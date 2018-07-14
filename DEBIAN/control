@@ -1,8 +1,8 @@
 Package: vash
-Version: 1.18-5
+Version: 1.19-1
 Section: misc
 Architecture: amd64
-Depends: libc6
+Depends: ncurses
 Maintainer: vsv <vsv9876@yandex.ru>
 Description: Visual Assistant Shell (vash)
  Visual Assistant Shell, interactive supershell over sh/bash
