@@ -1,30 +1,34 @@
 Name:           vash
-Version:        1.19
+Version:        1.21
 Release:        1%{?dist}
 Summary:        Visual Assistant Shell (vash)
 
 
 License:        BSD
-URL:            file:///home/vsv/proj-ws/%{name}-%{version}.tar.gz
-Source0:        http://localhost/home/vsv/proj-ws/%{name}-%{version}.tar.gz
+URL:            file:///home/vsv/proj-ws/
+#%{name}-%{version}.tar.gz
+Source0:        %url/%{name}-%{version}.tar.gz
 
-BuildRequires:  glibc-devel
-Requires:       glibc
+
+BuildRequires:  ncurses-devel
+Requires:       ncurses
 
 %description
 Visual Assistant Shell, interactive supershell over sh/bash
 features visual assistance for command line parameters, command string editing, parameterized command history, hotkey scripting, etc.
 
+%global debug_package %{nil}
+
 %prep
-#%autosetup
+%autosetup
 
 
 %build
 #%configure
 #make cfg
 ./configure
-#%make_build
-make compile
+%make_build
+#make
 
 
 %install
