@@ -1,11 +1,13 @@
 #!/bin/sh
 
+# dirty hack for Debian9
+
 make cleandist
-make cfg
-make bld
+./configure
+make complile
 make DESTDIR=`pwd`/BLD install
 cp -rp DEBIAN/ BLD
 fakeroot dpkg -b BLD
-mv BLD.deb vash_1.18_amd64.deb
+mv BLD.deb vash_1.19_amd64.deb
 
 

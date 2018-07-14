@@ -17,8 +17,11 @@ info:
 	@echo '    make install'
 	@echo '    make clean'
 
-install:    $(DEST) $(VISILIB) .vhset.tar
-	cat .vhset.tar | ( cd $(VISILIB); tar -xf - )
+# outdated in 2018 with last version of input key table
+#install:    $(DEST) $(VISILIB) .vhset.tar
+#	cat .vhset.tar | ( cd $(VISILIB); tar -xf - )
+
+install:    $(DEST) $(VISILIB)
 
 $(DEST):
 	-mkdir -p $(DEST)

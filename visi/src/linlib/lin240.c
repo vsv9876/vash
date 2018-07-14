@@ -101,7 +101,7 @@ do_kbl()
 	if ( (s=getenv("VHSET")) != NULL ) {
 		strcpy(name, s);
 	} else {
-		strcpy(name, "/usr/local/lib/visi");
+		strcpy(name, "/usr/lib/visi");
 	}
 	strcat(name, "/.vhset/");
 	if(*t_lh) {

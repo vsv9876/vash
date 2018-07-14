@@ -38,7 +38,6 @@ make compile
 /usr/lib/*
 
 
-
 %changelog
 * Mon Jul 2 2018 Sergey Vovk <vsv>
 - build with -ncurses, compatible with tgoto,tgetent from libtermcap

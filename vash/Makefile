@@ -52,7 +52,8 @@ LDFLAGS       =
 # STDLIBS       = -ltermcap
 # STDLIBS       = -ltermnew
 # STDLIBS       = -ljobs -lndir
-STDLIBS       = -ltermcap
+# STDLIBS       = -ltermcap
+STDLIBS		= $(TERMLIB)
 
 #		$(VISI_NEW)/libnew.a \
 #

@@ -185,13 +185,3 @@ LINKER      = gcc $(DEBUG) -fno-builtin-function
 #CC          = cc -O -Wc,-bcs
 #LINKER      = cc -Wc,-bcs
 
-$(SHOWCONFIG):;
-	@echo '***** Make.conf variables configured:'
-	@echo PATH=$(PATH)
-	@echo DEST=$(DEST)
-	@echo PKGBLD=$(PKGBLD)
-	@echo CC=$(CC)
-	@echo LINKER=$(LINKER)
-	@echo VISI=$(VISI)
-	@echo CFLAGS_ASH=$(CFLAGS_ASH)
-	@echo CFLAGS_VISI=$(CFLAGS_VISI)

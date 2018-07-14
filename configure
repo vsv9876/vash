@@ -2,10 +2,12 @@
 
 #echo Warning! there no automatic configuration prepared,
 #echo please, use 'make cfg' instead
-BLDCONF=./BLD.conf
+#BLDCONF=./BLD.conf
+BLDCONF=./configure.conf
 
- > $BLDCONF	echo '#' `date`
- >> $BLDCONF	echo ''
+# > $BLDCONF	echo '#' `date`
+# >
+ > $BLDCONF	echo ''
  >> $BLDCONF	echo 'TOPDIR    = '`pwd`
  >> $BLDCONF	echo ''
  >> $BLDCONF	echo 'DEST      = /usr'
