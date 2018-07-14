@@ -1,6 +1,6 @@
 Name:           vash
-Version:        1.18
-Release:        5%{?dist}
+Version:        1.19
+Release:        1%{?dist}
 Summary:        Visual Assistant Shell (vash)
 
 
@@ -16,18 +16,19 @@ Visual Assistant Shell, interactive supershell over sh/bash
 features visual assistance for command line parameters, command string editing, parameterized command history, hotkey scripting, etc.
 
 %prep
-%autosetup
+#%autosetup
 
 
 %build
 #%configure
-make cfg
+#make cfg
+./configure
 #%make_build
 make compile
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
+#rm -rf $RPM_BUILD_ROOT
 %make_install
 
 %files
@@ -39,5 +40,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jul 2 2018 Sergey Vovk <vsv>
+- build with -ncurses, compatible with tgoto,tgetent from libtermcap
+
 * Fri Aug  5 2016 Sergey Vovk <s.vovk>
-- 
+- initial build for Fedora

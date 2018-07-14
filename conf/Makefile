@@ -75,8 +75,9 @@ CFLAGS_VISI = -DUSE_TERMIOS
 #CFLAGS_VISI = -DUSE_TERMIOS -DNOUSE_STRCHR -DNOUSE_STRCP
 CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX
 ASHLIB      = SVR4
-TERMLIB     = -ltermcap
-#TERMLIB     = -lncurses
+#TERMLIB     = -ltermcap
+TERMLIB     = -lncurses
+
 #
 #CC          = gcc -traditional -Wtraditional -Wall
 #CC          = gcc -Wp,-std=c89
