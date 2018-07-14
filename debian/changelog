@@ -1,0 +1,11 @@
+vash (1.20-2) UNRELEASED; urgency=medium
+
+  * 2nd attempt to build for Debian
+
+ -- Sergey Vovk <vsv@lab2.lo>  Fri, 13 Jul 2018 17:23:03 +0300
+
+vash (1.20-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Sergey Vovk <vsv@lab2.lo>  Fri, 13 Jul 2018 17:21:37 +0300
