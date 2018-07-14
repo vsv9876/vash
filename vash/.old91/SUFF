@@ -1,0 +1,24 @@
+From cliff@st.simbirsk.su Thu Jan 30 16:52:34 1992
+From: Viacheslav Andreev <cliff@st.simbirsk.su>
+Message-Id: <152.9201301149@fly.st.simbirsk.su>
+Subject: suffixes
+To: vsv@st.simbirsk.su
+Date: Thu, 30 Jan 92 15:49:30 MVT
+X-Mailer: ELM [version 2.3 PL8]
+Status: RO
+
+	*.cpio)         cpio -itvc < $ar;;
+	*.cpio.Z)       zcat $ar | cpio -itvc;;
+	*.cpio.F)       fcat $ar | cpio -itvc;;
+	*.ar)           ar tv $ar;;
+	*.ar.Z)         zcat $ar > $t; ar tv $t; rm $t;;
+	*.ar.F)         fcat $ar > $t; ar tv $t; rm $t;;
+	*.tar)          tar tvf $ar;;
+	*.tar.Z)        zcat $ar | tar tvf -;;
+	*.tar.F)        fcat $ar | tar tvf -;;
+	*.zoo)          zoo l $ar;;
+	*.zip)          unzip -l $ar;;
+	*.lzh)          lharc v $ar;;
+
+
+

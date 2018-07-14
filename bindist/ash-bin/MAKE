@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+
+dirname=`pwd`
+name=`basename $dirname`
+#echo $name
+
+set -x
+cp /usr/local/lib/ash/ASHINTRO .
+tar cfF $name.tar LIST
+compress -b16 $name.tar
+ls -l $name.tar.*

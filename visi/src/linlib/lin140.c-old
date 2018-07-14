@@ -1,0 +1,207 @@
+/*
+**      +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
+**     (c) linlib  !    ДЛЯ АЛФАВИТНО-ЦИФРОВЫХ
+**      +----------+    ВИДЕОТЕРМИНАЛОВ
+**/
+
+/*
+ *  New version for POSIX termios.h.
+ */
+
+#include <stdio.h>
+#include "line.h"
+
+#ifdef USE_TERMIOS
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <termios.h>
+/* #ifndef UW_20 */
+/* #include <sys/filio.h> */
+/* #endif */
+
+/*
+ *  Управление режимами драйвера терминала
+ */
+
+static struct termios old;
+static struct termios new;  /* terminal i/o status */
+
+int osgflg = 0;         /* ФЛАГИ ДРАЙВЕРА (old.sg_flags)???????? */
+
+/*
+ * реакция на сигнал прерывания
+ */
+static v_off();
+static void onintr()
+{
+	/* эта функция применяется как реакция на SIG_QUIT и при exit */
+	signal(SIGINT,SIG_IGN);
+	v_off(); exit(0);
+}
+
+/*------------------------------*/
+/* ТЕЛЕТАЙПНЫЙ РЕЖИМ - СТАНДАРТ */
+/*------------------------------*/
+static v_off()
+{
+	static   void     (*fsig)();
+
+	fflush(vttout);         /* СНАЧАЛА ЗАКОНЧИТЬ ВЫВОД */
+
+	/* вернуть стандартную реакцию на сигнал SIG_INT */
+	fsig = signal(SIGINT,SIG_IGN);
+	if( fsig == &onintr ) {
+		fsig = SIG_DFL;
+	}
+	signal( SIGINT, fsig );
+
+#if 0
+	ioctl(vtti, TCSETS, &old);
+#endif
+	tcsetattr(vtti, TCSADRAIN, &old);
+}
+
+/*----------------------------*/
+/* УСТАНОВКА ЭКРАННОГО РЕЖИМА */
+/*----------------------------*/
+static v_on()
+{
+	static   void       (*fsig)();
+	cc_t i;
+
+#if 0
+	ioctl(vtti,TCGETS,&old);        /* get prev tty modes */
+#endif
+	tcgetattr(vtti, &old);        /* get prev tty modes */
+	new = old;
+	new.c_oflag = (new.c_oflag&(~OPOST));
+	new.c_lflag = ISIG;
+
+	/* special character processing */
+/*        new.c_cc[VINTR  ] = CNUL; */
+/*        new.c_cc[VQUIT  ] = CNUL; */
+	for ( i = 0; i <= NCCS; i++)
+	    new.c_cc[i] = CNUL;
+	new.c_cc[VSTART] = old.c_cc[VSTART];
+	new.c_cc[VSTOP] = old.c_cc[VSTOP];
+	new.c_cc[VMIN ] = 1;    /* check, may be VMIN=VTIME=0 is better ? */
+	new.c_cc[VTIME] = 5;
+
+	fsig = signal(SIGINT,SIG_IGN);
+	if( fsig == SIG_DFL )   {
+		fsig = &onintr;
+		signal( SIGINT, fsig );
+	}
+#if 0
+	ioctl(vtti, TCSETS, &new);
+#endif
+	tcsetattr(vtti, TCSADRAIN, &new);
+}
+
+/*-----------------------------------------------------*/
+/* ПРОВЕРКА НА ОТСУТСТВИЕ СИМВОЛОВ В БУФЕРЕ КЛАВИАТУРЫ */
+/*-----------------------------------------------------*/
+ttytst()
+{
+	static long num_r;
+#ifdef FIONREAD
+	ioctl(vtti, FIONREAD, &num_r);
+#else
+#ifndef FIORDCHK
+#define FIORDCHK        (('f'<<8)|3)            /* V7 */
+#endif
+	ioctl(vtti, FIORDCHK, &num_r);
+#endif
+	return( num_r == 0l );
+}
+
+/*--------------*/
+/* ВВОД СИМВОЛА */
+/*--------------*/
+/* Для драйвера ДЕМОС требуется отслеживать ввод,
+ * и если принят символ русского регистра, то
+ * на тех терминалах, где клавиятура управляется от ЭВМ,
+ * требуется скорректировать ее состояние
+ * до ввода следующего символа.
+ *      P.S.
+ *      Поскольку такие терминалы сами по себе продукт
+ *      еще тот, то и их поддержка того же уровня -
+ *      Здесь результат освоения документации без отладки.
+ */
+
+int     cyrflg = 0;     /* последний символ пришел латинский */
+
+static  int cyrkbd()
+{
+/* оставлена заглушка для совместимости */
+}
+
+static int kb_nwt = 0;  /* Не ожидать ввод с клавиатуры -
+			 * при пустой очереди выполнять
+			 * асинхронные задания.
+			 * ПО УМОЛЧАНИЮ - ВВОД ОЖИДАЕТСЯ */
+/*
+ * Вернуть принятый символ, без символа
+ * асинхронные задания выполняются в фоне, если нужно
+ */
+ttyinp()
+{
+	char         cc;
+	register int c;
+
+	next_j();       /* один раз перед вводом каждого символа */
+	cyrkbd();
+	fflush(vttout);
+
+	if(kb_nwt) {
+		while( ttytst() ) { /* пока очередь пустая */
+			next_j();       /* прокрутить асинхронщину */
+			cyrkbd();
+			fflush(vttout);
+		}
+		if (read(vtti, &cc, 1) < 0) exit(2);
+		c = cc;
+		goto ret_c;     /* вернуть код */
+	} else {
+
+		if (read(vtti, &cc, 1) < 0) exit(1);
+		c = cc;
+		goto ret_c;
+ret_c:
+		c &= 0377;
+		if(c > 0177)    cyrflg = 1;
+		else            cyrflg = 0;
+		return( c );
+	}
+}
+
+/*------------------------------------------------*/
+/* УПРАВЛЕНИЕ РЕЖИМАМИ ТЕРМИНАЛЬНОГО ВВОДА-ВЫВОДА */
+/*------------------------------------------------*/
+
+extern int k_pad();     /* см. lin215.c */
+
+io_set(flags)
+register int flags;
+{
+	/* переключение keypad приходится делать из-за
+	 * повсеместного распространения termcap для vt100, xterm,
+	 * в котором клавиши со стрелками правильно работают
+	 * только при включенном keypad
+	 */
+	if(flags & IO_VIDEO)    {
+		v_on();
+		k_pad(1);
+	}
+	if(flags & IO_TTYPE)    {
+		k_pad(0);
+		v_off();
+	}
+	if(flags & IO_WAIT)
+				kb_nwt = 0;
+	if(flags & IO_NOWAIT)
+				kb_nwt = 1;
+}
+
+#endif  /* USE_TERMIOS */

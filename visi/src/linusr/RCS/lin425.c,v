@@ -1,0 +1,138 @@
+head     3.2;
+access   ;
+symbols  LINLIB_3:3.2;
+locks    ; strict;
+comment  @ * @;
+
+
+3.2
+date     89.08.29.14.45.19;  author vsv;  state Rel;
+branches ;
+next     3.1;
+
+3.1
+date     89.01.13.19.12.04;  author vsv;  state Exp;
+branches ;
+next     3.0;
+
+3.0
+date     88.06.16.18.02.25;  author vsv;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@
+קשקןה מבתקבמיס כלבקיû
+@
+
+
+3.2
+log
+@קועףיס LINLIB_3
+@
+text
+@/*
+**      +----------+    גיגליןפוכב קקןהב-קשקןהב
+**     (c) linlib  !    הלס בלזבקיפמן-דיזעןקשט
+**      +----------+    קיהוןפועםימבלןק
+**/
+
+/*
+ *      $Header: lin425.c,v 3.1 89/01/13 19:12:04 vsv Exp $
+ *
+ *      $Log:	lin425.c,v $
+ * Revision 3.1  89/01/13  19:12:04  vsv
+ * מבתקבמיו כלבקיûי פונוער םןצופ ףןהועצבפר נעןגול.
+ * כעןםו פןחן, נעיםומומש םבכעןףש tocod ית line.h
+ * 
+ * Revision 3.0  88/06/16  18:02:25  vsv
+ * נעוהקבעיפולרמשך קשנץףכ
+ * 
+ * Revision 3.0  87/12/21  12:21:20  vsv
+ * נעוהקבעיפולרמשך קשנץףכ.
+ * 
+ */
+
+#include <stdio.h>
+#include <ctype.h>
+#include "line.h"
+#include "line0.h"
+
+cvt_lh(line, cod, mod, str)
+/*------------------------*/
+/* קשקןה מבתקבמיס כלבקיûי */
+/*------------------------*/
+LINE    *line;
+int       cod;
+char     *mod;
+char     *str;
+{
+	/* מבךפי י נןהףפבקיפר מבתקבמיו כלבקיûי
+	 * נן וו ףםשףלןקןםץ (לןחי‏וףכןםץ) כןהץ
+	 * מבנעיםוע ":NL" תבםומסופףס מב "RETURN"
+	 */
+	extern   unsigned strlen();
+	register char   *s;
+	extern   KBL    kbl[];  /* פבגלידב ףקסתי כןהןק י מבתקבמיך כלבקיû */
+	register KBL   *kblp;
+		kbcod   codh;   /* כןה, הלס כןפןעןחן מבךפי מבתקבמיו */
+
+	if( *mod == 'w' ) {
+		s = line->varl;
+		/* הלס üפןחן וףפר םבכעןףש ק "line.h" */
+		codh = tocod0(s[1]);
+		codh |= tocod1(s[2]);
+
+		for(kblp=kbl; kblp->t_key!=0; kblp++) {
+			if(kblp->t_cod == codh) {
+				strcpy(str, kblp->t_knm);
+				goto ret;
+			}
+		}
+		strcpy(str, &line->varl[1]);
+ret:
+/***** סקמבס ‏וûץס...
+		for(s=str+strlen(str), s--; s > str && *s; s--) {
+			if(isspace(*s)) *s = '\0';
+		}
+ *****/
+		;
+	}
+	return( TRUE ) ;        /* ןûיגןכ גשפר מו םןצופ... */
+}
+@
+
+
+3.1
+log
+@מבתקבמיו כלבקיûי פונוער םןצופ ףןהועצבפר נעןגול.
+כעןםו פןחן, נעיםומומש םבכעןףש tocod ית line.h
+@
+text
+@d8 1
+a8 1
+ *      $Header: lin425.c,v 3.0 88/06/16 18:02:25 vsv Exp $
+d11 4
+@
+
+
+3.0
+log
+@נעוהקבעיפולרמשך קשנץףכ
+@
+text
+@d8 1
+a8 1
+ *      $Header: lin420.c,v 3.0 87/12/21 12:21:20 vsv Exp $
+d10 4
+a13 1
+ *      $Log:	lin420.c,v $
+d33 4
+d45 3
+a47 2
+		codh = s[1];
+		codh |= s[2] << 8; /***** תהוףר מבהן גש פ‎בפולרמוו... */
+d57 1
+d61 2
+@

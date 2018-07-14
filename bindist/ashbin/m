@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ -x /usr/local/bin/less ]
+then
+	case L"$LESS" in
+	L)        LESS=cs; export LESS;;
+	esac
+        MOREPROG=/usr/local/bin/less
+elif [ -x /usr/bin/more ]
+then
+	MOREPROG=/usr/bin/more
+elif [ -x /usr/bin/pg ]
+then
+	MOREPROG=/usr/bin/pg
+fi
+
+exec ${MOREPROG} $@

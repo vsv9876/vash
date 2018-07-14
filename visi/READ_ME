@@ -1,0 +1,106 @@
+#       +----------+    Line INput/output LIBrary
+#      (C) LINLIB  !    for character (ASCII only)
+#       +----------+    videoterminals
+
+Вовк Сергей Владимирович & CO. (C) НИИАР, Димитровград, 1985-1989.
+Serge Vovk and the team (C) 1985-1989, 2016 remix revision
+
+There is full source distribution of LINLIB framework
+Вас можно поздравить -- вы обладаете полным дистрибутивом
+инструментальной системы LINLIB.
+
+The distribution is adressed to experienced unix system administrator,
+which have to install from scratch all components in order described below.
+
+Вам, как системному программисту, понадобится проявить
+терпение при освоении системы, прикладным программистам
+после ваших консультаций будет легче, так что
+не торопитесь и проделайте все по-порядку.
+Я надеюсь, что большинство мелких огрех не доставят вам много хлопот,
+однако буду благодарен за любую информацию о проблемах,
+которые вы испытали при постановке системы у себя в хакердоме.
+
+
+Order of installation:
+ПОРЯДОК СБОРКИ СИСТЕМЫ:
+1. Format documents, print, read (sorry, most of documents still in Russian)
+   Собрать документацию, напечатать, прочитать:
+	cd doc/book; make all; more reclam.lp book.lp
+	cd doc/man; make all;
+
+2. Compile libraries and utility commands:
+   Собрать библиотеки и команды:
+	cd src; make all;
+
+3. Compile and test two programs based on LINLIB framework:
+   Собрать и проверить две программы, сделанные по технологии LINLIB:
+
+3.1 Compile vhset utility, setup with it keyboard and videoattributes:
+    Собрать сервисную программу VHSET, настроить при ее помощи клавиатуру и видеоатрибуты:
+	cd prog/vhset; make all; more READ_ME
+
+3.2 Compile ldemo project, make sure it works well:
+    Собрать демонстрационную программу LDEMO и убедиться
+    в ее правильной работе:
+	cd prog/ldemo; make all; ldemo;
+
+4. Next steps with distribution files.
+   Дальнейшая судьба файлов дистрибутива.
+	Please, redo all desribed in documentation
+	to install files in place.
+	Для установки файлов на места проделайте все,
+	что описано в документации.
+	In case personal installation it is reasonable to
+	leave on place directories
+	если LINLIB поначалу будет нужен только Вам,
+	то имеет смысл оставить на этом же месте каталоги
+		bin, lib, include, prog/proto
+	and remove all other with quiet. If place on disk
+	is not to shirt it is desirable leave all subdirectories prog.
+	Man pages may be installed to standard place:
+	а все остальное спокойно удалить. Если место на диске
+	позволяет, то, желательно оставить весь каталог prog,
+	особенно vhset и ldemo. Оперативный справочник (man)
+	удобнее всего установить на стандартное место:
+		cd doc/man; make install;
+		whatis linlib; man linlib;
+
+	Please, do not forget to print mini-help files
+	which may be helpfull in everyday usage.
+	Не забудьте распечатать мини-подсказки (doc/hlp/*),
+	они могут быть полезными для повседневной работы.
+
+
+
+	Directories and files of distribution:
+	КАТАЛОГИ И ФАЙЛЫ ДИСТРИБУТИВА:
+	==============================
+
+READ_ME   - this text //Текст этой инструкции
+-------------------------------------------------------------------
+doc       - documentation //документация
+
+	  doc/book       ads and verbose manual //реклама и подробное руководство
+	  doc/man        man pages //оперативный справочник
+	  doc/hlp/*      mini-help pages //справочные листки (шпаргалки)
+-------------------------------------------------------------------
+These directories have to be placed to /usr or /usr/local:
+Место следующим трем каталогам в каталоге  /usr  либо  /usr/new:
+
+lib       - runtime librries //исполняющие библиотеки
+bin       - framework utilities //команды инструментальной системы
+include   - header files //файлы-заголовки
+-------------------------------------------------------------------
+prog      - instant programs //готовые программы
+	  prog/ldemo    demo //демонстрационная программа
+	  prog/vhset    video hardware setup on user taste //настройка клавиатуры и видеоатрибутов
+			по вкусу пользователя
+	  prog/proto    prototype of user app // прототип прикладной программы
+-------------------------------------------------------------------
+src       - sources // исходные тексты исполняющих библиотек
+-------------------------------------------------------------------
+visi      - user interaction preprocessors //препроцессоры сценария диалога
+-------------------------------------------------------------------
+rt11      - RT-11 distribution //дистрибутив для RT-11 (РАФОС-2, ФОДОС, ОС ДВК)
+dos       - MS-DOS distribution (never completed) // дистрибутив для MS-DOS IBM PC, пока не готов
+-------------------------------------------------------------------

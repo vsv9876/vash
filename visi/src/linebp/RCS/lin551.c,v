@@ -1,0 +1,35 @@
+head     1.1;
+access   ;
+symbols  V3_3:1.1;
+locks    ;
+comment  @ * @;
+
+
+1.1
+date     90.12.27.16.25.35;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@χεςσιρ V3_3
+@
+text
+@#include "line.h"
+#include "linebp.h"
+
+char    *vexdir =        /* λαταμοη οπισαξικ στςαξιγ */
+#ifdef  DEMOS2
+	"/usr/new/lib/visi/";
+#endif
+#ifdef RT11
+	"LIN:";
+#endif
+@

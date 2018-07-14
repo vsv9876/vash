@@ -1,0 +1,14 @@
+#/bin/sh
+
+# create C header file buildd.h, using current date
+
+SRC='buildd.h'
+DATEON=`date +%Y%m%d_%H%M`
+
+> $SRC
+
+###>> $SRC echo '#include <stdio.h>'
+###>> $SRC echo '#include <stdlib.h>'
+###>> $SRC echo '#include "assist.h"'
+>> $SRC echo ''
+>> $SRC echo '#define BUILDD "'$DATEON'"'

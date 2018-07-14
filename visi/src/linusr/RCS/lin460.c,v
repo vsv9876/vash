@@ -1,0 +1,104 @@
+head     3.2;
+access   ;
+symbols  LINLIB_3:3.2;
+locks    vsv:3.2; strict;
+comment  @ * @;
+
+
+3.2
+date     89.08.29.14.50.26;  author vsv;  state Rel;
+branches ;
+next     3.1;
+
+3.1
+date     88.06.27.15.31.01;  author vsv;  state Exp;
+branches ;
+next     3.0;
+
+3.0
+date     88.06.16.18.04.44;  author vsv;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@
+קשקןה ףןןג‎ומיס ןג ןûיגכו
+@
+
+
+3.2
+log
+@קועףיס LINLIB_3
+@
+text
+@/*
+**      +----------+    גיגליןפוכב קקןהב-קשקןהב
+**     (c) linlib  !    הלס בלזבקיפמן-דיזעןקשט
+**      +----------+    קיהוןפועםימבלןק
+**/
+
+/*
+ *      $Header: lin460.c,v 3.1 88/06/27 15:31:01 vsv Exp $
+ *
+ *      $Log:	lin460.c,v $
+ * Revision 3.1  88/06/27  15:31:01  vsv
+ * עוקיתיס בעטיקב RCS
+ * 
+ * Revision 3.0  88/06/16  18:04:44  vsv
+ * נעוהקבעיפולרמשך קשנץףכ
+ * 
+ */
+
+#include <stdio.h>
+#include "line.h"
+
+/*---------------------------*/
+/* קשקןה ףןןג‎ומיס ןג ןûיגכו */
+/*---------------------------*/
+static  int errflg ;    /* זלבח: ףןןג‎ומיך ןג ןûיגכו מו גשלן */
+
+w_emsg ( str )
+char    *str ;          /* פוכףפ ףןןג‎ומיס ןג ןûיגכו */
+{
+	if( *str ) {    /* וףלי בעחץםומפ קשתןקב מונץףפבס ףפעןכב */
+		errflg = 1;
+		cp_set(-1, 0, ERR);
+		bell();
+		printf(" ?!! %s ", str);
+	} else {
+		if(errflg) {
+			errflg = 0;
+			cp_set(-1, 0, TXT ) ;
+			er_eol();
+		}
+	}
+}
+@
+
+
+3.1
+log
+@עוקיתיס בעטיקב RCS
+@
+text
+@d8 1
+a8 1
+ *      $Header: lin460.c,v 3.0 88/06/16 18:04:44 vsv Exp $
+d11 3
+@
+
+
+3.0
+log
+@נעוהקבעיפולרמשך קשנץףכ
+@
+text
+@d8 1
+a8 1
+ *      $Header$
+d10 4
+a13 1
+ *      $Log$
+d30 1
+@

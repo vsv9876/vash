@@ -1,0 +1,31 @@
+head     1.1;
+access   ;
+symbols  V3_3:1.1;
+locks    ;
+comment  @ * @;
+
+
+1.1
+date     90.12.27.16.25.36;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@קועףיס V3_3
+@
+text
+@#include "line.h"
+#include "linebp.h"
+
+/* ףפעבמידב נןהףכבתכי */
+char    *phelp0 = "phelp0.lb";
+
+@

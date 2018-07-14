@@ -1,0 +1,16 @@
+#/bin/sh
+#
+# VISI/LINLIB
+#
+# Check for previous version's constants:
+#               'kb',    '^M',    etc...
+#
+
+case x$1 in
+x-v)
+	grep "'[a-zA-Z^].'" *.c *.cv
+	;;
+*)
+	grep -l "'[a-zA-Z^].'" *.c *.cv
+	;;
+esac

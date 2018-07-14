@@ -1,0 +1,7 @@
+There is one of variants of termcap database.
+Variant linlib/visi based on termlib or termnew requires such a file.
+Unfortunately, termcap file not found in modern Linux distibutions anymore.
+
+Please, put this file as ~/.termcap or /usr/local/etc/termcap as workaround
+in case no termcap database supported on your system.
+Note, there is a plan to migrate linlib/visi to terminfo/courses to solve this problem.

@@ -1,0 +1,305 @@
+head     1.1;
+access   ;
+symbols  LINLIB_3:1.1;
+locks    ;
+comment  @ * @;
+
+
+1.1
+date     90.12.27.16.28.40;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@קועףיס LINLIB_3
+@
+text
+@/*
+**      +----------+    גיגליןפוכב קקןהב-קשקןהב
+**     (c) linlib  !    הלס בלזבקיפמן-דיזעןקשט
+**      +----------+    קיהוןפועםימבלןק
+**/
+
+/*
+ *      $Header: lin140.c,v 3.5 89/08/29 15:14:11 vsv Rel $
+ *
+ *      $Log:	lin140.c,v $
+ * Revision 3.5  89/08/29  15:14:11  vsv
+ * קועףיס LINLIB_3
+ *
+ * Revision 3.4  89/01/05  14:38:45  vsv
+ * מוגןלרûןו "ץףןקועûומףפקןקבמיו" :
+ * נעי נועוטןהו עוציםב פועםימבלב ןפ
+ * פולוחעבזמןחן כ היףנלוךמןםץ י מבןגןעןפ
+ * מו ‏יףפיפףס קטןהמבס ן‏ועוהר.
+ *
+ * Revision 3.3  88/06/17  17:43:22  vsv
+ * בףימטעןממןו תבהבמיו נעןחןמסופףס
+ * כבצהשך עבת נעי נןלץ‏ומיי
+ * ן‏ועוהמןחן ףיםקןלב
+ * מותבקיףיםן ןפ הלימש ן‏ועוהי קקןהב.
+ *
+ * Revision 3.2  88/05/23  10:27:12  vsv
+ * יףנעבקלומב ןגעבגןפכב ףיחמבלב נעועשקבמיס,
+ * פונוער נעבקילרמן עבגןפבופ ף תבנעןףןם system.
+ *
+ * Revision 3.1  88/03/25  15:29:10  vsv
+ * יףנעבקלומב ןûיגכב ף ןגעבגןפכןך ףיחמבלב
+ * נעועשקבמיס נעי נועוטןהו IO_VIDEO --> IO_TTYPE
+ *
+ * Revision 3.0  87/12/21  11:43:43  vsv
+ * נעוהקבעיפולרמשך קשנץףכ
+ *
+ */
+
+#include <stdio.h>
+#include "line.h"
+
+/*
+**      ץנעבקלומיו עוציםבםי העבךקועב פועםימבלב
+**/
+
+#include <sgtty.h>
+
+#ifdef  RT11
+static  int     *jsw = 044;     /* JOB STATUS WORD */
+#endif
+
+#ifdef  DEMOS2
+#include <signal.h>
+static struct sgttya old, new;          /* ÓÏÓÔÏÑÎÉÑ ÔÅÒÍÉÎÁÌÁ */
+#endif
+
+int osgflg = 0;         /* זלבחי העבךקועב (old.sg_flags) */
+
+/*------------------------------*/
+/* עובכדיס מב ףיחמבל נעועשקבמיס */
+/*------------------------------*/
+#ifdef RT11
+/* כ ףןצבלומיא, הלס RT-11 נןכב מו עבגןפבופ תבנעןף .SCCA
+ * פבכ, כבכ üפןחן טןפולןףר גש...
+ */
+#endif
+
+#ifdef DEMOS2
+static onintr()
+{
+	signal(SIGINT,SIG_IGN); /* ןףפבלרמשו מןפש ûןנומב יחמןעו... */
+	v_off(); exit(0);
+}
+#endif
+
+/*------------------------------*/
+/* פולופבךנמשך עוצים - ףפבמהבעפ */
+/*------------------------------*/
+static v_off()
+{
+#ifdef  DEMOS2
+	static   int      (*fsig)();
+#endif
+#ifdef  RT11
+	FILE *freopen() ;
+#endif
+
+	fflush(vttout);         /* ףמב‏בלב תבכןמ‏יפר קשקןה */
+
+#ifdef  RT11
+	*jsw &= ~010100 ;                /* SPECIAL .TTINR MODE OFF */
+	freopen("tt:", "w", vttout);     /* UNBUFERED I/O OFF */
+#ifdef  decus
+	vttout->_flag &= ~_IONBF ;       /* SINGLE CHAR OUTPUT OFF */
+#endif
+#endif
+
+#ifdef  DEMOS2
+	/* ףמספר עובכדיא מב CTRL-C */
+	fsig = signal(SIGINT,SIG_IGN);
+	if( fsig == &onintr ) {
+		fsig = SIG_DFL;
+	}
+	signal( SIGINT, fsig );
+
+	ioctl(vtti, TIOCSETB, &old);
+#endif
+}
+
+/*----------------------------*/
+/* ץףפבמןקכב üכעבממןחן עוציםב */
+/*----------------------------*/
+static v_on()
+{
+#ifdef  RT11
+	FILE *freopen() ;
+
+	*jsw |= 010100 ;                /* SPECIAL .TTINR MODE          */
+	freopen ( "tt:", "wu", vttout ) ;       /* UNBUFERED I/O        */
+#ifdef  decus
+	vttout->_flag |= _IONBF ;       /* SINGLE CHAR OUTPUT           */
+#endif
+#endif
+
+#ifdef  DEMOS2
+	static   int      (*fsig)();
+
+	ioctl(vtti,TIOCGETA,&old);         /* גועום ףפבעשו עוציםש */
+	new = old;
+	osgflg = old.sg_flags;          /* וכףנןעפיעץום זלבחי העבךקועב */
+/*      new.sg_flags = (old.sg_flags &
+ *          ~(CRMOD|ECHO|XTABS|
+ *          CYRILL|LCASE|UCASE)) | CBREAK ;
+ */
+	new.sg_flags = (old.sg_flags &
+	    ~(ECHO|XTABS
+/*                      |LCASE|UCASE          */
+			)) | CBREAK ;
+	if(old.sg_flags & LCASE)
+		new.sg_flags &= ~UCASE;
+	new.sg_width  = 0;
+	new.sg_length = 0;
+	/*      new.sg_quitc  = 0;      */
+	/*      new.sg_startc = 0;      */
+	/*      new.sg_stopc  = 0;      */
+	new.sg_suspc  = 0;
+	new.sg_dsuspc = 0;
+	new.sg_rprntc = 0;
+	/*      new.sg_flushc = 0;      */
+	new.sg_werasc = 0;
+	new.sg_lnextc = 0;
+	new.sg_brkc   = 0;
+	new.sg_eofc   = 0;
+
+	/* עובכדיס מב CTRL-C */
+	fsig = signal(SIGINT,SIG_IGN);
+	if( fsig == SIG_DFL )   {
+		fsig = &onintr;
+		signal( SIGINT, fsig );
+	}
+	ioctl(vtti, TIOCSETB, &new);
+#endif
+}
+
+#ifdef  DEMOS2
+/*-----------------------------------------------------*/
+/* נעןקועכב מב ןפףץפףפקיו ףיםקןלןק ק גץזועו כלבקיבפץעש */
+/*-----------------------------------------------------*/
+ttytst()
+{
+	static long num_r;
+
+	ioctl(vtti, FIONREAD, &num_r);
+	return( num_r == 0l );
+}
+#endif
+
+/*--------------*/
+/* קקןה ףיםקןלב */
+/*--------------*/
+/* הÌÑ ÄÒÁÊ×ÅÒÁ הוםןף ÔÒÅÂÕÅÔÓÑ ÏÔÓÌÅÖÉ×ÁÔØ ××ÏÄ,
+ * É ÅÓÌÉ ÐÒÉÎÑÔ ÓÉÍ×ÏÌ ÒÕÓÓËÏÇÏ ÒÅÇÉÓÔÒÁ, ÔÏ
+ * ÎÁ ÔÅÈ ÔÅÒÍÉÎÁÌÁÈ, ÇÄÅ ËÌÁ×ÉÑÔÕÒÁ ÕÐÒÁ×ÌÑÅÔÓÑ ÏÔ üקם,
+ * ÔÒÅÂÕÅÔÓÑ ÓËÏÒÒÅËÔÉÒÏ×ÁÔØ ÅÅ ÓÏÓÔÏÑÎÉÅ
+ * ÄÏ ××ÏÄÁ ÓÌÅÄÕÀÝÅÇÏ ÓÉÍ×ÏÌÁ.
+ *      P.S.
+ *      נÏÓËÏÌØËÕ ÔÁËÉÅ ÔÅÒÍÉÎÁÌÙ ÓÁÍÉ ÐÏ ÓÅÂÅ ÐÒÏÄÕËÔ
+ *      ÅÝÅ ÔÏÔ, ÔÏ É ÉÈ ÐÏÄÄÅÒÖËÁ ÔÏÇÏ ÖÅ ÕÒÏ×ÎÑ -
+ *      תÄÅÓØ ÒÅÚÕÌØÔÁÔ ÏÓ×ÏÅÎÉÑ ÄÏËÕÍÅÎÔÁÃÉÉ ÂÅÚ ÏÔÌÁÄËÉ.
+ */
+
+int     cyrflg = 0;     /* ÐÏÓÌÅÄÎÉÊ ÓÉÍ×ÏÌ ÐÒÉÛÅÌ ÌÁÔÉÎÓËÉÊ */
+
+static  int cyrkbd()
+{
+#ifdef DEMOS2
+	if( (osgflg & LCASE) )
+		return;
+	if(cyrflg && ((osgflg & CYRILL) != 0))
+		switch(osgflg & CSTYLE) {
+		case CS_TYPE2 :
+		case CS_TYPE0 :
+			putc('N' & 037, vttout);  /* ×ÙÄÁÔØ SI (ctrl/n) */
+			break;
+		};
+#endif
+}
+
+#ifdef  RT11
+/* lin110.mac: יםיפבדיס תבנעןףב .TTINR RT-11 */
+extern  int     ttinr();
+#endif
+
+static int kb_nwt = 0;  /* מÅ ÏÖÉÄÁÔØ ××ÏÄ Ó ËÌÁ×ÉÁÔÕÒÙ -
+			 * ÐÒÉ ÐÕÓÔÏÊ ÏÞÅÒÅÄÉ ×ÙÐÏÌÎÑÔØ
+			 * ÁÓÉÎÈÒÏÎÎÙÅ ÚÁÄÁÎÉÑ.
+			 * נן ץםןל‏במיא - קקןה ןציהבופףס */
+
+/* קÅÒÎÕÔØ ÐÒÉÎÑÔÙÊ ÓÉÍ×ÏÌ, ÂÅÚ ÓÉÍ×ÏÌÁ ×ÏÚ×ÒÁÔÁ ÎÅÔ */
+/* ÁÓÉÎÈÒÏÎÎÙÅ ÚÁÄÁÎÉÑ ×ÙÐÏÌÎÑÀÔÓÑ × ÆÏÎÅ, ÅÓÌÉ ÎÕÖÎÏ */
+ttyinp()
+{
+	char         cc;
+	register int c;
+
+	next_j();       /* ןהימ עבת נועוה קקןהןם כבצהןחן ףיםקןלב */
+	cyrkbd();
+	fflush(vttout);
+
+	if(kb_nwt) {
+#ifdef  RT11
+		while((c=ttinr()) == -1) {  /* ÐÏËÁ ÓÉÍ×ÏÌ ÎÅ ÐÒÉÎÑÔ */
+			next_j();       /* ÐÒÏËÒÕÔÉÔØ ÁÓÉÎÈÒÏÎÝÉÎÕ */
+			cyrkbd();
+			fflush(vttout);
+		}
+#endif
+#ifdef  DEMOS2
+		while( ttytst() ) { /* נןכב Ï‏ועוהר נץףפבס */
+			next_j();       /* נעןכעץפיפר בףימטעןמ‎ימץ */
+			cyrkbd();
+			fflush(vttout);
+		}
+		read(vtti, &cc, 1);
+		c = cc;
+#endif
+		goto ret_c;     /* ×ÅÒÎÕÔØ ËÏÄ */
+	} else {
+#ifdef  RT11
+		while( (c=ttinr()) == -1);      /* while for SJ only */
+#endif
+
+#ifdef  DEMOS2
+		read(vtti, &cc, 1);        /* ÓÉÍ×ÏÌ ÐÒÏÞÉÔÁÔØ */
+		c = cc;
+		goto ret_c;
+#endif
+ret_c:
+		c &= 0377;
+		if(c > 0177)    cyrflg = 1;
+		else            cyrflg = 0;
+		return( c );
+	}
+}
+
+/*------------------------------------------------*/
+/* ץנעבקלומיו עוציםבםי פועםימבלרמןחן קקןהב-קשקןהב */
+/*------------------------------------------------*/
+io_set(flags)
+register int flags;
+{
+	if(flags & IO_VIDEO)
+				v_on();
+	if(flags & IO_TTYPE)
+				v_off();
+	if(flags & IO_WAIT)
+				kb_nwt = 0;
+	if(flags & IO_NOWAIT)
+				kb_nwt = 1;
+}
+@

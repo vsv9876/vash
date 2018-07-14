@@ -1,0 +1,149 @@
+
+SHELL         = /bin/sh
+
+include		../Make.conf
+
+##
+##      +----------+    βιβμιοτελα χχοδα-χωχοδα
+##     (C) LINLIB  !    δμρ αμζαχιτξο-γιζςοχωθ
+##      +----------+    χιδεοτεςνιξαμοχ
+##
+##      $Header$
+##      $Log$
+##
+
+#
+#       σβοςλα πςιλμαδξοκ πςοηςαννω βεϊ υσταξοχλι
+#       βιβμιοτελ LINLIB ξα σταξδαςτξωε νεστα
+#
+VISI          = ../visi
+VBIN          = $(VISI)/bin
+VLIB          = $(VISI)/lib
+
+PROGRAM       = vhset
+EXECMODE      =  711
+DEST          = /usr/local
+DESTBIN       = $(DEST)/bin
+
+CFLAGS        = -I$(VISI)/include
+
+#CC            = cc -O
+#LINKER        = cc
+
+LDFLAGS       =
+# STDLIBS       = -ltermcap
+# STDLIBS       = -ltermnew
+LIBS          = \
+		$(VLIB)/liblinebp.a \
+		$(VLIB)/liblinusr.a \
+		$(VLIB)/libline.a \
+		$(VLIB)/libtermnew.a
+
+VCC           = $(VBIN)/vcc
+VLBP          = $(VBIN)/vlbp
+LBP           = $(VBIN)/lbp
+MAKEFILE      = Makefile
+
+EXTHDRS	      = $(VISI)/include/line.h \
+		$(VISI)/include/line0.h \
+		$(VISI)/include/linebp.h \
+		$(VISI)/include/lineva.h \
+		/usr/include/stdio.h
+
+HDRS	      = vhset.h
+
+SRCS          = vhset0.cv \
+		vhseta.cv \
+		vhsetk.cv \
+		vhsetm.cv
+
+OBJS	      = vhset0.o \
+		vhseta.o \
+		vhsetk.o \
+		vhsetm.o
+
+SUFFIX        = .cv:sC
+
+.SUFFIXES : .out .o .c .cm .f .e .r .y .yr .ye .l .s .cl .p .q \
+	    .cv .la .lav .lb
+.cv.c:
+	$(VCC) -o $@ $<
+
+#.cv.o:
+#	$(VCC) -o $*.c $<
+#	$(CC) $(CFLAGS) -c $*.c
+#	rm -f $*.c
+
+.cv.o:
+	$(VCC) -o $*.c $<
+	$(CC) $(CFLAGS) -c $*.c; rm -f $*.c
+
+# πεςεχοδ σελγιι δαξξωθ χ σελγιΰ λοδα
+# νοφετ ποξαδοβιτψσρ δμρ οχεςμεκξωθ πςοηςανν ι
+# σιστενξωθ πςοηςανν, σοβιςαενωθ σ λμΰώον ld -n,
+# ΣΝ. ΤΑΛΦΕ Π?ΑΧΙΜΟ data-to-text:
+# .cv.o:
+#         $(VCC) -o $*.c $<
+#         $(CC) $(CFLAGS) -S $*.c
+#         ed - $*.s <data-to-text
+#         $(AS) -o $*.o $*.s
+#         rm -f $*.c $*.s
+
+.la.lb:
+	$(LBP) $< $@
+
+.lav.la:
+	$(VLBP) -o $@ $<
+
+.lav.lb:
+	$(VLBP) -o $*.la $<
+	$(LBP) $*.la $@; rm -f $*.la
+
+all:  $(PROGRAM)
+
+data-to-text:
+	echo 'g/\.data/s//\.text/' >data-to-text
+	echo 'w' >>data-to-text
+	echo 'q' >>data-to-text
+
+program:        $(PROGRAM)
+
+$(PROGRAM):     $(OBJS) $(LIBS) $(MAKEFILE)
+		@echo "Loading $(PROGRAM) ... "
+		@$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) $(STDLIBS) -o $(PROGRAM)
+		@echo " ...done"
+
+clean:
+	rm -f $(PROGRAM) $(OBJS) data-to-text $(NOTEXT)
+#	cd FORMS; make clean
+
+depend:
+	mkmf -f $(MAKEFILE) PROGRAM=$(PROGRAM) DEST=$(DEST)
+
+calls:  $(SRCS)
+	calls $(CFLAGS) $(SRCS) >calls
+
+install:        $(DESTBIN) $(PROGRAM)
+		@echo "Install $(PROGRAM) to $(DESTBIN) ..."
+		cp $(PROGRAM) $(DESTBIN)
+#		cd FORMS; make install
+		@echo done
+
+update:		$(DESTBIN)/$(PROGRAM)
+
+$(DESTBIN)/$(PROGRAM): $(SRCS) $(LIBS) $(HDRS) $(EXTHDRS)
+		@make -f $(MAKEFILE) DEST=$(DEST) install
+
+$(DESTBIN):
+	-mkdir -p $(DESTBIN)
+	test -d $(DESTBIN)
+
+###
+vhset0.o: /usr/include/stdio.h $(VISI)/include/line.h \
+	$(VISI)/include/line0.h vhset.h
+vhseta.o: /usr/include/stdio.h $(VISI)/include/line.h \
+	$(VISI)/include/line0.h $(VISI)/include/lineva.h
+vhsetk.o: /usr/include/stdio.h $(VISI)/include/line.h \
+	$(VISI)/include/line0.h
+vhsetm.o: /usr/include/stdio.h $(VISI)/include/line.h \
+	$(VISI)/include/line0.h $(VISI)/include/linebp.h vhset.h

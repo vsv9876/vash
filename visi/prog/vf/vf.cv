@@ -1,0 +1,537 @@
+/*
+**      +----------+    Библиотека ввода-вывода
+**     (c) linlib  !    для алфавитно-цифровых
+**      +----------+    видеотерминалов
+**/
+
+/*
+ *      $Header: vf.cv,v 1.1 90/07/11 21:08:50 vsv Exp $
+ *      $Log:	vf.cv,v $
+Revision 1.1  90/07/11  21:08:50  vsv
+Initial revision
+
+Revision 1.1  90/06/08  10:59:33  vsv
+Initial revision
+
+ */
+
+#include <signal.h>
+#include <ctype.h>
+#include <stdio.h>
+#include "line.h"
+#include "vf.h"
+
+#ifdef RT11
+ error Программа предназначена исключительно для unix
+#endif
+
+extern  char *malloc();
+extern  char *calloc();
+
+char *itms[ITMMAX+1] = {0};
+char *itmbuf = (char *)0;
+int   itmbsz = ITMBUF;
+
+int     oneitm = 0;     /* флаг: разрешено указать только один пункт меню */
+
+int     itm = 0;        /* индекс указанного курсором пункта меню */
+int     itmofs = 0;     /* смещение окна (индекс) */
+/* следующие два параметра определяются при чтении списка пунктов меню */
+int     itmlen = 0;     /* макс. длина строки пункта меню */
+int     itmmax = 0;     /* количество пунктов меню */
+
+int     yy = 10; /* КОЛИЧЕСТВО ПУНКТОВ В СТОЛБЦЕ */
+int     xx = 4;  /* КОЛИЧЕСТВО СТОЛБЦОВ */
+int     dx = 20; /* РАССТОЯНИЕ МЕЖДУ ПЕРВЫМИ ПОЗИЦИЯМИ СОСЕДНИХ СТОЛБЦОВ */
+int     x0 = 0;         /* ПОЗИЦИЯ ПЕРВОГО СТОЛБЦА */
+int     y0 = BEGLI;     /* ПОЗИЦИЯ ПЕРВОЙ СТРОКИ */
+	/* СМЕЩЕНИЕ ПРИ ПЕРЕХОДЕ ЧЕРЕЗ КАДР */
+int     ofsx = 30;      /* ВЛЕВО/ВПРАВО */
+int     ofsy = 10;      /* ВВЕРХ/ВНИЗ */
+
+fatal()
+{
+	fprintf(stderr, "FATAL ERROR - exit\n");
+	cp_set(-1, 0, TXT);
+	io_set(IO_TTYPE);
+	exit(1);
+}
+
+#ifdef HELP
+extern  LINE supm[];    /* см. ниже: вспомогательная страница настройки */
+extern  pre_vf();
+sup()
+{
+	u_page(supm, 0);
+	pre_vf();
+	return(TRUE);
+}
+#endif HELP
+
+int
+tst_xy(line, cod)
+/*
+ * проверка корректности параметров, пока не нужна
+ */
+LINE *line;
+kbcod cod;
+{
+	return(TRUE);
+}
+
+scrlnl()
+/*
+ * to scroll with newlines
+ * продвинуть свиток на экране при помощи переводов строки
+ */
+{
+	register int i;
+	for (i = y0; i <= (y0+yy+1); i++)
+		putc('\n', vttout);
+}
+
+vfread()
+/*
+ * заполнить буфер пунктов меню.
+ * посчитать пункты, определить макс. длину пункта
+ */
+{
+	register char *itmbp;
+	short len;
+	int c;
+
+	if ((itmbuf=malloc(itmbsz+1)) == (char *)0) {
+		fprintf(stderr, "Нет памяти для главного буфера...\n");
+		exit(1);
+	}
+	itmmax = 0;
+	len = 0;
+	itms[itmmax] = itmbp = itmbuf;
+	*itmbp++ = ' ';
+	while ((c = getchar()) != EOF) {
+		if (&itmbuf[itmbsz] == itmbp)
+			break;
+
+		if (c == '\n') {
+			/* конец очередной строки */
+			*itmbp++ = '\0';
+			if ( len > itmlen ) itmlen = len;
+			len = 0 ;
+			if (itmmax >= ITMMAX)
+				break;
+			itmmax++;
+			itms[itmmax] = itmbp;
+			*itmbp++ = ' ';
+		}
+		else {
+			len++;
+			*itmbp++ = c;
+		}
+	}
+	*itmbp++ = '\0';
+	if ( len > itmlen ) itmlen = len;
+}
+
+static  int t_file(line, cod)
+/*
+ * тест для пунктов меню (имен файлов)
+ */
+register LINE *line;
+kbcod cod;
+{
+	register char *p;
+	register char **pp;
+
+	if (cod == ' ' || (oneitm && cod == KB_NL)) {
+		pp = (char **)line->varl;
+		p = *pp;
+		if (*p == ' ') {
+			line->attr = ATT|INP|NED;
+			*p = '*';
+		}
+		else {
+			line->attr = TXT|INP|NED;
+			*p = ' ';
+		}
+	}
+	return (TRUE);
+}
+
+static  LINE tmplate =
+{ 16, 0, 0, 0, TXT|INP|NED, 0, cvt_sp, t_file, &itms[0] };
+
+LINE *vf = (LINE *)0;
+
+pre_vf()
+/*--------------------------------*/
+/* построить страницу меню файлов */
+/*--------------------------------*/
+{
+	register int i;
+
+	if (vf != (LINE *)0) free(vf);
+	if ((vf=(LINE *)calloc((yy*xx)+1, sizeof(LINE))) == (LINE *)0) {
+		fprintf(stderr, "No memory for vf[]\n");
+		fatal();
+	}
+	for (i = 0; i < yy*xx && i+itmofs < itmmax; i++) {
+		vf[i] = tmplate;
+		vf[i].colu = x0 + ((i / yy) * dx);
+		vf[i].line = y0 + (i % yy);
+		vf[i].size = dx;
+		/* надо учесть атрибут уже помеченных файлов */
+		if (*itms[i+itmofs] == '*') {
+			vf[i].attr = ATT|INP|NED;
+		} else {
+			vf[i].attr = TXT|INP|NED;
+		}
+		vf[i].varl = &itms[i+itmofs];
+	}
+	vf[i].size = 0;
+}
+
+static  int tutsel(cod)
+/*
+ * тотальная пометка
+ */
+kbcod cod;
+{
+	register LINE *line;
+	register char *p;
+	register int i;
+
+	for (i = 0; i < itmmax; i++)
+		switch(cod) {
+		case '+':
+			itms[i][0] = '*';
+			continue;
+		case '-':
+			itms[i][0] = ' ';
+			continue;
+		}
+
+	for(line=vf; line->size != 0; line++) {
+		switch(cod) {
+		case '+':
+			line->attr = ATT|INP|NED;
+			break;
+		case '-':
+			line->attr = TXT|INP|NED;
+			break;
+		}
+		w_line(line);
+	}
+}
+
+vfout()
+/*
+ * указанные пункты подать на вывод
+ */
+{
+	register int i;
+	register char *p;
+
+	for ( i = 0; i < itmmax; i++ ) {
+		p = itms[i];
+		if ( *p == '*')
+			printf("%s\n", p+1);
+	}
+}
+
+#ifdef  HELP
+extern  LINE helpm[];
+#endif
+
+clritm()
+/* прочистить место на экране для меню */
+{
+    register int i;
+
+    for (i = 0; i < yy; i++) {
+	cp_set(i+y0, 0, TXT);
+	er_eol();
+    }
+}
+
+static  int     showco; /* позиция нач. строки индикации окна */
+
+itmshow()
+/* показать положение "окна" */
+{
+	register int i;
+
+	if (yy*xx >= itmmax) return;
+
+	showco = (maxco - (itmmax/yy))/2;
+	if (showco < 0) showco = 0;
+
+	cp_set(y0+yy, showco, TXT);
+	for (i = 0; i < itmmax; i += yy) {
+		if (i >= itmofs && i < itmofs+(yy*xx))
+			{ at_set(MSE|INP); w_chr('#'); }
+		else    { at_set(TXT);     w_chr('-'); }
+	}
+}
+
+u_menu(mainl, helpl)
+/*
+ * работа со страницей меню
+ */
+register LINE *mainl;
+LINE *helpl;
+{
+	register unsigned i;
+	kbcod cod;
+
+	/* первоначальный показ на экране */
+	cp_set(y0, 0, TXT);
+	er_eop();
+	itmshow();
+	w_page(mainl);
+
+	itm = i = 0;
+	for ( ;; ) {
+		cod = r_line( &mainl[i], 0 );
+		w_emsg("");
+		switch (cod) {
+		default:
+			bell();
+			break;
+		case KB_NL:
+			w_line( &mainl[i] );
+			return;
+#ifdef HELP
+		case '9':
+			sup();
+			er_pag();
+			itmshow(); w_page(mainl);
+			break;
+		case KB_HE:
+			w_help(helpl); itmshow(); w_page(mainl);
+			break;
+#endif  HELP
+		case KB_RE:
+			er_pag(); itmshow(); w_page(mainl);
+			break;
+		case KB_AL:
+			itm -= yy;
+			if (itm < 0) itm = 0;
+			break;
+		case KB_AU:
+			if (itm > 0) itm--;
+			break;
+		case '+':
+		case '-':
+			if (oneitm)     bell();
+			else            tutsel(cod);
+			break;
+		case ' ':
+			w_line( &mainl[i] );
+			if (oneitm) return;
+			/* проваливаемся... */
+		case KB_AD:
+			if (itm < itmmax-1) itm++;
+			break;
+		case KB_AR:
+			itm += yy;
+			if (itm >= itmmax) itm = itmmax - 1;
+			break;
+		}
+		/* поставить в соответствие значение itm
+		 * и положение курсора на экране
+		 */
+		i = itm - itmofs;
+		if (i >= 0 && i < xx*yy)
+			continue;
+		else {
+			switch (cod) {
+			case KB_AL:
+				itmofs -= ofsx;
+				if (itmofs < 0)
+					itmofs = 0;
+				break;
+			case KB_AU:
+				itmofs -= ofsy;   break;
+			case KB_AR:
+				itmofs += ofsx;
+if (xx > 1 && itmofs >= (((itmmax/ofsy)-(ofsx/ofsy))*ofsy))
+	itmofs = ((itmmax/ofsy)-(ofsx/ofsy))*ofsy;
+				break;
+			case KB_AD:
+			case ' ':
+				itmofs += ofsy;   break;
+			}
+			i = itm - itmofs;
+			clritm();
+			pre_vf();
+			itmshow();
+			w_page(mainl);
+		}
+	}
+}
+
+itmini()
+/*-------------------------------*/
+/* НАСТРОИТЬ НАЧАЛЬНЫЕ ПАРАМЕТРЫ */
+/*-------------------------------*/
+{
+	int nxx;        /* КОЛИЧЕСТВО СТОЛБЦОВ НА ЭКРАНЕ */
+
+	if (xx != 1) {
+		xx = maxco/(itmlen + 1);
+		if (xx == 0) xx = 1;
+	}
+	yy = (itmmax + xx - 1)/xx;        /* м.б. нужно меньше строчек... */
+	if (yy > 10) yy = 10;
+	nxx = (itmmax + yy - 1)/yy;        /* м.б. нужно меньше колонок... */
+	if (nxx < xx) xx = nxx;
+
+	dx = itmlen + 1 + ((maxco - ((itmlen + 1) * xx)) / (xx + 1));
+	if (dx > maxco) dx = maxco;
+
+	y0 = maxli - yy - 2;
+	x0 = (maxco - (dx*xx))/2;
+
+	if (xx == 1) {
+		ofsx = yy;
+		ofsy = yy/2;
+		x0 = (maxco - itmlen) / 2;
+	}
+	else  {
+		ofsx = yy*(xx - 1);
+		ofsy = yy;
+	}
+	if (x0 < 0) x0 = 0;
+}
+
+usage()
+{
+	fprintf(stderr, "Usage: vf [-m] [-1] [-bN]\n");
+	exit(1);
+}
+
+int     allcod = 1;
+
+void onintr(signo)
+{
+	signal(SIGINT, SIG_IGN);
+	cp_set(-1, 0, TXT);
+	io_set(IO_TTYPE);
+	exit(signo);
+}
+
+main(argc, argv)
+char **argv;
+{
+	int c;
+
+	for (argc--, argv++; argc > 0; argc--, argv++) {
+		if (*argv[0] == '-') {
+			switch(argv[0][1]) {
+			default:
+				usage();
+			case 'b':
+				itmbsz = atoi( &argv[0][2] );
+				if (itmbsz <= 0) {
+					fprintf(stderr,
+					"-b flag bad used...");
+					usage();
+				}
+				continue;
+			case 'm':
+				oneitm++;
+				continue;
+			case '1':
+				xx = 1;
+				continue;
+			}
+		}
+	}
+	vtty();
+
+	vfread();
+	itmini();
+	pre_vf(0);
+	scrlnl();
+
+	hw_set();
+	io_set(IO_VIDEO);
+	signal(SIGINT, onintr);
+
+#ifdef  HELP
+	u_menu(vf, helpm);
+#else
+	u_menu(vf, 0);
+#endif
+	cp_set(-1, 0, TXT);
+	io_set(IO_TTYPE);
+
+	vfout();
+	exit(0);
+}
+
+#ifdef HELP
+---PAGE supm
+---LINES
+hl      = gc    -       -       cvt_hl  -       "-"
+yy      = iv    n       "%3d"   -       tst_xy  &yy
+xx      = iv    n       "%3d"   -       tst_xy  &xx
+dx      = iv    n       "%3d"   -       tst_xy  &dx
+y0      = iv    n       "%3d"   -       tst_xy  &y0
+x0      = iv    n       "%3d"   -       tst_xy  &x0
+ox      = iv    n       "%3d"   -       tst_xy  &ofsx
+oy      = iv    n       "%3d"   -       tst_xy  &ofsy
+
+itmx    = v     -       "%$#d"  -       -       &itmmax
+itm     = v     -       "%$#d"  -       -       &itm
+itmo    = v     -       "%$#d"  -       -       &itmofs
+itml    = v     -       "%$#d"  -       -       &itmlen
+
+---SCREEN
+=Настройка режимов
+
+	.yy.    yy/ количество пунктов (имен файлов) в столбце
+	.xx.    xx/ количество столбцов
+	.dx.    dx/ расстояние между первыми позициями соседних столбцов
+	.y0.    y0/ позиция первой строки
+	.x0.    x0/ позиция первого столбца
+
+	."смещение при переходе через границу кадра".
+
+	.ox.    ofsx/ влево/вправо
+	.oy.    ofsy/ вверх/вниз
+
+	.hl.......................................................
+
+	количество пунктов      .itmx.
+	курсором указан пункт   .itm..
+	смещение кадра          .itmo.
+	макс. длина строки      .itml.
+
+---END
+
+---PAGE helpm
+---LINES
+sp      = gh    -       -       -       -       "пробел"
+
+---SCREEN
+=Селектор имен файлов  VF (пробная версия)
+
+
+	для пометки или отмены пометки нажмите .sp.....
+	для подстановки и выполнения команды нажмите .:NL....
+
+
+=Инструкция для программиста
+
+ Эта команда предназначена для использования в командных файлах для выбора
+ имен файлов и в других подобных случаях. Примеы использования:
+
+	cp `ls | vf` /tmp;      копирование файлов в каталог /tmp
+	arrt xv1 `arrt t1`;     чтение файлов с флоппи-диска в формате RT-11
+
+ Команда vf считывает стандартный ввод, отмеченные строки выдает на
+ стандартный вывод. Ввод/вывод можно перенаправлять (см. примеры выше).
+
+---END
+#endif HELP

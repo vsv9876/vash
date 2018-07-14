@@ -1,0 +1,32 @@
+:
+#
+# Assistant Shell (ash)
+#
+# more/less/pg wrapper for ash
+#
+# WARNING!
+# this script used both for view text files and from pipe,
+# so don't use /usr/bin/view or something like
+
+PAGER_PROG=more
+
+	       if [ -x /usr/local/bin/less ]
+	       then
+		       PAGER_PROG=/usr/local/bin/less
+	       elif [ -x /opt/bin/less ]
+	       then
+		       PAGER_PROG=/opt/bin/less
+	       elif [ -x /usr/contrib/bin/less ]
+	       then
+		       PAGER_PROG=/usr/contrib/bin/less
+	       elif [ -x /usr/bin/more ]
+	       then
+		       PAGER_PROG=/usr/bin/more
+	       elif [ -x /usr/bin/pg ]
+	       then
+		       PAGER_PROG=/usr/bin/pg
+	       fi
+
+exec ${PAGER_PROG} $@
+
+

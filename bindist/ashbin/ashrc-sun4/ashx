@@ -1,0 +1,103 @@
+:
+#
+# Assistant for sh startup
+# Version for SunOS 4.*
+#------------------------------
+# First Bourne' shell started,
+# then exec setup environ, then exec ash
+#------------------------------
+#
+# DEBUG switch: uncomment next line.
+# set -x
+
+echo '
+	Assistant Shell for Unix.
+	(C) 1990-1995 Sergey V.Vovk
+
+	To use on-line help type ? or HELP metakey'
+
+#
+#---------------------------------------------
+# environ-passed setup (ASH):
+#
+#   h     history will be stored
+#   lNN   lines for filename menu (from 2 to 20), default 10
+#   p     key help panel bar on
+#   s     scroll cmd script but no clear screen
+#   c     clock show,  uprigh corner of screen
+#   m 	check mailbox for incoming mail
+#
+# example for assist environ-passed setup:
+
+ASH=l8pshcm
+
+#---------------------------------------------
+# label for identification machine name, /dev/tty???,
+# and other likely info.
+# ASHLBL
+#
+ttyfull=`tty`
+tty=`basename $ttyfull`
+
+#uname=`uname -n`
+uname=`uname -n | sed -e 's/\..*$//'`
+
+#ASHLBL="$LOGNAME"'@'"$uname:$tty"
+ASHLBL="$uname:$tty $LOGNAME"
+
+case $PATH in
+*/usr/local/bin*)     ;;
+*)
+	PATH=$PATH:/usr/local/bin
+esac
+
+#EDITOR=re
+#export EDITOR
+#
+# sorry, really it is need a #V macro in .ashstd - still not implemented
+PAGER=/usr/local/bin/m
+
+export ASHLBL ASH PATH PAGER
+#export EDITOR
+
+#stty kill '^u'
+
+if [ x"$DISPLAY" != x ]
+then
+	if [ -x /usr/openwin/bin/resize ]
+	then
+		#resize=/usr/openwin/bin/resize
+		TERMCAP=`/usr/ucb/tset -S | read term termcap; echo $termcap`
+		export TERMCAP
+
+		#eval `$resize -u`
+		eval `/usr/openwin/bin/resize -u`
+
+	else
+		if [ -x /usr/X11/bin/resize ]
+		then
+			#resize=/usr/X11/bin/resize
+			#eval `$resize -u`
+			eval `/usr/X11/bin/resize -u`
+		else
+			if [ -x /usr/X/bin/resize ]
+			then
+				#resize=/usr/X/bin/resize
+				#eval `$resize -u`
+				eval `/usr/X/bin/resize -u`
+			else
+				eval `resize -u`
+			fi
+		fi
+	fi
+	# decoration on xterm window
+	case $TERM in
+	xterm*)
+		#ASH=l8sh
+		ASH=l8shp
+		echo ']0;'"$ASHLBL"''
+		;;
+	esac
+fi
+
+exec /usr/local/bin/ash "$@"

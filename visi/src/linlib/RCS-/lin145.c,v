@@ -1,0 +1,43 @@
+head     1.1;
+access   ;
+symbols  LINLIB_3:1.1;
+locks    ;
+comment  @ * @;
+
+
+1.1
+date     90.12.27.16.28.43;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@קועףיס LINLIB_3
+@
+text
+@/*
+**      +----------+    גיגליןפוכב קקןהב-קשקןהב
+**     (c) linlib  !    הלס בלזבקיפמן-דיזעןקשט
+**      +----------+    קיהוןפועםימבלןק
+**/
+
+/*
+ *      $Header$
+ *      $Log$
+ */
+
+#include <stdio.h>
+#include "line.h"
+
+FILE *vttout = stdout;
+#ifdef DEMOS2
+int     vtti = 0;
+#endif
+@

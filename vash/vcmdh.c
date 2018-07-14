@@ -1,0 +1,376 @@
+/*
+ * РАБОТА С БУФЕРОМ КОМАНДНЫХ СТРОК.
+ * НЕЧТО НАПОДОБИЕ ИСТОРИИ, ЗАПОМИНАЮТСЯ
+ * ТОЛЬКО УНИКАЛЬНЫЕ КОМАНДЫ.
+ */
+
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include "line.h"       /* ФАЙЛ-ЗАГОЛОВОК LINLIB */
+#include "assist.h"
+
+#ifdef TINYSMALL
+#define CMDB 512        /* РАЗМЕР БУФЕРА КОМАНД */
+#define CMDP 40         /* КОЛИЧЕСТВО КОМАНД В БУФЕРЕ */
+#define CMDHL 8         /* КОЛИЧЕСТВО КОМАНД В МЕНЮ НА ЭКРАНЕ */
+#else
+#define CMDP 60         /* КОЛИЧЕСТВО КОМАНД В БУФЕРЕ */
+#define CMDHL 8         /* КОЛИЧЕСТВО КОМАНД В МЕНЮ НА ЭКРАНЕ */
+#define CMDB CMDP * MAXLICO /* 8192       /* два полных экранаистории хватит... */
+#endif /* TINISMALL */
+
+static  char    cmdb[CMDB+1];   /* БУФЕР КОМАНД */
+static  char   *cmdp[CMDP+1];   /* УКАЗАТЕЛИ НА КОМАНДЫ */
+static  int     cmdplast = 0;   /* ИНДЕКС ПОСЛЕДНЕЙ КОМАНДЫ */
+static  int     cmdpi = 0;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ */
+static  int     cmdbot = 0;     /* ИНДЕКС СВОБОДНОГО МЕСТА В БУФЕРЕ */
+
+int cmddel(cmd)
+/*
+ * УБРАТЬ ИЗ БУФЕРА
+ * возвращается номер удаляемой команды.
+ */
+char *cmd;
+{
+	register int i;
+	int saven;      /* индекс указателя следующей команды */
+	int delsize;    /* размер удаляемой команды */
+
+/***
+	if (*cmd == '\0')
+		return(-1);
+ ***/
+	for (i = 0; cmdp[i]; i++)
+		if (strcmp(cmd, cmdp[i]) == 0) {
+			delsize = strlen(cmd) + 1;
+			/* СКОПИРУЕМ СОДЕРЖИМОЕ БУФЕРА В НОВОЕ МЕСТО */
+			for (saven = i + 1; saven < cmdplast; i++,saven++) {
+				cmdp[i] = cmdp[saven] - delsize;
+				strcpy(cmdp[i], cmdp[saven]);
+			}
+			cmdbot -= delsize;
+			saven = i; cmdplast--;
+			while (i <= CMDP)
+				cmdp[i++] = 0;
+			return(saven);
+		}
+	return(-1);
+}
+
+cmdsqz(reqsz)
+/*
+ * ПРОЧИСТИТЬ СТАРЫЕ КОМАНДЫ И СЖАТЬ */
+/**/
+int     reqsz;  /* РАЗМЕР, КОТОРЫЙ ТРЕБУЕТСЯ ОСТАВИТЬ СВОБОДНЫМ */
+{
+	register int i;
+	int     realsz; /* освобождаемый размер */
+	int     saven;  /* прежний индекс самой старой сохраняемой команды */
+
+	/* если место есть, ничего не делать */
+	if ((reqsz < (CMDB - cmdbot)) && cmdplast < CMDP)
+		return;
+
+	/* посчитаем занятое командами место */
+	i = realsz = 0;
+	do {
+		realsz += strlen(cmdp[i++]) + 1;
+	} while (*cmdp[i] && ((CMDB - cmdbot) + realsz) < reqsz);
+	saven = i;
+
+	/* можно не проверять, если размер буфера не меньше двух строк: */
+	/* проверить, реально ли освободилось... */
+	if (((CMDB - cmdbot) + realsz) < reqsz)
+		/* уничтожим все содержимое буфера */
+		i = cmdbot = cmdpi = 0;
+	else {
+		/* скопируем содержимое буфера в новое место */
+		for (i = 0; saven < cmdplast; i++,saven++) {
+			cmdp[i] = cmdp[saven] - realsz;
+			strcpy(cmdp[i], cmdp[saven]);
+		}
+		cmdbot -= realsz;
+	}
+	cmdplast = i;
+	if (cmdpi > cmdplast)   /* не промазать с текущей историей!!! */
+		cmdplast = i;
+	while (i <= CMDP)       /* занулить незанятые указатели */
+		cmdp[i++] = 0;
+}
+
+int cmdput(cmd)
+/*
+ * ПОЛОЖИТЬ В БУФЕР
+ */
+char *cmd;
+{
+	int newsize;
+	char *p;
+
+	if (*cmd == 0)          /* НИЧЕГО НЕ ДЕЛАТЬ */
+		return(0);
+	cmddel(cmd);           /* УБРАТЬ СТАРУЮ КОПИЮ */
+	newsize = strlen(cmd) + 1;
+	cmdsqz(newsize);
+
+	/* ПОЛОЖИТЬ НОВУЮ КОМАНДУ */
+	p = cmdb;
+	p += cmdbot;
+	cmdp[cmdplast] = p;
+	strcpy(cmdp[cmdplast], cmd);
+
+	cmdplast++;
+	cmdpi = cmdplast;       /* МОДИФИЦИРОВАТЬ ИНДЕКСЫ */
+	cmdbot += newsize;
+
+	return(-1);
+}
+
+int cmdprv(cmd)
+/*
+ * ВЗЯТЬ ПРЕДЫДУЩУЮ КОМАНДУ ИЗ БУФЕРА
+ */
+char *cmd;
+{
+	if (cmdpi > 0) cmdpi--;
+	else    return(0);
+	if (cmdp[cmdpi])
+		strcpy(cmd, cmdp[cmdpi]);
+	return(1);
+}
+
+int cmdnxt(cmd)
+/*
+ * ВЗЯТЬ СЛЕДУЮЩУЮ КОМАНДУ ИЗ БУФЕРА
+ */
+char *cmd;
+{
+	if (cmdp[cmdpi] && cmdplast > cmdpi)
+		cmdpi++;
+	if (cmdp[cmdpi]) {
+		strcpy(cmd, cmdp[cmdpi]);
+		return(1);
+	}
+	else    *cmd = 0;
+	return(0);
+}
+
+/*
+ * Сохранить историю (буфер команд) в файл $HOME/.ashhist
+ * а также положить ее туда.
+ * Эти две подпрограммы вызываются исключительно из main()
+ */
+char *hfile = "/.ashhist";
+
+cmdghist(hdp)
+char *hdp;
+{
+	FILE *fp;
+	char filename[200];
+	char cmd[140];
+	int c;
+	register char *p;
+
+	strcpy(filename, hdp);
+	strcat(filename, hfile);
+
+	if ((fp = fopen(filename, "r")) == NULL)
+		return(0);
+	p = cmd;
+	while ((c = getc(fp)) != EOF) {
+		if ((*p++ = c) == '\n') {
+			*(--p) = '\0';
+			cmdput(cmd);
+			p = cmd;
+		}
+	}
+	fclose(fp);
+	return(1);
+}
+
+cmdphist(hdp)
+char *hdp;
+{
+	char filename[200];
+	FILE *fp;
+	register char **pp;
+
+	strcpy(filename, hdp);
+	strcat(filename, hfile);
+
+	if ((fp = fopen(filename, "w")) == NULL)
+		return(0);
+
+	for (pp = cmdp; *pp != (char *)0; pp++)
+		/*VARARGS*/
+		fprintf(fp, "%s\n", *pp);
+
+	fclose(fp);
+	return(1);
+}
+
+static  char *cmdpp;
+
+int t_hist(line, cod)
+/*
+ * ТЕСТ ДЛЯ СТРОК БУФЕРА ИСТОРИИ КОМАНД
+ */
+register LINE *line;
+kbcod cod;
+{
+	char *cmd;
+
+	cmd = *(char **)(line->varl);
+
+	switch(cod) {
+	case ' ':
+		/* ДОБАВИТЬ КОМАНДУ В РАБОЧИЙ БУФЕР */
+		strcat(cmdpp, cmd);
+		break;
+	case KB_NL:
+		/* СКОПИРОВАТЬ КОМАНДУ В РАБОЧИЙ БУФЕР */
+		strcpy(cmdpp, cmd);
+		break;
+	case KB_DE:
+		/* УБРАТЬ КОМАНДУ ИЗ ПАМЯТИ */
+		if (cmdplast > 2 ) {
+			cmddel(cmd);
+			clritm();
+			itmmax = cmdplast;
+/***
+			if (itm < cmdplast);
+			else    itm = cmdplast - 1;
+			if (itm > 1)
+				itm -= 1;
+ ***/
+			pre_vf();
+			itmshow();
+			w_page(vf, 0);
+		}
+		else
+			bell();
+		break;
+	}
+	return (TRUE);
+}
+
+h_menu()
+/*
+ * РАБОТА С МЕНЮ БУФЕРА ИСТОРИИ КОМАНД.
+ */
+{
+	register unsigned i;
+	kbcod cod;
+
+	/* первоначальный показ на экране */
+	cp_set(y0, 0, TXT);
+	er_eop();
+	w_cmd(cmdpp);   /* ОСТАВИТЬ КОМАНДУ НА ЭКРАНЕ */
+	itmshow();
+	w_page(vf, 0);
+
+	for ( ;; ) {
+
+		i = itm - itmofs;
+		cod = r_line( &vf[i], 0 );
+
+		w_emsg("");
+
+		switch (cod) {
+
+		default:
+			break;
+		case KB_HE:      /* справка */
+			cp_set(-1, 0, TXT);
+			fprintf(vttout, "Command # %2d from %2d, %4d byte(s) (%2d%%)",
+			itm, cmdplast, cmdbot, (100*cmdbot)/CMDB);
+			break;
+		case KB_EX:      /* выход */
+		case ' ':       /* добавить */
+		case KB_NL:      /* заменить */
+			return;
+
+		case KB_RE:      /* перерисовка */
+			er_pag();
+			cwdshow();
+			w_emsg("");
+			itmshow(); w_page(vf, 0);
+			break;
+#ifdef RETRO
+		case KB_DE:
+			if (itm - itmofs < 0)
+				cod = KB_AU;
+			else    break;
+			/* проваливаемся... */
+#else
+		case KB_DE:
+			cod = KB_AU;
+			/* проваливаемся... */
+#endif
+		case KB_AL:
+		case KB_AU:
+		case KB_AD:
+		case KB_AR:
+			i = itmadj(cod);
+			break;
+		}
+	}
+}
+
+static  LINE tmplate =
+/*NOSTRICT*/
+{ /*16*/MAXLICO, 0, 0, 0,
+       TXT|INP|PMT|NED|LFASTR,
+	       0,
+		       cvt_sp,
+		       t_hist,
+			       (char **)0 };
+
+cmdvew(cmd)
+char  *cmd;
+{
+	extern int  y0_top;     /* определено в vshcmd */
+	extern char *pmtsh;    /* --"-- */
+	LINEMENU savelm;
+
+	if (cmdplast <= 1) {
+		bell(); return;
+	}
+	savelm = clm;
+	cp_set(y0-1, 0, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
+	er_eop();
+
+	/* инициализация меню команд */
+	itms   = cmdp;          /* УКАЗАТЕЛИ НА СТРОКИ КОМАНД */
+	itmmax = cmdplast;      /* ПОСЛЕДНЯЯ КОМАНДА В ИСТОРИИ */
+	vf     = (LINE *)0;		/* hint to avoid new overlapping malloc? /* TODO WTF */
+	itmlen = maxco - ((strlen(pmtsh)) * 2); /*по феншую, отступ на промптер слева и справа*/
+	ltmpl  = &tmplate;
+
+	itm    = cmdpi;         /* ТЕКУЩАЯ КОМАНДА */
+	if (cmdpi < cmdplast);
+	else         itm -= 1;
+	yy_max = 10;
+	itmofs = 0;
+	while((itm - itmofs) >= yy_max)
+		itmofs += yy_max;
+	itmini();
+	pre_vf();
+
+	/* СОХРАНИТЬ СВИТОК */
+	if (y0_top > y0) {
+		y0_top = y0;
+		scrlnl();
+	}
+	cmdpp = cmd;    /* ДЛЯ КОПИРОВАНИЯ НОВОЙ КОМАНДЫ */
+
+	h_menu();
+
+	free((char *)vf); vf = (LINE *)0;
+	cp_set(y0_top, 0, TXT); er_eop();
+
+	cmdpi = itm;    /* НОВОЕ ЗНАЧ. ИНДЕКСА ИСТОРИИ */
+	vf = (LINE *)0;
+	clm = savelm;
+}

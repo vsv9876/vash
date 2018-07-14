@@ -1,0 +1,61 @@
+---PAGE sup
+---LINES
+versn   = c    "v1.18.x/remix"
+vexdir  = v    -       -       cvt_sp  -       vexdir
+buildd  = c    buildd
+
+hl      = gc    -       -       cvt_hl  -       "-"
+coprts  = c     coprts
+f       = ipv   -       -       -       -       f
+i       = ipv   -       -       -       -       i
+o       = ipv   -       -       -       -       o
+r       = ipv   -       -       -       -       r
+
+---#    = ipa
+pF      = ia    -       onoff   cvt_a   -       pF
+wF      = ia    -       onoff   cvt_a   -       wF
+sF      = ia    -       onoff   cvt_a   -       sF
+hF      = ia    -       onoff   cvt_a   -       hF
+cF      = ia    -       onoff   cvt_a   -       cF
+mF      = ia    -       onoff   cvt_a   -       mF
+xF      = ia    -       onoff   cvt_a   -       xF
+
+---# suspend on new line key before debug section below
+ym      = iv    n       "%3d"   -       t_ymax  yy_max
+
+y0      = v     -       "%d"   -       -       y0
+y0t     = v     -       "%d"   -       -       y0_top
+li      = v     -       "%d"   -       -       maxli
+co      = v     -       "%d"   -       -       maxco
+
+---# use for debug in SCREEN section
+---#    y0:     .y0.
+---#    y0_top: .y0t
+---#
+---#  Please, to return try Ctrl-E or .:EX....
+---#	   to get help press     .'?    or .:HE....
+---SCREEN
+=vash environment setup:
+				to get help press .:HE....
+    h .hF history save		  
+    s .sF scroll		   
+    m .mF mail_biff		  
+    c .cF clock                   
+    p .pF keybar                  
+    w .wF who+cwd  
+    x .xF who+cwd xterm title
+    l .ym.lines max
+
+=setup for debug only:
+
+	-f: .f.........................................................
+	-i: .i.........................................................
+	-@: .r.........................................................
+	-o: .o.........................................................
+
+    co: .co li: .li vexdir: .vexdir....................................
+
+=about:
+Visual Assistant Shell .versn............... Build Id: .buildd......
+.coprts.....................................
+---END

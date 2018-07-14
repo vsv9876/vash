@@ -1,0 +1,139 @@
+head     3.2;
+access   ;
+symbols  LINLIB_3:3.2;
+locks    vsv:3.2; strict;
+comment  @ * @;
+
+
+3.2
+date     89.08.29.14.44.46;  author vsv;  state Rel;
+branches ;
+next     3.1;
+
+3.1
+date     88.06.27.15.29.54;  author vsv;  state Exp;
+branches ;
+next     3.0;
+
+3.0
+date     87.12.21.12.21.20;  author vsv;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@
+ףפבמהבעפמןו ץנעבקלומיו נועוכלא‏בפולום.
+@
+
+
+3.2
+log
+@קועףיס LINLIB_3
+@
+text
+@/*
+**      +----------+    גיגליןפוכב קקןהב-קשקןהב
+**     (c) linlib  !    הלס בלזבקיפמן-דיזעןקשט
+**      +----------+    קיהוןפועםימבלןק
+**/
+
+/*
+ *      $Header: lin420.c,v 3.1 88/06/27 15:29:54 vsv Exp $
+ *
+ *      $Log:	lin420.c,v $
+ * Revision 3.1  88/06/27  15:29:54  vsv
+ * עוקיתיס בעטיקב RCS
+ * 
+ * Revision 3.0  87/12/21  12:21:20  vsv
+ * נעוהקבעיפולרמשך קשנץףכ.
+ * 
+ */
+
+#include <stdio.h>
+#include "line.h"
+
+/*---------------------------------------*/
+/* ףפבמהבעפמןו ץנעבקלומיו נועוכלא‏בפולום */
+/*---------------------------------------*/
+
+cvt_a(line, cod, mod, str)
+LINE    *line;
+int       cod;
+char     *mod;
+char     *str;
+{
+	register        int     *indx;
+	register        char    **p;
+	register        int     i;
+
+	indx = (int *)line->varl;
+	p  = (char **)line->cvts;
+
+	/* הלס מבהוצמןףפי נעי עבגןפו ף "םץףןעןם" */
+	/* ףמב‏בלב מבניûום קשקןה - üפן נען‎ו */
+	if( *mod == 'w' ) {
+		for(i=0; p[i]!=0; i++) ;
+		if( *indx >= i )
+			*indx = 0;
+		strcpy(str, p[*indx]);
+
+	} else if( *mod == 'r' ) {
+		switch ( cod ) {
+		case 0:         bell();
+				break;
+		case ' ' :
+		case '.' :
+		case '>' :
+			*indx += 1 ;
+			if(p[*indx] == 0)
+				*indx = 0;
+			break;
+
+		case 'DE':
+		case ',' :
+		case '<' :
+			if ( *indx == 0 ) {
+				while(p[*indx +1] != 0) {
+					*indx += 1;
+				}
+			}
+			else *indx -= 1;
+			break ;
+		default :
+			break ;
+		}
+	}
+	return( TRUE ) ;        /* ןûיגןכ גשפר מו הןלצמן גש... */
+}
+@
+
+
+3.1
+log
+@עוקיתיס בעטיקב RCS
+@
+text
+@d8 1
+a8 1
+ *      $Header: lin420.c,v 3.0 87/12/21 12:21:20 vsv Exp $
+d11 3
+@
+
+
+3.0
+log
+@נעוהקבעיפולרמשך קשנץףכ.
+@
+text
+@d8 1
+a8 1
+ *      $Header$
+d10 4
+a13 1
+ *      $Log$
+d33 1
+a33 1
+	indx = line->varl;
+d46 2
+@

@@ -1,0 +1,61 @@
+:
+#
+# Assistant for sh startup
+# Version for SunOS 4.*
+#------------------------------
+# First Bourne' shell started,
+# then exec setup environ, then exec ash
+#------------------------------
+#
+# DEBUG switch: uncomment next line.
+# set -x
+
+echo '
+	Assistant Shell for Unix.
+	(C) 1990-1995 Sergey V.Vovk
+
+	To use on-line help type ? or HELP metakey'
+
+#
+#---------------------------------------------
+# environ-passed setup (ASH):
+#
+#   h     history will be stored
+#   lNN   lines for filename menu (from 2 to 20), default 10
+#   p     key help panel bar on
+#   s     scroll cmd script but no clear screen
+#   c     clock show,  uprigh corner of screen
+#   m 	check mailbox for incoming mail
+#
+# example for assist environ-passed setup:
+
+ASH=l10pshc
+
+#---------------------------------------------
+# label for identification machine name, /dev/tty???,
+# and other likely info.
+# ASHLBL
+#
+ttyfull=`tty`
+tty=`basename $ttyfull`
+uname=`uname -n`
+ASHLBL="$LOGNAME"'@'"$uname:$tty"
+
+case $PATH in
+*/usr/local/bin*)     ;;
+*)
+	PATH=$PATH:/usr/local/bin
+esac
+
+#EDITOR=re
+#export EDITOR
+#
+# sorry, really it is need a #V macro in .ashstd - still not implemented
+PAGER=/usr/local/bin/m
+
+export ASHLBL ASH PATH PAGER
+#export EDITOR
+
+#stty kill '^u'
+
+exec /usr/local/bin/ash "$@"

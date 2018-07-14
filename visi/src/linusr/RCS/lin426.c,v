@@ -1,0 +1,64 @@
+head     1.1;
+access   ;
+symbols  LINLIB_3:1.1;
+locks    ;
+comment  @ * @;
+
+
+1.1
+date     90.12.27.16.33.17;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@ВЕРСИЯ LINLIB_3
+@
+text
+@/*
+**      +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
+**     (c) linlib  !    ДЛЯ АЛФАВИТНО-ЦИФРОВЫХ
+**      +----------+    ВИДЕОТЕРМИНАЛОВ
+**/
+
+/*
+ *      $Header$
+ *
+ *      $Log$
+ */
+
+/* оформление в стиле К.Уейна Ретлиффа */
+
+#include <stdio.h>
+#include "line.h"
+
+int cvt_hl(line, cod, mod, str)
+/*
+ * Провести горизонтальную линию,
+ * знак задается при описании формы.
+ *
+ */
+	LINE    *line;
+	int       cod;
+	char     *mod;
+	char     *str;
+	{
+	register char *s;
+	register int   i;
+
+	if( *mod == 'w' ) {
+		s = line->varl;
+		for(i = line->size; i>0; i--)
+			*str++ = *s;
+		*str = '\0';
+		}
+	return( TRUE );
+	}
+@

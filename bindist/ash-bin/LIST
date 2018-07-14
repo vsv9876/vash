@@ -1,0 +1,16 @@
+RELNOTES
+ASHINTRO
+COPYRIGHT
+LIST
+MAKE
+/.ashproc
+/usr/local/bin/vhset
+/usr/local/lib/visi/vhset/phelp0.lb
+/usr/local/lib/visi/vhset/vhseta.lb
+/usr/local/lib/visi/vhset/vhsetk.lb
+/usr/local/lib/visi/vhset/vhsetm.lb
+/usr/local/lib/visi/.vhset
+/usr/local/lib/ash
+/usr/local/bin/ash
+/usr/local/bin/ashrc
+/usr/local/bin/m

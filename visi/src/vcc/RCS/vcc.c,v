@@ -1,0 +1,1276 @@
+head     1.7;
+access   ;
+symbols  ;
+locks    vsv:1.7; strict;
+comment  @ * @;
+
+
+1.7
+date     90.12.27.16.35.38;  author vsv;  state Exp;
+branches ;
+next     1.6;
+
+1.6
+date     89.08.29.15.59.05;  author vsv;  state Exp;
+branches ;
+next     1.5;
+
+1.5
+date     89.02.02.15.10.11;  author vsv;  state Exp;
+branches ;
+next     1.4;
+
+1.4
+date     89.01.13.17.55.49;  author vsv;  state Exp;
+branches ;
+next     1.3;
+
+1.3
+date     88.06.17.19.23.59;  author vsv;  state Exp;
+branches ;
+next     1.2;
+
+1.2
+date     88.06.01.09.57.22;  author vsv;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     88.05.14.13.03.12;  author vsv;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@
+πςελονπιμρτος οπισαξικ όλςαξξωθ ζοςν.
+@
+
+
+1.7
+log
+@δΟΒΑΧΜΕΞ USRATTR Ι ÒΑΒΟΤΑ Σ ΞΙΝ.
+@
+text
+@/*
+ *      vcc = video + cc
+ *
+ *      $Header: vcc.c,v 1.6 89/08/29 15:59:05 vsv Exp $
+ *      $Log:	vcc.c,v $
+ * Revision 1.6  89/08/29  15:59:05  vsv
+ * χεςσιρ LINLIB_3
+ * 
+ * Revision 1.5  89/02/02  15:10:11  vsv
+ * ισπςαχμεξα οϋιβλα ςαϊβοςα στςολ σελγιι ---LINES,
+ * πςιχοδιχϋαρ λ χωδαώε σοοβύεξιρ '=' δομφεξ βωτψ ποσμε ινεξι
+ * χ σοχεςϋεξξο πςαχιμψξωθ οπισαξιρθ
+ * 
+ * Revision 1.4  89/01/13  17:55:49  vsv
+ * ποσμεδξαρ χεςσιρ, ξε ποπαχϋαρ χ αςθιχ.
+ * σοθςαξεξα πεςεδ πεςεδεμλοκ ποσμε
+ * βομψϋοηο πεςεςωχα.
+ * 
+ * Revision 1.3  88/06/17  19:23:59  vsv
+ * ισπςαχμεξω Οϋιβλι vlbp
+ * 
+ * Revision 1.2  88/06/01  09:57:22  vsv
+ * λμΰώι νοηυτ βωτψ λαλ χ ξιφξεν, ταλ
+ * ι χ χεςθξεν ςεηιστςε
+ * 
+ * Revision 1.1  88/05/14  13:03:12  vsv
+ * Initial revision
+ * 
+ */
+
+#include <ediag.h>
+#include <stdio.h>
+#include <ctype.h>
+#include "line.h"
+#include "linebp.h"
+
+#include "vgen.h"
+
+extern  char *malloc();
+
+char    Enomem[] = "No memory (%s)\n";
+char    Rnomem[] = "ξΕΤ ΠΑΝΡΤΙ (%s)\n";
+
+int     nlin = 0;       /* ξονες σώιταξξοκ ιϊ ζακμα.lav στςολι */
+int  lbptyp = 0;        /* τελυύικ τιπ (ιϊ λαλοκ σελγιι "ινρ=" */
+int  vscan  = 0;        /* ζμαη: οβςαϊ όλςαξα σλαξιςυετσρ πο χεςτιλαμι */
+
+char    Esxerr[] = "%s: %d:Syntax err:  %s\n";
+char    Rsxerr[] = "%s: %d:σΙΞΤΑΛΣ. ΟΫ.: %s\n";
+
+
+
+/* λοξσταξτω πςεπςογεσσοςα */
+#define LBPOSIZ 200             /* ςαϊνες χςενεξξοκ στςολι */
+
+#ifdef VCC
+char    pag_id[] = "---PAGE";   /* ξαώαμο οπςεδεμεξιρ στςαξιγω */
+#endif
+
+char    vis_id[] = "---";
+char    com_id[] = "#";
+char    por_id[] = "PORTS";
+char    tab_id[] = "TABLES";
+char    lin_id[] = "LINES";
+char    scr_id[] = "SCREEN";
+char    hel_id[] = "HELP";
+char    end_id[] = "END";
+char    markl    = '.';
+
+#define isnamec(c) (isalnum(c) || c == '_')
+
+/*----------------------------*/
+/* οπισαξιε χξυτςεξξιθ δαξξωθ */
+/*----------------------------*/
+typedef struct {
+	int     nmt;            /* τιπ */
+	char   *nms;            /* στςολα, ηδε ινρ χστςεώαετσρ */
+} NM_DEF;
+
+/* πςινεώαξιε:
+ * 1)   εσμι ινρ ξε χστςεώαετσρ χ ότοκ ταβμιγε, το
+ *      οξο σοοτχετστχυετ στςολε σ ταλιν ινεξεν.
+ */
+
+/* τιπω σελγικ δμρ ταβμιγω οπςεδεμεξικ ινεξ */
+
+#define DPORT   1
+#define DTABLE  2
+#define DLINE   3
+
+/* λυώα στςολ σ οπςεδεμεξιρνι ινεξ */
+typedef struct {
+	char    *top;           /* ξαώαμο λυώι */
+	char    *bot;           /* λοξεγ, νεστο δμρ ξοχοκ ϊαπισι */
+	unsigned siz;           /* ςαϊνες πομεϊξοηο νεστα χ βακταθ */
+	NM_DEF  *nmd;           /* ταβμιγα: ιϊ λαλοκ σελγιι στςολα */
+	NM_DEF  *nmp;           /* υλαϊατεμψ ξα ξοχωκ οπισατεμψ τιπα */
+	int     ncnt;           /* σώετώιλ στςολ */
+	int     nmax;           /* ναλσιναμψξοε λομ-χο στςολ χ λυώε */
+	} HEAP;
+
+HEAP    shp  = {0};     /* λυώα στςολ οπισαξικ lbp */
+
+char    *scrp = 0;      /* βυζες οβςαϊα όλςαξα = malloc(80*24); */
+
+/* υλαϊατεμι σλαξιςοχαξιρ όλςαξα */
+int     cur_li = 0;     /* στςολα */
+/*int     cur_co = 0;     /* ποϊιγιρ */
+
+char lbpo[LBPOSIZ] = {0};       /* βυζες ζοςνιςοχαξιρ στςολι χ ζοςνατε lbp */
+
+/*---- ζακμω: ινεξα ι υλαϊατεμι ξα ποτολι */
+char ifn[50];
+char ofn[50];
+char hvfn[50];
+
+FILE *ifp;
+FILE *hvfp;
+
+/*-------  διαηξοστιλα ------*/
+usage(s)
+char *s;
+{
+#ifdef VLBP
+
+	fprintf(stderr,
+	"χωϊοχ:\n %s [-h file.hv] [-o file.la] file.lav\n",
+	s);
+#endif
+#ifdef VCC
+	fprintf(stderr,
+	"χωϊοχ:\n %s [-o file.c] file.cv\n",
+	s);
+#endif
+	exit(1);
+}
+
+int     cnterr = 0 ;    /* σώετώιλ οϋιβολ */
+
+
+main(argc, argv)
+/*----------*/
+/*   MAIN   */
+/*----------*/
+int  argc;
+char *argv[];
+{
+	register acnt;
+	char *s;
+
+	_setediag();
+
+	if (argc <  2) {
+		usage(argv[0]);
+	}
+	for ( acnt=1; acnt < argc ; acnt++ ) {
+		if ( (int)argv[acnt][0] == '-' ) {
+			switch( (int)argv[acnt][1] ) {
+			case 'h' :
+			case 'H' :
+				strcpy(hvfn, argv[++acnt]);
+				break;
+			case 'o' :
+			case 'O' :
+				acnt += 1;
+				strcpy( ofn, argv[acnt]);
+				break;
+			default:
+				usage(argv[0]);
+				break;
+			};
+		} else if ( ifn[0] == '\0') {
+			strcpy( ifn, argv[acnt]);
+		} else {
+			usage(argv[0]);
+		}
+	}
+
+	/* οτλςωτψ ζακμ.lav */
+	if ((ifp=fopen(ifn, "r")) == NULL) {
+		perror(ifn);
+		exit(1);
+	}
+	/* ϊαπςοσιτψ πανρτψ δμρ οβςαϊα όλςαξα */
+	if ( (scrp=malloc(80*24))==NULL ) {
+		fprintf(stderr, ediag(Enomem, Rnomem), "scrp");
+		exit(1);
+	}
+	/* οτλςωτψ οσξοχξοκ χωχοδξοκ ζακμ */
+	if(*ofn) {
+		if ((freopen(ofn, "w", stdout)) == NULL) {
+			perror(ofn);
+			exit(1);
+		}
+	}
+
+#ifdef VCC
+    /*----------- χ οδξον ζακμε ν.βωτψ βομψϋε οδξοκ στςαξιγω */
+    while(fgets(lbpo, LBPOSIZ, ifp), feof(ifp) == 0) {
+
+      if (str_eq(lbpo, pag_id) == 0) {
+	printf("%s", lbpo);             /* τελστ ξα σι */
+      }
+      else {
+	s = lbpo + strlen(pag_id);      /* σξαώαμα ξακτι ινρ στςαξιγω */
+	while(isspace(*s)) s++;
+	s[ strlen(s) - 1 ] = '\0';
+
+	printf("LINE %s[] = {\n", s);  /* ξαώαμο οπισαξιρ στςαξιγω */
+
+#endif
+	/* ιξιγιαμιϊιςοχατψ λυώυ στςολ (ςαϊνες_βυζεςα, λομιώεστχο_στςολ) */
+	ini_hs( &shp, HSSIZE, 200);
+
+	/* ϊαπομξιτψ λυώυ στςολ σ οπςεδεμεξιρνι ινεξ;
+	 * ϊαπομξιτψ βυζες όλςαξα ιϊ σελγιι SCREEN;
+	 */
+	cur_li = 0;    /* σλαξιςοχαξιε όλςαξα ξαώατψ σξαώαμα */
+	pass1();
+	if ( cnterr ) {
+		fprintf(stderr,
+ediag("PASS1: Errors detected: %d\n", "PASS1: οβξαςυφεξο οϋιβολ: %d\n"),
+		cnterr);
+		exit(1);
+	}
+	/* σλαξιςοχατψ όλςαξ, ϊαπισατψ ζακμ.la */
+	scan_s();
+
+	/* εσμι ϊατςεβοχαξ ζακμ.hv, ϊαπισατψ εηο,
+	 * ξο πολα ξεποξρτξο λαλ ότο μυώϋε σδεματψ */
+/*      do_hv();        */
+
+#ifdef VCC
+	des_hs( &shp ); /* υξιώτοφιτψ λυώυ στςολ */
+
+	printf( "%s\n\n",   "{ 0 }, };"  );
+
+      } /*---------- λοξεγ στςαξιγω */
+    } /*--------- πςοδομφιτψ ποισλ δςυηιθ οπισαξικ στςαξιγ */
+#endif
+
+	fclose(ifp);
+	exit(0);
+
+}
+
+
+/*--------- πςογεδυςω ξιφξεηο υςοχξρ ----------*/
+
+str_eq(s, pat)
+/*-------------------------*/
+/* σςαχξιτψ ινρ σ οβςαϊγον */
+/*-------------------------*/
+register char *s;
+register char *pat;
+{
+	/* χεςξυτψ 0, εσμι ξε σοχπαδαετ;
+	 *         1, εσμι τοώξοε σοχπαδεξιε;
+	 */
+	while ( *pat != '\0' ) {
+		if ( *pat++ != *s++ )
+			return(0);
+	}
+	return(1);
+}
+
+NM_DEF *fnd_nm(s)
+char *s;
+/*-------------------------*/
+/* ξακτι οπςεδεμεξιε ινεξι */
+/*-------------------------*/
+{
+	register NM_DEF *hpp;
+	register unsigned i;
+
+	for (hpp=shp.nmd, i=0; i<shp.ncnt; i++, hpp++) {
+		/* εσμι σοχπαδαετ s ι "ινρ=..", χεςξυτψ υλαϊατεμψ */
+		if(str_eq(hpp->nms, s))
+			return(hpp);
+	}
+	/* ξε σοχπαδαετ: χεςξυτψ NULL */
+	return((NM_DEF *)NULL);
+}
+
+des_hs( hp )
+/*-----------------------*/
+/* ΥΞΙήΤΟΦΙΤΨ ΛΥήΥ ΣΤÒΟΛ */
+/*-----------------------*/
+register HEAP *hp;
+{
+	free( hp->nmd );
+	free( hp->top );        /* ΟΣΧΟΒΟΔΙΤΨ ΠΑΝΡΤΨ Χ ΟΒÒΑΤΞΟΝ ΠΟÒΡΔΛΕ */
+}
+
+ini_hs( hp, siz, strnum )
+/*-----------------------------*/
+/* ιξιγιαμιϊιςοχατψ λυώυ στςολ */
+/*-----------------------------*/
+register HEAP *hp;
+unsigned siz;
+{
+	extern char *malloc();
+
+	if((( hp->top = malloc(siz)) != NULL )
+	&& (( hp->nmd =
+	  (NM_DEF *)malloc(sizeof(NM_DEF)* strnum)) != NULL )) {
+		hp->bot = hp->top;
+		hp->siz = siz;
+		hp->nmp = hp->nmd;
+		hp->nmax = strnum;
+		return(1);
+	}
+	return(0);
+}
+
+char *
+c_ports(name)
+/*---------------------------------------*/
+/* πο ινεξι name χεςξυτψ ϊξαώ. ιϊ por_id */
+/*---------------------------------------*/
+char *name;
+{
+	static char nm_fnd[82]; /* ϊξαώεξιε ινεξι (στςολα ποσμε "ινρ=") */
+	register NM_DEF *hpp;   /* οπςεδεμεξιε ινεξι */
+	register char *res;     /* ςεϊυμψτατ */
+
+	strcpy(nm_fnd, name); strcat(nm_fnd, "=");
+	if(((hpp=fnd_nm(nm_fnd)) != (NM_DEF *)NULL)
+	&& ((hpp->nmt) == DPORT)) {
+		for(res=hpp->nms; *res++ != '='; ); /* πςοπυστιτψ "ινρ=" */
+		strcpy(nm_fnd, res);
+	} else {
+		nm_fnd[ strlen(nm_fnd) - 1 ] = 0;
+	}
+	return(nm_fnd);
+}
+
+char *
+c_lines(lbps)
+/*---------------------------------------------------------*/
+/* στςολυ χ ζοςν. lbp πςεοβςαϊοχατψ λ ζοςνατυ στςυλτ. LINE */
+/*---------------------------------------------------------*/
+register char *lbps;
+{
+	static  nm_ret[100];    /* στςολα ςεϊυμψτατα */
+			/* όμενεξτω στςολι χ ζοςνατε lbp: */
+	char    fldtyp[20];     /* τιπ πομρ, ξαπς "ipa" */
+	char    susflg[20];     /* ζμαηι ϊαδεςφλι */
+	char    lpar[20];       /* οώεςεδξοκ παςανετς μιξιι */
+	int     multp;    /* ζμαη: ξαδο χσταχιτψ '|' πεςεδ σμεδ. λοξστ. */
+	int     parn;   /* λομιώεστχο παςανετςοχ δμρ πςοχεςλι σιξταλσισα */
+	char   *lbpssav;
+	register char *s;
+	register char *os;
+
+	lbpssav = lbps;
+	/* σξρτψ ατςιβυτω */
+	for(s=fldtyp; !isspace(*lbps); lbps++)
+		*s++ = (isupper(*lbps)) ? tolower(*lbps) : *lbps;
+	*s = '\0';
+	while(isspace(*lbps)) lbps++;
+
+	/* σξρτψ ζμαηι */
+	for(s=susflg; !isspace(*lbps); lbps++)
+		*s++ = (isupper(*lbps)) ? tolower(*lbps) : *lbps;
+	*s = '\0';
+	while(isspace(*lbps)) lbps++;
+
+	/* ξαώατψ ϊαπισωχατψ ςεϊυμψτατ */
+	os = nm_ret;
+
+	/* ξαςισοχατψ ζμαηι χ ζοςνατε σι */
+	for(multp=0,s=susflg; *s; ) {
+		if(multp)       *os++ = '|';
+		else            multp = 1;
+		switch(*s) {
+		case  'U':
+		case  'u': strcpy(os, "SUSU"); os += 4; break;
+		case  'D':
+		case  'd': strcpy(os, "SUSD"); os += 4; break;
+		case  'L':
+		case  'l': strcpy(os, "SUSL"); os += 4; break;
+		case  'R':
+		case  'r': strcpy(os, "SUSR"); os += 4; break;
+		case  'N':
+		case  'n': strcpy(os, "SUSNL"); os += 5; break;
+
+		case  '*':
+		case  '-': *os++ = '0'; break;
+		default:
+			fprintf(stderr, "'%c': %s\n", *s,
+			ediag("bad flag","πμοθοκ ζμαη"));
+		}
+		s++;
+	}
+	*os++ = ','; *os++ = '\t';
+
+	/* ξαςισοχατψ ατςιβυτω χ ζοςνατε σι */
+	for(multp=0,s=fldtyp; *s; ) {
+		if(multp)       *os++ = '|';
+		else            multp = 1;
+		switch(*s) {
+		case  'I':
+		case  'i': strcpy(os, "INP"); os += 3; break;
+		case  'P':
+		case  'p': strcpy(os, "PMT"); os += 3; break;
+		case  'C':
+		case  'c': strcpy(os, "LTXT"); os += 4; break;
+		case  'H':
+		case  'h': strcpy(os, "LHDR"); os += 4; break;
+		case  'V':
+		case  'v': strcpy(os, "LVAR"); os += 4; break;
+		case  'A':
+		case  'a': strcpy(os, "LALT"); os += 4; break;
+		case  'M':
+		case  'm': strcpy(os, "LMSE"); os += 4; break;
+		case  '1':
+		case  '2':
+		case  '3':
+		case  '4':
+		case  '5':
+		case  '6':
+		case  '7':
+		case  '8':
+		case  '9':
+		case  '0': strcpy(os, "USRATTR");
+			   os[7] = *s;
+			   os += 8; break;
+
+		case  '*':
+		case  '-':
+		case  'G':
+		case  'g': *os++ = '0'; break;
+		default:
+			fprintf(stderr, "'%c': %s\n", *s,
+			ediag("bad attribute","πμοθοκ ατςιβυτ"));
+		}
+		s++;
+	}
+
+	/* οσταμψξωε παςανετςω */
+	parn = 0;
+	while( *lbps ) {
+
+		parn++;
+		/* ςαϊδεμιτεμψ πεςεδ παςανετςον */
+		*os++ = ','; *os++ = '\t';
+
+		switch( *lbps ) {
+		case '\0':
+			goto ret;
+		case  '*':
+		case  '-':
+			lbps++;
+			/* παςανετς πυστοκ */
+			*os++ = '0';
+			break;
+		case  '"':
+			/* ξακτι στςολυ ι σλοπιςοχατψ εε */
+			do {
+				*os++ = *lbps;
+			} while( ! ((*lbps != '\\') && (*++lbps == '"') ));
+
+			*os++ = *lbps++;
+			break;
+		default:
+
+			/* ξαλοπιτψ ινρ */
+			for(s=lpar; *lbps && !isspace(*lbps); )
+				*s++ = *lbps++;
+			*s = '\0';
+
+			/* ξακτι ποδσταξοχλυ */
+			sprintf(os, "%s", c_ports(lpar));
+			os += strlen(os);
+		}
+		/* πςοπυστιτψ δο σμεδ. παςανετςα */
+		while(*lbps && isspace(*lbps))  lbps++;
+	}
+ret:
+	*os = '\0';
+
+	/* ξαδο βω πςοχεςιτψ λομιώεστχο ξακδεξξωθ παςανετςοχ... */
+	/** parn = 1 (c,h); δμρ οσταμψξωθ parn = 5 **/
+	if(*fldtyp=='c' || *fldtyp=='h') {
+		if(parn == 1 )
+			return(nm_ret);
+		else
+			goto err_exit;
+	} else if(parn == 4) {
+		return(nm_ret);
+	} else { ; }
+err_exit:
+	fprintf(stderr, "%s: '%s'\n",
+	ediag("Bad par count","πμοθοε λομιώεστχο παςανετςοχ"), lbpssav);
+
+}
+
+
+subst(siz)
+/*---------------------*/
+/* σδεματψ ποδσταξοχλι */
+/*---------------------*/
+int siz;        /* ςαϊνες πομρ */
+{
+	static  char subs[300];         /* στςολα σ ποδσταξοχλανι */
+	int     prompted = 0;           /* πομε ινεετ ποδσλαϊλυ */
+	register char *from;
+	register char *to;
+	int     comma;
+
+	prompted = 0;
+	to = subs;
+	from = lbpo;
+#ifdef VLBP
+	while(!isspace(*from)) {
+		if(*from == 'p' || *from++ == 'P') prompted = 1;
+		from++;
+	}
+#endif VLBP
+#ifdef VCC
+	comma = 0;
+	while(*from) {
+		if(*from == ',') comma++;
+		if(comma == 4 && *from=='P'
+		&& from[1]=='M' && from[2]=='T')  /* attr == PMT ? */
+			prompted = 1;
+		from++;
+	}
+#endif VCC
+	from = lbpo;
+	while(*from) {
+		if(*from == '$' && from[1] == '#') {      /* ςαϊνες πομρ */
+			from++, from++;
+			sprintf(to, "%d", siz-prompted); /* πομεϊξωκ ςαϊνες*/
+			while(*to) to++;        /* λοξεγ ποσμε ποδστ.*/
+		}
+		else {
+			*to++ = *from++;
+		}
+	}
+	*to = '\0';
+
+	/* εσμι ξε υλαϊαξ λμΰώ -o, ςεϊυμψτατ ξα τεςνιξαμε */
+	printf("%s\n", subs);
+
+}
+
+#ifdef VCC
+
+mk_vcc(siz, li, co, s, typ)
+/*----------------------------------------*/
+/* πςεοβςαϊοχατψ λ ζοςνατυ στςυλτυςω LINE */
+/*----------------------------------------*/
+int     siz;
+int     li;
+int     co;
+register char *s;       /* σοδεςφινοε πομρ */
+int     typ;            /* 'h', 'c', 'k', '?' */
+{
+	/* ςεϊυμψτατ ποπαδαετ χ στςολυ lbpo;
+	 * ζυξλγιι mk_lbp ι mk_vcc οώεξψ ποθοφι,
+	 * οδξα σδεμαξα ιϊ δςυηοκ;
+	 * ποδσταξοχλι ι χωχοδ χ ζακμ δεμαΰτσρ
+	 * ζυξλγιεκ subst;
+	 */
+	static  char nm_fnd[82];        /* ινρ, λοτοςοε ξυφξο ξακτι */
+	register NM_DEF *hpp;           /* οπςεδεμεξιε ινεξι */
+	register char *os;
+	register char *o2s;
+
+	if(typ == '?') {        /* πομε σ ινεξεν, ξαδο σδεματψ ποδσταξοχλυ */
+		strcpy(nm_fnd, s); strcat(nm_fnd, "=");
+		if(((hpp=fnd_nm(nm_fnd)) != (NM_DEF *)NULL)
+		&& ((hpp->nmt) != DPORT)) {
+			os = (hpp->nms);
+			while(*os++ != '=');    /* ξακτι ϊξαώεξιε ινεξι */
+			  strcpy(nm_fnd, os); strcat(nm_fnd, "=");
+			  if(hpp->nmt == DTABLE) {   /* ςασϋις. ταβμ. */
+			  sprintf(lbpo,
+			  "{ %2d,%2d,%2d, SUST|%s, 0,0,0,0, %s },",
+			  siz, li, co, vscan?("SUSL"):("SUSU"),
+			  c_ports(os));
+			} else
+			if(hpp->nmt == DLINE) {
+				sprintf(lbpo,
+				"{ %2d,%2d,%2d, %s },",
+				siz, li, co, c_lines(os));
+		       }
+		} else {
+			/* υνομώαξιε: στςολα δμρ χχοδα */
+			sprintf(lbpo,
+			"{ %2d,%2d,%2d, 0, LVAR|INP|PMT, 0,0,0, %s },",
+			siz, li, co, s);
+		}
+	} else
+	if(typ == 'h' || typ == 'c') {
+		sprintf(lbpo, "{ %2d,%2d,%2d, 0, %s, 0,0,0, ",
+		siz, li, co, typ=='h' ? ("LHDR"):("LTXT") );
+
+		for(os=lbpo; *os; os++) ;       /* ξακτι λοξεγ */
+		*os++ = '"';
+		while(*s) {
+			if(*s == '"') *os++ = '\\';
+			*os++ = *s++;
+		}
+		strcpy(os, "\" },");
+	} else
+	if(typ == 'k') {
+		sprintf(lbpo,
+   "{ %2d,%2d,%2d, 0, ATT|MID|PAD, 0, cvt_lh, 0, \"%s\" },",
+		siz, li, co, s);
+	}
+	subst(siz);        /* σδεματψ ποδσταξοχλι */
+}
+#endif VCC
+
+#ifdef VLBP
+
+mk_lbp(siz, li, co, s, typ)
+/*-------------------------------*/
+/* ϊαπισατψ στςολυ χ ζοςνατε lbp */
+/*-------------------------------*/
+int     siz;
+int     li;
+int     co;
+register char *s;
+int     typ;
+{
+	static  char nm_fnd[82];        /* ινρ, λοτοςοε ξυφξο ξακτι */
+	register NM_DEF *hpp;           /* οπςεδεμεξιε ινεξι */
+	register char *os;
+	register char *o2s;
+
+	if(typ == '?') {        /* πομε σ ινεξεν, ξαδο σδεματψ ποδσταξοχλυ */
+		strcpy(nm_fnd, s); strcat(nm_fnd, "=");
+		if(((hpp=fnd_nm(nm_fnd)) != (NM_DEF *)NULL)
+		&& ((hpp->nmt) != DPORT)) {
+			os = (hpp->nms);
+			while(*os++ != '=');    /* ξακτι ϊξαώεξιε ινεξι */
+			if(hpp->nmt == DTABLE) {
+			sprintf(lbpo,
+			"g\t%2d %2d %2d\tt%c - - - %s",
+			siz, li, co, vscan?('l'):('u'), os);
+			} else
+			if(hpp->nmt == DLINE) {
+				o2s = lbpo;
+				while(!isspace(*os))   /* ατςιβυτω */
+					*o2s++ = *os++;
+				while( isspace(*os)) os++; /* δμρ λςασοτω*/
+				sprintf(o2s,
+				"\t%2d %2d %2d\t%s",
+				siz, li, co, os);
+		       }
+		} else {
+			sprintf(lbpo,
+			"ip\t%2d %2d %2d\t- - - - %s",
+			siz, li, co, s);
+		}
+	} else
+	if(typ == 'h' || typ == 'c') {
+		sprintf(lbpo, "%c\t%2d %2d %2d\t", typ, siz, li, co);
+		for(os=lbpo; *os; os++) ;       /* ξακτι λοξεγ */
+		*os++ = '"';
+		while(*s) {
+			if(*s == '"') *os++ = '"';  /* ταλοχ ζοςνατ lbp...*/
+			*os++ = *s++;
+		}
+		*os++ = '"'; *os = '\0';
+	} else
+	if(typ == 'k') {
+		sprintf(lbpo, "%c\t%2d %2d %2d\t- - cvt_lh - \"%s\"",
+			typ, siz, li, co, s);
+	}
+	subst(siz);        /* σδεματψ ποδσταξοχλι */
+}
+#endif VLBP
+
+
+mk_lin(li, co)
+/*----------------------------------------*/
+/* ξακτι ιξζοςναγιΰ δμρ ζοςνιςοχαξιρ πομρ */
+/*----------------------------------------*/
+int li;
+int co;
+{
+	/* ποσμε τοηο, λαλ στςολα lbp ϊαπισαξα,
+	 * χ βυζεςε οβςαϊα όλςαξα ξε οσταχμρετσρ
+	 * ξιλαλοηο σμεδα οτ πομρ - χσε ςασπισωχαετσρ πςοβεμανι.
+	 */
+	register char *s;
+	register char *os;      /* υλαϊατεμψ δμρ λοπιςοχαξιρ */
+	char     *fbeg;         /* σινχομ χ ποϊιγιι ξαώαμα πομρ */
+	unsigned spcnt;         /* σώετώιλ πςοβεμοχ χ λοξγε λοννεξταςιρ */
+	static  char stro[80];  /* ϊδεσψ ξαλοπιτψ στςολυ σοδεςφινοηο πομρ */
+	int  fldsiz;    /* ςαϊνες πομρ */
+	int  li_lbp, co_lbp;    /* λοοςδιξατω πομρ δμρ lbp */
+	int  typ;               /* τιπ πομρ (c,h,k,?) */
+
+	spcnt = fldsiz = 0;
+	os = &stro[0];
+	fbeg = s = &scrp[80 * li + co];
+	li_lbp = li; co_lbp = co;       /* σοθςαξιτψ λοοςδιξατω */
+	if(*fbeg == markl) {  /*--------------* πομε σ ινεξεν */
+		s++; fldsiz = 1; typ = '?';
+		while(co++, isnamec(*s)) {      /* ξαλοπιτψ ινρ πομρ */
+			fldsiz++; *os++ = *s++; }
+		if(fldsiz == 1) {       /* νοφετ, ότο βωμο ξε ινρ πομρ ?: */
+			if(fbeg[1] == '"') {         /* ϊαηομοχολ ? */
+				fldsiz = 2; s= &fbeg[2]; typ = 'h';
+				while(co++<80) {
+					fldsiz++;
+					if (*s=='"' && s[1]==markl)
+						{ s++; break; }
+					else {        *os++ = *s++;   }
+				}
+			} else
+			if(fbeg[1] == '\'') {       /* ινρ πςοστ. λμαχιϋι ? */
+				typ = 'h'; spcnt = 1; s++;
+				while(spcnt--) {        /* οϋ. ξε μοχρτσρ */
+					co++; *os++ = *s++; }
+				fldsiz = 3;
+			} else
+			if(fbeg[1] == ':') {       /* ινρ ζυξλ. λμαχιϋι ? */
+				typ = 'k'; spcnt = 3;
+				while(spcnt--) {        /* οϋ. ξε μοχρτσρ */
+					co++; *os++ = *s++; }
+				fldsiz = 4;     /* μυώϋε βω 7..8 */
+			} else {
+				fprintf(stderr,
+ediag("Screen scan err:line %d, col %d\n", "οΫ. ΣΛΑΞΙÒΟΧΑΞΙΡ: ΣΤÒ %d, ΠΟΪ. %d\n"),
+				li, co); cnterr++;
+			}
+		}
+		while(*s++ == markl && (co++)<80) {
+			fldsiz++; }       /* ξαλοπιτψ εηο ςαϊνες */
+		*os = '\0';
+		goto fill_end;
+	} else
+	if(*fbeg == '=' && co_lbp == 0) { /*-----* ϊαηομοχολ ξα χσΰ ϋιςιξυ */
+		co++; s++;
+		while(co++ < 80 ) {
+			if(*s==' ') {
+				if((spcnt++) >=4)    break;
+			} else {
+				spcnt = 0;
+			}
+			*os++ = *s++;
+		}
+		*os = '\0'; os--;
+		while(*os == ' ') *os-- = '\0';
+		fldsiz = 80;
+		typ = 'h'; goto fill_end;
+	}
+	else {          /*---------------* τελστ λοννεξταςιρ */
+/***
+		*os++ = *s++; co++;
+***/
+		while((co++)<80 ) {
+			*os++ = *s++; fldsiz++;
+			if(*s==' ') {
+				if(s[1]   == markl)    break;
+				if((spcnt++) >=3)    break;
+			} else {
+				spcnt = 0;
+			}
+		}
+		*os = '\0';
+		while(*--os == ' ') { *os = '\0'; fldsiz--; }
+		typ = 'c';
+	}
+fill_end:
+
+#ifdef VLBP
+	/* ϊαπισατψ στςολυ χ ζοςνατε lbp */
+	mk_lbp(fldsiz, li_lbp, co_lbp, stro, typ);
+#endif
+#ifdef VCC
+	/* ϊαπισατψ στςολυ ιξιγιαμιϊαγιι στςυλτυςω LINE */
+	mk_vcc(fldsiz, li_lbp, co_lbp, stro, typ);
+
+#endif
+
+	/* υβςατψ ιϊ βυζεςα οβςαϊα όλςαξα χσε σμεδω */
+	for(s=fbeg; fldsiz > 0; fldsiz--) *s++ = ' ';
+}
+
+scan_s()
+/*--------------------------*/
+/* σλαξιςοχατψ οβςαϊ όλςαξα */
+/*--------------------------*/
+{
+	register int li;        /* στςολα */
+	register int co;        /* ποϊιγιρ */
+	char    *lbeg;          /* ξαώ. στςολι χ βυζεςε όλςαξα */
+	int     vertli;         /* ξαώ. χεςτιλαμψξοηο πςοσνοτςα (στςολα)*/
+
+	/* σξαώαμα γιλμ πο στςολαν */
+	for(li=0; vscan=0,li<cur_li; li++) {
+		lbeg = &scrp[ 80 * li ];
+		if(*lbeg == '+') {      /* πςοσνοτς πο χεςτιλαμι */
+			vscan=1; vertli = li;
+			/* γιλμ πο ποϊιγιρν στςολι */
+			for(co=1; co<80; co++) {
+				/* γιλμ πο στςολαν */
+				for(li=vertli;
+				lbeg = &scrp[80*li], *lbeg == '+';
+				li++) {
+					if(lbeg[co] != ' ')
+						mk_lin(li, co);
+				}
+			}
+			li--;
+		} else {        /* ξοςν. πςοσνοτς πο στςολαν */
+			/* γιλμ πο ποϊιγιρν στςολι */
+			for(co=0; co<80; co++) {
+				if(scrp[80*li+co] != ' ')
+					mk_lin(li, co);
+			}
+		}
+	}
+}
+
+put_hs(s, hp)
+/*-----------------*/
+/* πομοφιτψ χ λυώυ */
+/*-----------------*/
+register char *s;
+register HEAP *hp;
+{
+	unsigned siz;
+
+
+/*      printf("-(%d)->\t%s\n", lbptyp, s);     *οτμαδλα*/
+
+	/*-------------------------- πςοχεςιτψ, νοφετ νεστα ξετ... */
+	if((hp->ncnt == hp->nmax) ||
+	(hp->bot - hp->top + hp->siz)<(siz=strlen(s) + 1)) {
+		/* λςαξτω */
+		fprintf(stderr,
+ediag("%s: %d:\t:No working plase, sorry...\n", "%s: %d:\t:ξΕΤ ΝΕΣΤΑ Χ ÒΑΒ. ΤΑΒΜΙΓΕ..\n"), ifn, nlin);
+		exit(1);
+	} else
+	      { /*------------- ξαδο βω δεματψ πςοχεςλυ ξα δυβμιλατ... */
+		/*--- ϊαλιξυτψ στςολυ χ λυώυ */
+		strcpy(hp->bot, s);
+		hp->nmp->nms = hp->bot; /* ϊαπονξιτψ ξαώ. στςολι */
+		hp->nmp->nmt = lbptyp;  /* ϊαπ. τιπ σελγιι */
+		hp->nmp++; hp->ncnt++;  /* σμεδ. ιξζ. ο τιπε σΰδα */
+		hp->bot += siz;         /* α σΰδα στςολυ "ινρ=..." */
+	}
+}
+
+fil_sc()
+/*-------------------------*/
+/* ϊαπομξιτψ στςολυ όλςαξα */
+/*-------------------------*/
+{
+	/* ξυφξο χσεηο μιϋψ ϊανεξιτψ πςοβεμανι
+	 * ταβυμργιι ι πυστωε λοξγω στςολ.
+	 */
+	int i;
+	char *s;
+	char *scr;
+	char *savescr;
+	int   c;
+
+	s = lbpo;
+	savescr = scr = &scrp[ 80 * cur_li ];
+	for(i=0; i<80; i++) *scr++ = ' ';
+	scr = savescr;
+	for(i=0;  i<80 ; i++) {
+		c = (int)*s++;
+		switch(c) {
+		case '\t' :     i +=(7 - (i%8));   break;
+		case '\0' :
+		case '\n' :     goto end_fil; break;
+		default:
+			scr[i] = (char)c;  break;
+		}
+	}
+end_fil:
+	cur_li += 1;
+}
+
+ins_hs()
+/* ςασποτςοϋιτψ στςολυ ιϊ σελγικ σ οπςεδεμεξιρνι ινεξ:
+ *
+ * ξακτι οβςαϊεγ χιδα "ινρ = χωςαφεξιε ;"
+ * πονεστιτψ εηο χ οτδεμψξυΰ στςολυ χ λυώυ;
+ * πεςχωε ξεϊξαώαύιε πςοβεμω υδαμιτψ;
+ * ϊαχεςϋαΰύυΰ τοώλυ σ ϊαπρτοκ υδαμιτψ τοφε;
+ * πςινεώαξιε:
+ *      στςολι οπισαξιρ χ ισθοδξον ζακμε ξε πεςεξοσρτσρ.
+ */
+{
+	register char *from;
+	register char *to;
+	int     consts;         /* ζμαη: στςολοχαρ λοξσταξτα */
+
+	static  char    tmps[200];
+
+	from = lbpo;
+
+BEG_OF_SCAN:
+	/* χ στςολε σελγιι ---LINES ν.βωτψ ξε οδξο οπισαξιε */
+	if (*from == '\0')
+		return;
+
+	consts = 0;
+	to = tmps;
+	while(isspace(*from))
+		from++;
+	/* ξακτι "ινρ=" */
+	while(isnamec(*from))   *to++ = *from++;
+	while(isspace(*from))   from++;
+
+	if ((*from != '\0') && (*from != '=')) {
+		fprintf(stderr, ediag(Esxerr,Rsxerr), ifn, nlin,
+		ediag(" the '=' mast be after name.", " '=' ΔΟΜΦΕΞ ΒΩΤΨ ΠΟΣΜΕ ΙΝΕΞΙ.") );
+		return;
+	} else {
+		*to++ = *from++;
+	}
+	while(isspace(*from)) from++;
+	while(*from) {
+		if ( *from == '\n' ) *from = ';'; /* ζολυσ δμρ ϊαχεςϋεξιρ */
+		if ( *from == ';' && !consts ) {
+			if ( to != tmps ) {
+				*to = ' ';
+				/* ποδώιστιτψ πςοβεμω χ λοξγε στςολι:  */
+				while(isspace(*to) && tmps<=to)
+					*to-- = '\0';
+				/* πομοφιτψ χ λυώυ, εσμι ξε πυστο */
+				if(tmps[0])
+					put_hs(tmps, &shp);
+				from++;
+				goto BEG_OF_SCAN;
+			} else  {
+				from++;
+			}
+		} else
+		if ( *from == '"' && from[1] == '"' ) {
+			*to++ = *from++;
+		} else
+		if ( *from == '"' && from[1] != '"' ) {
+			if (consts) consts = 0;
+			else        { *to++ = *from++; consts = 1; }
+		} else    ;
+		*to++ = *from++;
+	}
+}
+
+pass1()
+/* πεςχωκ πςοθοδ :
+ * πςοώιτατψ χ λυώυ στςολι ιϊ σελγικ PORTS, TABLES, LINES;
+ * οτζιμψτςοχατψ, πομοφιτψ χ λυώυ στςολ;
+ * οσταξοχιτψσρ ξα σελγιι SCREEN;
+ */
+{
+	register char *s;       /* υλαϊατεμψ ξα λμΰώ. σμοχο */
+	int skpflg;     /* ζμαη: 1=πςοπυσλατψ στςολυ, 0=υώιτωχατψ */
+
+	s = &lbpo[ strlen(vis_id) ];
+	skpflg = 1;
+
+	for ( nlin=1; fgets(lbpo, LBPOSIZ, ifp), feof(ifp) == 0; nlin++) {
+
+		/* εσμι com_id -- υϊξατψ, λαλαρ λοξλςετξο σελγιρ */
+		/* πςοώιτατψ στςολυ σ λμΰώον scr_id,
+		 * ξα ότον οσταξοχιτψσρ.
+		 */
+		if ( str_eq(lbpo, vis_id) ) {
+
+			/*--- end_id -- οσταξοχιτψσρ */
+			if      (str_eq( s, end_id )) {
+				return;
+			}
+			/*--- ότι σελγιι εύε ξε ποδδεςφιχαΰτσρ */
+			else if (str_eq( s, hel_id )) {
+				skpflg = 1; lbptyp = 0;
+			}
+			/*--- ότι σελγιι ξαδο υώιτωχατψ */
+			else if (str_eq( s, scr_id )) {
+				skpflg = 0; lbptyp = 0;
+			}
+			else if (str_eq( s, por_id )) {
+				skpflg = 0; lbptyp = DPORT;
+			}
+			else if (str_eq( s, tab_id )) {
+				skpflg = 0; lbptyp = DTABLE;
+			}
+			else if (str_eq( s, lin_id )) {
+				skpflg = 0; lbptyp = DLINE;
+			}
+			else if (str_eq( s, com_id )) {
+				;       /* ξιώεηο ξε νεξρετσρ */
+			}
+			else {
+				if (skpflg == 0 && lbptyp) {
+					fprintf(stderr,
+					"%s: %d: οϋιβλα χ λμΰώε:%20.20s\n",
+					ifn, nlin, lbpo);
+					cnterr += 1;
+					/* πςοπυσλατψ ποσμε οϋιβλι */
+					skpflg = 1;
+				} else
+				if (skpflg == 0 && lbptyp == 0) {
+					/* ξυ, θοςοϋο. ξα όλςαξε ιξοηδα
+					 * βωχαετ ι ξε ταλοε... */
+					fil_sc(); /* στςολα όλςαξα */
+				} else {
+					;
+				}
+			}
+		} else {
+			/* τεπεςψ ξαδο υώιτωχατψ στςολι,
+			 * εσμι χϊχεδεξ ζμαη
+			 */
+			if ( skpflg == 0 ) {
+			    if (lbptyp)
+				ins_hs();       /* χσταχιτψ χ λυώυ */
+			    else
+				fil_sc();       /* ϊαπομξιτψ στςολυ όλςαξα */
+			}
+		}
+	} ;
+	/* ξοςναμψξο εστψ χωθοδ πο λμΰώυ scr_id */
+	fprintf(stderr,
+	"%s: %d: ξε ξακδεξα σελγιρ '%s%s'\n",
+	ifn, nlin, vis_id, end_id );
+	cnterr++;
+}
+
+@
+
+
+1.6
+log
+@χεςσιρ LINLIB_3
+@
+text
+@d4 1
+a4 1
+ *      $Header: vcc.c,v 1.5 89/02/02 15:10:11 vsv Exp $
+d6 3
+d417 12
+@
+
+
+1.5
+log
+@ισπςαχμεξα οϋιβλα ςαϊβοςα στςολ σελγιι ---LINES,
+πςιχοδιχϋαρ λ χωδαώε σοοβύεξιρ '=' δομφεξ βωτψ ποσμε ινεξι
+χ σοχεςϋεξξο πςαχιμψξωθ οπισαξιρθ
+@
+text
+@d4 1
+a4 1
+ *      $Header: vcc.c,v 1.4 89/01/13 17:55:49 vsv Exp $
+d6 5
+d210 1
+a210 1
+	ini_hs( &shp, 04000, 200);
+@
+
+
+1.4
+log
+@ποσμεδξαρ χεςσιρ, ξε ποπαχϋαρ χ αςθιχ.
+σοθςαξεξα πεςεδ πεςεδεμλοκ ποσμε
+βομψϋοηο πεςεςωχα.
+@
+text
+@d4 1
+a4 1
+ *      $Header: vcc.c,v 1.3 88/06/17 19:23:59 vsv Exp $
+d6 5
+d884 1
+d886 4
+d897 3
+a899 2
+	if (*from && *from != '=') {
+		printf(ediag(Esxerr,Rsxerr), ifn, nlin,
+@
+
+
+1.3
+log
+@ισπςαχμεξω Οϋιβλι vlbp
+@
+text
+@d4 1
+a4 1
+ *      $Header: vcc.c,v 1.2 88/06/01 09:57:22 vsv Exp $
+d6 3
+d208 2
+a209 3
+		fprintf(stderr, ediag(
+		"PASS1: Errors detected: %d\n",
+		"PASS1: οβξαςυφεξο οϋιβολ: %d\n"),
+d647 2
+a648 2
+		typ = 'h';
+		sprintf(lbpo, "%c\t%2d %2d %2d\t%s", typ, siz, li, co, s);
+d663 2
+a664 2
+	 * χ βυζεςε οβςαϊα όλςαξα ξε οσταετσρ
+	 * ξιλαλοηο σμεδα - οδξι πςοβεμω.
+d666 1
+a666 1
+	register char *s;       /* σινχομ χ ποϊιγιι ξαώαμα πομρ */
+d669 1
+a669 1
+	unsigned spcnt;         /* σώετώιλ πςοβεμοχ */
+d686 2
+a687 2
+				while(co<80) {
+					co++; fldsiz++;
+d705 2
+a706 3
+				fprintf(stderr, ediag(
+				"Screen scan err:line %d, col %d\n",
+				"οΫ. ΣΛΑΞΙÒΟΧΑΞΙΡ: ΣΤÒ %d, ΠΟΪ. %d\n"),
+d710 2
+a711 2
+		while(*s++ == markl && (co)<80) {
+			co++; fldsiz++; }       /* ξαλοπιτψ εηο ςαϊνες */
+d716 2
+a717 3
+		fldsiz++; s++;
+		while(co<80 ) {
+			co++;
+d723 1
+a723 1
+			*os++ = *s++; fldsiz++;
+d731 4
+a734 3
+		*os++ = *s++; fldsiz = 1;
+		while((co)<80 ) {
+			co++;
+d760 1
+a760 1
+	for(s=fbeg; fldsiz>=0; fldsiz--) *s++ = ' ';
+d764 3
+a766 3
+/*----------------------*/
+/* σζοςνιςοχατψ ζακμ.la */
+/*----------------------*/
+d815 2
+a816 3
+		fprintf(stderr, ediag(
+		"%s: %d:\t:No working plase, sorry...\n",
+		"%s: %d:\t:ξΕΤ ΝΕΣΤΑ Χ ÒΑΒ. ΤΑΒΜΙΓΕ..\n"), ifn, nlin);
+d889 1
+a889 2
+		ediag(" the '=' mast be after name.",
+		      " '=' ΔΟΜΦΕΞ ΒΩΤΨ ΠΟΣΜΕ ΙΝΕΞΙ.") );
+@
+
+
+1.2
+log
+@λμΰώι νοηυτ βωτψ λαλ χ ξιφξεν, ταλ
+ι χ χεςθξεν ςεηιστςε
+@
+text
+@d4 1
+a4 1
+ *      $Header: vcc.c,v 1.1 88/05/14 13:03:12 vsv Exp $
+d6 4
+d108 2
+a110 3
+
+#if defined(VLBP)
+
+d112 4
+a115 3
+
+#else if defined(VCC)
+
+d117 1
+a117 1
+
+a118 1
+	s);
+d488 1
+a488 1
+#if defined VLBP
+d490 2
+a491 1
+		if(*from == 'p' || *from == 'P') prompted = 1;
+d493 2
+a494 1
+#else if defined VCC
+d503 1
+a504 1
+#endif
+d748 2
+a749 2
+#if defined VLBP        /* ϊαπισατψ στςολυ χ ζοςνατε lbp */
+
+d751 3
+a753 3
+
+#else if defined VCC    /* ϊαπισατψ στςολυ ιξιγιαμιϊαγιι στςυλτυςω LINE */
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 5
+a8 2
+ *      $Header$
+ *      $Log$
+d141 1
+d145 1
+@

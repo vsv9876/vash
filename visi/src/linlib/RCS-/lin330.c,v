@@ -1,0 +1,218 @@
+head     1.1;
+access   ;
+symbols  LINLIB_3:1.1;
+locks    ;
+comment  @ * @;
+
+
+1.1
+date     90.12.27.16.29.18;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@χεςσιρ LINLIB_3
+@
+text
+@/*
+**      +----------+    βιβμιοτελα χχοδα-χωχοδα
+**     (c) linlib  !    δμρ αμζαχιτξο-γιζςοχωθ
+**      +----------+    χιδεοτεςνιξαμοχ
+**/
+
+/*
+ *      $Header: lin330.c,v 3.1 89/08/29 15:17:03 vsv Rel $
+ *
+ *      $Log:	lin330.c,v $
+ * Revision 3.1  89/08/29  15:17:03  vsv
+ * χεςσιρ LINLIB_3
+ * 
+ * Revision 3.0  88/06/16  17:50:23  vsv
+ * ξαχεδεξ ξελοτοςωκ ημρξεγ ξα λοναξδω ςεδαλτιςοχαξιρ
+ * 
+ */
+
+#include <stdio.h>
+#include <ctype.h>
+#include "line.h"
+#include "line0.h"
+
+extern SCREEN scrn;
+
+int     edinsm = 0;     /* ΖΜΑΗ: ÒΕΦΙΝ ΧΣΤΑΧΛΙ */
+/* extern  int edinff;  */
+int     edinff = 1;     /* ΖΜΑΗ: ΠΟΛΑΪΩΧΑΤΨ ΣΟΣΤΟΡΞΙΕ ÒΕΔΑΛΤΟÒΑ ΣΤÒΟΛΙ */
+
+
+static edinfo( infflg )
+register int infflg;
+{
+	if ( !edinff )  return;
+	if ( infflg ) {
+		w_msg(scrn.sc_at, ":ςΕΔ:");
+		if ( edinsm )   w_str("<χΣΤΑΧΛΑ>");
+
+	} else {
+		w_emsg("");
+	}
+}
+
+static int
+chgstr(s, size, ofs, cod)
+/* χωπομξιτψ ιϊνεξεξιρ ι πολαϊατψ */
+register char *s;
+int  size;
+int ofs;
+kbcod cod;
+{
+	register int j;
+	register int lend;      /* ποϊιγιρ ποσμεδξεηο ξεπυστοηο σινχομα */
+		 int chg;       /* ποϊιγιρ ιϊνεξεξιρ */
+
+	/* ξακτι μοη. λοξεγ στςολι */
+	if(edinsm) {
+		for(lend=size; lend>0 && s[--lend]==' ';) ;
+		if(lend<ofs) lend=ofs;
+	}
+	chg = ofs;
+	if(cod=='DE') {
+		cod = ' ';
+		ofs = --chg;
+		if(edinsm) {
+			for(j=chg; j<lend; j++) s[j]=s[j+1];
+			s[j++]=' ';
+		} else {
+			s[lend = chg] = cod;
+		}
+		/******* <--('DE')--- ******/
+		cp_set(scrn.sc_li, scrn.sc_co - 1, scrn.sc_at);
+	} else {
+		if(edinsm) {
+			for(j=size; --j>chg; ) s[j]=s[j-1]; /* χσταχιτψ */
+			lend += (lend<(size-1) ? 1 : 0);
+		} else {
+			lend = chg;
+		}
+		s[chg] = cod;
+		ofs += 1;
+	}
+
+	for(j=chg; j<=lend; j++) w_chr(s[j]);   /* ξα όλςαξ!!! */
+	return (ofs);
+}
+
+
+e_str(str, size, ctst, ofsp)
+/*-----------------*/
+/* ςεδαλτος στςολι */
+/*-----------------*/
+register char    *str;  /* στςολα δμρ ςεδαλτιςοχαξιρ*/
+int     size;           /* ςαϊνες πομρ ςεδαλτιςοχαξιρ */
+kbcod   (*ctst)();      /* τεστ δμρ χχοδα πεώαταενωθ λοδοχ */
+int     *ofsp;          /* υλαϊατεμψ ξα χεμιώιξυ σνεύεξιρ οτ ξαώ. πομρ */
+{
+	/* ξαώαμο πομρ ι VIDEO ϊαδαΰτσρ ώεςεϊ cp_set();
+	 * ctst χοϊχςαύαετ 0, εσμι λοδ ξε ιϊνεξρετ στςολυ;
+	 *                -1, εσμι ξαδο ϊαλοξώιτψ ςεδαλτιςοχαξιε;
+	 *              cod,  εσμι λοδ ιϊνεξρετ σοδεςφινοε στςολι.
+	 */
+
+	register int i;
+	register int j;
+	register int  col;      /* ποϊιγιρ ι στςολα ξα όλςαξε */
+		 int  lin;
+		 int  atr;
+		 kbcod    cod;
+		 kbcod    ok;
+
+	col = scrn.sc_co;
+	lin = scrn.sc_li;
+	atr = scrn.sc_at;
+
+	edinfo(1);
+	/* ϊαπομξιτψ λοξεγ στςολι ι πολαϊατψ */
+	cp_set(lin, col, atr);
+	j = 0;
+	while(str[j]) w_chr(str[j++]);
+	while(j<size) w_chr(str[j++] = ' ');
+	str[size] = 0;
+
+	i = ofsp ? *ofsp : 0;
+
+	/* γιλμ ςεδαλτιςοχαξιρ */
+	for( ;; ) {
+		if(i >= size) i = size-1;       /* χσεηδα πςοχεςρτψ!!! */
+		cp_set(lin, col+i, 0);
+
+		cod = r_cod(0);
+		/* πςοτεστιςυεν χχοδ */
+		ok = ctst ? (*ctst)(cod, size, i) : cod;
+		if(ok == -1) {
+			goto ret;
+		} else if(ok == 0) {
+			bell();
+		} else {
+			switch(cod = ok) {
+			case 'PR': /* δοπ. λοναξδω ςεδαλτοςα στςολι */
+				switch(r_cod(0)) {
+				case 'AR': /* λοξεγ ϊξαώαύεκ ιξζ. */
+					   for(i=size-1; isspace(str[i]);
+						i--); i++; break;
+				case 'AL': i = 0; break;
+				case ' ':
+					   for(j=i; j<size; j++) {
+						w_chr(str[j] = ' ');
+					   }; break;
+				case 'DE':
+					   for(j=i; j<size-1; j++) {
+					       w_chr(str[j] = str[j+1]);
+					   };
+					   w_chr(str[j] = ' ');
+					   str[size] = '\0';
+					   break;
+				case 'PR': edinsm=(edinsm ? 0 : 1);
+					   edinfo(1);
+					   break;
+				default: bell(); break;
+				}; break;
+
+			case 'AL': if(i>0)  i--;
+				   else     goto ret;
+				   break;
+			case 'TA': if(i == size-1) goto ret;
+				   i += 8-(i%8); break;
+			case 'AR': if(i == size-1) goto ret;
+				   i++;
+				   break;
+			case 'NL': goto ret;
+			case 'DE':
+				   if(i==0)      goto ret;
+				   i = chgstr(str, size, i, cod);
+				   break;
+			default:
+				if(cod1(cod))   goto ret;/*ξο νοφξο ι μυώϋε*/
+				else            i=chgstr(str, size, i, cod);
+
+			}
+		}
+		/* λοξεγ γιλμα ςεδαλτοςα */
+	}
+ret:
+	str[size] = 0;
+	if(ofsp) *ofsp = i;
+
+	/* ποδώιστιτψ πςοβεμω χ λοξγε στςολι */
+	for (i=size; --i>=0 && (str[i]==' ');) ;
+	str[++i] = 0;
+	edinfo(0);
+	return(cod);
+}
+@

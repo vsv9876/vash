@@ -1,0 +1,73 @@
+#! /usr/new/bin/ash
+#
+# Файл .ashhelp
+#-----------------------------------------
+# Работа с подсказкой (HELP)
+# Wed Sep 12 15:46:39 MSD 1990
+#-----------------------------------------
+# Содержимое этого файла и указанного ниже (.../ash/HELP) должно
+# быть согласовано.
+#
+-fcat #A/HELP
+-i
+-o.
+-@
+
+-1shell
+-2menu
+-3view
+-4edit
+-5copy
+-6movren
+-7misc
+-8remove
+-9setup
+-0return
+
+:EX
+:U0
+:0
+	* * _cmdset .ashstd
+:U1
+:1
+	* * _help 1shell.lb
+:U2
+:2
+	* * _help 2menu.lb
+:U3
+:3
+	* * _help 3view.lb
+:U4
+:4
+	* * _help 4edit.lb
+:U5
+:5
+	* * _help 5copy.lb
+:U6
+:6
+	* * _help 6movren.lb
+:U7
+:7
+	* * _help 7misc.lb
+:U8
+:8
+	* * _help 8remove.lb
+:U9
+:9
+	* * _help suphlp.lb
+:[#]
+	* * _file #@
+:[?]
+:HE
+	* * _help mainh.lb
+:[ ]
+:NL
+	* * +nl
++nl
+	* * Return*     _cmdset .ashstd
+	* * Intro*      :#m #A/ASHINTRO
+	* * Help*       _help mainh.lb
+	* * ASH*        _help ash.lb
+	* * Shell*      _help 1shell.lb
+	* * Alias*      _help alias.lb
+	* * Other*      _help other.lb

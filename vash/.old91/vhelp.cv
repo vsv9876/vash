@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include "line.h"
+#include "assist.h"
+
+extern  char    Cfill[];
+extern  char    Crepf[];
+
+/*NOXSTR*/
+char   *yesno[] = { " [ ]", " [x]", 0 };
+/*YESXSTR*/
+
+int
+t_ymax(line, cod)
+register LINE *line;
+kbcod cod;
+{
+	int *var;
+
+	var = (int *)line->varl;
+	if (*var < 2 || *var > (maxli - 4)) {
+		w_emsg("Число строк должно быть от 2 до 20");
+		return(FALSE);
+	}
+	return(TRUE);
+}
+
+#ifndef HELP
+
+#define supage (LINE *)0;
+
+#else
+
+static
+---PAGE supage
+---LINES
+hl      = gc    -       -       cvt_hl  -       "-"
+Cfill   = ipv   -       -       -       -       Cfill
+Crepf   = ipv   -       -       -       -       Crepf
+
+panl    = ipa   -       yesno   cvt_a   -       &panelf
+scrl    = ipa   -       yesno   cvt_a   -       &scrolf
+hist    = ipa   -       yesno   cvt_a   -       &histf
+clck    = ipa   -       yesno   cvt_a   -       &clockf
+ymax    = ipv   -       "%$#d"  -       t_ymax  &yy_max
+---#itmx    = v     -       "%$#d"  -       -       &itmmax
+---#itm     = v     -       "%$#d"  -       -       &itm
+---#itmo    = v     -       "%$#d"  -       -       &itmofs
+---#itml    = v     -       "%$#d"  -       -       &itmlen
+
+---SCREEN
+=Настройка (SETUP)
+
+Режимы:
+		.hist История
+		.panl Панель
+		.clck Часы
+		.scrl Свиток
+		.ymax Строк меню
+
+раб. каталог:   .Crepf..................................
+Заполн. меню:   .Cfill..................................
+
+---#    .hl.......................................................
+---#
+---#    Параметры меню файлов   кол-во пунктов          .itmx.
+---#       (для отладки ash):   курсором указан пункт   .itm..
+---#                            смещение кадра          .itmo.
+---#                            макс. длина строки      .itml.
+
+---END
+#endif HELP
+
+LINE *supm = supage;
+
+sup()
+{
+#ifdef  HELP
+	u_page(supm, 0);
+	pre_vf();
+	er_pag();
+	return(TRUE);
+#endif HELP
+}
+
+#ifdef HELP
+
+---PAGE helpm
+---LINES
+sp      = gh    -       -       -       -       "ПРОБЕЛ"
+
+---SCREEN
+=Assistant for sh - HELP
+
+* Ввод команды sh начинайте с английской литеры нижнего регистра;
+  для выполнения команды нажмите .:NL....
+* Для возврата в меню имен файлов нажмите .:GL....
+* Команды sh, встроенные в оболочку ash:
+
+	exit         : закончить работу
+	cd [каталог] : перейти в каталог (в домашний каталог)
+
+* Пометка имен файлов:
+
+	.sp.....  : поставить или убрать пометку для одного файла или каталога
+	.:>  .:<  : пометка для перенаправления станд. вывода/ввода
+	.:+       : пометить все файлы (кроме каталогов и скрытых файлов)
+	.:-       : убрать всю пометку
+
+* Подстановка помеченных имен в командную строку (примеры):
+	sh> chmod -w ##; ls -ld ##                   (## указывает место)
+	sh> cp ## /tmp
+---END
+#endif HELP

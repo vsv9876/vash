@@ -1,0 +1,33 @@
+---LINES
+var     = ipv   -       -       -       -         "John Smth"
+alt1    = ipa   -       -       -       -         "YES"
+alt2    = ipa   -       -       -       -         "no"
+mse     = ipm   -       -       -       -         " End of work "
+sp      = h     "space "
+
+---SCREEN
+."Basic commands on the screen"....
+
+1. Exit, end of the page.. .:EX....
+   Get help............... .:HE....             ."Active fileds examples:"....
+2. Menu choice:
+   move cursor, press.... .sp.....              .mse............   (menu item)
+3. Selector switch:
+		forward... .sp.....             .alt1.
+		backward.. .:DE....             .alt2.              (selector)
+4. Switch context to edit:
+   keep content........... .sp.....             .var.......     (input string)
+   erase before edit...... .:DE....
+
+5. Refresh screen......... .:RE....
+
+=Editing commands (line editor)
+
+6. Complete  input......... .:NL....    9. Fast cursor moving:
+7. Erase character:                         string begin.... .:PR.... .:AL....
+   left from cursor....... .:DE....         end of text..... .:PR.... .:AR....
+   below cursor.. .:PR.... .:DE....     8. Toggle INS/OVR:
+   to end of line. .:PR.... .sp.....                         .:PR.... .:PR....
+
+					    LINLIB (C)1986,1990 Sergey Vovk
+---END

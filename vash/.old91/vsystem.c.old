@@ -1,0 +1,304 @@
+#include <sys/ioctl.h>
+#include <sys/param.h>
+#include <signal.h>
+#include <ctype.h>
+#include <stdio.h>
+#include "line.h"
+#include "assist.h"
+
+#define ARGVMAX 500
+
+extern  int     y0_top;
+extern  char    pmtsh[];
+extern  char  **environ;
+
+#define ASH_NOWAIT 001  /* не ждать завершения запущенного процесса */
+#define ASH_NOFORK 010  /* заменить программу процесса */
+#define ASH_NOSH   020  /* не запускать дополнительный процесс sh */
+
+/*
+ * Выполнить программу.
+ *
+ * Запуск нового процесса, ожидание.
+ */
+int vexec(argv0, argv, execmode)
+char  *argv0;
+char **argv;
+{
+	extern int errno;
+	int pid, piddone;       /* номера процессов */
+	int forked;             /* флаг: есть порожденный процесс */
+	int syscod;
+	int (*sigint)();
+	/* реакция на сигнал уже была установлена SIG_IGN,
+	   здесь повторяется для надежности, после окончательной
+	   отладки надо убрать */
+	sigint = signal( SIGINT, SIG_IGN);
+
+	if (execmode & ASH_NOFORK) {
+		forked = 0;
+		pid = 0;
+	}
+	else {
+		forked = 1;
+		pid = fork();  /* vfork требует точно указать exec */
+	}
+	if (pid < 0) {
+		fprintf(stderr, "Can't fork\n");
+		return(-1);
+	}
+	if (pid == 0) {
+		/* процесс-ребенок */
+		if (execmode & ASH_NOWAIT) {
+			signal( SIGINT, SIG_IGN);
+		}
+		else {
+			signal( SIGINT, SIG_DFL );
+		}
+		/* здесь переопределить станд. файлы */
+		/*...*/
+
+		execvp(argv0, argv, environ);
+		fprintf(stderr, "ASH Can't exec %s\n", argv0);
+		if (forked)
+			exit(1);
+		else    {
+			signal( SIGINT, sigint);
+			return(-1);
+		}
+	}
+	if (pid > 0) {
+		/* процесс-родитель */
+		syscod = 0;
+		if (execmode & ASH_NOWAIT)
+			/*VARARGS*/
+			printf("[%d] Started\n", pid);
+		else
+			do {
+				piddone = wait( &syscod );
+				if ( pid != piddone)
+					printf("[%d] done\n", piddone);
+			} while ( pid != piddone);
+
+		signal( SIGINT, sigint );
+		return(syscod);
+	}
+#ifdef lint
+	/*NOTREACHED*/
+	return(0);
+#endif
+}
+
+/*
+ * Экранная преамбула запуска команды.
+ */
+shstart()
+{
+	showtime( 0 );                  /* погасить часы */
+	cp_set(0, 0, TXT); er_eol();    /* погасить cwd */
+
+	if (y0 > y0_top)
+		cp_set(y0_top-1, 0, TXT);
+	else
+		cp_set(y0-1, 0, TXT);
+
+	y0_top = y0;    /* установить границу свитка */
+	er_eop();
+
+	io_set(IO_TTYPE);
+}
+
+extern  int     mark_i;
+extern  int     mark_o;
+
+/*ARGSUSED*/
+int avexec(cmd, cmdlbl, execmode)
+char *cmd;      /* собственно команда, которую надо выполнить */
+char *cmdlbl;   /* строка для индикации, как правило == cmd */
+int  execmode;
+{
+	char *argv[ARGVMAX+1];
+	register char *p;
+	register int i;
+
+	p = cmd; while(isspace(*p)) p++;
+	i = 0;
+	argv[i] = p;
+	for (; *p; p++) {
+		if(isspace(*p)) {
+			/* закрыть очередной аргумент */
+			*p++ = '\0';
+			while(*p && isspace(*p)) p++;
+			i++; argv[i] = p;
+		}
+		if (i < ARGVMAX) continue;
+		else break;
+	}
+	i++; argv[i] = (char *)0;
+	return(vexec(argv[0], argv, execmode));
+}
+
+/*
+ * Формирование команды для /bin/sh.
+ * Подстановка помеченных файлов.
+ * Показ команды перед выполнением.
+ */
+int shexec(cmd, cmdlbl, execmode, execapnd)
+char *cmd;      /* собственно команда, которую надо выполнить */
+char *cmdlbl;   /* строка для индикации, как правило == cmd */
+int  execmode;
+int  execapnd;
+{
+	/* строка для подстановки:
+	 * макс. длина аргументов + длина префикса "exec "
+	 */
+	char cmd2[NCARGS + 6];
+	char *argv[5];
+	int syscod;         /* код возврата команды */
+	int i;
+	register int j;
+	register char *p;
+
+	p = cmd;
+	i = 0;
+	if ( execapnd ) {
+		/*VARARGS*/
+		sprintf(cmd2, "exec ");
+		i += 5;
+	}
+	/* подставить пометку станд. ввода */
+	if (mark_i >= 0) {
+		sprintf(&cmd2[i], "%s ", itms[mark_i]);
+		itms[mark_i][0] = ' '; mark_i = -1;
+		while(cmd2[++i]);
+	}
+	/* подставить аргументы */
+	while( *p ) {
+		if (*p == MONEY && p[1] == MONEY) {
+			p++; p++;
+			/* подставить */
+			for (j = 0; j < itmmax; j++) {
+	  /* проверка переполнения самая приблизительная */
+				if (i >= (NCARGS-80)) {
+					fprintf(stderr, " *** %s ***\n",
+					"Переполнение подстановки имен");
+					return(-1);
+				}
+				if(itms[j][0] == MONEY) {
+					/* вставить очередное имя */
+					sprintf(&cmd2[i], "%s ", &itms[j][2]);
+					while(cmd2[++i]);
+#ifdef RETRO
+					i--; cmd2[i++] = ' ';
+#endif
+				}
+			}
+			/* убрать последний пробел - он лишний */
+			cmd2[--i] = '\0';
+		}
+		else    cmd2[i++] = *p++;
+	}
+	cmd2[i] = 0;
+	/* подставить пометку станд. вывода */
+	if (mark_o >= 0) {
+		sprintf(&cmd2[i], " %s", itms[mark_o]);
+		itms[mark_o][0] = ' '; mark_o = -1;
+	}
+
+	/* показать выполняемую команду: */
+	if (cmdlbl == (char *)0) {
+		cmdlbl = cmd2;  /* саму команду и показать */
+	}
+	printf("%s %s", pmtsh, cmdlbl);
+	if (execmode & ASH_NOWAIT)
+		putchar('&');
+	putchar('\n');
+
+	fflush(stdout);
+
+	/* выполнить команду */
+	if (execmode & ASH_NOSH)
+		syscod = avexec(cmd2, cmdlbl, execmode);
+	else {
+		argv[0] = "sh";
+		argv[1] = "-c";
+		argv[2] = cmd2;
+		argv[3] = (char *)0;
+
+		syscod = vexec(argv[0], argv, execmode);
+	}
+	return(syscod);
+}
+
+/*
+ * Главная запускалка команд.
+ *
+ * Анализ командной строки, выбор режима и способа запуска.
+ */
+int vsystem(cmd, cmdlbl)
+char *cmd;      /* собственно команда, которую надо выполнить */
+char *cmdlbl;   /* строка для индикации, как правило == cmd */
+{
+	int execmode;   /* флаги запуска команды */
+	int execapnd;   /* флаг: дописать впереди команды "exec " */
+	int execargv;   /* флаг: выполнить команду без sh */
+	register char *p;
+	register char *cmdp;
+	int syscod;
+
+	execmode = 0;
+
+	execargv = execapnd = 1;
+	if (strncmp(cmd, "exec ", 5) == 0) {
+		execmode |= ASH_NOFORK;
+		p = cmdp = &cmd[5];
+	}
+	else
+		p = cmdp = cmd;
+
+	for (; *p; p++) {
+		switch(*p) {
+		default: break;
+		case '&':
+			if (p[1] == '\0') {
+				/* фоновый запуск, подчистить пробелы */
+				execmode |= ASH_NOWAIT;
+				*p = '\0'; --p;
+				while (p > cmdp && isspace(*p)) {
+					*p = '\0'; --p;
+				}
+				continue;
+			}
+		/* разделители процессов */
+		case '|': case ';':
+		case '(': case ')':
+		case '{': case '}':
+			execapnd = 0;
+			/* проваливаемся... */
+
+		/* другие метасимволы sh */
+		case '<': case '>':
+		case '*': case '@': case '?':
+		case '!': case '$': case '^':
+		case '\'': case '"': case '`':
+			execargv = 0;
+			break;
+		case MONEY:
+			if (p[1] == MONEY) {
+				p++; p++;
+				continue;
+			}
+			execargv = 0;
+			break;
+		}
+	}
+	if (mark_i >= 0 || mark_o >= 0)
+		execargv = 0;
+	if (execargv)
+		execapnd = 0;
+	execmode |= (execargv ? ASH_NOSH : 0);
+	shstart();
+	syscod = shexec(cmdp, cmdlbl, execmode, execapnd);
+	io_set(IO_VIDEO);
+	return(syscod);
+}

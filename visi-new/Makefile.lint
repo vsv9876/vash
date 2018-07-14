@@ -1,0 +1,63 @@
+
+SHELL         = /bin/sh
+
+#
+# Сборка вспомогательной библиотеки для assist.
+#
+# Библиотека содержит новейшие версии некоторых модулей LINLIB,
+# которые пока не внесены в стандартные библиотеки LINLIB.
+# Во избежание проблем с неразрешенными ссылками используется
+# не формат ar, a format a.out, для чего вызывается ld -r.
+# См. ниже правило $(LIBRARY):
+#
+
+MAKEFILE      = Makefile
+
+CFLAGS        = -DDEMOS2 -I.. -I../../visi/include -DW_PAGE_TAB
+
+CC            = cc -O
+
+LIBRARY       = libnew.o
+
+HDRS          =
+
+EXTHDRS       =
+
+SRCS          = lin330.c\
+		lin340.c\
+		lin360.c\
+		lin425.c\
+		lin460.c\
+		lin472.c
+
+OBJS          = lin330.o\
+		lin340.o\
+		lin360.o\
+		lin425.o\
+		lin460.o\
+		lin472.o
+
+$(LIBRARY):     $(OBJS)
+		@echo "Linking $(LIBRARY) ... "
+		ld -r -x -o $(LIBRARY) $(OBJS)
+		@echo "   ...OK"
+
+SUFFIX        = .cv:sC
+
+.SUFFIXES : .out .o .c .cm .f .e .r .y .yr .ye .l .s .cl .p .q \
+	    .cv .la .lav .lb
+.c.o:
+	$(CC) -c $(CFLAGS) $<
+
+.c.s:
+	$(CC) -S $(CFLAGS) $<
+
+.cv.c:
+	$(VCC) -o $@ $<
+
+library:        $(LIBRARY)
+
+clean:;         rm -f $(OBJS) $(LIBRARY)
+
+depend:;        mkmf -f $(MAKEFILE)
+###

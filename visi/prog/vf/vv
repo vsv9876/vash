@@ -1,0 +1,61 @@
+:
+
+#
+# Example for usage super/trans/glucator vf
+#
+# Vovk Sergej Vladimirovich, USSR
+#
+# vsv 1990 (c) All rights reserved
+#
+
+trap "echo Terminated...; exit" 15
+trap "wait; echo Interrupted...; exec sh -$- $0" 1 2
+
+# Get keycaps (for help messages), not supported...
+# eval `vhkey`
+# vhkey replased with constants:
+  K_NL=' <Enter> '
+# K_DE=' <Backspace> '
+# K_TA=' <Tab> '
+
+dir=`pwd`
+
+while cat <<EOF
+-- vv -------------------------------------------------------- vv --
+   Work with directory             Menu selection: press $K_NL
+--------------------------------------------------------------------
+EOF
+
+do
+
+echo $dir
+
+case `echo \
+'View
+Edit
+Print
+Remove
+Make
+Change directory
+Execute sh command
+Setup this script
+End of job (EXIT)' | vf -1 -m` in
+   View*) more `ls -a | vf` ;;
+   Edit*) ( trap 1 2; re `ls -a | vf -m` );;
+   Pri*) echo 'Not supported (make youself)' ;;
+   Rem*) rm -v `ls -a | vf` ;;
+   Mak*) vmake ;;
+   Exe*) echo -n 'sh> '; read cmd; eval $cmd
+	 echo -n 'Press' $K_NL; read dummy
+	 ;;
+   Cha*)        echo -n 'New directory: '
+		read dirname
+		eval dir=$dirname
+		if test -n $dir
+		then cd $dir; dir=`pwd`
+		else echo 'Resume in previouse directory'
+		fi;;
+   Set*) re $0; exec sh -$- $0;;
+   End*) exit 0 ;;
+esac
+done

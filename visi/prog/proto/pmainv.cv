@@ -1,0 +1,94 @@
+/*
+**      +----------+    גיגליןפוכב קקןהב-קשקןהב
+**     (c) linlib  !    הלס בלזבקיפמן-דיזעןקשט
+**      +----------+    קיהוןפועםימבלןק
+**/
+
+/*
+ *      $Header$
+ *      $Log$
+ */
+
+#include <stdio.h>
+#include "line.h"       /* זבךל-תבחןלןקןכ LINLIB */
+
+
+static  int ex_flg;     /* זלבח: נןעב תבכבמ‏יקבפר */
+
+mkexit()
+{
+	cp_set(-1, 0, TXT);
+	ex_flg = 1;
+	return(TRUE);
+}
+
+
+---PAGE linem
+---LINES
+m_exit  = ipm      -   -   mkexit  tst_m   " כןמוד עבגןפש "
+
+---SCREEN
+=נעןפןפינ נעיכלבהמןך נעןחעבםםש  LINLIB V3.4
+
+
+
+
+
+
+
+			.m_exit...............................
+
+
+
+
+   .:?  .:HE....  קשקןה נןהףכבתכי (HELP)
+
+	.:RE....  נועועיףןקכב üכעבמב (REFRESH)
+---END
+
+
+vmain()
+/*------------*/
+/* VIDEO MAIN */
+/*------------*/
+{
+	kbcod cod;
+	LINE *cline;
+	cline = 0;
+
+	er_pag();
+	w_page(linem);
+
+	for( ;; ) {
+		cod = r_page(linem, &cline, 0);
+		/* זלבח קתקןהיפףס ‏ועות זץמכדיא ןגףלץציקבמיס םומא */
+		if(ex_flg) return;
+
+		switch(cod) {
+		case ' ' :
+			/* נועועיףןקבפר נןףלו םומא */
+			if((cline->attr & LMSE) == LMSE) {
+				er_pag();
+				w_page(linem);
+			}
+			break;
+		case '?':
+		case KB_HE:
+			/* קשקןה ףנעבקן‏מןך ימזןעםבדיי */
+			w_help(0); w_page(linem);
+			break;
+		case KB_EX :
+			/* תקןמןכ, ית üפןך ףפעבמידש
+			 * נןהמיםבפרףס מוכץהב
+			 */
+			bell();
+			break;
+		default :
+			w_emsg("");
+			cp_set(-1, 0, TXT);
+			printf("<%c%c>", cod1(cod), cod0(cod));
+			fflush(vttout);
+			break;
+		}
+	}
+}

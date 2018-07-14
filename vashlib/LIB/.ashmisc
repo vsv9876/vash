@@ -1,0 +1,103 @@
+#! /usr/local/bin/ash
+#
+# Файл .ashmisc
+#-----------------------------------------
+# СОЗДАНИЕ ФАЙЛОВ/КАТАЛОГОВ/ПРОЧ.
+# Wed Sep 12 15:46:39 MSD 1990
+#-----------------------------------------
+#
+-f:FLa
+-i.
+-o.
+-@
+
+# НАЗВАНИЯ КЛАВИШ
+-1sh>
+-2compr
+-3
+-4touch
+-5tar
+-6cpio
+-7dir
+-8
+-9
+-0return
+
+:[?]
+:HE
+    * *     _help 7misc.lb
+:NL
+:EX
+:U0
+:0
+    * *     _cmdset .ashstd
+# Редактирование последней команды sh:
+:[1!]
+    r?x ?   _sh
+
+:2
+:U2
+	rwx +   _menu2 .ashcompr
+	rwx -   _err надо пометить имена файлов пробелом
+	r-x *   +Cant
+
+:U4
+:4
+    rwx -   +touch
+    rwx +   +touchf
+    * *     +Cant
++touch
+    ?w? ?   touch #@
+
++touchf
+    ??? ?   touch ##
+
++Cant
+    * * *   _err Can't write this directory
+
+:@
+    rwx -   _msg rwx -
+    rwx +   _msg rwx +
+    r-x -   _msg rwx -
+    r-x +   _msg rwx +
+
+:U5
+:5
+    rwx -   +tardir
+    rwx +   +tarfiles
+    r-x *   +Cant
+
+
++tardir
+
+    * d * tar -cvf #@.tar #@
+    * * * _msg подведите курсор к каталогу или пометьте файлы
+
++tarfiles
+
+    * ? * tar -cvf .tar ##
+    * * * _msg err in .ashmisc
+:U6
+:6
+    rwx -   +cpiodir
+    rwx +   +cpiofiles
+    r-x *   +Cant
+
++cpiodir
+
+    * d . find #@ -depth -print | grep -v '^\./\.\.cpio' | cpio -odv > #@.cpio
+    * d * find #@ -depth -print | cpio -odv > #@.cpio
+    * * * _msg подведите курсор к каталогу или пометьте файлы
+
++cpiofiles
+
+    * ? * find ## -depth -print | cpio -odv > .cpio
+
+:U7
+:7
+	rwx ?   mkdir .
+	* *     +Cant
+:^F
+	* * _cmdset .ashmisc
+:*
+	* * _msg Undefined key (.ashmisc || termcap)

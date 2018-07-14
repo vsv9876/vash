@@ -1,0 +1,297 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    vsv:1.1;
+comment  @@;
+
+
+1.1
+date     90.08.17.11.01.41;  author vsv;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@
+последний текст до правки vcc по
+поводу атрибутов через константу.
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/*
+**      +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
+**     (c) linlib  !    ДЛЯ АЛФАВИТНО-ЦИФРОВЫХ
+**      +----------+    ВИДЕОТЕРМИНАЛОВ
+**/
+
+/*
+ *      $Header$
+ *
+ *      $Log$
+ */
+
+#include <stdio.h>
+#include "line.h"
+#include "line0.h"
+#include "lineva.h"
+
+extern LPA lpainp[];
+extern LPA lpaout[];
+
+int     lpa_pi = 0;     /* РЕЖИМ ИЗМЕНЕНИЯ АТРИБУТОВ (НА ВВОДЕ/НА ВЫВОДЕ) */
+
+int     wamask[10] = {
+	A_SO,   A_US,   A_VS,   A_MD,
+	A_MR,   A_MB,   A_MK,
+	0,      0,      0,
+	};
+
+LPA     *lpa_p[2] = {
+	lpaout,         lpainp
+	};
+
+extern  LINE linem[];
+LINE *
+getl5(line)
+/*-------------------------------------------------------*/
+/* вернуть указатель на базовую линию в 5й строке экрана */
+/*-------------------------------------------------------*/
+register LINE *line;
+{
+	register LINE *l;
+
+	for (l=linem; l->size != 0; l++) {
+		if (l->line != 5)
+			continue;
+		if (l->colu == line->colu)
+			return( l );
+	}
+	return( (LINE *)(0) );
+}
+
+static int ok5 = 0;
+show5()
+/*-------------------------------------------*/
+/* показать базовые линии в 5й строке экрана */
+/*-------------------------------------------*/
+{
+	register LINE *l;
+	register int i;
+
+	if ( ok5 )  return;
+	ok5++;
+	for (l=linem; l->size != 0; l++) {
+		if (l->line == 5) {
+			w_line( l );
+			/* надо подправить номер видеоатрибута;
+			 * таблица на экране ориентирована по вертикали,
+			 * поэтому можно использовать индекс
+			 */
+			for (i = 1; i <= 7; i++) {
+				l[i].attr = (l[i].attr & ~VIDEO)
+					    | TXT;
+			}
+		}
+	}
+	ok5++;
+}
+
+cvt_atr(line, cod, mod, str)
+/*---------------------------------*/
+/* формат для изображения лог.типа */
+/*---------------------------------*/
+LINE   *line;
+kbcod   cod;
+char   *mod;
+char   *str;
+{
+	register short *attr;
+		 int    i;
+
+	attr = &line->attr;
+	sscanf(line->cvts, "%d", &i);
+
+	if(*mod == 'w') {
+		/* срабатывает только один раз */
+		show5();
+
+		/* завести константу через vcc невозможно пока */
+		*attr = (*attr & ~VIDEO) | i;
+		strcpy(str, line->varl);
+
+		cp_set(line->line + 2, line->colu, (i|INP));
+		w_str(line->varl);
+	}
+	else {
+	}
+	return(TRUE);
+}
+
+cvt_va(line, cod, mod, str)
+/*---------------------*/
+/* формат для атрибута */
+/*---------------------*/
+LINE   *line;
+kbcod   cod;
+char   *mod;
+char   *str;
+{
+	char    outstr[6];      /* строка для формирования вывода */
+	int     i;
+	int     va;             /* видеоатрибуты ( флаги ) */
+	register int *ap;       /* указатель на атрибут */
+	register LINE *line5;   /* указатель на базовую линию в 5-й строке */
+	register LPA *lpap;
+
+	va = *(int *)line->cvts;
+	i = (int)line->varl;
+
+	if(*mod == 'w') {
+		strcpy(outstr, " . .");
+		if(lpainp[i].lpa_a & va) outstr[3] = '+';
+		if(lpaout[i].lpa_a & va) outstr[1] = '+';
+		strcpy(str, outstr);
+	} else {
+		if(cod == ' ' || cod == 'DE') {
+			line5 = getl5(line);
+
+			switch(cod) {
+			case ' ':
+				lpap = lpa_p[0];
+				break;
+			case 'DE':
+				lpap = lpa_p[1];
+				break;
+			}
+			ap = &(lpap[ i ].lpa_a);
+
+			if((*ap) & va) { (*ap) = (*ap) & (~va); }
+			else           { (*ap) = (*ap) | ( va); }
+
+			w_line(line5);
+		}
+	}
+	return(TRUE);
+}
+
+cvt_pmt(line, cod, mod, str)
+/*----------------------*/
+/* формат для подсказки */
+/*----------------------*/
+LINE   *line;
+kbcod   cod;
+char   *mod;
+char   *str;
+{
+	int     i;
+	kbcod tmpcod;
+
+	i = (int)line->varl;
+
+	if(*mod == 'w') {
+		sprintf(str, " %c %c",
+		lpaout[i].lpa_p, lpainp[i].lpa_p);
+	} else {
+		if (cod == ' ' || cod == 'DE') {
+			switch(cod) {
+			case ' ':
+				  lpa_pi = 0; break;
+			case 'DE':
+				  lpa_pi = 1; break;
+			}
+			w_msg(ATT, "Напечатайте символ подсказки ");
+			if (lpa_pi)
+				w_str("на вводе: ");
+			else
+				w_str("на выводе: ");
+
+			tmpcod = r_key();
+			if (tmpcod == 0 || cod1(tmpcod) != 0)
+				w_msg(ERR, "Управляющая клавиша");
+			else    {
+				if(lpa_pi) {    /* подсказка для вывода */
+					lpainp[i].lpa_p = cod0(tmpcod);
+				} else {        /* для ввода */
+					lpaout[i].lpa_p = cod0(tmpcod);
+				}
+				w_msg(TXT, "");
+			}
+		}
+	}
+	return(TRUE);
+}
+
+extern  int     cvt_hl();
+---PAGE linem
+---PORTS
+	LPA_B = 1;
+	LPA_PI = &lpa_pi;
+	W_so   = &wamask[0];
+	W_us   = &wamask[1];
+	W_vs   = &wamask[2];
+	W_md   = &wamask[3];
+	W_mr   = &wamask[4];
+	W_mb   = &wamask[5];
+	W_mk   = &wamask[6];
+---TABLES
+	t = 1;
+---LINES
+	P       = ia - -      cvt_pmt - LPA_B
+	TXT     = a  - "1"    cvt_atr - " TXT "
+	HDR     = a  - "2"    cvt_atr - " HDR "
+	VAR     = a  - "3"    cvt_atr - " VAR "
+	ALT     = a  - "4"    cvt_atr - " ALT "
+	MSE     = a  - "5"    cvt_atr - " MSE "
+	ERR     = a  - "6"    cvt_atr - " ERR "
+	ATT     = a  - "7"    cvt_atr - " ATT "
+	so      = ia - W_so   cvt_va  - LPA_B
+	us      = ia - W_us   cvt_va  - LPA_B
+	vs      = ia - W_vs   cvt_va  - LPA_B
+	md      = ia - W_md   cvt_va  - LPA_B
+	mr      = ia - W_mr   cvt_va  - LPA_B
+	mb      = ia - W_mb   cvt_va  - LPA_B
+	mk      = ia - W_mk   cvt_va  - LPA_B
+	hl      = gc - -      cvt_hl  - "-"
+---#
+---# не трогайте положение строки 5 (.TXT. .HDR. ...), от ее координат
+---# зависит работа функции форматного преобразования переключателя.
+---SCREEN
+=Настройка видеоатрибутов и подсказок
+
+
+
++ .hl....................................................................
++ Изображение при выводе:       .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .ATT.
++
++              при вводе:
++ .hl....................................................................
++ ВИДЕО:  :so  "выделение"      .so.  .t..  .t..  .t..  .t..  .t..  .t..
++         :us  "подчерк"        .us.  .t..  .t..  .t..  .t..  .t..  .t..
++         :vs  "фон"            .vs.  .t..  .t..  .t..  .t..  .t..  .t..
++         :md  "яркость"        .md.  .t..  .t..  .t..  .t..  .t..  .t..
++         :mr  "реверс"         .mr.  .t..  .t..  .t..  .t..  .t..  .t..
++         :mb  "мигание"        .mb.  .t..  .t..  .t..  .t..  .t..  .t..
++         :mk                   .mk.  .t..  .t..  .t..  .t..  .t..  .t..
++ .hl....................................................................
++
++ Приглашение (prompt):         .P..  .t..  .t..  .t..  .t..  .t..  .t..
+
+---END
+
+static  char    helpf[] = "vhseta.lb";
+
+pag_a()
+/*---------------------*/
+/* настройка атрибутов */
+/*---------------------*/
+{
+	u_page(linem, helpf);
+	return(TRUE);
+}
+@

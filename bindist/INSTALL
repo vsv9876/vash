@@ -1,0 +1,16 @@
+Assistant Shell v 1.18
+
+Подготовлен в двоичном формате популярных версий Unix для PC/AT 386/486
+
+ash118-Fbsd.tar.Z   - FreeBSD 1.1
+ash118bsdos.tar.Z   - BSD/OS 2.0.1 (BSDi)
+ash118ISC.tar.Z     - Interactive UNIX v3.0
+ash118uw.tar.Z      - UnixWare 2.0.x
+ash118sun4.tar.Z    - SunOS 4.1.3/4.1.4
+ash118osf1.tar.Z    - OSF1/V3.2 (DEC UNIX, Alpha AXP)
+
+Архив записан с полными именами от корня,
+за исключением файлов README, и т.п.
+
+Вариант для FreeBSD должен быть развернут от корня,
+там нет лидирующих символов '/'

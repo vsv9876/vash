@@ -1,0 +1,42 @@
+head     1.2;
+access   ;
+symbols  VLIB_1:1.2;
+locks    ;
+comment  @@;
+
+
+1.2
+date     89.08.29.10.57.20;  author vsv;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.08.29.10.52.13;  author vsv;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@
+ϊαηομοχολ νοδυμρ βιβμιοτελι
+@
+
+
+1.2
+log
+@χεςσιρ 1.0
+@
+text
+@+----------+    βιβμιοτελα χχοδα-χωχοδα
+!  linlib  !    δμρ αμζαχιτξο-γιζςοχωθ
++----------+    χιδεοτεςνιξαμοχ
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@@

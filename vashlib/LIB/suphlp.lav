@@ -1,0 +1,36 @@
+---PAGE supage
+---LINES
+stdfile	= c ".ashstd"
+vexdir  = v    -       -       cvt_sp  -       vexdir
+hl      = gc    -       -       cvt_hl  -       "-"
+f       = ipv   -       -       -       -       f
+i       = ipv   -       -       -       -       i
+o       = ipv   -       -       -       -       o
+
+panl    = ipa   -       onoff   cvt_a   -       pF
+scrl    = ipa   -       onoff   cvt_a   -       sF
+hist    = ipa   -       onoff   cvt_a   -       hF
+clck    = ipa   -       onoff   cvt_a   -       cF
+ymax    = ipv   -       "%4d"   -       t_ymax  yy_max
+---SCREEN
+=help for setup
+
+  each flag can be changed with ."selector".
+  please, press .:HE.... again to get generic help about keyboard and screen
+
+flags:
+."history save". - command history will be saved on exit from vash
+."scroll"....... - scroll the command output if checked, otherwise clear screen
+."clock"........ - show current time at the right top of the screen
+		    on the end of the every command
+."keybar"....... - show description of keys 0-9 at the bottom of the screen
+."who+cwd"...... - who and current working directory shown on scren and/or
+		    on xterm window title
+."lines max".... - maximum lines for main menu will on the screen, on change,
+		    please, use .'= or .'U or .:NL.... to force rescan main menu
+
+."setup for debug only". - it is better to don't touch if not sure
+    full description is in comments of .stdfile
+
+    maxli/maxco - current size of the screen, maximum lines/columns
+---END

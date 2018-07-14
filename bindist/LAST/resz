@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# set environment for old VISI suuport, need for Assistant Shell 1.18.1
+#
+
+stty -a < /dev/tty | grep columns | tr ';' '\n' | while read num key z
+do
+	#echo $num $key $z;
+	#
+	case $key in
+	columns)	echo COLUMNS=$num
+			echo export COLUMNS
+			;;
+	rows)		echo LINES=$num
+			echo export LINES
+			;;
+	esac
+	#continue
+	# gnu stty (Linux)
+	case $num in
+	columns)	echo COLUMNS=$key
+			echo export COLUMNS
+			;;
+	rows)		echo LINES=$key
+			echo export LINES
+			;;
+	esac
+done

@@ -1,0 +1,42 @@
+: assistant for sh startup
+#
+# First Bourne' shell started,
+# then exec setup environ, then exec ash
+#
+# DEBUG switch: uncomment next line.
+#set -x
+
+echo '
+	Interactive shell for Unix "Assistant"
+	(c)1990, Vovk S.V.
+
+	Please, wait until standart setup is in progress...'
+
+# environ-passed setup:
+#
+# h     history will be stored
+# lNN   lines for filename menu (from 2 to 20), default 10
+# p     key help panel bar on
+# s     scroll cmd script but no clear screen
+# c     clock show,  uprigh corner of screen
+
+export PATH MAIL MORE ASH
+
+MORE=-Ccsqeb15
+# example for assist environ-passed setup:
+# ASH=l8pshc
+
+#echo "tty is $TERM"
+whoami=`whoami`
+
+case $whoami in
+"$USER"*)
+	PATH=:$HOME/bin$PATH
+	MAIL=/usr/spool/mail/$USER
+	;;
+root*)
+	ASH=l8sp
+	PATH=:/etc$PATH
+	export USER; USER=root
+	;;
+esac

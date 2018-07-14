@@ -1,0 +1,34 @@
+:
+#
+# Template for user-oriented menu.
+# Mon Mar 11 14:57:01 MSK 1991
+#
+
+#+ List file attributes
+	set -x; ls -asl $@ | m
+
+#+ Show processes status
+	set -x; ps -ef
+
+#+ Show disk free info
+	sync; . /etc/dfspace
+
+#+ Show disk usage
+	set -x; du
+
+#+ Show list of users logged in
+	who -u -H
+
+#+ Show swaping status
+	/etc/swap -l
+
+#+ Show this file
+	m /usr/local/lib/ash/.ashmenu
+
+#+ Compare two text files
+	case x$# in
+	x2)   diff -b $@ ;;
+	x*)   echo 'Please, tag (mark) two files first...\c'; exit 1;;
+	esac
+
+### EOF .ashmenu

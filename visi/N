@@ -1,0 +1,10 @@
+./Makefile
+./include/line.h
+./include/ediag.h
+./src/Makefile
+./src/linlib/Makefile
+./src/linlib/lin100.c
+./src/linusr/Makefile
+./src/termnew/Makefile
+./src/vcc/Makefile
+./N

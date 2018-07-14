@@ -1,0 +1,235 @@
+head     1.1;
+access   ;
+symbols  LINLIB_3:1.1;
+locks    ;
+comment  @ * @;
+
+
+1.1
+date     90.12.27.16.29.07;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@χεςσιρ LINLIB_3
+@
+text
+@/*
+**      +----------+    βιβμιοτελα χχοδα-χωχοδα
+**     (c) linlib  !    δμρ αμζαχιτξο-γιζςοχωθ
+**      +----------+    χιδεοτεςνιξαμοχ
+**/
+
+/*
+ *      $Header: lin240.c,v 3.9 89/08/29 15:16:14 vsv Rel $
+ *
+ *      $Log:	lin240.c,v $
+ * Revision 3.9  89/08/29  15:16:14  vsv
+ * χεςσιρ LINLIB_3
+ * 
+ * Revision 3.8  89/08/29  10:32:44  vsv
+ * ξευδαώξαρ ποπωτλα νοδιζιγιςοχατψ 
+ * αμηοςιτν ξαστςοκλι ξα λμαχιϋι (δμρ uas)
+ * σνοτςι #ifdef DEBUG
+ * 
+ * Revision 3.7  89/08/14  16:37:16  vsv
+ * ποδπςαχμεξα ςαβοτα σ ινεξεν ζακμα ξαστςοκλι,
+ * χσρλαρ νεμοώψ.
+ * 
+ * Revision 3.6  89/05/05  11:45:05  vsv
+ * vhset :lh: works without :lh: termcap key
+ * 
+ * Revision 3.5  89/01/16  19:29:12  vsv
+ * πςαχμεξα ξεβομψϋαρ ώυϋψ,
+ * σχρϊαξξαρ σ ϊαηςυϊλοκ ινεξ λμαχιϋ
+ * ιϊ οπισαξιρ vhset.
+ * 
+ * Revision 3.4  89/01/05  14:41:58  vsv
+ * ισπςαχμεξα πμΰθα: ξαδο βωμο χ λοξγε
+ * ϊαλςωχατψ ζακμ.
+ * 
+ * Revision 3.3  88/08/18  10:36:59  vsv
+ * ισπςαχμεξο δυβμιςοχαξιε νετλι cont:
+ * 
+ * Revision 3.2  88/07/27  16:32:14  vsv
+ * ξαλοξεγ ισπςαχμεξο ώτεξιε ξαστςοκλι λμαχιϋ
+ * 
+ * Revision 3.1  88/06/27  15:20:15  vsv
+ * ςεχιϊιρ αςθιχα RCS
+ * 
+ * Revision 3.0  88/06/16  17:55:17  vsv
+ * ισπςαχμεξ .vhelp ξα .vhset
+ * 
+ */
+
+#include <ediag.h>
+#include <ctype.h>
+#include <stdio.h>
+#include "line.h"
+#include "line0.h"
+
+/*
+ * ξαστςοκλα μοηιώεσλιθ λοδοχ τεςνιξαμα
+ */
+
+extern  LPA     lpainp[];
+extern  LPA     lpaout[];
+extern  KBL     kbl[];      /* οπισαξιε χοϊνοφξοστεκ τεςνιξαμα */
+extern  char   *filelh;    /* υλαϊατεμψ ξα ινρ ζακμα σ οπισαξιεν */
+extern  int     kpadon;    /* ζμαη: δοπομξιτεμψξαρ λμαχιατυςα χλμΰώεξα */
+
+#ifdef DEMOS2
+extern  char *getenv();
+#endif DEMOS2
+
+
+do_kbl()
+/*--------------------------------*/
+/* χωπομξιτψ ξαστςοκλυ λμαχιατυςω */
+/*--------------------------------*/
+{
+	char    name[100]; /* ινρ λμαχιατυςω δμρ ποισλα HELP */
+	char    str[100];  /* στςολα δμρ θςαξεξιρ οδξοκ ϊαπισι ξαστςοκλι */
+	FILE    *lhfp;     /* ζακμ σ ξαστςοκλοκ */
+
+	kbcod   t_key;     /* ζιϊ. λοδ λμαχιϋι */
+	kbcod   t_cod;     /* μοη. λοδ */
+	kbcod   t_cods;    /* μοη. λοδ λμαχιϋι δμρ ποισλα */
+
+	register LPA *lpap;
+	register char *s;
+	register int   i;
+		 int ibeg;
+		 char *os;
+
+#ifndef DEMOS2
+	/* εσμι ξετ ιξζοςναγιι, ηδε ισλατψ ξαστςοκλυ, λοξεγ */
+	if ( *t_lh == '\0' ) return;
+#endif
+#ifdef  DEMOS2
+	/* οπςεδεμιτψ νεστο, ηδε εε ισλατψ */
+	if ( (s=getenv("VHSET")) != NULL ) {
+		strcpy(name, s);
+	} else {
+		strcpy(name, "/usr/new/lib/visi");
+	}
+	strcat(name, "/.vhset/");
+	if(*t_lh) {
+		strcat(name, t_lh);
+	} else {
+		if((s=getenv("TERM")) != NULL)
+			strcat(name, s);
+	}
+
+	/* οτλςωχαεν ζακμ */
+	if( (lhfp=fopen(name, "r")) == NULL ) {
+		/* ξιλαλοκ διαηξοστιλι... εστψ υνομώαξιε */
+		return;
+	}
+#endif  DEMOS2
+
+#ifdef  RT11
+	/* ξαδο ξακτι ζακμ χιδα 'HOM:VT52.VHS' */
+	/*              μιβο    'SY:VT52.VHS' */
+	strcpy (name, "VHS:");
+	strcat (name, t_lh );
+	strcat (name, ".VHS");
+
+	/* οτλςωχαεν ζακμ */
+	if( (lhfp=fopen(name, "r")) != NULL ) {
+		goto cont1;
+	}
+	strcpy (name, "SY:");
+	strcat (name, t_lh );
+	strcat (name, ".VHS");
+
+	/* οτλςωχαεν ζακμ */
+	if( (lhfp=fopen(name, "r")) == NULL ) {
+		return;
+	}
+cont1:
+	for(s=name; *s; s++) {
+		if(islower(*s)) toupper(*s);
+	}
+#endif
+
+	/* σοθςαξιν ινρ ζακμα, εσμι εστψ ηδε */
+	if (filelh) strcpy(filelh, name);
+
+	ibeg = 0;
+	/* ώιταεν ξαστςοκλυ... */
+	while( fgets(s=str, 98, lhfp), feof(lhfp)==0) {
+		if(isspace(*s))       continue;
+
+		/* χλμΰώιτψ δοπ. λμαχιατυςυ ? */
+		if     (*s == '+')      { w_raw(t_ks); kpadon = 1;      }
+		else if(*s == '-')      { w_raw(t_ke); kpadon = 0;      }
+
+		/* λοδ ι ξαϊχαξιε λξοπλι ? */
+		else if(*s == ':') {
+			s++;
+			/* πομυώιτψ οβα λοδα λμαχιϋι */
+			t_key  = tocod0(*s++);
+			t_key |= tocod1(*s++);
+			t_cod  = tocod0(*s++);
+			t_cod |= tocod1(*s++);
+
+#ifndef DEBUG
+			/* πςοχεςιτψ, χνεστο ώεηο χσταχμρτψ */
+			for(i=ibeg, ibeg++; t_cods = kbl[i].t_cod; i++ ) {
+				if(t_cods == t_cod) {
+					/* σλοπιςοχατψ ζιϊ. λοδ */
+					kbl[i].t_key = t_key;
+					/* σλοπιςοχατψ ξαϊχαξιε */
+					if(os = kbl[i].t_knm) {
+					    while(*s && isprint(*s))
+						*os++ = *s++;
+					    *os = 0;
+					}
+					goto cont;
+				}
+			}
+#else
+			/* ξιλαλιθ πςοχεςολ */
+			i=ibeg; ibeg++;
+
+			/* σλοπιςοχατψ ζιϊ. λοδ */
+			kbl[i].t_key = t_key;
+			/* σλοπιςοχατψ μοη. λοδ */
+			kbl[i].t_cod = t_cod;
+			/* σλοπιςοχατψ ξαϊχαξιε */
+			if(os = kbl[i].t_knm) {
+			    while(*s && isprint(*s))
+				*os++ = *s++;
+			    *os = 0;
+			}
+			goto cont;
+#endif
+		} else
+		if(isdigit(*s)) {     /* ατςιβυτ ι ποδσλαϊλα */
+			lpap = &lpaout[*s++ & 07];  /* ASCII-λοι7-λοι8-depend! */
+			lpap->lpa_p  =  *s++;
+			lpap->lpa_a  = (*s++ & 07) << 6;
+			lpap->lpa_a |= (*s++ & 07) << 3;
+			lpap->lpa_a |= (*s++ & 07);
+			lpap = &lpainp[*str & 07];
+			lpap->lpa_p  =  *s++;
+			lpap->lpa_a  = (*s++ & 07) << 6;
+			lpap->lpa_a |= (*s++ & 07) << 3;
+			lpap->lpa_a |= (*s++ & 07);
+		}
+cont:
+		;
+	}
+	fclose(lhfp);
+	return;
+}
+@

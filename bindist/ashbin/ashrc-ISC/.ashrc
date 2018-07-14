@@ -1,0 +1,56 @@
+:
+#
+# Assistant for sh startup
+# Version for SYSTEM V
+#------------------------------
+# First Bourne' shell started,
+# then exec setup environ, then exec ash
+#------------------------------
+#
+# DEBUG switch: uncomment next line.
+# set -x
+
+echo '
+	ASH V1.8
+	Assistant Shell for Unix.
+	EXPERIMENTAL VERSION - to use it is Your own risk.
+	Copyright (C) 1990,1991,1992 by Sergey Vovk
+	All Rights Reserved.
+
+	Please, wait until standart setup is in progress...'
+
+#
+#---------------------------------------------
+# environ-passed setup (ASH):
+#
+# h     history will be stored
+# lNN   lines for filename menu (from 2 to 20), default 10
+# p     key help panel bar on
+# s     scroll cmd script but no clear screen
+# c     clock show,  uprigh corner of screen
+#
+# example for assist environ-passed setup:
+
+ASH=l10pshc
+
+#---------------------------------------------
+# label for identification machine name, /dev/tty???,
+# and other likely info.
+# ASHLBL
+#
+ttyfull=`tty`
+tty=`basename $ttyfull`
+uname=`uname`
+ASHLBL="$LOGNAME"'@'"$uname:$tty"
+
+case $PATH in
+*/usr/local/bin*)     ;;
+*)
+	PATH=/usr/local/bin:$PATH
+esac
+
+EDITOR=re
+
+export ASHLBL ASH PATH EDITOR
+
+exec /usr/local/bin/ash

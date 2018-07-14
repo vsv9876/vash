@@ -1,0 +1,64 @@
+head     1.1;
+access   ;
+symbols  LINLIB_3:1.1;
+locks    ;
+comment  @ * @;
+
+
+1.1
+date     89.08.29.14.50.42;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@χεςσιρ LINLIB_3
+@
+text
+@/*
+**      +----------+    βιβμιοτελα χχοδα-χωχοδα
+**     (c) linlib  !    δμρ αμζαχιτξο-γιζςοχωθ
+**      +----------+    χιδεοτεςνιξαμοχ
+**/
+
+/*
+ *      πομψϊοχατεμψσλικ υςοχεξψ βιβμιοτελι LINLIB
+ *
+ *      cvt_sp()   χχοδ στςολι πο υλαϊατεμΰ;
+ *
+ */
+
+/*
+ *      $Header$
+ *      $Log$
+ */
+
+#include <stdio.h>
+#include "line.h"
+
+
+int     cvt_sp(line, cod, mod, str)
+/*-----------------------------------*/
+/* χχοδ στςολι πο δχοκξονυ υλαϊατεμΰ */
+/*-----------------------------------*/
+LINE *line;
+kbcod cod;
+char *mod;
+char *str;
+{
+	register char **spp;
+
+	spp = (char **)line->varl;
+	if(*mod == 'r') strcpy(*spp, str);
+	else            strcpy(str, *spp);
+	return(TRUE);
+}
+
+@

@@ -1,0 +1,22 @@
+:
+#
+# Фильтр для обработки абзацев внутри red.
+#
+# Nroff's vars:
+# .ll - line's length
+# .pl - page's length
+
+set -x
+
+case $# in
+1)      ll=$*; shift;;
+0)      ll=78;;
+*)      exit 1;;
+esac
+
+tmpf=/tmp/n78n$$
+
+cat >> $tmpf
+pl=`wc -l <$tmpf`
+# wait;
+( echo .nh; echo ".pl $pl"; echo ".ll $ll"; cat $tmpf ) | nroff;

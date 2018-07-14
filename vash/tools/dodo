@@ -1,0 +1,27 @@
+:
+#
+# Background make with message at THE END
+# Protocol saved in file "a"
+
+(
+case $# in
+0)      nice make      >a 2>&1 & ;;
+*)      nice make "$@" >a 2>&1 & ;;
+esac
+pid=$!
+echo -n '' [$pid] Started...
+
+wait $pid
+ok=$?
+# DEBUG:
+# echo "\'$ok\'"
+
+case $ok in
+0)
+	echo -n '' [$pid] Ready... '(' make "$@" ')'
+	;;
+*)
+	echo -n '' [$pid] Exit $ok '(' make "$@" ')'
+	;;
+esac
+) &

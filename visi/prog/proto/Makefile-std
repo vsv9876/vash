@@ -1,0 +1,129 @@
+
+SHELL         = /bin/sh
+
+##
+##      +----------+    βιβμιοτελα χχοδα-χωχοδα
+##     (C) LINLIB  !    δμρ αμζαχιτξο-γιζςοχωθ
+##      +----------+    χιδεοτεςνιξαμοχ
+##
+##      $Header$
+##      $Log$
+##
+
+#
+#       σταξδαςτξωκ ζακμ δμρ σβοςλι LINLIB-πςοηςαννω
+#
+
+CC            = cc
+
+DEST	      = .
+
+EXTHDRS	      = /usr/include/stdio.h
+
+HDRS	      = ajobs.h \
+		line.h \
+		linebp.h
+
+LDFLAGS       = -n
+
+
+# STDLIBS       = -ltermcap
+STDLIBS       = -lline -llinusr -ltermnew
+
+LIBS          =
+
+VCC           = vcc
+
+VLBP          = vlbp
+
+LBP           = lbp
+
+CFLAGS        = -DDEMOS2
+
+LINKER        = cc
+
+MAKEFILE      = Makefile-std
+
+PRINT	      = pr
+
+PROGRAM	      = proto
+
+EXECMODE      =  711
+
+SRCS          = phelp.cv \
+		pmain.c \
+		pvmain.cv
+
+OBJS	      = phelp.o \
+		pmain.o \
+		pvmain.o
+
+SUFFIX        = .cv:sC
+
+.SUFFIXES : .out .o .c .cm .f .e .r .y .yr .ye .l .s .cl .p .q \
+	    .cv .la .lav .lb
+.cv.c:
+	$(VCC) -o $@ $<;
+
+# πεςεχοδ σελγιι δαξξωθ χ σελγιΰ λοδα
+# νοφετ ποξαδοβιτψσρ δμρ οχεςμεκξωθ πςοηςανν ι
+# σιστενξωθ πςοηςανν, σοβιςαενωθ σ λμΰώον ld -n
+.cv.o:
+	$(VCC) -o $*.c $<;
+	$(CC) $(CFLAGS) -c $*.c;        #-   - οβωώξαρ τςαξσμργιρ
+	rm -f $*.c;                     #-
+#        $(CC) $(CFLAGS) -S $*.c;        #+   + δμρ οχεςμερ
+#        ed - $*.s <data-to-text;        #+
+#        $(AS) -o $*.o $*.s;             #+
+#        rm -f $*.c $*.s;                #+
+
+.la.lb:
+	$(LBP) $< $@;
+
+.lav.la:
+	$(VLBP) -o $@ $<;
+
+.lav.lb:
+	$(VLBP) -o $*.la $<;
+	$(LBP) $*.la $@;
+	rm -f $*.la;
+
+all:  data-to-text $(PROGRAM)
+
+data-to-text:
+	echo 'g/\.data/s//\.text/' >data-to-text;
+	echo 'w' >>data-to-text;
+	echo 'q' >>data-to-text;
+
+program:        $(PROGRAM)
+
+$(PROGRAM):     $(OBJS) $(LIBS) $(MAKEFILE)
+		@echo -n "== ιδετ σβοςλα $(PROGRAM) ... "
+		@$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) $(STDLIBS) -o $(PROGRAM)
+		@echo "== ηοτοχο =="
+
+clean:;         @rm -f $(OBJS) data-to-text
+
+depend:;	@mkmf -f $(MAKEFILE) PROGRAM=$(PROGRAM) DEST=$(DEST)
+
+index:;		@ctags -wx $(HDRS) $(SRCS)
+
+install:	$(PROGRAM)
+		@echo "== υσταξοχλα $(PROGRAM) χ λαταμοη $(DEST)
+		@install -s -m $(EXECMODE) $(PROGRAM) $(DEST)
+
+more:;          @more -cs $(HDRS) $(SRCS)
+
+print:;		@$(PRINT) $(HDRS) $(SRCS)
+
+tags:           $(HDRS) $(SRCS); @ctags $(HDRS) $(SRCS)
+
+update:		$(DEST)/$(PROGRAM)
+
+$(DEST)/$(PROGRAM): $(SRCS) $(LIBS) $(HDRS) $(EXTHDRS)
+		@make -f $(MAKEFILE) DEST=$(DEST) install
+
+###
+phelp.o: /usr/include/stdio.h line.h
+pmain.o: /usr/include/stdio.h line.h
+pvmain.o: /usr/include/stdio.h line.h

@@ -1,0 +1,46 @@
+---PAGE supage
+---LINES
+hl      = gc    -       -       cvt_hl  -       "-"
+coprts  = c     coprts
+f       = ipv   -       -       -       -       f
+i       = ipv   -       -       -       -       i
+o       = ipv   -       -       -       -       o
+r       = ipv   -       -       -       -       r
+
+panl    = ipa   -       onoff   cvt_a   -       pF
+scrl    = ipa   -       onoff   cvt_a   -       sF
+hist    = ipa   -       onoff   cvt_a   -       hF
+clck    = ipa   -       onoff   cvt_a   -       cF
+mail    = ipa   -       onoff   cvt_a   -       mF
+ymax    = ipv   n       "%4d"   -       t_ymax  yy_max
+y0      = v     -       "%4d"   -       -       y0
+y0t     = v     -       "%4d"   -       -       y0_top
+
+---# use for debug in SCREEN section
+---#    y0:     .y0.
+---#    y0_top: .y0t
+---SCREEN
+Assistant Shell for BSD
+.coprts..............................................................
+
+				    to return try        Ctrl-E or .:EX....
+				    to use help press    .'?    or .:HE....
+
+=SETUP environment values
+
+	.hist .'h History save on exit
+	.panl .'p Keybar
+	.clck .'c Clock
+	.mail .'m Mail_Biff
+	.scrl .'s Scroll
+
+	.ymax .'l lines (max.)
+
+=Advanced setup - don't touch, please
+
+	Rescan cmd: .f......................................
+	Rescan src: .i......................................
+	'##' subst: .r......................................
+	Opposite:   .o...................................... (not used)
+
+---END

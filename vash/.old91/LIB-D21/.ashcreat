@@ -1,0 +1,44 @@
+#! /usr/new/bin/ash
+#
+# זÁÊÌ ashcreate
+#-----------------------------------------
+# ףןתהבמיו זבךלןק/כבפבלןחןק/נען‏.
+# Wed Sep 12 15:46:39 MSD 1990
+#-----------------------------------------
+#
+-f:FL
+-i.
+-o.
+
+# מבתקבמיס כלבקיû
+-1Empty
+-2
+-3
+-4Text
+-5
+-6
+-7Dir
+-8
+-9HELP
+-0Return
+
+:U0
+:0
+	* *     _cmdset .ashstd
+:GL
+	* *     _cmdset .ashstd
+:U1
+:1
+	rwx ?   touch <>
+:U4
+:4
+	rwx ?   red <>
+:U7
+:7
+	rwx ?   mkdir <>
+:U9
+:9
+	* * _help create.lb
+
+:^F
+	* * _cmdset dura

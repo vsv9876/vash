@@ -1,0 +1,82 @@
+head     1.1;
+access   ;
+symbols  LINLIB_3:1.1;
+locks    vsv:1.1;
+comment  @ * @;
+
+
+1.1
+date     89.08.29.14.50.41;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@χεςσιρ LINLIB_3
+@
+text
+@/*
+**      +----------+    βιβμιοτελα χχοδα-χωχοδα
+**     (c) linlib  !    δμρ αμζαχιτξο-γιζςοχωθ
+**      +----------+    χιδεοτεςνιξαμοχ
+**/
+
+/*
+ *      πομψϊοχατεμψσλικ υςοχεξψ βιβμιοτελι LINLIB
+ *
+ *      u_page(page, phline)    ςαβοτα σο στςαξιγεκ;
+ */
+
+/*
+ *      $Header$
+ *      $Log$
+ */
+
+#include <stdio.h>
+#include "line.h"
+
+u_page(page, phline)
+/*-----------------------------*/
+/* ζυξλγιρ ςαβοτω σο στςαξιγεκ */
+/*-----------------------------*/
+LINE *page;             /* οσξοχξαρ στςαξιγα */
+LINE *phline;           /* ινρ ζακμα στςαξιγω HELP */
+{
+    kbcod   cod;        /* λοδ ποσμεδξεκ λμαχιϋι */
+    LINE *cline;        /* υλαϊατεμψ ξα τελυύυΰ μιξιΰ χ στςαξιγε */
+
+    cline = page;       /* υσταξοχιτψ χ ξαώαμο στςαξιγω */
+    er_pag();
+    w_page(page);
+
+    while ( -1 ) {
+	cod = r_page( page, &cline, 0);
+	switch ( cod ) {
+	case ' ':
+		/* πεςεςισοχατψ ποσμε νεξΰ */
+		if((cline->attr & LMSE) == LMSE) {
+			er_pag();
+			w_page(page);
+		}
+		break;
+	case 'GL' :
+		return;
+	case '?':
+	case 'HE':
+		/* πολαϊατψ σπςαχοώξυΰ ιξζοςναγιΰ */
+		w_help(phline);
+		w_page(page);
+		break;
+	default:   w_emsg("");     /* ποηασιτψ σοοβύεξιε οβ οϋιβλε */
+	}
+    }
+}
+
+@

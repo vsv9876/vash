@@ -1,0 +1,29 @@
+head     1.1;
+access   ;
+symbols  LINLIB_3:1.1;
+locks    ;
+comment  @ * @;
+
+
+1.1
+date     90.12.27.16.33.38;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@ВЕРСИЯ LINLIB_3
+@
+text
+@#include "line.h"
+
+int fastmenu = 0;       /* быстрый выбор: не только подвести курсор,
+			   но и выбрать пункт меню */
+@

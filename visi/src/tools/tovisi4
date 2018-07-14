@@ -1,0 +1,44 @@
+#/bin/sh
+#
+# VISI/LINLIB
+#
+# Translate a character constant a la
+#                 'AU'
+# into more reasonable form
+#                 KBCOD('A', 'D')
+
+for i in $*
+do
+	echo ------------------------ $i
+	ed $i <<EOF
+	g/'AU'/s/'AU'/KB_AU/gp
+	g/'AD'/s/'AD'/KB_AD/gp
+	g/'AL'/s/'AL'/KB_AL/gp
+	g/'AR'/s/'AR'/KB_AR/gp
+	g/'GL'/s/'GL'/KB_EX/gp
+	g/'HE'/s/'HE'/KB_HE/gp
+	g/'KO'/s/'KO'/KB_KP/gp
+	g/'PR'/s/'PR'/KB_PR/gp
+	g/'NL'/s/'NL'/KB_NL/gp
+	g/'DE'/s/'DE'/KB_DE/gp
+	g/'RE'/s/'RE'/KB_RE/gp
+	g/'TA'/s/'TA'/KB_TA/gp
+	g/'U0'/s/'U0'/KBUSR('0')/gp
+	g/'U1'/s/'U1'/KBUSR('1')/gp
+	g/'U2'/s/'U2'/KBUSR('2')/gp
+	g/'U3'/s/'U3'/KBUSR('3')/gp
+	g/'U4'/s/'U4'/KBUSR('4')/gp
+	g/'U5'/s/'U5'/KBUSR('5')/gp
+	g/'U6'/s/'U6'/KBUSR('6')/gp
+	g/'U7'/s/'U7'/KBUSR('7')/gp
+	g/'U8'/s/'U8'/KBUSR('8')/gp
+	g/'U9'/s/'U9'/KBUSR('9')/gp
+	g/'U-'/s/'U-'/KBUSR('-')/gp
+	g/'U\,'/s/'U\,'/KBUSR('\,')/gp
+	g/'U\.'/s/'U\.'/KBUSR('\.')/gp
+	w
+	!echo $i file done
+	q
+EOF
+	echo ------------------------
+done

@@ -1,0 +1,66 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    vsv:1.2;
+comment  @ * @;
+
+
+1.2
+date     90.12.27.17.01.18;  author vsv;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.08.29.16.01.12;  author vsv;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@
+נעונעןדוףףןע VISI
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@/*
+ *      vgen = Visi GENeration
+ *
+ *      $Header: vgen.h,v 1.1 89/08/29 16:01:12 vsv Exp $
+ *      $Log:	vgen.h,v $
+ * Revision 1.1  89/08/29  16:01:12  vsv
+ * Initial revision
+ * 
+ */
+
+#define HSSIZE 016000    /* ֱׂÚֵֽׂ ֲױֱֵֶׂ ִּׁ ֻױÞֹ ׃װֻֿׂ */
+
+/*
+ * ןנעוהוליפר פןלרכן ןהימ זלבח חומועבדיי:
+ * נעיםו‏במיו:
+ *       ק ןף הוםןף üפן הולבופףס ‏ועות Makefile
+ */
+/* #define VLBP            /* נעונעןדוףףןע הלס lbp */
+/* #define VCC             /* נעונעןדוףףןע הלס ףי-כןםנילספןעב */
+/* #define VINTF           /* זילרפע הלס ימפוענעופבפןעב vint */
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 5
+a8 2
+ *      $Header$
+ *      $Log$
+d11 1
+a11 1
+#define HSSIZE 010000    /* ֱׂÚֵֽׂ ֲױֱֵֶׂ ִּׁ ֻױÞֹ ׃װֻֿׂ */
+@

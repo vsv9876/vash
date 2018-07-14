@@ -1,0 +1,33 @@
+---PAGE supage
+---LINES
+hl      = gc    -       -       cvt_hl  -       "-"
+f       = ipv   -       -       -       -       f
+i       = ipv   -       -       -       -       i
+o       = ipv   -       -       -       -       o
+
+panl    = ipa   -       onoff   cvt_a   -       pF
+scrl    = ipa   -       onoff   cvt_a   -       sF
+hist    = ipa   -       onoff   cvt_a   -       hF
+clck    = ipa   -       onoff   cvt_a   -       cF
+ymax    = ipv   -       "%4d"   -       t_ymax  yy_max
+---SCREEN
+=Настройка (SETUP)
+
+	Режимы:
+		.hist История
+		.panl Панель
+		.clck Часы
+		.scrl Свиток
+
+	Размер главного меню:
+
+		.ymax строк (макс.)
+
+
+  Исправлять эти строки не рекомендуется:
+
+Заполн. меню:   .f......................................
+раб. каталог:   .i......................................
+второй. кат.:   .o......................................
+
+---END

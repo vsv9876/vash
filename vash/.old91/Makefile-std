@@ -1,0 +1,189 @@
+##
+##      +----------+    βιβμιοτελα χχοδα-χωχοδα
+##     (C) LINLIB  !    δμρ αμζαχιτξο-γιζςοχωθ
+##      +----------+    χιδεοτεςνιξαμοχ
+##
+##      $Header$
+##      $Log$
+##
+
+#
+#       σβοςλα πςιλμαδξοκ πςοηςαννω βεϊ υσταξοχλι
+#       βιβμιοτελ LINLIB ξα σταξδαςτξωε νεστα
+
+VISI          = ../visi
+VBIN          = $(VISI)/bin
+VLIB          = $(VISI)/lib
+
+PROGRAM       = ash
+EXECMODE      =  711
+DEST          = /usr/new/bin
+
+CFLAGS        = -DDEMOS2 -I../visi/include -DHELP
+CC            = cc
+
+LINKER        = cc
+LDFLAGS       = -n
+# STDLIBS       = -ltermcap
+# STDLIBS       = -ltermnew
+STDLIBS       = -ljobs -lndir
+LIBS          = \
+		$(VLIB)/liblinusr.a \
+		$(VLIB)/libline.a \
+		$(VLIB)/libtermnew.a
+
+VCC           = $(VBIN)/vcc
+VLBP          = $(VBIN)/vlbp
+LBP           = $(VBIN)/lbp
+MAKEFILE      = Makefile
+
+EXTHDRS	      = ../visi/include/line.h \
+		../visi/include/line0.h \
+		/usr/include/ctype.h \
+		/usr/include/ndir.h \
+		/usr/include/signal.h \
+		/usr/include/stdio.h \
+		/usr/include/strings.h \
+		/usr/include/sys/iopage.h \
+		/usr/include/sys/localopts.h \
+		/usr/include/sys/param.h \
+		/usr/include/sys/psw.h \
+		/usr/include/sys/stat.h \
+		/usr/include/sys/types.h \
+		/usr/include/whoami.h
+
+HDRS	      = assist.h
+
+SRCS          = lin145.c \
+		lin330.c \
+		lin460.c \
+		main.c \
+		vcmd.c \
+		vcmdh.c \
+		vcoprt.c \
+		vfread.c \
+		vhelp.cv \
+		visusp.c \
+		visystem.c \
+		vls.c \
+		vmain.c \
+		vmisc.c \
+		vshcmd.c
+
+OBJS	      = lin145.o \
+		lin330.o \
+		lin460.o \
+		main.o \
+		vcmd.o \
+		vcmdh.o \
+		vcoprt.o \
+		vfread.o \
+		vhelp.o \
+		visusp.o \
+		visystem.o \
+		vls.o \
+		vmain.o \
+		vmisc.o \
+		vshcmd.o
+
+SUFFIX        = .cv:sC
+
+.SUFFIXES : .out .o .c .cm .f .e .r .y .yr .ye .l .s .cl .p .q \
+	    .cv .la .lav .lb
+.cv.c:
+	$(VCC) -o $@ $<
+
+.cv.o:
+	$(VCC) -o $*.c $<
+	$(CC) $(CFLAGS) -c $*.c
+	rm -f $*.c
+
+# πεςεχοδ σελγιι δαξξωθ χ σελγιΰ λοδα
+# νοφετ ποξαδοβιτψσρ δμρ οχεςμεκξωθ πςοηςανν ι
+# σιστενξωθ πςοηςανν, σοβιςαενωθ σ λμΰώον ld -n,
+# ΣΝ. ΤΑΛΦΕ ΠÒΑΧΙΜΟ data-to-text:
+# .cv.o:
+#         $(VCC) -o $*.c $<
+#         $(CC) $(CFLAGS) -S $*.c
+#         ed - $*.s <data-to-text
+#         $(AS) -o $*.o $*.s
+#         rm -f $*.c $*.s
+
+.la.lb:
+	$(LBP) $< $@
+
+.lav.la:
+	$(VLBP) -o $@ $<
+
+.lav.lb:
+	$(VLBP) -o $*.la $<
+	$(LBP) $*.la $@
+	rm -f $*.la
+
+all:  $(PROGRAM)
+
+data-to-text:
+	echo 'g/\.data/s//\.text/' >data-to-text
+	echo 'w' >>data-to-text
+	echo 'q' >>data-to-text
+
+program:        $(PROGRAM)
+
+objs:           $(OBJS)
+
+$(PROGRAM):     $(OBJS) $(LIBS) $(MAKEFILE)
+		@echo "Loading $(PROGRAM) ... "
+		@$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) $(STDLIBS) -o $(PROGRAM)
+		@echo " ...done"
+
+clean:
+	rm -f $(OBJS) data-to-text $(NOTEXT)
+
+depend:
+	mkmf -f $(MAKEFILE) PROGRAM=$(PROGRAM) DEST=$(DEST)
+
+calls:  $(SRCS)
+	calls $(CFLAGS) $(SRCS) >calls
+
+install:        $(DEST) $(PROGRAM)
+		@echo "== υσταξοχλα $(PROGRAM) χ λαταμοη $(DEST)
+		@install -s -m $(EXECMODE) $(PROGRAM) $(DEST)
+
+update:		$(DEST)/$(PROGRAM)
+
+$(DEST)/$(PROGRAM): $(SRCS) $(LIBS) $(HDRS) $(EXTHDRS)
+		@make -f $(MAKEFILE) DEST=$(DEST) install
+
+$(DEST):
+	mkdir $(DEST)
+###
+lin145.o: /usr/include/stdio.h ../visi/include/line.h
+lin330.o: /usr/include/stdio.h /usr/include/ctype.h ../visi/include/line.h \
+	../visi/include/line0.h
+lin460.o: /usr/include/stdio.h ../visi/include/line.h
+main.o: /usr/include/signal.h /usr/include/sys/localopts.h \
+	/usr/include/ctype.h /usr/include/stdio.h ../visi/include/line.h \
+	assist.h
+vcmd.o: /usr/include/sys/types.h /usr/include/sys/localopts.h \
+	/usr/include/sys/stat.h /usr/include/signal.h /usr/include/ctype.h \
+	/usr/include/stdio.h ../visi/include/line.h assist.h
+vcmdh.o: /usr/include/strings.h /usr/include/stdio.h ../visi/include/line.h \
+	assist.h
+vcoprt.o: /usr/include/stdio.h ../visi/include/line.h
+vfread.o: /usr/include/ndir.h ../visi/include/line.h /usr/include/stdio.h \
+	assist.h
+vhelp.o: /usr/include/stdio.h ../visi/include/line.h assist.h
+visusp.o: /usr/include/stdio.h ../visi/include/line.h /usr/include/signal.h \
+	/usr/include/sys/localopts.h
+visystem.o: /usr/include/sys/param.h /usr/include/whoami.h \
+	/usr/include/sys/localopts.h /usr/include/signal.h \
+	/usr/include/sys/psw.h /usr/include/sys/types.h \
+	/usr/include/sys/iopage.h ../visi/include/line.h /usr/include/stdio.h
+vls.o: /usr/include/sys/types.h /usr/include/sys/localopts.h \
+	/usr/include/sys/stat.h /usr/include/strings.h /usr/include/stdio.h \
+	/usr/include/ndir.h ../visi/include/line.h assist.h
+vmain.o: /usr/include/sys/types.h /usr/include/sys/localopts.h \
+	/usr/include/sys/stat.h /usr/include/signal.h /usr/include/ctype.h \
+	/usr/include/stdio.h ../visi/include/line.h assist.h
+vmisc.o: /usr/include/stdio.h ../visi/include/line.h assist.h
+vshcmd.o: /usr/include/stdio.h ../visi/include/line.h assist.h

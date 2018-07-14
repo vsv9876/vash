@@ -1,0 +1,181 @@
+head     1.1;
+access   ;
+symbols  LINLIB_3:1.1;
+locks    ;
+comment  @# @;
+
+
+1.1
+date     90.12.27.16.28.35;  author vsv;  state Rel;
+branches ;
+next     ;
+
+
+desc
+@
+@
+
+
+
+1.1
+log
+@ВЕРСИЯ LINLIB_3
+@
+text
+@///
+///     $Header: lin100.s,v 3.2 89/08/29 15:13:37 vsv Rel $
+///
+
+///
+///     поддержка асинхронных заданий для си-компилятора ДЕМОС
+///
+	.text
+	.data
+/
+nxt_of  =  2
+prv_of  =  4
+adr_of  = 10
+srt_of  = 12
+sem_of  = 14
+pri_of  = 15
+csp_of  = 16
+flg_of  = 20
+grp_of  = 22
+bos_of  = 24
+tos_of  = 26
+/
+	.data
+main:
+	end-main                  / [ 0] size in bytes
+////    .byte 0                         / [ 1] type
+	main                            / [ 2] next element
+	main                            / [ 4] previous element
+	0                               / [ 6] nof & pof
+/
+	0                               / [10] job start address
+	0                               / [12] sort value
+	.byte 1                         / [14] semaphore
+	.byte 0                         / [15] priority
+	0                               / [16] stack pointer
+	0                               / [20] flag
+	0                               / [22] group
+	0       / 2000                   / [24] bottom of stack
+	0       / 0500                   / [26] top of stack
+end:
+/
+/
+	.globl  _ce_job
+_ce_job:  main                           / pointer to current jcb
+/
+	.globl  _lh_job
+_lh_job: 0                               / active jobs
+	_lh_job
+	_lh_job
+	0
+/
+///_lh_syn: 0                               / jobs to be synced
+///        _lh_syn
+///        _lh_syn
+///        0
+////
+///_lh_sus: 0                               / suspended jobs
+///        _lh_sus
+///        _lh_sus
+///        0
+///
+///_lh_wtf: 0                               / jobs waiting for flags
+///        _lh_wtf
+///        _lh_wtf
+///        0
+///
+///_lh_clk: 0                               / jobs waiting for clock
+///        _lh_clk
+///        _lh_clk
+///        0
+//////
+///
+///
+///     struct jcb  jcb ;       /* данные для блока управления заданием */
+///
+///     strt_j ( job ) ;        /* запуск задания */
+///     struct jcb *job ;
+///
+///     quit();                 /* закончить текущее задание */
+///     next_j();               /* выполнить другие задания */
+///
+	.text
+	.globl  csv
+	.globl  cret
+	.globl  _strt_j
+	.globl  _quit
+	.globl  _next_j
+c_pmtr  = 4
+_strt_j:
+	jsr     r5,csv                  / save environment
+	mov     c_pmtr(r5),r3         / get job control block
+	mov     bos_of(r3),r2           / bottom of stack
+	mov     r3,-(r2)                / save jcb as argument #1
+	mov     r5,-(r2)                / <1> save r5 environment !!!!
+	mov     r2,csp_of(r3)           / init stack pointer
+	clrb    sem_of(r3)              / init job semaphore
+	mov     $_lh_job,r1             / get activ jobs
+	jsr     pc,ins                  / and insert job in list
+	jmp     cret                    / return to caller
+/
+_quit:
+	jsr     r5,csv                  / save environment
+	mov     r5,-(sp)                / <1> also save r5 !!!!!
+	mov     _ce_job,r3              / current job
+	mov     sp,csp_of(r3)           / save stack pointer
+	br      sync                    /
+/
+_next_j:
+	jsr     r5,csv                  / save environment
+	mov     r5,-(sp)                / <1> also save r5 !!!!!
+	mov     _ce_job,r3               / current job
+	mov     sp,csp_of(r3)           / save stack pointer
+	mov     $_lh_job,r1              / list head
+	jsr     pc,ins                     / insert current job
+/
+sync:   mov     $_lh_job,r1              / list head
+	mov     nxt_of(r1),r1           / get next job
+	jsr     pc,rmv                  / remove from wait list
+	mov     csp_of(r3),sp           / restore stack pointer
+	mov     (sp)+,r5                / <0> restore r5 !!!!!
+	mov     r3,_ce_job              / new current job
+	tstb    sem_of(r3)              / already running ?
+	beq     strt                    / no start it
+	jmp     cret                    / return to new job
+/
+strt:   incb    sem_of(r3)              / increment semaphore
+	jsr     pc,*adr_of(r3)          / start that job
+	br      sync                    / abort job
+/       ----------------------------------------------------------------------
+/       r1  =   current element
+/       r3  =   element to be inserted
+/       call ins
+/       ----------------------------------------------------------------------
+ins:
+	mov     prv_of(r1),r0           / previous element
+	mov     r0,prv_of(r3)           / update curr one
+	mov     r1,nxt_of(r3)           / update curr one
+	mov     r3,nxt_of(r0)           / update prev one
+	mov     r3,prv_of(r1)           / update next one
+	rts     pc
+///
+///     r1  =   element to be removed
+///     call rmv
+///     r1 :=   next element
+///     r3 :=   removed element
+///
+rmv:
+	mov     r1,r3                   / r3 := removed element
+	mov     prv_of(r1),r0           / prev element
+	mov     nxt_of(r1),r1           / next element
+	mov     r1,nxt_of(r0)           / update prev one
+	mov     r0,prv_of(r1)           / update next one
+	mov     r3,nxt_of(r3)           / update curr one
+	mov     r3,prv_of(r3)           / update curr one
+	rts     pc
+
+@

@@ -1,0 +1,77 @@
+/*
+**      +----------+    גיגליןפוכב קקןהב-קשקןהב
+**     (c) linlib  !    הלס בלזבקיפמן-דיזעןקשט
+**      +----------+    קיהוןפועםימבלןק
+**/
+
+/*
+ *      נןלרתןקבפולרףכיך ץעןקומר גיגליןפוכי LINLIB
+ *      w_help()  נןכבת ףנעבקן‏מןך ימזןעםבדיי
+ */
+
+/*
+ *      $Header: lin470.cv,v 1.1 89/08/29 14:50:38 vsv Rel $
+ *      $Log:	lin470.cv,v $
+Revision 1.1  89/08/29  14:50:38  vsv
+קועףיס LINLIB_3
+
+ */
+
+#include <stdio.h>
+#include "line.h"
+
+static
+---PAGE help0
+---SCREEN
+=LINLIB == Main keyboard commands
+
+   close screen:           .:GL....     navigation across fields:
+   screen refresh:         .:RE....     .:AU.... .:AD....
+   keypad on/off:          .:KO....     .:AL.... .:AR.... .:NL....
+
+   selector control:                    How to select menu item:
+   forward:  .:>   .:.   ."SPACE ".     navigate, then press ."SPACE ".
+   backward: .:<   .:,   .:DE....
+
+   switch to field editing:        
+      - keep content:                   ."SPACE ".
+      - erase content:                  .:DE....   (eny printing simbol)
+
+=Field editing commands (string editor)
+
+ cursor to begin:        .:GL.... .:AL....     symbol erasing:
+ cursor to text tail:    .:GL.... .:AR....     left from cursor:      .:DE....
+ mode insert/replace:    .:GL.... .:GL....     under cursor: .:GL.... .:DE....
+ input new value:        .:NL....
+
+---END
+
+
+w_help(phelp)
+/*--------------------------------*/
+/* נןכבתבפר ףנעבקן‏מץא ימזןעםבדיא */
+/*--------------------------------*/
+LINE    *phelp;         /* ףפעבמידב נןהףכבתכי */
+{
+help_1:
+	if(phelp) {
+		er_pag();
+		w_page(phelp);
+		switch(r_cod(0)) {
+		case KB_RE:      goto help_1;
+		case KB_HE:      break;
+		default:        goto help_0;
+		}
+	} else bell();
+	;
+help_2:
+	er_pag();
+	w_page(help0);
+	switch(r_cod(0)) {
+	case KB_RE:      goto help_2;
+	case KB_HE:      goto help_1;
+	default:        break;
+	}
+help_0:
+	er_pag();
+}

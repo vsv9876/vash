@@ -1,0 +1,89 @@
+head	3.1;
+access;
+symbols
+	LINLIB_3:3.1;
+locks
+	vsv:3.1; strict;
+comment	@ * @;
+
+
+3.1
+date	89.08.29.14.50.44;	author vsv;	state Rel;
+branches;
+next	3.0;
+
+3.0
+date	88.06.16.18.06.19;	author vsv;	state Exp;
+branches;
+next	;
+
+
+desc
+@
+αξαμοη ζυξλγιι perror δμρ LINLIB
+@
+
+
+3.1
+log
+@χεςσιρ LINLIB_3
+@
+text
+@/*
+**      +----------+    βιβμιοτελα χχοδα-χωχοδα
+**     (c) linlib  !    δμρ αμζαχιτξο-γιζςοχωθ
+**      +----------+    χιδεοτεςνιξαμοχ
+**/
+
+/*
+ *      $Header: lin490.c,v 3.0 88/06/16 18:06:19 vsv Exp $
+ *
+ *      $Log:	lin490.c,v $
+ * Revision 3.0  88/06/16  18:06:19  vsv
+ * πςεδχαςιτεμψξωκ χωπυσλ
+ * 
+ */
+
+#include <ediag.h>
+#include <stdio.h>
+#include "line.h"
+
+lerror(s)
+/*-----------------------*/
+/* αξαμοη ζυξλγιι perror */
+/*-----------------------*/
+register char *s;
+{
+	extern  int errno;              /* σιστενξωκ ξονες οϋιβλι */
+	extern  int sys_nerr;           /* ναλσ. ξονες σοοβύεξιρ */
+	extern  char *sys_errlist[];    /* αξημ. σπισολ σοοβύεξικ */
+	extern  char *sys_rerrlist[];   /* ςυσσ. σπισολ σοοβύεξικ */
+
+	char    outstr[STRLEN];
+
+	if (errno <= sys_nerr ) {
+		sprintf ( outstr,
+		"CLIB: '%s' : %s",      s,
+		ediag ( sys_errlist[ errno ], sys_rerrlist[ errno ] ) );
+	} else {
+		sprintf ( outstr, "CLIB: %d : %s ",
+		ediag ( "Unknown error", "ξειϊχεστξαρ οϋιβλα" ) );
+	}
+	/* χωχοδ σοοβύεξιρ οβ Οϋιβλε */
+	w_emsg ( outstr );
+}
+@
+
+
+3.0
+log
+@πςεδχαςιτεμψξωκ χωπυσλ
+@
+text
+@d8 1
+a8 1
+ *      $Header$
+d10 4
+a13 1
+ *      $Log$
+@

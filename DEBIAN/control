@@ -1,0 +1,10 @@
+Package: vash
+Version: 1.18-5
+Section: misc
+Architecture: amd64
+Depends: libc6
+Maintainer: vsv <vsv9876@yandex.ru>
+Description: Visual Assistant Shell (vash)
+ Visual Assistant Shell, interactive supershell over sh/bash
+ features visual assistance for command line parameters,
+ command string editing, parameterized command history, hotkey scripting, etc.

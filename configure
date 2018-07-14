@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#echo Warning! there no automatic configuration prepared,
+#echo please, use 'make cfg' instead
+BLDCONF=./BLD.conf
+
+ > $BLDCONF	echo '#' `date`
+ >> $BLDCONF	echo ''
+ >> $BLDCONF	echo 'TOPDIR    = '`pwd`
+ >> $BLDCONF	echo ''
+ >> $BLDCONF	echo 'DEST      = /usr'
+ >> $BLDCONF	echo ''
+ >> $BLDCONF	echo 'PATH      = '`pwd`'/visi/bin:'$PATH
+ >> $BLDCONF	echo ''
+#make cfg
+
+exit 0

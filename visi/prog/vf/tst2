@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# clear;
+cat <<---
+υλαφιτε ξυφξωκ πυξλτ νεξΰ,
+
+ϊατεν ξαφνιτε <χλ>
+---
+vf -1 <<----
+1       wertwetert
+2       sdfasd asd asf asf sdf sf
+3       asd asd asd asd
+4       eee
+5       sdasdasdasd asd as asd asd asd asd
+6       sdf
+7       d
+8       dddd
+9       rrfrfrfr
+10
+11
+12
+13
+14      werwerwerwr
+15      wqerwerwerwerwerwerwer
+16      werwerwerwr me e e e erere eer e
+17      wer we erere eer er er ereee
+----

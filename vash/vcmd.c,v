@@ -1,0 +1,356 @@
+head	1.1;
+access;
+symbols;
+locks
+	vsv:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	95.10.04.15.27.18;	author vsv;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#include <ctype.h>
+#include <stdio.h>
+#include "line.h"
+#include "assist.h"
+#include "astat.h"
+
+/* встроенные функции */
+extern  int     cmdset();
+extern  int     sup(), v_susp();
+extern  int     vshcmd(), menu2();
+extern  int     fsh(), fmenu2();
+extern  int     ffile(), fmsg(), fmsgerr();
+extern  int     rescan();
+
+extern  char  *nmsubs();
+
+#ifdef DEBUG
+extern  int     kshow();
+#endif
+
+FUNTAB funtab[] = {
+	{ "read",       0 },
+	{ "sh",         fsh },
+	{ "menu2",      fmenu2 },
+	{ "cmdset",     cmdset },
+	{ "sup",        sup },
+	{ "sus",        v_susp },
+	{ "file",       ffile },
+	{ "ls",         0 },
+	{ "help",       w_help },
+	{ "msg",        fmsg },
+	{ "err",        fmsgerr },
+	{ "rescan",     rescan },
+#ifdef DEBUG
+	{ "kshow",      kshow },
+#endif
+	{ (char *)0,    0 },
+};
+
+extern  char    Cfill[];
+extern  char    Crepf[];
+extern  char    Coutf[];
+extern  char    Csubs[];
+
+extern  PATCMD  pc[];
+extern  KEYTAB  kt2[];
+extern  KEYTAB  kt1[];
+
+static  char    lastkey[4];     /* код последней нажатой клавиши */
+/*
+ * Интерпретировать клавишную команду
+ *
+ * Две фазы интерпретации:
+ * 1. Проверяется правомочность самой команды по таблице kt1.
+ *    Сравниваются права самого каталога, наличие пометки.
+ * 2. Если имя действия начинается со знака '+',
+ *    интерпретируется таблица kt2.
+ *    Сравниваются права файла, его тип, шаблон имени.
+ * Возвращаемые значения:
+ *      -1      не найдено соответствие, экран не испорчен.
+ *       0      отказ от действия, экран не испорчен.
+ *       1      команда выполнена, экран испорчен.
+ */
+/*ARGSUSED*/
+vcmd(j, cod, mainl)
+int     j;      /* индекс пункта рядом с курсором */
+kbcod   cod;    /* код нажатой клавиши */
+LINE    *mainl; /* указатель на страницу меню */
+{
+	char  file[140];
+	char    cods[20];       /* строка с идент. встроен. команды */
+	register KEYTAB *ktp;
+	register PATCMD *pcp;
+	register int i;
+	char   *patp;           /* образец для сравнения */
+	char   *cmd;
+
+	/* получить строку с кодом клавиши, найти совпадение. */
+	lastkey[0] = cod0(cod);
+	lastkey[1] = cod1(cod);
+	lastkey[2] = 0;
+	for (ktp=kt1; ; ktp++) {
+		if (ktp->kt_key == (char *)0)
+			return(-1);     /* ничего не найдено */
+		if (patcmp(ktp->kt_key, lastkey))
+			break;
+	}
+
+	/* получить образец первого условия, найти совпадение */
+	patp = tstat1();
+	for (pcp=ktp->kt_tab, i=ktp->kt_ib; i <= ktp->kt_ie; i++) {
+		if (pcp[i].pc_pat == (char *)0)
+			return(-1);     /* конец таблицы */
+		if (patcmp(pcp[i].pc_pat, patp))
+			break;
+		if (i == ktp->kt_ie)
+			return(-1);     /* конец поиска, ничего не найдено */
+	}
+	cmd = pcp[i].pc_cmd;    /* команда получена */
+	/* выполнить команду */
+	/* если команда нач. со зн. '+' */
+	if (*cmd == '+') {
+		/* найти программу для второго условия */
+		for (i=0, cmd++; cmd[i] && cmd[i] != ' '; i++)
+			cods[i] = cmd[i];
+		cods[i] = 0;
+		for (ktp=kt2; ; ktp++) {
+			if (ktp->kt_key == (char *)0)
+				return(-1);     /* ничего не найдено */
+			if (patcmp(ktp->kt_key, cods))
+				break;
+		}
+		/* получить образец второго условия, найти совпадение */
+/*                cmdsub(file, &itms[itm][2]);  */
+		cmdsub(file, "#@@", itm);
+		patp = tstat2(file);
+		for (pcp=ktp->kt_tab, i=ktp->kt_ib; i <= ktp->kt_ie; i++) {
+			if (pcp[i].pc_pat == (char *)0)
+				return(-1);     /* конец таблицы */
+			if (patcmp(pcp[i].pc_pat, patp))
+				break;
+			if (i == ktp->kt_ie)
+				/* конец поиска, ничего не найдено */
+				return(-1);
+		}
+		cmd = pcp[i].pc_cmd;    /* новая команда получена */
+	}
+	if (*cmd == '_' && cmd++) {
+	/* встроенная команда */
+		return(vincmd(cmd));
+	}
+	return(vexcmd(cmd, (char *)0));   /* внешняя команда */
+}
+
+int vincmd(cmd)
+register char *cmd;     /* встроенная функция */
+{
+	char  keywd[20];        /* ключевое слово команды */
+	char *keywdp;
+	int (*keyf)();
+	register FUNTAB *ftp;
+
+	keywdp = keywd;
+	while (*cmd && *cmd != ' ')
+		*keywdp++ = *cmd++;
+	*keywdp = 0;
+	while (*cmd && *cmd == ' ') cmd++;   /* остаток команды */
+
+	/* установить соответствие */
+	for (ftp = funtab; ftp->ft_name; ftp++) {
+		if (strcmp(ftp->ft_name, keywd) == 0) {
+			if (keyf = ftp->ft_fun)
+				return((*keyf)(cmd));
+			else    break;
+		}
+	}
+	w_emsg(keywd); w_str(cmd);
+	return(-1);     /* функция не найдена */
+}
+
+/*
+ * выполнить подстановки #k,#@@,#i,#o,#a,..., кроме ##.
+ */
+
+cmdsub(ptmp, p, i)
+register char *p;       /* откуда копировать */
+register char *ptmp;    /* куда копировать */
+register int  i;        /* копия itm */
+{
+    extern char *getenv();
+    register char *s;
+    char *nm_ptr;
+
+    *ptmp = '\0';
+    while (*p) {
+	if (*p == MONEY) {
+	    p++;
+	    switch(*p) {
+
+	    default:    /* пропустить без изменений */
+		*ptmp++ = MONEY;
+		*ptmp++ = *p++;
+		continue;
+	    case 0:     /* КОНЕЦ */
+		break;
+	    case 'k':   /* код последней клавиши */
+		strcpy(ptmp, lastkey);
+		break;
+	    case '@@':   /* имя файла возле курсора */
+		nm_ptr = nmsubs(&itms[i][2], Csubs);
+		strcpy(ptmp, nm_ptr);
+		break;
+	    case 'i':   /* имя реперного файла/текущего каталога */
+		strcpy(ptmp, Crepf);
+		break;
+	    case 'o':   /* имя целевого (второго) файла/каталога */
+		strcpy(ptmp, Coutf);
+		break;
+	    case 'e':   /* имя редактора текстов (EDITOR=) */
+		if ((s=getenv("EDITOR")) == NULL)
+#ifndef SYSV
+		    s = "re";   /* стандарт ДЕМОС */
+#else
+		    s = "vi";   /* стандарт UNIX */
+#endif
+		strcpy(ptmp, s);
+		break;
+	    case '*':   /* имя файла до последнего суффикса */
+		fnsplit(ptmp, &itms[i][2], 0);
+		break;
+	    case 's':   /* последний суффикс имени файла, с точкой */
+		fnsplit(ptmp, &itms[i][2], 1);
+		break;
+	    case 'S':   /* последний суффикс имени файла, без точки */
+		fnsplit(ptmp, &itms[i][2], 2);
+		break;
+#ifdef DEVELOPE
+	    case 'm':   /* новое имя для создания/переименования */
+	    case 'a':   /* строка пользователя */
+	    case 'b':   /* строка пользователя */
+#endif
+	    }
+	    p++;
+	    while (*ptmp) ptmp++;
+	    continue;
+	}
+	else
+	    *ptmp++ = *p++;
+    }
+    *ptmp = '\0';       /* конец подстановки */
+}
+
+/*ARGSUSED*/
+int vexcmd(cmd, cmdlbl)
+char *cmd;      /* "сырая" команда, требуются подстановки */
+char *cmdlbl;   /* вывеска взамен команды */
+{
+	char    tmpcmd[140];
+
+	if (cmd) {
+	    /* выполнить подстановки */
+	    cmdsub(tmpcmd, cmd, itm);
+	    cmd = tmpcmd;
+	}
+	return( vshcmd(cmd, (char *)0) );
+}
+
+int
+fsh(cmd)        /* команда sh */
+register char *cmd;
+{
+	if (*cmd == '\0')
+		/* vshcmd использует старую команду */
+		cmd = (char *)0;
+	return(vexcmd(cmd, (char *)0));
+}
+int
+fmenu2(file)        /* меню из файлов .ashmenu */
+register char *file;
+{
+	char    cmdlbl[100];    /* вывеска взамен команды */
+	char    tmpcmd[40];
+
+	switch(menu2(tmpcmd, cmdlbl, file)) {
+	case 1:
+		/* результат команды игнорируется */
+		vshcmd(tmpcmd, cmdlbl);
+		/* проваливаемся... */
+	case 0:
+		/* восстановить гл. меню */
+		return( 1 );
+	}
+	return( 0 );
+}
+
+int
+ffile(cmd)
+register char *cmd;
+{
+	char  file[140];
+
+	cmdsub(file, cmd, itm);
+	w_msg(TXT, tstat2(file));
+	return( 0 );
+}
+
+int
+fmsg(s)
+register char *s;
+{
+	w_msg(TXT, s);
+	return(0);
+}
+
+int
+fmsgerr(s)
+register char *s;
+{
+	w_msg(ERR, s);
+	return(0);
+}
+
+int
+kshow(s)
+/*
+ * Показать программу настройки (для отладки)
+ */
+register char *s;
+{
+	char tmps[300];
+	register int i, j;
+
+	for (i=0; kt1[i].kt_key; i++) {
+		sprintf(tmps, "kt1: %d:%d:'%s'",
+		kt1[i].kt_ib,
+		kt1[i].kt_ie,
+		kt1[i].kt_key);
+		cp_set((i%10)+2, 0, TXT); w_str(tmps); er_eol();
+		if ( (i+1) % 10 ) ;
+		else    { bell(); r_cod(0); er_pag(); }
+	}
+	for (i=0; kt2[i].kt_key; i++) {
+		sprintf(tmps, "kt2: %d:%d:'%s'",
+		kt2[i].kt_ib,
+		kt2[i].kt_ie,
+		kt2[i].kt_key);
+		cp_set((i%10)+2, 0, TXT); w_str(tmps);
+		if ( (i+1) % 10 ) ;
+		else    { bell(); r_cod(0); er_pag(); }
+	}
+	return(1);
+}
+@

@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+
+dirname=`pwd`
+name=`basename $dirname`
+#echo $name
+
+set -x
+mv READ_ME READ_ME.old
+cp /usr/local/lib/ash/ASHINTRO .
+tar cf $name.tar `cat LIST`
+compress -b16 $name.tar
+ls -l $name.tar.*

@@ -1,0 +1,248 @@
+head     3.2;
+access   ;
+symbols  LINLIB_3:3.2;
+locks    ; strict;
+comment  @ * @;
+
+
+3.2
+date     89.08.29.14.49.43;  author vsv;  state Rel;
+branches ;
+next     3.1;
+
+3.1
+date     88.06.27.15.30.25;  author vsv;  state Exp;
+branches ;
+next     3.0;
+
+3.0
+date     87.12.21.12.21.54;  author vsv;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@
+‏בףש (נעיםוע בףימטעןממןחן תבהבמיס).
+@
+
+
+3.2
+log
+@קועףיס LINLIB_3
+@
+text
+@/*
+**      +----------+    גיגליןפוכב קקןהב-קשקןהב
+**     (c) linlib  !    הלס בלזבקיפמן-דיזעןקשט
+**      +----------+    קיהוןפועםימבלןק
+**/
+
+/*
+ *      $Header: lin430.c,v 3.1 88/06/27 15:30:25 vsv Exp $
+ *
+ *      $Log:	lin430.c,v $
+ * Revision 3.1  88/06/27  15:30:25  vsv
+ * עוקיתיס בעטיקב RCS
+ * 
+ * Revision 3.0  87/12/21  12:21:54  vsv
+ * נעוהקבעיפולרמשך קשנץףכ.
+ * 
+ */
+
+/* ‏בףש ף דיזעןקןך ימהיכבדיוך */
+
+#include <stdio.h>
+#include "line.h"
+#include "ajobs.h"
+
+#include <time.h>
+
+#define STCKSZ  512     /* עבתםוע ףפוכב הלס בףימטעןממןחן תבהבמיס */
+
+static  unsigned stck[STCKSZ];
+static  int     s_sec;          /* נןףלוהמסס ףוכץמהב */
+static  int     clckli;         /* ףפעןכב */
+static  int     clckco;         /* נןתידיס */
+static  int     clckat;         /* בפעיגץפ */
+static  int     clckdie;        /* זלבח: תבכןמ‏יפר קשקןה ימהיכבדיי, ץםועופר */
+
+#ifndef decus
+static  struct  tm *ptm;
+#else
+static	TIME	buf ;
+#endif
+
+/*-------------------------------------*/
+/* נעןדוהץעב קשקןהב נןכבתבמיך מב üכעבמ */
+/* ף ימפועקבלןם ק ןהמץ ףוכץמהץ         */
+/*-------------------------------------*/
+static	int	clo()
+{
+	int next_j() ;
+#ifndef decus
+	struct tm *localtime();
+	long time();
+	long timbuf;
+#else
+	int  $$rtim();
+#endif
+	for ( ;; ) {
+		if (clckdie) {
+			cp_sav();
+			cp_set (clckli, clckco, TXT);
+#ifdef decus
+			printf ("%11.11s", "");
+#else
+			printf ("%8.8s", "");
+#endif decus
+			cp_fet();
+			clckdie = 0;
+			return;
+		}
+
+		/* נןלץ‏יפר ףיףפוםמןו קעוםס */
+#ifndef decus
+		timbuf = time(0);
+		ptm = localtime(&timbuf);       /* DECUS : $$rtim(&buf); */
+
+		if ( s_sec != ptm->tm_sec) {
+			s_sec = ptm->tm_sec;
+			cp_sav();
+			cp_set (clckli, clckco, TXT);
+			printf ("%8.8s", "");
+			cp_set (clckli, clckco, clckat);
+			printf ("%2d:%02d'%02d",
+			ptm->tm_hour, ptm->tm_min, ptm->tm_sec );
+			cp_fet();
+		}
+#else
+		$$rtim (&buf);
+		if ( s_sec != buf.second ) {
+			s_sec = buf.second ;
+			cp_sav();
+			cp_set (clckli, clckco, clckat);
+			printf ("%2d:%02d'%02d.%02d",
+			buf.hour, buf.minute, buf.second, buf.tick ) ;
+			cp_fet();
+		}
+#endif
+		next_j();       /* ןפנץףפיפר םןמיפןע בףימטעןממשט תבהבמיך */
+	}
+}
+
+static  JCB     job1 =  {
+	JCBSIZ,0,0,0,0,0,
+	clo,0,0,0,0,0,0,
+	&stck[STCKSZ],&stck[0]
+	};
+
+
+/*----------------------------*/
+/* זלבח: תבהבמיו ץצו תבנץ‎ומן */
+/*----------------------------*/
+static  int runflg = 0;
+
+/*--------------------------*/
+/* תבנץףכ/ןףפבמןק ימהיכבדיי */
+/*--------------------------*/
+clock(ckli, ckco, ckat)
+int ckli, ckco, ckat;
+{
+
+	if(ckat == -1)  {
+		if(runflg == 0)
+			return(1);
+		clckdie = 1;    /* תבכבתבפר ןףפבמןק */
+		/* הןצהבפרףס תבקועûומיס תבהבמיס */
+		while(clckdie)
+			next_j();
+		runflg = 0;
+	} else {
+		if(runflg)
+			return(1);
+		runflg = 1; clckdie = 0;
+		clckli = ckli;
+		clckco = ckco;
+		clckat = ckat;
+		strt_j( &job1 );        /* תבנץףפיפר תבהבמיו */
+	}
+	return(0);      /* OK */
+}
+@
+
+
+3.1
+log
+@עוקיתיס בעטיקב RCS
+@
+text
+@d8 1
+a8 1
+ *      $Header: lin430.c,v 3.0 87/12/21 12:21:54 vsv Exp $
+d11 3
+d78 2
+@
+
+
+3.0
+log
+@נעוהקבעיפולרמשך קשנץףכ.
+@
+text
+@d8 1
+a8 1
+ *      $Header$
+d10 4
+a13 1
+ *      $Log$
+d24 1
+a24 3
+/*----------------------------------------------------------------------*/
+static	int	stck[512] ;
+static	int	s_sec ;
+d26 7
+d39 4
+a42 1
+/*----------------------------------------------------------------------*/
+d47 1
+d54 13
+d69 1
+a69 1
+		timbuf = time(&timbuf);
+d73 4
+a76 5
+			s_sec = ptm->tm_sec ;
+			cp_sav() ;
+			cp_set ( 2, 70, TXT ) ;
+			printf (
+			"%02d:%02d.%02d",
+d78 1
+a78 1
+			cp_fet() ;
+d81 1
+a81 1
+		$$rtim ( &buf ) ;
+d84 3
+a86 3
+			cp_sav() ;
+			cp_set ( 2, 67, TXT ) ;
+			printf ( "*%02d:%02d:%02d.%02d",
+d88 1
+a88 1
+			cp_fet() ;
+d91 1
+a91 1
+		next_j() ;
+d97 3
+a99 2
+	&clo,0,0,0,0,0,0,
+	&stck[512],&stck[0] };
+d101 11
+a111 2
+clock(flag)
+int flag ;
+d113 19
+a131 1
+	strt_j( &job1 );
+@

@@ -1,0 +1,331 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    vsv:1.1;
+comment  @@;
+
+
+1.1
+date     90.06.08.10.59.33;  author vsv;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@
+СЕЛЕКТОР ФАЙЛОВ
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/*
+**      +----------+    Библиотека ввода-вывода
+**     (c) linlib  !    для алфавитно-цифровых
+**      +----------+    видеотерминалов
+**/
+
+/*
+ *      $Header$
+ *      $Log$
+ */
+
+#include <ctype.h>
+#include <stdio.h>
+#include "line.h"
+#include "vf.h"
+
+#ifdef RT11
+ error Программа предназначена исключительно для unix
+#endif
+
+char *itms[ITMMAX+1] = {0};
+char  itmbuf[ITMMAX*ITMLEN];
+
+int     itmmax = 0;
+int     itm = 0;
+int     itmofs = 0;
+short   itmlen = 0;
+short   oneitm = 0;    /* флаг: допускается только один аргумент */
+
+scrlnl()
+{
+	register int i;
+	for (i = BEGLI; i < 24; i++)
+		putc('\n', vttout);
+}
+
+vfread()
+/*-----------------*/
+/* заполнить буфер */
+/*-----------------*/
+{
+	register char *itmbp;
+	short len;
+	int c;
+
+	itmmax = 0;
+	len = 0;
+	itms[itmmax] = itmbp = itmbuf;
+	*itmbp++ = ' ';
+	while ((c = getchar()) != EOF) {
+		if (&itmbuf[ITMMAX*ITMLEN-1] == itmbp)
+			break;
+
+		if (c == '\n') {
+			/* конец очередной строки */
+			*itmbp++ = '\0';
+			if ( len > itmlen ) itmlen = len;
+			len = 0 ;
+			itmmax++;
+			itms[itmmax] = itmbp;
+			*itmbp++ = ' ';
+		}
+		else {
+			len++;
+			*itmbp++ = c;
+		}
+	}
+	*itmbp++ = '\0';
+	if ( len > itmlen ) itmlen = len;
+/*----
+	itmmax++;
+----*/
+}
+
+static  int t_file(line, cod)
+register LINE *line;
+kbcod cod;
+{
+	register char *p;
+	register char **pp;
+
+	if (cod == ' ') {
+		if(oneitm) {
+			w_emsg("допускается только один аргумент");
+			return(FALSE);
+		}
+		pp = (char **)line->varl;
+		p = *pp;
+		if (*p == ' ') {
+			line->attr = ATT|INP|NED;
+			*p = '*';
+		}
+		else {
+			line->attr = TXT|INP|NED;
+			*p = ' ';
+		}
+	}
+	return (TRUE);
+}
+
+static  LINE tmplate =
+{ 16, 0, 0, 0, TXT|INP|NED, 0, cvt_sp, t_file, &itms[0] };
+
+LINE vf[41] = { 0 };
+
+pre_vf()
+/*--------------------------------*/
+/* построить страницу меню файлов */
+/*--------------------------------*/
+{
+	register int i;
+
+	for (i = 0; i < 40 && i+itmofs < itmmax; i++) {
+		vf[i] = tmplate;
+		vf[i].colu = (i / 10)*20;
+		vf[i].line = (i % 10) + BEGLI;
+		/* надо учесть атрибут уже помеченных файлов */
+		if (*itms[i+itmofs] == '*') {
+			vf[i].attr = ATT|INP|NED;
+		} else {
+			vf[i].attr = TXT|INP|NED;
+		}
+		vf[i].varl = &itms[i+itmofs];
+	}
+	vf[i].size = 0;
+}
+
+vfout()
+{
+	register int i;
+	register char *p;
+
+	for ( i = 0; i < itmmax; i++ ) {
+		p = itms[i];
+		if ( *p == '*')
+			printf("%s\n", p+1);
+	}
+}
+
+---PAGE helpm
+---LINES
+sp      = gh    -       -       -       -       "пробел"
+itmx    = v     -       "%$#d"  -       -       &itmmax
+itm     = v     -       "%$#d"  -       -       &itm
+itmo    = v     -       "%$#d"  -       -       &itmofs
+itml    = v     -       "%$#d"  -       -       &itmlen
+
+---SCREEN
+=Селектор имен файлов  VF (пробная версия)
+
+	для пометки или отмены пометки нажмите .sp.....
+	для подстановки и выполнения команды нажмите .:NL....
+
+					количество файлов       .itmx.
+					курсором указан файл    .itm..
+					смещение кадра          .itmo.
+					макс. длина имени файла .itml.
+
+=Инструкция для программиста
+
+ Эта команда предназначена для использования в командных файлах для выбора
+ имен файлов и в других подобных случаях. Примеы использования:
+
+	cp `ls | vf` /tmp;      копирование файлов в каталог /tmp
+	arrt xv1 `arrt t1`;     чтение файлов с флоппи-диска в формате RT-11
+
+ Команда vf считывает стандартный ввод, отмеченные строки выдает на
+ стандартный вывод. Ввод/вывод можно перенаправлять (см. примеры выше).
+
+---END
+
+clritm()
+/* прочистить место на экране для меню */
+{
+    register int i;
+
+    for (i = 0; i < 10; i++) {
+	cp_set(i+BEGLI, 0, TXT);
+	er_eol();
+	}
+}
+
+static  int     showco = -1;    /* позиция нач. строки индикации окна */
+
+itmshow()
+/* показать положение "окна" */
+{
+	register int i;
+
+	if (showco < 0) {
+		showco = (maxco - (itmmax/10))/2;
+		if (showco < 0) showco = 0;
+	}
+	cp_set(BEGLI+10, showco, TXT);
+	for (i = 0; i < itmmax; i += 10) {
+		if (i >= itmofs && i < itmofs+40)
+			{ at_set(MSE|INP); w_chr('='); }
+		else    { at_set(TXT);     w_chr('-'); }
+	}
+}
+
+u_menu(mainl, helpl)
+/*
+ * работа со страницей меню
+ */
+register LINE *mainl;
+LINE *helpl;
+{
+	register unsigned i;
+	kbcod cod;
+
+	/* первоначальный показ на экране */
+	cp_set(BEGLI, 0, TXT);
+	er_eop();
+	itmshow();
+	w_page(mainl);
+
+	itm = i = 0;
+	for ( ;; ) {
+		cod = r_line( &mainl[i], 0 );
+		switch (cod) {
+		default:
+			w_emsg(""); break;
+		case 'NL':
+			if (oneitm) *itms[ i + itmofs ] = '*';
+			return;
+		case 'HE':
+			w_help(helpl); itmshow(); w_page(mainl);
+			break;
+		case 'RE':
+			er_pag(); itmshow(); w_page(mainl);
+			break;
+		case 'AL':
+			itm -= 10;
+			if (itm < 0) itm = 0;
+			break;
+		case 'AU':
+			if (itm > 0) itm--;
+			break;
+		case ' ':
+			w_line( &mainl[i] );
+		case 'AD':
+			if (itm < itmmax-1) itm++;
+			break;
+		case 'AR':
+			itm += 10;
+			if (itm >= itmmax) itm = itmmax - 1;
+			break;
+		}
+		/* поставить в соответствие значение itm
+		 * и положение курсора на экране
+		 */
+		i = itm - itmofs;
+		if (i >= 0 && i < 40)
+			continue;
+		else {
+			switch (cod) {
+			case 'AL':
+				itmofs -= 30;
+				if (itmofs < 0)
+					itmofs = 0;
+				break;
+			case 'AU':
+				itmofs -= 10;   break;
+			case 'AR':
+				itmofs += 30;
+				if (itmofs >= (((itmmax/10)-3)*10))
+					itmofs = ((itmmax/10)-3)*10;
+				break;
+			case 'AD':
+			case ' ':
+				itmofs += 10;   break;
+			}
+			i = itm - itmofs;
+			clritm();
+			pre_vf();
+			itmshow();
+			w_page(mainl);
+		}
+	}
+}
+
+main()
+/*--------*/
+/*  MAIN  */
+/*--------*/
+{
+	int c;
+
+	vtty();
+	scrlnl();
+
+	hw_set();
+	io_set(IO_VIDEO);
+
+	vfread();
+	pre_vf(0);
+	u_menu(vf, helpm);
+
+	cp_set(-1, 0, TXT);
+	io_set(IO_TTYPE);
+
+	vfout();
+	exit(0);
+}
+@

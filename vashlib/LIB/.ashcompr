@@ -1,0 +1,60 @@
+:
+# Меню для компресии (вызывается из .ashmisc)
+#
+
+#+ ## проверить корректность пометки ##
+for file in $@
+do
+    echo -n '#'
+    if [ -f $file -a -s $file ]
+    then
+	continue
+    else
+	echo ''
+	echo 'Ошибка:'
+	echo 'не подходит для компрессии файл' $file
+	if [ -f $file -a ! -s $file ]
+	then
+	   echo 'это пустой файл' ;
+	fi
+	if [ -d $file ]
+	then
+	    echo 'это каталог' ;
+	fi
+	if [ -c $file ]
+	then
+	    echo 'это спец. файл (char. device)' ;
+	fi
+	if [ -b $file ]
+	then
+	    echo 'это спец. файл (block device)' ;
+	fi
+	if [ -p $file ]
+	then
+	    echo 'это труба (pipe)' ;
+	fi
+#        if [ -t $file ]
+#        then
+#            echo 'это спец. файл (tty)' ;
+#        fi
+	echo ''
+	ls -ld $file
+	exit 1
+    fi
+#    echo ''
+done
+echo ''
+exit 0
+
+
+#+ gzip     # обычная компрессия
+gzip $@
+
+#+ gzip -9  # самая плотная компрессия
+gzip -9 $@
+
+#+ compress # стандартный compress
+compress $@
+
+#+ compress -b12 # для переноса на pdp11 или xenix286
+compress -b12 $@

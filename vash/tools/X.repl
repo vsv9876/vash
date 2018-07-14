@@ -1,0 +1,17 @@
+:
+#
+# Замена контекста в указанных файлах
+#
+
+for i in $*
+do
+echo === $i ===
+mv $i $i.b
+cp $i.b $i
+ed - $i <<---
+g/NED/s//NED|LFASTR/
+w
+q
+---
+done
+echo    ======
