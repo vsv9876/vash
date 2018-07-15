@@ -7,6 +7,7 @@
 
 extern  char    coprts[];
 extern  char    buildd[];
+extern  char   *versn;
 extern  char   *vexdir;
 extern  int     y0_top;
 
@@ -41,6 +42,7 @@ IN_PORTS inport[] = {
 	{ "cvt_a",      cvt_a },
 	{ "coprts",     coprts },
 	{ "buildd",     buildd },
+	{ "versn",      &versn },
 	{ "vexdir",     &vexdir },
 	{ "f",          Cfill },
 	{ "i",          Crepf },
