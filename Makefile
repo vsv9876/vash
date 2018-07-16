@@ -19,7 +19,7 @@ BLDCFG	= ./configure.conf
 
 BLD	= $(TOPDIR)/BLD
 #BLD	= .
-DESTDIR	= $(BLD)
+DESTDIR	= $(TOPDIR)/BLD
 
 include $(BLDCFG)
 include $(MAKECONF)
@@ -82,6 +82,11 @@ cfg:
 #cfg:
 #	$(SHELL) -c './config'
 #	$(MAKE) $(BLDCFG)
+configure.conf:
+	@echo ''
+	@echo 'no ./configure.conf founds - please, run ./configure first'
+	@echo ''
+	/bin/true
 
 #$(SHOWCONFIG):
 showconfig:
@@ -115,14 +120,14 @@ install:   $(DESTDIR) $(DEST) $(VISILIB)
 	cd visilib;			$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd vashrc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 
-bld:	pkgbuild
-
-pkgbuild: all $(BLD)
-	cd $(VHSET); $(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(BLD)"
-	cd $(VASH);  $(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(BLD)"
-	cd vashlib/LIB;			$(MAKE) install "DEST=$(BLD)"
-#	cd vashlib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(BLD)"
-#	cd visilib;			$(MAKE) install "DEST=$(BLD)"
+#bld:	pkgbuild
+#
+#pkgbuild: all $(BLD)
+#	cd $(VHSET); $(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(BLD)"
+#	cd $(VASH);  $(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(BLD)"
+#	cd vashlib/LIB;			$(MAKE) install "DEST=$(BLD)"
+##	cd vashlib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(BLD)"
+##	cd visilib;			$(MAKE) install "DEST=$(BLD)"
 
 clean:
 	cd $(VISI)/bin; rm -f *
@@ -142,11 +147,11 @@ distclean:	clean
 			-name '*.core' -o \
 			-name a \
 		')' -exec rm -f '{}' ';'
-#	rm -rf $(BLDCFG) $(BLD)
+	rm -rf $(BLDCFG) $(BLD)
 
-$(BLD):
-	mkdir -p $(BLD)
-#	test -d $(BLD)
+#$(BLD):
+#	mkdir -p $(BLD)
+##	test -d $(BLD)
 
 $(DEST):
 	mkdir -p $(DEST)
