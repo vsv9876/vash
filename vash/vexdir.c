@@ -6,4 +6,4 @@
  */
 /*NOXSTR*/
 char   *vexdir = DESTLIB;
-char   *versn  = "1.21/remix";
+char   *versn  = VERSN;

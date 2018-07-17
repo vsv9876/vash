@@ -5,12 +5,18 @@
 #BLDCONF=./BLD.conf
 BLDCONF=./configure.conf
 
+mypwd=`pwd`
+mydir=`basename $mypwd`
+VERSN="$mydir"
+
 # > $BLDCONF	echo '#' `date`
 # >
  > $BLDCONF	echo ''
  >> $BLDCONF	echo 'TOPDIR    = '`pwd`
  >> $BLDCONF	echo ''
  >> $BLDCONF	echo 'DEST      = /usr'
+ >> $BLDCONF	echo ''
+ >> $BLDCONF	echo 'VERSN     = "'$VERSN'"'
  >> $BLDCONF	echo ''
  >> $BLDCONF	echo 'PATH      = '`pwd`'/visi/bin:'$PATH
  >> $BLDCONF	echo ''

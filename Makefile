@@ -20,6 +20,7 @@ BLDCFG	= ./configure.conf
 BLD	= $(TOPDIR)/BLD
 #BLD	= .
 DESTDIR	= $(TOPDIR)/BLD
+VERSN	= "1.x(local)"
 
 include $(BLDCFG)
 include $(MAKECONF)
@@ -106,7 +107,8 @@ compile:    $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
 	cd $(VHSET); $(MAKE) all "DEST=$(DEST)"
-	cd $(VASH);   $(MAKE) all "DEST=$(DEST)" "CFLAGS_ASH=$(CFLAGS_ASH)"
+	cd $(VASH);   $(MAKE) all "DEST=$(DEST)" "CFLAGS_ASH=$(CFLAGS_ASH)" \
+		"VERSN=$(VERSN)"
 	cd vashlib/LIB;           $(MAKE) "DEST=$(DEST)" all
 	cd vashlib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
 

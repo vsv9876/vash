@@ -40,7 +40,8 @@ DESTBIN       = $(DESTDIR)$(DEST)/bin
 #CFLAGS_ASH    =
 CFLAGS        = $(CFLAGS_ASH) \
 		-I$(VISI)/include\
-		-D'DESTLIB="$(DESTLIB)"'
+		-D'DESTLIB="$(DESTLIB)"' \
+		-D'VERSN="$(VERSN)"'
 
 #CC            = cc -O
 #LINKER        = cc
