@@ -1,8 +1,8 @@
-#!/usr/local/bin/ash
+#!/usr/bin/vash
 #
-# Assistant Shell (ash) (C) Sergey Vovk, 1990,1993,2013,2016
+# Visual Assistant Shell (vash) (C) Sergey Vovk, 1990,1993,2013,2016
 #
-# Стандартная настройка интерпретатора ash
+# Стандартная настройка интерпретатора vash (ash)
 # Tue Jun  1 22:41:47 MVT 1993
 #
 # Содержимое этого файла содержит информацию, которая может быть изменена
@@ -69,6 +69,7 @@
 	r?? D *.tar.[zpC]    :gzip -d < #@ | tar -tvf -
 	r?? D *.tar.bz2      :bzip2 -cd < #@ | tar -tvf -
 	r?? D *.tar.gz       :gzip -d < #@ | tar -tvf -
+	r?? D *.tar.xz       :xz -d < #@ | tar -tvf -
 	r?? D *.taz          :gzip -d < #@ | tar -tvf -
 	r?? D *.tgz          :gzip -d < #@ | tar -tvf -
 	r?? D *.tar.[Z]      :zcat < #@ | tar -tvf -
@@ -103,6 +104,7 @@
 	r?? ? *.tar.[zZCp]   gzip -d < #@ | tar -xvf -
 	r?? ? *.tar.bz2      bzip2 -cd < #@ | tar -xvf -
 	r?? ? *.tar.gz       gzip -d < #@ | tar -xvf -
+	r?? ? *.tar.xz       xz -d < #@ | tar -xvf -
 	r?? ? *.taz          gzip -d < #@ | tar -xvf -
 	r?? ? *.tgz          gzip -d < #@ | tar -xvf -
 	r?? D *.zip          unzip -d #@
