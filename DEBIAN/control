@@ -1,7 +1,7 @@
 Package: vash
-Version: 1.19-1
+Version: 1.22.3-1
 Section: misc
-Architecture: amd64
+Architecture: e2k-4c
 Depends: ncurses
 Maintainer: vsv <vsv9876@yandex.ru>
 Description: Visual Assistant Shell (vash)
