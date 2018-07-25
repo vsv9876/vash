@@ -2,12 +2,12 @@
 
 # dirty hack for Debian9
 
-make cleandist
+make distclean
 ./configure
-make compile
+make
 make DESTDIR=`pwd`/BLD install
 cp -rp DEBIAN/ BLD
 fakeroot dpkg -b BLD
-mv BLD.deb vash_1.22.3_amd64.deb
+mv BLD.deb vash_1.22.5_amd64.deb
 
 
