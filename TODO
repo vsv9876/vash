@@ -1,59 +1,42 @@
+-+ переименовать проект, в том числе, префиксы имен настроечных файлов
+  - подходит vash, но остались .ashstd и другие
+
+-- Unicode/UTF-8 support for main list (filenames) and internas
+
+linlib/vhset:
+? команды для редактирования строки и переходов между контекстами
+  должны быть более удобными, желательно выбор vi/emacs/pico
+- vhset: расширить набор клавишных команд PgUp, PgDown, Home, End
+- linlib: расширить набор операций редактирования
+
+?- restricted ash version, without command line editing/confirmation
+?- общие настройки для .ashstd, и проч. .ash* через встроенный препроцессор
+- оптимизация файлов настройки (директива include?)
 - прочистить .ashmenu или сделать варианты BSD/SYSV
-
-+ ПРОВЕРИТЬ SHELL = /bin/sh во всех Makefile,
-  make clean (vhset), make install vhset/visi
-
-- проверить правила в Makefiles от препроцессоров visi
-
-+ Избавиться от ld -r для ash/libnew/libnew.o
-
-+ доделать install для visi/vhset - visilib
 
 - suspend должен работать не только при SHELL=/bin/csh
 - ^Z для SYSV (ISC) lin132/lin140 должен переопределяться
+- перехват изменения размеров окна терминала (LINES, COLUMNS) встроить в ash
 
-- настройка LINES, COLUMNS должна быть встроена в ash
+- linlib/vhset: наследование от stty cooked intr, erase.
++? linlib/vhset: проверки на доступность /dev/tty, для сброса зависаний...
 
-+ объединить ashrc на разных платформах в один текст, 
-  uname || hostname > /dev/null ???
-
-- restricted ash version, without command line editing/confirmation
-
-- общие настройки для .ashstd, и проч. .ash* через встроенный препроцессор
-
-- команды для редактирования строки и переходов между контекстами
-  должны быть более удобными, желательно выбор vi/emacs/pico
+- history:
+  command history shareable with multiply sessions, like ksh
+- searching pattern across history (or select like in main lineset)
+  separate parameterized command cache and commands log
+- История команды cd (меню и подстановка параметров)
+- селекция для показа в главном окне (по команде '_') 
+- добавить флаг "при старте перейти в каталог такой-то"...
+- Поддержка проверки расширенных атрибутов файлов (rwx маловато будет)
+- работа с очень большими каталогами и номерами inode (уйти от статического выделения памяти под списки главного окна)
 
 + добавить регулирование предпочтений, сейчас только EDITOR, PAGER
-- надо еще MAILVIEW, MAILEDIT
-
-- command history shareable on multiply sessions, like ksh,
-- search pattern across history
-
-- наследование от stty cooked intr, erase.
-
-+?   проверки на доступность /dev/tty, для сброса зависаний...
-
-+ Диагностика про неопознанные клавиши должна выглядеть так:
-  имя файла настройки: клавиша неопределена (возможно, в termcap)
-
-+ Распознавание и настройка env LINES, COLUMNS
-
-+ Сливание версий SYSV & 386bsd
-
-- Поддержка работы с двумя каталогами
-
+?- надо еще MAILVIEW, MAILEDIT
 - Часы - убрать секунды (или сделать опцию)
-
-+ Вывеска клавиш и pwd - при выключенной нижней панели
-  pwd рисовать внизу в последней строке.
-
-+ Мульти-групп проверки прав доступа (для файловой системы BSD & SVR4)
 
 - запуск из каталога, открытого только на поиск,
   не должен приводить к core dumped, разрешить вход в каталоги, открытые
   только на чтение, например drw-rw-rw- - такое бывает при монтировании
   флоппи DOS на UnixWare ;-)
-- и вообще добавить флаг "при старте перейти в каталог такой-то"...
 
-- добавить декорации для xterm, устанавливаемые из ash, и управляемые setup

@@ -155,7 +155,7 @@ KBL kbl[KBLSIZE] = {
 	  { KBCTL(    'F'), KB_PD,    "PgDown" },
 	  /* extended for linlib 4 since 2017-05 */
 	  /* delUnderCursor, insert, home, end, PageUp, PageDown */
-      { KBCOD('k','D'),   KB_DE,   "del->  " },
+      { KBCOD('k','D'),   KB_KD,   "del->  " },
 	  { KBCOD('k','I'), KB_IN,    "Insert" },
 	  { KBCOD('k','h'), KB_KH,    "Home  " },
 	  { KBCOD('@','7'), KB_KE,    "End   " },

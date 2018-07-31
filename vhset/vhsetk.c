@@ -32,7 +32,7 @@ static char *keynam[] = {
 "KB_KE  End key",
 "KB_PU  PgUp",
 "KB_PD  PgDown",
-"KB_DE  del->  ",
+"KB_KD  del->  ",
 "KB_IN  Insert",
 0 };
 

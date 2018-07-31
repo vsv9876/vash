@@ -168,8 +168,7 @@ int     *ofsp;          /* υλαϊατεμψ ξα χεμιώιξυ σνεύεξιρ οτ ξαώ. πομρ */
 			case KB_PR: /* δοπ. λοναξδω ςεδαλτοςα στςολι */
 				switch(r_cod(0)) {
 				case KB_AR: /* λοξεγ ϊξαώαύεκ ιξζ. */
-					   for(i=size-1; isspace(str_l[i]);
-						i--); i++; break;
+					   for(i=size-1; isspace(str_l[i]);	i--); i++; break;
 				case KB_AL: i = 0; break;
 				case ' ':
 					   for(j=i; j<size; j++) {
@@ -188,11 +187,30 @@ int     *ofsp;          /* υλαϊατεμψ ξα χεμιώιξυ σνεύεξιρ οτ ξαώ. πομρ */
 				default: bell(); break;
 				}; break;
 
+			/* linlib 4 since 2017-05 */
+			case KB_KE: /* λοξεγ ϊξαώαύεκ ιξζ. */
+			   for(i=size-1; isspace(str_l[i]);	i--); i++; break;
+			case KB_KH: i = 0; break;
+			case KB_IN: edinsm=(edinsm ? 0 : 1);
+				   edinfo(1);
+				   break;
+			case KB_KD:
+				   for(j=i; j<size-1; j++) {
+				       w_chr(str_l[j] = str_l[j+1]);
+				   };
+				   w_chr(str_l[j] = ' ');
+				   str_l[size] = '\0';
+				   break;
+			/*----------------------------*/
+
 			case KB_AL: if(i>0)  i--;
 				   else     goto ret;
 				   break;
+			case KB_TA: bell(); break;
+#ifdef OLD_USE_TAB
 			case KB_TA: if(i == size-1) goto ret;
 				   i += 8-(i%8); break;
+#endif
 			case KB_AR: if(i == size-1) goto ret;
 				   i++;
 				   break;

@@ -192,13 +192,14 @@ typedef struct  {
 #define KB_KP     KBCOD('K','P')
 #define KB_PR     KBCOD('P','R')
 #define KB_NL     KBCOD('N','L')
-/* delete, refresh, tab */
+/* delete(backspace), refresh, tab */
 #define KB_DE     KBCOD('D','E')
 #define KB_RE     KBCOD('R','E')
 #define KB_TA     KBCOD('T','A')
 /* linlib 4 since 2017-05 */
-/* insert, home, end, PageUp, PageDown */
+/* insert, delete(forward), home, end, PageUp, PageDown */
 #define KB_IN     KBCOD('I','N')
+#define KB_KD     KBCOD('K','D')
 #define KB_KH     KBCOD('K','H')
 #define KB_KE     KBCOD('K','E')
 #define KB_PU     KBCOD('P','U')
