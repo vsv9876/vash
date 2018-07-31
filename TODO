@@ -6,8 +6,8 @@
 linlib/vhset:
 ? команды для редактирования строки и переходов между контекстами
   должны быть более удобными, желательно выбор vi/emacs/pico
-- vhset: расширить набор клавишных команд PgUp, PgDown, Home, End
-- linlib: расширить набор операций редактирования
++ vhset: расширить набор клавишных команд PgUp, PgDown, Home, End
++ linlib: расширить набор операций редактирования
 
 ?- restricted ash version, without command line editing/confirmation
 ?- общие настройки для .ashstd, и проч. .ash* через встроенный препроцессор
