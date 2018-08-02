@@ -1,4 +1,4 @@
-#!/usr/local/bin/ash
+#!/usr/bin/vash
 #
 #-----------------------------------------
 # Стандартная настройка интерпретатора ash
@@ -23,7 +23,7 @@
 #------------------------------------------
 
 # НАЗВАНИЯ КЛАВИШ
--1sh>
+-1proc>
 -2INT
 -3QUIT
 -4
@@ -73,7 +73,8 @@
        * *     _sus
 :[./a-z]
        * *     _sh #k
+#               Включите лат. регистр
 :[ю-ъЮ-Ч]
-       * *     _msg Включите лат. регистр
+       * *     _msg please, switch bak keyboard into latin layout
 :*
-	* * _msg Undefined key (.ashproc || termcap)
+	* * _msg key is not assigned yet (.ashproc || termcap/terminfo)

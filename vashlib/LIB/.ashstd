@@ -10,8 +10,9 @@
 #
 # Формат файлов настройки будет развиваться, подробности в конце файла.
 #
-# #A/.ashstd - this file (#A depend on compile time configuration,
-#                         by default is /usr/lib/vash)
+# #A/.ashstd - this files
+# #A substituted with env=VASH_VEXDIR, by default is /usr/lib/vash
+#
 # $HOME/.ashstd             - персональная версия этого файла
 #
 #-------------------------------------------------------
@@ -84,6 +85,9 @@
 	r?? ? *.[Z]          zcat < #@
 	r?? ? *.bz2          bzip2 -cd < #@
 	r?? ? *.gz           gzip -d < #@
+	r?? * *.src.rpm      rpm -qiv ./#@ | #m
+	r?? * *.rpm          rpm -qiv ./#@ | #m
+	r?? * *.deb          dpkg --info ./#@ | #m
 	r?? A *.a            ar t #@
 	r?? O *.o            :nm -np #@
 	r?? O *.si           :nm -np #@
@@ -93,7 +97,7 @@
 	r?? T .a             :tail -f #@
 	r?? T a              :tail -f #@
 	r?? T *              :#m #@
-	-?? E *              _msg file empty, zero length
+	r?? E *              _msg file empty, zero length
 	r?? E *              :cat #@
 	r?x d *              :ls -aCF #@/.
 	r?? M *              frm -n #@
@@ -114,6 +118,9 @@
 	r?? [DT] *.cpio.[Z]     zcat < #@ | cpio -idm
 	r?? [DT] *.cpio.[zp]    gzip -d < #@ | cpio -idm
 	r?? [DT] *.cpio.gz      gzip -d < #@ | cpio -idm
+    r?? * *.deb          sudo dpkg -i #@
+    r?? * *.src.rpm      _msg did You mean 'rpmbuild bb #@ ?'
+    r?? * *.rpm          sudo rpm -Uhv #@
 	r?? ? *.[zCp]           gzip -d #@
 	r?? ? *.[Z]             uncompress #@
 	r?? ? *.bz2             bzip2 -cd #@
@@ -152,17 +159,21 @@
 # Редактирование файла
 :4
 :U4
-	r-x ?   +ed
-	rwx ?   +edw
+	r?x ?   +ed
+#	r-x ?   +ed
+#	rwx ?   +edw
 +ed
 	rwx d *         :cd #@
 # vi не создает нового файла в каталоге
 # а red, например, создает...
 	rw? [TE] *      vi #@
 	rw? M *         elm -f ./#@
-	r?? [OD] *      strings #@ | #m
-+edw
+#	r?? [OD] *      strings #@ | #m
+#+edw
 	rwx d *         :cd #@
+	r?? * *.src.rpm rpm -qlv ./#@ | #m
+	r?? * *.rpm     rpm -qlv ./#@ | #m
+	r?? * *.deb     dpkg --contents ./#@ | #m
 	rw? [TE] *      #e #@
 	rw? M *         elm -f #@
 	r?? [OD] *      strings #@ | #m
@@ -233,12 +244,13 @@
 # см. выше +nl, +View
 :NL
 	??? ?   +nl
-:^F
 #       Освежить стандартную настройку ash (при отладке этого файла)
-	r?x ?   _cmdset .ashstd
+:^F
+[Z]
+	* *   _cmdset .ashstd
 :&
 #       Программа (настройка) ash для работы с процессами
-	* *     :ASH=l20ps; export ASH; exec ash .ashproc
+	* *     :ASH=l20ps; export ASH; exec vash .ashproc
 #        * *     _cmdset .ashproc
 
 #:[2-90]
@@ -351,7 +363,7 @@
 # Диапазон зависит от кодовой таблицы, здесь КОИ-8
 
 :[Ю-Чю-ъ]
-	??? ?   _msg switch keyboard to en/latin
+	??? ?   _msg please, switch keyboard to en/latin
 
 #-------------------------------------------------------
 #:[#]

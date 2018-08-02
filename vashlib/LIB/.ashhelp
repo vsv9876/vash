@@ -1,4 +1,4 @@
-#! /usr/new/bin/ash
+#! /usr/bin/vash
 #
 # Ê¡ Ã .ashhelp
 #-----------------------------------------
@@ -11,7 +11,7 @@
 -fcat #A/HELP
 -i
 -o.
--@
+-@1
 
 -1shell
 -2menu

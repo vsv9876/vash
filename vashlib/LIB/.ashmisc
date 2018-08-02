@@ -1,4 +1,4 @@
-#! /usr/local/bin/ash
+#! /usr/bin/vash
 #
 # Файл .ashmisc
 #-----------------------------------------
@@ -12,7 +12,7 @@
 -@
 
 # НАЗВАНИЯ КЛАВИШ
--1sh>
+-1misc>
 -2compr
 -3
 -4touch
@@ -38,7 +38,7 @@
 :2
 :U2
 	rwx +   _menu2 .ashcompr
-	rwx -   _err надо пометить имена файлов пробелом
+	rwx -   _err please, mark files using spacebar
 	r-x *   +Cant
 
 :U4
@@ -71,7 +71,7 @@
 +tardir
 
     * d * tar -cvf #@.tar #@
-    * * * _msg подведите курсор к каталогу или пометьте файлы
+    * * * _msg please, point with coursor to directory or mark files
 
 +tarfiles
 
@@ -87,7 +87,7 @@
 
     * d . find #@ -depth -print | grep -v '^\./\.\.cpio' | cpio -odv > #@.cpio
     * d * find #@ -depth -print | cpio -odv > #@.cpio
-    * * * _msg подведите курсор к каталогу или пометьте файлы
+    * * * _msg please, point to directory or mark files
 
 +cpiofiles
 
@@ -100,4 +100,4 @@
 :^F
 	* * _cmdset .ashmisc
 :*
-	* * _msg Undefined key (.ashmisc || termcap)
+	* * _msg key is not defined or assigned yet (.ashmisc || termcap/terminfo)
