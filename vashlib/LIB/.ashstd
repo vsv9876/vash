@@ -324,8 +324,16 @@
 	* -   :ls -la | #m
 	* *   :ls -ld ##
 :T
-	* -   :cat #@
-	* *   :cat ##
+#	* -   :cat #@
+#	* *   :cat ##
+    * -   +targz1
+    * +   +targz
++targz1
+    r?x [d] *-[0-9]*  tar cvzf #@.tar.gz #@/
+    r?? [TMD] *       :cat #@
++targz
+    r?x [d] *         tar cvzf #@.tar.gz ##
+    ??? * *           _msg #@ marked: ##
 
 :X
 #       установить полномочия выполнения (для командных файлов)
