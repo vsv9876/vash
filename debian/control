@@ -1,15 +1,20 @@
 Source: vash
-Section: unknown
+Section: shells
 Priority: optional
 Maintainer: Sergey Vovk <vsv@lab2.lo>
-Build-Depends: debhelper (>= 9), autotools-dev
+#	, dh-autoreconf
+#	, autotools-dev
+Build-Depends: debhelper (>= 9)
+	, libncurses5-dev
 Standards-Version: 3.9.8
-Homepage: <insert the upstream URL, if relevant>
+Homepage: http://gitlab.com/vsv9876/vash
 #Vcs-Git: https://anonscm.debian.org/collab-maint/vash.git
 #Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/vash.git
 
 Package: vash
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Suggests: gzip, xc, tar, cpio, bash, tcsh
+Description: visual assistant shell
+ Visual Assistant SHell 'vash' formely known as 'ash' (Assistant SHell).
+ Features command string editing, scripting, parameterized command history, etc.

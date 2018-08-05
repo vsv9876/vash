@@ -1,10 +1,10 @@
-vash (1.23.1-1) UNRELEASED; urgency=medium
+vash (1.23.1) unstable; urgency=medium
 
   * upstream vash-1.23.1
 
  -- Sergey Vovk (testing only) <vsv@lab2.lo>  Mon, 18 Jul 2018 00:17:14 +0300
 
-vash (1.21-1) UNRELEASED; urgency=medium
+vash (1.21-1) unstable; urgency=medium
 
   * 2nd attempt to build for Debian
   * upstream vash-1.21
