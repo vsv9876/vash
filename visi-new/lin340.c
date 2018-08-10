@@ -128,9 +128,9 @@ out_string:
 		}
 		else {                          /* ðòïóôï óôòïëá */
 			eds = line->varl;
-			goto string_symple; }
+			goto string_simple; }
 	} else {
-string_symple:
+string_simple:
 		strncpy(s, line->varl, size); s[size] = 0;
 	}
 

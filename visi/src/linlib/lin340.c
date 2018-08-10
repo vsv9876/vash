@@ -5,12 +5,9 @@
 **/
 
 /*
- *      $Header: lin340.c,v 1.1 90/12/27 16:29:21 vsv Rel $
+ *      $Header: lin340.c,v 3.5 89/08/29 15:17:13 vsv Rel $
  *
  *      $Log:	lin340.c,v $
- * Revision 1.1  90/12/27  16:29:21  vsv
- * קועףיס LINLIB_3
- * 
  * Revision 3.5  89/08/29  15:17:13  vsv
  * קועףיס LINLIB_3
  * 
@@ -33,6 +30,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "line.h"
 #include "line0.h"
 
@@ -51,12 +49,13 @@ register char *ou;      /* ףפעןכב, כץהב נןםוףפיפר קשקןה */
 register char *fo;      /* זןעםבפ printf */
 register char *va;      /* ץכבתבפולר מב נועוםוממץא */
 {
-
+#ifdef DOUBLE
 	if(index(fo, 'f') || index(fo, 'e') || index(fo, 'g'))
 		/* זןעםבפש ף נלבקבא‎וך פן‏כןך */
 		return( sprintf(ou, fo, *(double *)va) );
 	else
 		/* הלס ןףפבלרמשט הןףפבפן‏מן י פבכ */
+#endif
 		return( sprintf(ou, fo, *(long *)va) );
 }
 
@@ -65,7 +64,7 @@ register LINE *line;
 {
 /*      next_j();     */
 
-	r_line(line, (int *)(-1));
+	r_line(line, (int *)(-1)); /* preset to call in write mode (only output, no input) */
 }
 
 kbcod
@@ -91,12 +90,12 @@ register LINE    *line; /* ץכבתבפולר מב לימיא */
 	char   *eds;            /* ףפעןכב הלס עוהבכפןעב */
 	int     base;           /* מב‏בלן נןלותמןך ימזןעםבדיי:
 				**   ףםו‎ומיו ןפ נןהףכבתכי */
-	static	char    wks[STRLEN];    /* עבגן‏בס ףפעןכב */
+	char    wks[STRLEN];    /* עבגן‏בס ףפעןכב */
 
 	attr = line->attr;
 
-	/* קשתןק ‏ועות r_line ? */
-	if(onexit = (posp == (int *)(-1)) ? 1 : 0)
+	/* קשתןק ‏ועות w_line() ? */
+	if(onexit = ((posp == (int *)(-1)) ? 1 : 0))
 		attr &= ~INP;  /* מופ, w_line */
 	cod = 0;
 
@@ -153,9 +152,12 @@ string_simple:
 	cp_set(line->line, line->colu, attr);
 
 	/*==== נןכבתבפר */
-	w_str(wks);
+	if ( (posp != (int *)(-1)) && (attr & (LFASTR|NED)) == (LFASTR|NED) )
+		w_chr(*wks);    /* װּֿ״ֻֿ ִּׁ r_line */
+	else
+		w_str(wks);
 
-	if(onexit) return(cod);    /* כןמוד הלס קשתןקב ‏ועות w_line */
+	if(onexit || posp == (int *)(-1)) return(cod);    /* כןמוד הלס קשתןקב ‏ועות w_line */
 
 	/*==== כץעףןע נועוה קקןהןם נועקןך כלבקיûי */
 	cp_set(line->line, line->colu, attr);
@@ -163,7 +165,7 @@ string_simple:
 	/*==== ‏יפבפר כןה נועקןך כלבקיûי */
 	switch(cod = r_cod(0)) {
 	case KB_DE: *eds = '\0';
-	case  ' ': if(posp) *posp=0;
+	case  ' ': if(posp != (int *)(-1) && posp) *posp=0;
 		   break;
 	default:
 		/* וףפר פןמכןףפר הלס נןלוך ף עוהבכפיעןקבמיום:

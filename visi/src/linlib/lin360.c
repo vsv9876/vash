@@ -5,12 +5,11 @@
 **/
 
 /*
- *      $Header: lin360.c,v 1.1 90/12/27 16:29:26 vsv Rel $
+ *      $Header: lin360.c,v 3.2 89/08/29 15:17:36 vsv Rel $
  *
+#define W_PAGE_TAB
+#ifndef W_PAGE_TAB
  *      $Log:	lin360.c,v $
- * Revision 1.1  90/12/27  16:29:26  vsv
- * קועףיס LINLIB_3
- * 
  * Revision 3.2  89/08/29  15:17:36  vsv
  * קועףיס LINLIB_3
  * 
@@ -20,6 +19,9 @@
  * Revision 3.0  87/12/21  12:20:49  vsv
  * נעוהקבעיפולרמשך קשנץףכ.
  * 
+#else W_PAGE_TAB
+ *      ף׀ֱֳֵֹּ״־ֱׁ ׳ֵׂ׃ֹׁ ׃ ױ׀ֿׂÝֵ־ֹֹֽׁ.
+#endif W_PAGE_TAB
  */
 
 #include <stdio.h>
@@ -149,9 +151,7 @@ fnd_ad (lni, line)
 	/* תהוףר מבהן גש פ‎בפולרמוו(צקבמודכיך ם.ם.) :
 	 *       24 ףפעןכי מו הלס קףוט פועםימבלןק נעבקהב...
 	 */
-/*#define MAXLI_ 24*/
-#define MAXLI_ maxli
-	if((nxt_line = (int)lni->line ) < MAXLI_ ) { /*קנועוה, וףלי וףפר כץהב*/
+	if((nxt_line = (int)lni->line ) < maxli ) { /*קנועוה, וףלי וףפר כץהב*/
 		for(lnj=lni; lnj->size!=0; lnj++) {     /* כןמוד ? */
 			if((lnj->line <= lni->line))    /*ףפע. מו מיצו */
 				continue;
@@ -190,6 +190,7 @@ fnd_nxt(lni, line)
 	return(lni);
 }
 
+#ifndef W_PAGE_TAB
 aj_tbl(scnd, line_e)
 /*-----------------------------------*/
 /* מבףפעןיפר üלוםומפ פבגלידש נן גבתו */
@@ -234,6 +235,7 @@ on_base:
 	scnd->varl += (linptr_t)(saved.varl);
 }
 
+#endif W_PAGE_TAB
 /*---------------------*/
 /* מבעיףןקבפר ףפעבמידץ */
 /*---------------------*/
@@ -244,18 +246,22 @@ register kbcod cod;
 	register LINE *line;
 
 	/* ףמב‏בלב קףו, ‏פן מו הלס קקןהב */
-	for(line=line_e; line!=NULL && line->size != 0; line++) {
+	for(line=line_e; line->size != 0; line++) {
+#ifndef W_PAGE_TAB
 		/* קפןעי‏משך üלוםומפ פבגלידש מבהן ףמב‏בלב מבףפעןיפר... */
-		if(line!=NULL && (line->flag & SUST)) {
+		if(line->flag & SUST){
 			aj_tbl(line, line_e);
 		}
-		if( line!=NULL && (INP & ~(line->attr)) )
-			w_line(line, cod);
+#endif W_PAGE_TAB
+		if( (INP & ~(line->attr)) )
+		    /*    w_line(line, cod);    */
+			w_line(line);
 	}
 	/* לימיי הלס קקןהב ק נןףלוהמאא ן‏ועוהר */
 	for(line=line_e; line->size != 0; line++) {
 		if( (INP & ~(line->attr)) == 0 )
-			w_line(line, cod);
+		    /*    w_line(line, cod);    */
+			w_line(line);
 	}
 }
 

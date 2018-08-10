@@ -142,7 +142,8 @@ clean:
 
 distclean:	clean
 	find . -name BLD -exec rm -rf '{}' ';'
-	find . '('      -name core -o \
+	find . -type f -a '(' \
+			-name core -o \
 			-name '*.b' -o \
 			-name '*~' -o \
 			-name 'core.*' -o \

@@ -5,9 +5,12 @@
 **/
 
 /*
- *      $Header: lin460.c,v 3.2 89/08/29 14:50:26 vsv Rel $
+ *      $Header: lin460.c,v 1.1 90/08/24 08:08:17 vsv Exp $
  *
  *      $Log:	lin460.c,v $
+ * Revision 1.1  90/08/24  08:08:17  vsv
+ * Initial revision
+ * 
  * Revision 3.2  89/08/29  14:50:26  vsv
  * ВЕРСИЯ LINLIB_3
  * 
@@ -25,32 +28,38 @@
 /*---------------------------*/
 /* ВЫВОД СООБЩЕНИЯ ОБ ОШИБКЕ */
 /*---------------------------*/
-static  int errflg ;    /* ФЛАГ: СООБЩЕНИЙ ОБ ОШИБКЕ НЕ БЫЛО */
 
-w_emsg ( str )
-char    *str ;          /* ТЕКСТ СООБЩЕНИЯ ОБ ОШИБКЕ */
+static  int msgflg ;    /* На экране есть сообщение */
+
+int     ok_msg()
 {
-	if( *str ) {    /* ЕСЛИ АРГУМЕНТ ВЫЗОВА НЕПУСТАЯ СТРОКА */
-		errflg = 1;
-		cp_set(-1, 0, ERR);
-		/* bell(); */
-		/* printf(" ?!! %s ", str); */
-		w_str(" ?! ");
-		w_str(str);
-		w_str(" ");
+	return(msgflg);
+}
+
+w_msg(vamode, str)
+register int     vamode;        /* видеоатрибут */
+register char    *str ;         /* текст сообщения об ошибке */
+{
+	if (msgflg) {                   /* если строка на экране занята */
+		msgflg = 0;             /* погасить ее */
+		cp_set(-1, 0, TXT);
 		er_eol();
-	} else {
-		if(errflg) {
-			errflg = 0;
-			cp_set(-1, 0, TXT ) ;
-			er_eol();
+	}
+	if (*str) {    /* если аргумент вызова непустая строка */
+		msgflg = 1;
+		cp_set(-1, 0, vamode);
+		if ((vamode & VIDEO) == ERR) {
+			/*bell();*/
+			w_str("Err: ");
 		}
+		w_str(str); w_str(" ");
+		at_set(TXT); er_eol();
 	}
 }
 
-w_msg(attr, str)
-int     attr;
-char *str;
+/* для поддержки совместимости со старыми версиями */
+w_emsg(s)
+register char *s;
 {
-	w_emsg(str);
+	w_msg(ERR, s);
 }

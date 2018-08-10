@@ -122,13 +122,13 @@ OBJS	      = \
 		vsusp.o\
 		vsystem.o
 
-LIBNEW       = \
-		$(VISI_NEW)/lin330.o\
-                $(VISI_NEW)/lin340.o\
-                $(VISI_NEW)/lin360.o\
-                $(VISI_NEW)/lin425.o\
-                $(VISI_NEW)/lin460.o\
-                $(VISI_NEW)/lin472.o
+#LIBNEW       = \
+#		$(VISI_NEW)/lin330.o\
+#                $(VISI_NEW)/lin340.o\
+#                $(VISI_NEW)/lin360.o\
+#                $(VISI_NEW)/lin425.o\
+#                $(VISI_NEW)/lin460.o\
+#                $(VISI_NEW)/lin472.o
  
 
 SUFFIX        = .cv:sC
@@ -188,9 +188,11 @@ objs:           $(OBJS)
 #                 $(AS) -o $*.o $*.s
 #                 rm -f $*.s
 
-$(PROGRAM):     $(VISI_NEW)/libnew $(OBJS) $(LIBS) $(MAKEFILE)
+# $(VISI_NEW)/libnew 
+## linker ... $(LIBNEW) 
+$(PROGRAM):     $(OBJS) $(LIBS) $(MAKEFILE)
 		@echo "Loading $(PROGRAM) ... "
-		$(LINKER) $(LDFLAGS) $(OBJS) $(LIBNEW) $(LIBS) $(STDLIBS) -o $(PROGRAM)
+		$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) $(STDLIBS) -o $(PROGRAM)
 		@echo " ...done"
 
 clean:  otherclean
@@ -211,7 +213,7 @@ cxref:  $(SRCS)
 lint lintcheck:;        $(LINT) $(CFLAGS) *.c $(VISI_NEW)/*.c >a.lint
 
 otherclean:
-		cd ./$(VISI_NEW); make clean;
+#		cd ./$(VISI_NEW); make clean;
 #                cd ./ashrc; make DEST=$(DEST) clean
 
 otherinst:
@@ -259,26 +261,26 @@ buildd.h: buildd
 #$(VISI_NEW)/libnew.a:
 #       cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" libnew.a
 
-$(VISI_NEW)/libnew:
-	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" library
-
-$(VISI_NEW)/lib330.o:
-	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib330.o
-
-$(VISI_NEW)/lib340.o:
-	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib340.o
-
-$(VISI_NEW)/lib360.o:
-	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib360.o
-
-$(VISI_NEW)/lib425.o:
-	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib425.o
-
-$(VISI_NEW)/lib460.o:
-	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib460.o
-
-$(VISI_NEW)/lib472.o:
-	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib472.o
+#$(VISI_NEW)/libnew:
+#	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" library
+#
+#$(VISI_NEW)/lib330.o:
+#	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib330.o
+#
+#$(VISI_NEW)/lib340.o:
+#	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib340.o
+#
+#$(VISI_NEW)/lib360.o:
+#	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib360.o
+#
+#$(VISI_NEW)/lib425.o:
+#	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib425.o
+#
+#$(VISI_NEW)/lib460.o:
+#	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib460.o
+#
+#$(VISI_NEW)/lib472.o:
+#	cd $(VISI_NEW); make "DEST=$(DEST)" "CC=$(CC)" lib472.o
 
 ###
 amenu.o: assist.h
