@@ -162,7 +162,7 @@ vmain()
 		    case '?' :
 		    case ' ' :
 			er_pag();
-			w_page(mainm);  /* refresh screen after menu */
+			w_page(mainm);  /* refresh screen after submenu */
 			break;
 		
 		    case KB_HE:

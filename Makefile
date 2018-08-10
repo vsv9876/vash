@@ -119,7 +119,7 @@ install:   $(DESTDIR) $(DEST) $(VISILIB)
 	cd vashlib/LIB;			$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
 	cd vashlib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cp -rp termcap/. $(VISILIB)
-	cd visilib;			$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+#	cd visilib;			$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd vashrc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 
 #bld:	pkgbuild

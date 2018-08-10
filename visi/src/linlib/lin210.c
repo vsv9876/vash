@@ -190,8 +190,8 @@ LPA lpaout[LPASIZE] = {
 	{       ' ',    0       },
 	{       ' ',    0       },              /* TXT  */
 	{       ' ',    0       },              /* HDR  */
-	{       '>',    0       },              /* VAR  */
-	{       '>',    0       },              /* ALT  */
+	{       ':',    0       },              /* VAR  */
+	{       ':',    0       },              /* ALT  */
 	{       '-',    0       },              /* MSE  */
 	{       ' ',    A_US|A_MD },            /* ERR  */
 	{       '!',    A_SO    },              /* ATT  */
@@ -199,11 +199,11 @@ LPA lpaout[LPASIZE] = {
 
 LPA lpainp[LPASIZE] = {
 	{       ' ',    0       },
-	{       ' ',    0		},              /* TXT  */
+	{       ' ',    A_MD	},              /* TXT  */
 	{       ' ',    A_SO    },              /* HDR  */
 	{       '#',    A_SO    },              /* VAR  */
 	{       '?',    A_SO    },              /* ALT  */
-	{       '*',    A_SO    },              /* MSE  */
+	{       '>',    A_SO    },              /* MSE  */
 	{       ' ',    A_US|A_MD },            /* ERR  */
 	{       ' ',    A_MB    },              /* ATT  */
 };
