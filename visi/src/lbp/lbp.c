@@ -185,7 +185,7 @@ FILE   *i_fp;
 		    break;
 		case 'K' :                  /* מבתקבמיו כלבקיûי */
 		case 'k' :
-		    line->attr |= (ATT|MID|PAD);
+		    line->attr |= (VAR|MID|PAD);
 		    break;
 		default :
 		    printf("%s: %3d: unknown attribute '%c'\n",

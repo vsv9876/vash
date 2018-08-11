@@ -614,7 +614,7 @@ int     typ;            /* 'h', 'c', 'k', '?' */
 	} else
 	if(typ == 'k') {
 		sprintf(lbpo,
-   "{ %2d,%2d,%2d, 0, ATT|MID|PAD, 0, cvt_lh, 0, \"%s\" },",
+   "{ %2d,%2d,%2d, 0, VAR|MID|PAD, 0, cvt_lh, 0, \"%s\" },",
 		siz, li, co, s);
 	}
 	subst(siz);        /* σδεματψ ποδσταξοχλι */
