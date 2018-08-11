@@ -40,23 +40,23 @@ co      = v     -       "%d"   -       -       maxco
 				to get help press .:HE....
     h .hF history save		  
     s .sF scroll		   
-    m .mF mail_biff		  
-    c .cF clock                   
     p .pF keybar                  
     w .wF who+cwd  
     x .xF who+cwd xterm title
+    m .mF mail_biff		  
+    c .cF clock                   
     l .ym.lines max
-
-=setup for debug only:
 
     co: .co li: .li vexdir: .vexdir....................................
 
+---#."please, use parameters below consulting with manual".
+---#
 	-f: .f.........................................................
 	-i: .i.........................................................
 	-@: .r.........................................................
 	-o: .o.........................................................
 
-=about:
-Visual Assistant Shell .versn............... Build Id: .buildd......
+=Visual Assistant Shell
 .coprts.....................................
+version: .versn............... build id: .buildd......
 ---END

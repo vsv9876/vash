@@ -8,6 +8,6 @@ make
 make DESTDIR=`pwd`/BLD install
 cp -rp DEBIAN/ BLD
 fakeroot dpkg -b BLD
-mv BLD.deb vash_1.xx.1_amd64.deb
+mv BLD.deb vash_1.xx_amd64.deb
 
 

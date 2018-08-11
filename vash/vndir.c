@@ -587,6 +587,9 @@ int newflag;    /* если 0, то только обновить каталог */
 	/*NOSTRICT*/
 		if (Cfill[0] == '\0'
 		||  (fpls = popen(tmpbuf, "r")) == NULL) {
+			cp_set(-1, 0, TXT);
+			io_set(IO_TTYPE);
+			fprintf(vttout, "\n");
 			fprintf(stdout, /* stderr */
 "\nMain menu build failed with error ('%s')\n", tmpbuf);/*Cfill);*/
 			perror(Cfill);

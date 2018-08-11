@@ -11,5 +11,5 @@ static LINE helpk[] = {
 
 /*NOXSTR*/
 char    coprts[] =
-"(c) Sergey Vovk, 1990,2016";
+"1990-2018 (c) Sergey Vovk";
 /*YESXSTR*/

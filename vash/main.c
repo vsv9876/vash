@@ -81,6 +81,8 @@ static  LINE tmplate =
 
 char    *itms1[ITMMAX+1];       /* УКАЗАТЕЛИ НА ПУНКТЫ ГЛАВНОГО МЕНЮ */
 
+#define VEXDIR "VASH_VEXDIR"
+
 main(argc, argv)
 int argc;
 char **argv;
@@ -99,7 +101,7 @@ char **argv;
        ashstd = ".ashstd";
 
        /* setup extra directory for all working files library, ashstd will be found in that place */
-       if ((s = getenv("VASH_VEXDIR")) != (char *)0) vexdir = s;
+       if ((s = getenv(VEXDIR)) != (char *)0) vexdir = s;
 
 #ifdef  VTTY
 	vtty();
@@ -231,7 +233,11 @@ char **argv;
 
 		u_menu(vf, "mainh.lb");
 		ashexit(0);
+	} else {
+		/* ошибки (плохо установлен ash, не читается реперный файл */
+		/* scrlnl(); */
+		io_set(IO_TTYPE);
+		printf("\n");
+		exit(1);
 	}
-	/* ошибки (плохо установлен ash, не читается реперный файл */
-	exit(1);
 }
