@@ -1,0 +1,5 @@
+#!/bin/bash
+
+top=`pwd`
+export PATH=$top/visi/bin:$PATH
+export VASH_VEXDIR=$top/vashlib/LIB
