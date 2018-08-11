@@ -190,7 +190,7 @@ objs:           $(OBJS)
 
 # $(VISI_NEW)/libnew 
 ## linker ... $(LIBNEW) 
-$(PROGRAM):     $(OBJS) $(LIBS) $(MAKEFILE)
+$(PROGRAM):     buildd.h $(OBJS) $(LIBS) $(MAKEFILE)
 		@echo "Loading $(PROGRAM) ... "
 		$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) $(STDLIBS) -o $(PROGRAM)
 		@echo " ...done"
@@ -213,6 +213,7 @@ cxref:  $(SRCS)
 lint lintcheck:;        $(LINT) $(CFLAGS) *.c $(VISI_NEW)/*.c >a.lint
 
 otherclean:
+		rm -f buildd.h
 #		cd ./$(VISI_NEW); make clean;
 #                cd ./ashrc; make DEST=$(DEST) clean
 
@@ -250,10 +251,10 @@ $(DESTDIR):
 	
 	
 # rebuild buildd.c, make new timestamp of build date
-buildd:
+buildd.h:
 	$(SHELL) ./builddate
 
-buildd.h: buildd
+#buildd.h: buildd
 #
 #
 # portable rulez

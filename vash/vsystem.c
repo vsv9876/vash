@@ -237,7 +237,14 @@ int  execapnd;
 	if (cmdlbl == (char *)0) {
 		cmdlbl = cmd2;  /* саму команду и показать */
 	}
-	printf("%s %s", pmtsh, cmdlbl);
+	at_set(TXT);
+	at_set(TXT|INP);
+	fprintf(vttout, "%s ", pmtsh);
+	/* w_str(pmtsh);*/
+	at_set(TXT);
+	fflush(vttout);
+
+	printf("%s", cmdlbl);
 	if (execmode & ASH_NOWAIT)
 		putchar('&');
 	putchar('\n');

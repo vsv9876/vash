@@ -21,6 +21,8 @@ linlib/vhset:
 - linlib/vhset: наследование от stty cooked intr, erase.
 +? linlib/vhset: проверки на доступность /dev/tty, для сброса зависаний...
 
+- запуск команды $SHELL -c 'cmd'
+
 - history:
   command history shareable with multiply sessions, like ksh
 - searching pattern across history (or select like in main lineset)
