@@ -75,7 +75,7 @@ extern LINEMENU clm;    /* פוכץ‎וו םומא */
 #define ofsy        clm._ofsy
 
 extern  char   *yesno[];
-extern  int     scrolf, oneitm, panelf, whodirf, xtermf, histf, clockf, cmailf, loginf;
+extern  int     scrolf, oneitm, panelf, whodirf, xtermf, histf, histsn, clockf, cmailf, loginf;
 extern  char   *homedir;
 extern  char   *vexdir; /* vash extra files directory */
 extern  char   *cwd;

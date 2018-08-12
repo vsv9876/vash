@@ -6,7 +6,7 @@
 #define PCMAX   600
 #define KT2MAX  100
 #define KT1MAX  200
-#define BUFSMAX 4000
+#define BUFSMAX 16000
 
 #else
 

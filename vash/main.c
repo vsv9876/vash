@@ -23,7 +23,8 @@ int     oneitm = 0;     /* флаг: разрешено указать только один пункт меню */
 int     panelf = 1;     /* флаг: показывать панель подсказки */
 int     whodirf = 1;    /* show whodir panel on screen */
 int     xtermf = 0;     /* show whodir panel on window title using xterm escape sequence */
-int     histf  = 0;     /* флаг: сохранять историю команд */
+int     histf  = 0;     /* флаг: сохранять историю команд при выходе из vash */
+int		histsn = 1;		/* флаг: синхронизировать историю после каждой команды */
 int     clockf = 1;     /* флаг: показывать часы */
 int     cmailf = 1;     /* флаг: проверять почту */
 int     loginf = 0;     /* флаг: главная оболочка, ppid() == 1 */
@@ -213,9 +214,9 @@ char **argv;
    	if ((homedir=getenv("HOME")) == (char *)0)
 	       histf = 0;
 
-       if (homedir != (char *)0)
-	       cmdghist(homedir);
-
+       if (homedir != (char *)0) {
+    	   cmdghist(homedir);
+       }
        tmpflnm = mkstemp(tmpflnm);      /* получить имя временного файла */
 /*         tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
 

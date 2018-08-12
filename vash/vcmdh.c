@@ -4,9 +4,14 @@
  * ТОЛЬКО УНИКАЛЬНЫЕ КОМАНДЫ.
  */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "line.h"       /* ФАЙЛ-ЗАГОЛОВОК LINLIB */
 #include "assist.h"
 
@@ -18,7 +23,10 @@
 #define CMDP 60         /* КОЛИЧЕСТВО КОМАНД В БУФЕРЕ */
 #define CMDHL 8         /* КОЛИЧЕСТВО КОМАНД В МЕНЮ НА ЭКРАНЕ */
 #define CMDB CMDP * MAXLICO /* 8192       /* два полных экранаистории хватит... */
-#endif /* TINISMALL */
+#endif /* TINYSMALL */
+
+extern char *homedir;
+extern int histsn;
 
 static  char    cmdb[CMDB+1];   /* БУФЕР КОМАНД */
 static  char   *cmdp[CMDP+1];   /* УКАЗАТЕЛИ НА КОМАНДЫ */
@@ -124,6 +132,11 @@ char *cmd;
 	cmdpi = cmdplast;       /* МОДИФИЦИРОВАТЬ ИНДЕКСЫ */
 	cmdbot += newsize;
 
+#ifdef DURA
+	/* сначала синхронизация истории в файл? */
+	/* при каждом изменении истории команд!!! */
+	if (histsn == 1) cmdphist(homedir);
+#endif
 	return(-1);
 }
 
@@ -163,38 +176,84 @@ char *cmd;
  */
 char *hfile = "/.ashhist";
 
+/*
+ * read history file, in case:
+ *  1) first time
+ *  2) file modified since last reading
+ * write history file every time,
+ * saving internal mark about st_mtime preventing useless read
+ */
+
+static time_t hflast = (time_t)0; /* zero for fisrt time comparizon */
+
+/*
+ * get history from file into cmdb[] buffer
+ *
+ * if histsn==0 (syncronize history is disabled),
+ * do it once first time when program started
+ */
 cmdghist(hdp)
 char *hdp;
 {
 	FILE *fp;
+	static struct stat	hfstat;
+	time_t      hftime;
 	char filename[200];
-	char cmd[140];
+	char cmdbuf[140]; /* one command from file, without trailing '\n' */
 	int c;
 	register char *p;
+	register int i;
 
 	strcpy(filename, hdp);
 	strcat(filename, hfile);
 
-	if ((fp = fopen(filename, "r")) == NULL)
-		return(0);
-	p = cmd;
-	while ((c = getc(fp)) != EOF) {
-		if ((*p++ = c) == '\n') {
-			*(--p) = '\0';
-			cmdput(cmd);
-			p = cmd;
-		}
+	if (stat(filename, &hfstat) < 0) return(0);
+	hftime = hfstat.st_mtime;
+
+	if (histsn == 0) {
+		if (hflast != 0) return(1);
+	}
+	if (hflast != 0 && hflast == hftime) return(1);
+
+	hflast = hftime;
+	if ((fp = fopen(filename, "r")) == NULL) return(0);
+
+	/* cmdb[CMDB+1];   /* БУФЕР КОМАНД */
+	/* *cmdp[CMDP+1];   /* УКАЗАТЕЛИ НА КОМАНДЫ */
+	for (i = 0; i <= CMDP; cmdp[i++] = 0) ;
+
+	cmdplast = 0;   /* ИНДЕКС ПОСЛЕДНЕЙ КОМАНДЫ */
+	cmdpi = 0;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ */
+	cmdbot = 0;     /* ИНДЕКС СВОБОДНОГО МЕСТА В БУФЕРЕ */
+
+	p = cmdbuf;		/* clear for next line from file */
+	i = 0;
+	while (i < CMDP && (c = getc(fp)) != EOF) {
+		*p = c;
+		if (c == '\n') {
+			*p = '\0'; p = cmdbuf; i++; /* clear buffer for next line */
+			cmdput(p);
+		} else
+			p++;
 	}
 	fclose(fp);
 	return(1);
 }
 
+/*
+ * put commands from buffer cmdb[] to file in home directory
+ */
 cmdphist(hdp)
 char *hdp;
 {
 	char filename[200];
+	struct stat	hfstat;
+	time_t      hftime;
 	FILE *fp;
+	int ok;
 	register char **pp;
+
+	if (hdp == (char *)0) return(0) ; /* history file is not defined */
 
 	strcpy(filename, hdp);
 	strcat(filename, hfile);
@@ -205,9 +264,12 @@ char *hdp;
 	for (pp = cmdp; *pp != (char *)0; pp++)
 		/*VARARGS*/
 		fprintf(fp, "%s\n", *pp);
-
+	ok = (fflush(fp)==EOF ? 0 : 1);
 	fclose(fp);
-	return(1);
+
+	if (ok && stat(filename, &hfstat) == 0)
+		hflast = hfstat.st_mtime;
+	return(ok);
 }
 
 static  char *cmdpp;
@@ -247,6 +309,8 @@ kbcod cod;
 			pre_vf();
 			itmshow();
 			w_page(vf, 0);
+			/* синхронизировать историю при удалении каждой команды */
+			if (histsn) cmdphist(homedir);
 		}
 		else
 			bell();
@@ -265,7 +329,7 @@ h_menu()
 
 	/* первоначальный показ на экране */
 	cp_set(y0, 0, TXT);
-	er_eop();
+	w_str("!");	er_eop();
 	w_cmd(cmdpp);   /* ОСТАВИТЬ КОМАНДУ НА ЭКРАНЕ */
 	itmshow();
 	w_page(vf, 0);
@@ -339,6 +403,12 @@ char  *cmd;
 	}
 	savelm = clm;
 	cp_set(y0-1, 0, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
+	/* сначала синхронизация истории из файла? */
+	/*TODO оптимизация перечитывания */
+	if (histsn) {
+		cmdghist(homedir);
+		w_str("*");
+	}
 	er_eop();
 
 	/* инициализация меню команд */
