@@ -1,3 +1,9 @@
+vash (1.26.0) unstable; urgency=medium
+
+  * debug, upstream vash-1.26.0 unpublished
+
+ -- Sergey Vovk (testing only) <vsv@lab2.lo>  Mon, 18 Jul 2018 00:17:14 +0300
+
 vash (1.25.0) unstable; urgency=medium
 
   * upstream vash-1.25.0 unpublished

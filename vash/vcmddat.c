@@ -68,7 +68,7 @@ keyshow(yes)
 PATCMD  pc[PCMAX];      /* образец:действие */
 KEYTAB  kt2[KT2MAX];    /* действие:табл(pc):ixbeg:ixend */
 KEYTAB  kt1[KT1MAX];    /* клавиша:табл(pc):ixbeg:ixend */
-static  char    bufs[BUFSMAX];
+static  char    bufss[BUFSMAX];
 
 /*
  * Переменные для сканирования файла настройки
@@ -172,7 +172,7 @@ char *file;
     /* инициализация переменных сканирования */
     pc_ix = 0;
     kt2_ix = kt1_ix = -1;
-    bufsp = bufs;
+    bufsp = bufss;
     xchr = '\0';
 
     while (fgets(ws, WSMAX, fp) != NULL) {

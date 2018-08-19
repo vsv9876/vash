@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdio.h>
-#include "line.h"       /* ФАЙЛ-ЗАГОЛОВОК LINLIB */
+#include "line.h"
 #include "assist.h"
 
 extern  char *getenv();
@@ -41,6 +41,7 @@ scrlst()        /* курсор к началу свитка */
 	fflush(vttout);
 }
 
+
 vshcmd(cmd, cmdlbl)
 /*
  * выполнить команду /bin/sh
@@ -54,7 +55,7 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 	int justrun;            /* флаг: запускать, не редактировать */
 
 	cmdrun = 0;
-	pmtshsz = strlen(pmtsh) + 1;
+	pmtshsz = strlen(pmtsh) /* + 1*/;
 	cmdsize = maxco - 1 - pmtshsz;
 	justrun = 0;
 	cod = 0;
@@ -73,7 +74,7 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 		}
 		else {
 			/* копир. только то, что на экране */
-			strncpy(cmd0, cmd, cmdsize);
+			strncpy(cmd0, cmd, (size_t)cmdsize);
 			cmd0[cmdsize] = 0;
 		}
 		pos = strlen(cmd0);
@@ -103,6 +104,8 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 			break;
 		case KB_AU:
 			/* пред. команда */
+			/* синхронизировать историю, если в буфере набираемой команды пусто */
+			if (histsn && cmd0[0] == 0) cmdghist(homedir);
 			if ( !cmdprv(cmd0) )
 				bell();
 			break;
@@ -111,6 +114,12 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 			if ( !cmdnxt(cmd0) )
 				bell();
 			break;
+#ifndef TAB_USE_TEST
+		case KB_TA:
+			if (try_compl(&cmd0[0], &pos, maxco - 2) < 0) bell();
+			w_cmd(cmd0);
+			break;
+#endif
 		case KB_NL :
 			if (cmd == (char *)0) {
 				/* для strncmp необходимо */
@@ -202,6 +211,8 @@ std_shell:
 			case KB_AR:
 			case KB_AD:
 			case KB_AU:
+			/* case KB_TA */
+				/*cp_sav(); cp_set(-2, 1, ATT); w_str("ta"); cp_fet();*/
 					continue;
 			/* возврат в меню имен файлов */
 			case ' ':       return(1);
@@ -215,6 +226,7 @@ std_shell:
 					continue;
 				}
 				goto fil_cd;
+				/*break;*/
 			}       /* финал проверки завершения команды sh */
 
 		case KB_EX:
@@ -224,6 +236,8 @@ std_shell:
 				scrlst(); return(1);
 			}
 			return(0);      /* ничего не сделано */
+			/*break;*/
+		/*switch(cod) -- end*/
 		}
 	}
 }

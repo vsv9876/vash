@@ -9,6 +9,7 @@ linlib/vhset:
 + vhset: расширить набор клавишных команд PgUp, PgDown, Home, End
 + linlib: расширить набор операций редактирования
 
+?- реинкарнация - перезапуск vash в том же окружении, с возобновлением контекста приложения
 ?- restricted ash version, without command line editing/confirmation
 ?- общие настройки для .ashstd, и проч. .ash* через встроенный препроцессор
 - оптимизация файлов настройки (директива include?)

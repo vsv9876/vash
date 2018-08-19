@@ -34,7 +34,7 @@ char *strncp(dest, src, size)
 
 	 for(i = 0; i < size && src[i] != '\0'; i++)
 		 dest[i] = src[i];
-	 for(;i < size; i++) /* do not terminate oversized destination buffer, like strncpy */
+	 for(;i < size; i++) /* do not terminate oversized destination buffer, similar to strncpy() */
 		 dest[i] = '\0';
 
 	 return dest;

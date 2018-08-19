@@ -76,6 +76,7 @@ extern LINEMENU clm;    /* פוכץ‎וו םומא */
 
 extern  char   *yesno[];
 extern  int     scrolf, oneitm, panelf, whodirf, xtermf, histf, histsn, clockf, cmailf, loginf;
+extern  char   *envshell;
 extern  char   *homedir;
 extern  char   *vexdir; /* vash extra files directory */
 extern  char   *cwd;

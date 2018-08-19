@@ -85,6 +85,7 @@ SRCS          = buildd.c\
 		gidchk.c \
 		main.c\
 		menu2.c\
+		slist.c\
 		vcmd.c\
 		vcmddat.c\
 		vcmdh.c\
@@ -97,6 +98,7 @@ SRCS          = buildd.c\
 		vmisc.c\
 		vndir.c\
 		vshcmd.c\
+		vshcmpl.c\
 		vsusp.c\
 		vsystem.c
 
@@ -107,6 +109,7 @@ OBJS	      = \
 		gidchk.o\
 		main.o\
 		menu2.o\
+		slist.o\
 		vcmd.o\
 		vcmddat.o\
 		vcmdh.o\
@@ -119,6 +122,7 @@ OBJS	      = \
 		vmisc.o\
 		vndir.o\
 		vshcmd.o\
+		vshcmpl.o\
 		vsusp.o\
 		vsystem.o
 
@@ -288,6 +292,7 @@ amenu.o: assist.h
 buildd.o: buildd.h
 main.o: assist.h
 menu2.o: assist.h
+slist.o: slist.h
 vcmd.o: assist.h astat.h
 vcmddat.o: assist.h astat.h
 vcmdh.o: assist.h
@@ -297,4 +302,5 @@ vmain.o: assist.h
 vmisc.o: assist.h
 vndir.o: assist.h astat.h
 vshcmd.o: assist.h
+vshcmpl.o: assist.h
 vsystem.o: assist.h

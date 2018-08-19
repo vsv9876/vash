@@ -29,6 +29,7 @@ int     clockf = 1;     /* флаг: показывать часы */
 int     cmailf = 1;     /* флаг: проверять почту */
 int     loginf = 0;     /* флаг: главная оболочка, ppid() == 1 */
 
+char   *envshell;		/* env SHELL= */
 char   *homedir;        /* домашний каталог */
 char   *cwd;            /* текущий (рабочий) каталог */
 
@@ -111,9 +112,9 @@ char **argv;
 	hw_set();
 
 	if (getuid() == 0) {
-		pmtsh = " #";
+		pmtsh = "# ";
 	} else {
-		pmtsh = " $";
+		pmtsh = "$ ";
 	}
 
 	/*
@@ -210,6 +211,10 @@ char **argv;
 			ashstd = *argv;
 		}
 	}
+
+   	if ((envshell=getenv("SHELL")) == (char *)0) {
+   		envshell = "/bin/sh";
+   	}
 
    	if ((homedir=getenv("HOME")) == (char *)0)
 	       histf = 0;

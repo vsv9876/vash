@@ -259,7 +259,7 @@ fsh(cmd)        /* команда sh */
 register char *cmd;
 {
 	if (*cmd == '\0')
-		/* vshcmd использует старую команду */
+		/* vshcmd будет использовать старую команду */
 		cmd = (char *)0;
 	return(vexcmd(cmd, (char *)0));
 }

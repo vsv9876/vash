@@ -206,7 +206,9 @@ int     *ofsp;          /* υλαϊατεμψ ξα χεμιώιξυ σνεύεξιρ οτ ξαώ. πομρ */
 			case KB_AL: if(i>0)  i--;
 				   else     goto ret;
 				   break;
-			case KB_TA: bell(); break;
+			case KB_TA: /*bell(); break;*/
+				/*cp_sav(); cp_set(-2, 1, ATT); w_str("ta"); cp_fet();*/
+				goto ret; break;
 #ifdef OLD_USE_TAB
 			case KB_TA: if(i == size-1) goto ret;
 				   i += 8-(i%8); break;

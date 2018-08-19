@@ -22,14 +22,18 @@
 
 int tty_li = 0;
 int tty_co = 0;
+
+extern int maxli;
+extern int maxco;
+
 struct winsize winsz;
 int gtty_sz()
 {
 	int ret;
 	ret = ioctl(vtti, TIOCGWINSZ, &winsz);
 	if (ret == 0) {
-		tty_li = winsz.ws_row;
-		tty_co = winsz.ws_col;
+		maxli = tty_li = winsz.ws_row;
+		maxco = tty_co = winsz.ws_col;
 	}
 	return ret;
 }

@@ -239,7 +239,7 @@ int  execapnd;
 	}
 	at_set(TXT);
 	at_set(TXT|INP);
-	fprintf(vttout, "%s ", pmtsh);
+	fprintf(vttout, "%s", pmtsh);
 	/* w_str(pmtsh);*/
 	at_set(TXT);
 	fflush(vttout);
@@ -255,7 +255,7 @@ int  execapnd;
 	if (execmode & ASH_NOSH)
 		syscod = avexec(cmd2, cmdlbl, execmode);
 	else {
-		argv[0] = "sh";
+		argv[0] = envshell; /* "sh";*/
 		argv[1] = "-c";
 		argv[2] = cmd2;
 		argv[3] = (char *)0;
