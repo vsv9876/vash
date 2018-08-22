@@ -85,8 +85,8 @@
 	r?? ? *.[Z]          zcat < #@
 	r?? ? *.bz2          bzip2 -cd < #@
 	r?? ? *.gz           gzip -d < #@
-	r?? * *.src.rpm      rpm -qiv ./#@ | #m
-	r?? * *.rpm          rpm -qiv ./#@ | #m
+	r?? * *.src.rpm      rpm -qivp ./#@ | #m
+	r?? * *.rpm          rpm -qivp ./#@ | #m
 	r?? * *.deb          dpkg --info ./#@ | #m
 	r?? A *.a            ar t #@
 	r?? O *.o            :nm -np #@
@@ -171,8 +171,8 @@
 #	r?? [OD] *      strings #@ | #m
 #+edw
 	rwx d *         :cd #@
-	r?? * *.src.rpm rpm -qlv ./#@ | #m
-	r?? * *.rpm     rpm -qlv ./#@ | #m
+	r?? * *.src.rpm rpm -qlvp ./#@ | #m
+	r?? * *.rpm     rpm -qlvp ./#@ | #m
 	r?? * *.deb     dpkg --contents ./#@ | #m
 	rw? [TE] *      #e #@
 	rw? M *         elm -f #@

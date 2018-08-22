@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include "line.h"
 #include "assist.h"
+#include "slist.h"
+
+extern SLIST_HEAD *sgglist;
 
 extern  char *getenv();
 
@@ -116,7 +119,10 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 			break;
 #ifndef TAB_USE_TEST
 		case KB_TA:
-			if (try_compl(&cmd0[0], &pos, maxco - 2) < 0) bell();
+			if ((sgglist = sl_init()) != NULL) {
+				if (try_compl(&cmd0[0], &pos, maxco - 2) < 0) bell();
+				sgglist = sl_free(sgglist);
+			}
 			w_cmd(cmd0);
 			break;
 #endif

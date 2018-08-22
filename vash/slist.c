@@ -9,7 +9,21 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "slist.h"
+
+/*
+ * return ptr to string stored in this list element
+ */
+char *sl_sstr(slist)
+SLIST *slist;
+{
+	char *s;
+
+	s = (char *)slist;
+	s += sizeof(SLIST_PTR);
+	return s;
+}
 
 /*
  * append elements after last one
@@ -25,27 +39,27 @@ char  *str;
 	size_t ssize;
 	char  *s;
 
-	ssize = (size_t)strlen(str);
+	ssize = strlen(str);
 
-	s   = malloc(ssize+1);
-	ptr = malloc(sizeof(SLIST_PTR)); /* + ssize);*/
+	ptr   = malloc(ssize+1 + sizeof(SLIST_PTR));
+	/*ptr = malloc(sizeof(SLIST_PTR)); /* + ssize);*/
 	if (ptr != NULL) {
 		ptr->ssize = ssize;
-		ptr->sstr = s;
-		strncpy(ptr->sstr, str, ssize);
+		s = sl_sstr(ptr);
+		strncpy(s, str, ssize);
+		s[ssize] = '\0'; /**/
 		prev = NULL;
-		if (head->first == NULL) {
-			head->first = ptr; /*special case on first element */
+		if (head->sl_first == NULL) {
+			head->sl_first = ptr; /*special case on first element */
 		} else {
-			prev = head->last;
-			ptr->sprev = prev->sprev;
+			prev = head->sl_last;
+			ptr->sl_prev = prev;/*->sl_prev;*/
 		}
-		head->last = ptr;
-		head->size += 1;
+		head->sl_last = ptr;
+		head->sl_size += 1;
 	}
 	return ptr;
 }
-
 /*
  * init list,
  * returns pointer to first element
@@ -59,9 +73,9 @@ SLIST_HEAD *sl_init()
 
 	head = malloc(sizeof(SLIST_HEAD));
 	if (ptr != NULL) {
-		head->last = NULL;
-		head->first = NULL;
-		head->size = (size_t)0;
+		head->sl_last = NULL;
+		head->sl_first = NULL;
+		head->sl_size = (size_t)0;
 	}
 	return head;
 }
@@ -74,7 +88,7 @@ SLIST_HEAD *sl_init()
 SLIST *sl_prev(curr)
 SLIST *curr;
 {
-	return (curr->sprev);
+	return (curr->sl_prev);
 }
 
 /*static char last_defined = slist_init("");
@@ -97,28 +111,28 @@ SLIST_HEAD *head;
 		p = prev;
 	}
 */
-	return head->size;
+	return head->sl_size;
 }
 
-int sl_free(headp)
-SLIST_HEAD **headp;
+SLIST_HEAD *sl_free(head)
+SLIST_HEAD *head;
 {
 	SLIST *p;
 	SLIST *prev;
-	SLIST_HEAD *head;
+	/*SLIST_HEAD *head;*/
 	size_t i, count;
 
-	head = *headp;
-	i = count = head->size;
+	/*head = headp;*/
+	i = count = head->sl_size;
 	/* from last element to head */
-	for (p = head->last; i > 0 && p->sprev != NULL; i--) {
+	for (p = head->sl_last; i > 0 && p->sl_prev != NULL; i--) {
 		prev = sl_prev(p);
-		free(p->sstr);
+		/*free(p->sstr);*/
 		free(p);
 		p = prev;
 	}
 	free (head); /* head itself */
-	*headp = NULL; /* clear pointer to head */
+	/*headp = NULL; /* clear pointer to head */
 
-	return count;
+	return NULL;
 }
