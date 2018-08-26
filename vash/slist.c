@@ -29,7 +29,6 @@ SLIST *slist;
  * append elements after last one
  * returns pointer to new element
  */
-
 SLIST *sl_add(head, str)
 SLIST_HEAD *head;
 char  *str;
@@ -112,6 +111,30 @@ SLIST_HEAD *head;
 	}
 */
 	return head->sl_size;
+}
+
+/*
+ * check for duplicate for pattern; return non-zero if pattern already stored
+ */
+int sl_chkdup(head, patt)
+SLIST_HEAD *head;
+char *patt;
+{
+	SLIST *p;
+	SLIST *prev;
+	/*SLIST_HEAD *head;*/
+	size_t i, count;
+
+	/*head = headp;*/
+	i = count = head->sl_size;
+	/* from last element to head */
+	for (p = head->sl_last; i > 0 && p->sl_prev != NULL; i--) {
+		prev = sl_prev(p);
+		/*free(p->sstr);*/
+		if (strcmp(sl_sstr(p), patt) == 0) return 1;
+		p = prev;
+	}
+	return 0;
 }
 
 SLIST_HEAD *sl_free(head)

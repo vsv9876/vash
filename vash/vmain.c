@@ -225,6 +225,7 @@ char *helpl;
 #endif
 				cwdshow();      /* вывески */
 				itmshow();      /* положение окна */
+				hlp_clr();		/* TODO check if right place?*/
 				w_page(vf, 0);  /* пункты меню */
 			} else {
 				if (cmdret < 0)

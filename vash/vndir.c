@@ -64,8 +64,8 @@ int rescan()
  * Вернуть строку прав доступа (rwx)
  */
 char *
-rwxmode(stp)
-struct stat *stp;
+rwxmode(statp)
+struct stat *statp;
 {
 	static  char rwxs[4];
 	int umode;  /* реальные права доступа */
@@ -74,22 +74,21 @@ struct stat *stp;
 
 	userid = getuid();
 
-	umode = stp->st_mode;
+	umode = statp->st_mode;
 	if (userid) { /* не является суперпользователем */
-	    if      (stp->st_uid == userid);
+	    if      (statp->st_uid == userid);
 /*          else if (stp->st_gid == getgid())   */
-	    else if (gidchk(stp->st_gid))
+	    else if (gidchk(statp->st_gid))
 		    umode <<= 3;
 	    else    umode <<= 6;
 	}
 	/* assistant shell, будучи запущенным от root,
-	 * смотрит на права, которые поставил user сам себе.
-	 * мудрее и проще не придумаешь. (c) by vsv     ;-)
+	 * смотрит на права владельца объекта (TODO дополнить acl)
 	 */
 	rwxs[0] = ((umode & S_IREAD) ? 'r' : '-');
 	rwxs[1] = ((umode & S_IWRITE)? 'w' : '-');
 	rwxs[2] = ((umode & S_IEXEC) ? 'x' : '-');
-	rwxs[3] = 0;
+	rwxs[3] = '\0';
 	return(rwxs);
 }
 

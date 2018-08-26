@@ -1,5 +1,5 @@
 Package: vash
-Version: 1.26.0
+Version: 1.26.1
 Section: misc
 Architecture: amd64
 Depends:

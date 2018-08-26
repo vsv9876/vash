@@ -18,7 +18,9 @@ int pmtshsz;            /* размер подсказки */
 static  char cmd0[2 * MAXLICO + 2] = "";    /* ТЕКУЩАЯ КОМАНДА ОБОЛОЧКИ */
 static  int  cmdsize = 0;       /* МАКС. РАЗМЕР СТРОКИ */
 static  int  pos = 0;           /* позиция в строке */
-
+static  int old_pos = 0;		/* позиция курсора до попытки окончить ввод (completion),
+								если изменилась, выполнена вставка в буфер команды */
+extern int hlp_cmpl();
 /*
  * ФУНКЦИЯ w_cmd ВЫЗЫВАЕТСЯ В ЭТОМ МОДУЛЕ
  * И В МОДУЛЕ РАБОТЫ С ИСТОРИЕЙ
@@ -28,11 +30,11 @@ register char *cmd;
 {
 	register int i;
 
-	cp_set(-1, 0, TXT); er_eol();
+	cp_set(-1 /*y0-1*/, 0, TXT); er_eol();
 	at_set(TXT|INP);
 	/*if (getuid() == 0) pmtsh = ".#";*/
 	w_str(pmtsh);
-	cp_set(-1, pmtshsz, TXT);
+	cp_set(-1 /*y0-1*/, pmtshsz, TXT);
 	for(i = 0; cmd[i] && i < cmdsize; i++)
 		w_chr(cmd[i]);
 }
@@ -56,6 +58,7 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 	int syscod;             /* код возврата system */
 	int cmdrun;             /* ФЛАГ: КОМАНДА ЗАПУСКАЛАСЬ */
 	int justrun;            /* флаг: запускать, не редактировать */
+	int slsize;				/* количество возможных окончаний */
 
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
@@ -117,15 +120,23 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 			if ( !cmdnxt(cmd0) )
 				bell();
 			break;
-#ifndef TAB_USE_TEST
+		case KB_RE:
+			er_pag(); w_cmd(cmd0);
+			break;
 		case KB_TA:
 			if ((sgglist = sl_init()) != NULL) {
-				if (try_compl(&cmd0[0], &pos, maxco - 2) < 0) bell();
+				old_pos = pos;
+				if ((slsize = try_compl(&cmd0[0], &pos, maxco - 2)) < 0) bell();
+				if (pos == old_pos && sgglist->sl_size > 0) {
+					hlp_compl();
+					cmdrun = 1; /*для восстановления главного меню*/
+				} else {
+					hlp_clr();
+				}
 				sgglist = sl_free(sgglist);
 			}
 			w_cmd(cmd0);
 			break;
-#endif
 		case KB_NL :
 			if (cmd == (char *)0) {
 				/* для strncmp необходимо */
