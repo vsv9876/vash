@@ -22,7 +22,7 @@ linlib/vhset:
 - linlib/vhset: наследование от stty cooked intr, erase.
 +? linlib/vhset: проверки на доступность /dev/tty, для сброса зависаний...
 
-- запуск команды $SHELL -c 'cmd'
++ запуск команды $SHELL -c 'cmd' (имя SHELL брать из окружения)
 
 - history:
   command history shareable with multiply sessions, like ksh
@@ -36,6 +36,7 @@ linlib/vhset:
 - работа с очень большими каталогами и номерами inode (уйти от статического выделения памяти под списки главного окна)
 
 - починить меню F2, сейчас там какие-то заглушки
+- навигатор окна vf --==- не должен выходить за границы одной строки
 
 + добавить регулирование предпочтений, сейчас только EDITOR, PAGER
 ?- надо еще MAILVIEW, MAILEDIT

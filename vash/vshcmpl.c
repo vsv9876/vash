@@ -507,17 +507,21 @@ int maxpos; /* максимальное значение позиции в буфере строки */
 		}
     	ins_len = strlen(s_ins);
     	/* insert a completion just found into cmd buffer */
-    	if (ins_len != 0) {
-			/*ins_len = strlen(s_ins); s_ins[ins_len++] = ' '; /* expand one space on success*/
-			c = ' '; /* default with space, for dir '/' */
-    		if (ok == 1 && (cmpl_stat(s_dir, s_base, s_ins) != NULL)) {
-				if (tstats[0] == 'd') {
-					c = '/';
-				} else {
-					c = ' ';
-				}
+    	if (ins_len >= 0) {
+			/* advance one symbol on success: '/' on dir, ' ' otherwise */
+    		if (sgglist->sl_size == 1) {
+    			if (cmpl_stat(s_dir, s_base, s_ins) != NULL) {
+					if (tstats[0] == 'd') {
+						c = '/';
+					} else {
+						c = ' ';
+					}
+    			} else if (s_mode == path_cmd) {
+    				c = ' ';
+    			}
 				s_ins[ins_len] = c; ins_len += 1; s_ins[ins_len] = '\0';
-			}
+
+    		}
 			for(x_out = maxpos - ins_len, x_in = maxpos; x_in >= *curpos; x_in--, x_out--)
 				cmd[x_in] = cmd[x_out];
 			for(x_out=0, x_in=*curpos; x_out < ins_len; x_out++, x_in++)

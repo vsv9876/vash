@@ -185,19 +185,36 @@ itmshow()
 /* показать положение "окна" */
 {
 	int showco; /* позиция нач. строки индикации окна */
+	int showscale; /* масштаб показа, 1x, 2x, 3x, ... */
 	register int i;
+	int lxx, lyy, litmmax;
 
 	/* показать положение окна */
 	if (yy*xx < itmmax) {  /* если не все файлы на экране... */
 		/* отцентрировать... */
+/*
 		showco = (maxco - (itmmax/yy))/2;
 		if (showco < 0) showco = 0;
+*/
+		showco = 2;
+		lxx = xx;
+		lyy = yy;
+		litmmax = itmmax;
+		showscale = ((itmmax/lyy) / (maxco - 16)) + 1 ;
 
 		cp_set(maxli - 2, showco, TXT);
 		for (i = 0; i < itmmax; i += yy) {
-			if (i >= itmofs && i < itmofs+(yy*xx))
-				w_chr('=');
-			else    w_chr('-');
+			if (i >= itmofs && i < itmofs+(yy*xx)) {
+				if (showscale == 1)	w_chr('='); else {
+					if (((i/yy) % showscale) == 0) w_chr('%');
+				}
+			} else {
+				if (showscale == 1) w_chr('-');
+				else {
+					if (((i/yy) % showscale) == 0) w_chr('.');
+				}
+
+			}
 		}
 	}
 }

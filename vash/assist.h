@@ -53,7 +53,7 @@ int     _ofsx;           /* влево/вправо */
 int     _ofsy;           /* вверх/вниз */
 } LINEMENU;
 
-extern LINEMENU clm;    /* ТЕКУЩЕЕ МЕНЮ */
+extern LINEMENU clm;    /* ТЕКУЩЕЕ МЕНЮ (current lines menu) */
 
 #define itms        clm._itms
 #define itmbuf      clm._itmbuf
