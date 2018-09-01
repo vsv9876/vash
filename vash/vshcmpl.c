@@ -7,6 +7,7 @@
 #include "slist.h"
 
 /*#define DEBUGS 1*/
+#define DEDUP_PATH 1
 
 #define BUFSMAX 4000
 
@@ -133,11 +134,15 @@ int hlp_compl()
 	slistn = sgglist->sl_size;
 	slist = sgglist->sl_last;
 
-	cp_set(cur_li, cur_co, TXT|INP); er_eop();
+	for (cur_li = maxli - 3; cur_li >= y0; cur_li--) {
+		cp_set(cur_li, cur_co, TXT); w_chr('*'); er_eol();
+	}
+	cur_li = y0;
+	cp_set(cur_li, cur_co, TXT|INP); /*er_eop();*/
 	sprintf(tmps, " <%s> [%d] ", s_debug[s_mode], slistn);
 	w_str(tmps);
 	cur_co += strlen(tmps) + 1;
-	for (n = slistn; n > 0 && slist != NULL && cur_li < maxli - 1 ; n--) {
+	for (n = slistn; n > 0 && slist != NULL && cur_li < maxli - 2 ; n--) {
 		s = sl_sstr(slist);
 		ssize = strlen(s);
 		cp_set(cur_li, cur_co, TXT);
@@ -270,26 +275,27 @@ char *s_base;
 
 /*
  * deduplicate array of pointers to string, if content equal, leave firts one and squieeze
+ * return number of elements in array when squeeze done
  */
 int sdedup(pathp, maxnpath)
-char **pathp;
+char *pathp[];
 int maxnpath;
 {
 	int n, n2, ndup; /* n2 for deduplicate path dirs */
 
-	maxnpath = n;
 	/* deduplicate pathdir */
 	for (n = 0; n < maxnpath; n++ ) {
 		for (n2 = n + 1; n2 < maxnpath; n2++) {
 			if (strcmp(pathp[n], pathp[n2]) == 0) {
 				while(n2 < maxnpath) {
-					/* remove duplicated element and squeeze pathdir */
+					/* remove duplicated element and squeeze array */
 					pathp[n2] = pathp[n2 + 1]; n2++;
 				}
 				pathp[n2] = '\0'; maxnpath -= 1;
 			}
 		}
 	}
+	return n;
 }
 
 /*
@@ -352,24 +358,10 @@ char *basep; /*pointer to base */
 				}
 			}
 			maxnpath = n;
-			sdedup(pathdir, maxnpath);
-#ifdef DEDUP
-			/* deduplicate pathdir */
-			for (n = 0; n < maxnpath; n++ ) {
-				for (n2 = n + 1; n2 < maxnpath; n2++) {
-					if (strcmp(pathdir[n], pathdir[n2]) == 0) {
-						while(n2 < maxnpath) {
-							/* remove duplicated element and squeeze pathdir */
-							pathdir[n2] = pathdir[n2 + 1]; n2++;
-						}
-						pathdir[n2] = '\0'; maxnpath -= 1;
-					}
-				}
-			}
-#endif
+			maxnpath = sdedup(pathdir, maxnpath);
 			/*prepare suggestion list*/
-			for(n = 0; n < maxnpath; n++) {
-				sprintf(tmps, "ls -A1 %s 2>/dev/null", pathdir[n]);
+			for(n = 0; n < maxnpath && pathdir[n] != NULL; n++) {
+				sprintf(tmps, "ls -A %s 2>/dev/null", pathdir[n]);
 				res = sh_sugg(dirp, basep, tmps);
 			}
 		}
@@ -531,9 +523,9 @@ int maxpos; /* максимальное значение позиции в буфере строки */
     }
 
 #ifdef DEBUGS
-	sprintf(debugs, "ok=%d; '%c'%c' #%d %d/%d  dir='%s' base='%s' <%s> ins='%s'   %4s~",
+	sprintf(debugs, "ok=%d'%c%c #%d %d/%d dir=%s' base=%s' <%s> ins=%s'  %4s~",
 			ok, conold, contxt, argc, *curpos, maxpos, s_dir, s_base, s_debug[s_mode], s_ins, tstats);
-      /*cp_sav();*/ cp_set(y0-1, 0, ATT); w_str(debugs); er_eol(); /*cp_fet();*/
+      /*cp_sav();*/ cp_set(/*y0-1*/ -2, 0, ATT); w_str(debugs); er_eol(); /*cp_fet();*/
 #endif
 
   	return ok;

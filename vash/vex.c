@@ -55,6 +55,7 @@ IN_PORTS inport[] = {
 	{ "wF",         &whodirf },
 	{ "sF",         &scrolf },
 	{ "hF",         &histf  },
+	{ "hS",         &histsn },
 	{ "cF",         &clockf },
 	{ "mF",         &cmailf },
 	{ "yy_max",     &yy_max },

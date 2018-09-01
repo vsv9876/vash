@@ -40,7 +40,7 @@ char  *str;
 
 	ssize = strlen(str);
 
-	ptr   = malloc(ssize+1 + sizeof(SLIST_PTR));
+	ptr   = malloc(ssize + 2 + sizeof(SLIST_PTR));
 	/*ptr = malloc(sizeof(SLIST_PTR)); /* + ssize);*/
 	if (ptr != NULL) {
 		ptr->ssize = ssize;

@@ -329,7 +329,8 @@
     * -   +targz1
     * +   +targz
 +targz1
-    r?x [d] *-[0-9]*  tar cvzf #@.tar.gz #@/
+#   r?x [d] *-[0-9]*  tar cvzf #@.tar.gz #@/
+    r?x [d] *         tar cvzf #@.tar.gz #@/
     r?? [TMD] *       :cat #@
 +targz
     r?x [d] *         tar cvzf #@.tar.gz ##

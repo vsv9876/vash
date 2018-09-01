@@ -17,6 +17,7 @@ pF      = ia    -       onoff   cvt_a   -       pF
 wF      = ia    -       onoff   cvt_a   -       wF
 sF      = ia    -       onoff   cvt_a   -       sF
 hF      = ia    -       onoff   cvt_a   -       hF
+hS      = ia    -       onoff   cvt_a   -       hS
 cF      = ia    -       onoff   cvt_a   -       cF
 mF      = ia    -       onoff   cvt_a   -       mF
 xF      = ia    -       onoff   cvt_a   -       xF
@@ -38,7 +39,7 @@ co      = v     -       "%d"   -       -       maxco
 ---SCREEN
 =vash environment setup:
 				to get help press .:HE....
-    h .hF history save		  
+    h .hF history save .hS sync		  
     s .sF scroll		   
     p .pF keybar                  
     w .wF who+cwd  

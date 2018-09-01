@@ -50,7 +50,7 @@ showclck()
 #ifndef CP_SAV
 			cp_sav();
 #endif
-			cp_set(1, maxco-8, ATT);
+			cp_set(maxli-2/*1*/, maxco-8, ATT);
 			fprintf(vttout, "%02d:%02d'%02d",
 			tp->tm_hour, tp->tm_min, tp->tm_sec);
 #ifndef CP_SAV
@@ -181,6 +181,8 @@ fatal()
 	exit(1);
 }
 
+char itmnav[MAXLICO+1] = "";
+
 itmshow()
 /* показать положение "окна" */
 {
@@ -188,7 +190,9 @@ itmshow()
 	int showscale; /* масштаб показа, 1x, 2x, 3x, ... */
 	register int i;
 	int lxx, lyy, litmmax;
+	int n;
 
+	itmnav[0] = '\0';
 	/* показать положение окна */
 	if (yy*xx < itmmax) {  /* если не все файлы на экране... */
 		/* отцентрировать... */
@@ -203,19 +207,25 @@ itmshow()
 		showscale = ((itmmax/lyy) / (maxco - 16)) + 1 ;
 
 		cp_set(maxli - 2, showco, TXT);
-		for (i = 0; i < itmmax; i += yy) {
+
+		n = 0;
+		for (i = 0; i < itmmax && n < MAXLICO; i += yy) {
 			if (i >= itmofs && i < itmofs+(yy*xx)) {
-				if (showscale == 1)	w_chr('='); else {
-					if (((i/yy) % showscale) == 0) w_chr('%');
+				if (showscale == 1)
+					itmnav[n++] = '=';
+				else {
+					if (((i/yy) % showscale) == 0) itmnav[n++] = ':';
+					else							itmnav[n++] = '%';
 				}
 			} else {
-				if (showscale == 1) w_chr('-');
+				if (showscale == 1) itmnav[n++] = '-';
 				else {
-					if (((i/yy) % showscale) == 0) w_chr('.');
+					if (((i/yy) % showscale) == 0) itmnav[n++] = '.';
 				}
-
 			}
 		}
+		itmnav[n] = '\0';
+		w_str(itmnav);
 	}
 }
 
