@@ -112,7 +112,7 @@ LINE    *mainl; /* указатель на страницу меню */
 		}
 		/* получить образец второго условия, найти совпадение */
 /*                cmdsub(file, &itms[itm][2]);  */
-		cmdsub(file, "#@", itm);
+		cmdsub(file, "#@", clm._itm);
 		patp = tstat2(file);
 		for (pcp=ktp->kt_tab, i=ktp->kt_ib; i <= ktp->kt_ie; i++) {
 			if (pcp[i].pc_pat == (char *)0)
@@ -191,7 +191,7 @@ register int  i;        /* копия itm */
 		strcpy(ptmp, vexdir);
 		break;
 	    case '@':   /* имя файла возле курсора */
-		nm_ptr = nmsubs(&itms[i][2], Csubs);
+		nm_ptr = nmsubs(&clm._itms[i][2], Csubs);
 		strcpy(ptmp, nm_ptr);
 		break;
 	    case 'i':   /* имя реперного файла/текущего каталога */
@@ -215,13 +215,13 @@ register int  i;        /* копия itm */
 		strcpy(ptmp, s);
 		break;
 	    case '*':   /* имя файла до последнего суффикса */
-		fnsplit(ptmp, &itms[i][2], 0);
+		fnsplit(ptmp, &clm._itms[i][2], 0);
 		break;
 	    case 's':   /* последний суффикс имени файла, с точкой */
-		fnsplit(ptmp, &itms[i][2], 1);
+		fnsplit(ptmp, &clm._itms[i][2], 1);
 		break;
 	    case 'S':   /* последний суффикс имени файла, без точки */
-		fnsplit(ptmp, &itms[i][2], 2);
+		fnsplit(ptmp, &clm._itms[i][2], 2);
 		break;
 #ifdef DEVELOPE
 	    case 'n':   /* новое имя для создания/переименования */
@@ -248,7 +248,7 @@ char *cmdlbl;   /* вывеска взамен команды */
 
 	if (cmd) {
 	    /* выполнить подстановки */
-	    cmdsub(tmpcmd, cmd, itm);
+	    cmdsub(tmpcmd, cmd, clm._itm);
 	    cmd = tmpcmd;
 	}
 	return( vshcmd(cmd, (char *)0) );
@@ -288,7 +288,7 @@ register char *cmd;
 {
 	char  file[140];
 
-	cmdsub(file, cmd, itm);
+	cmdsub(file, cmd, clm._itm);
 	w_msg(TXT, tstat2(file));
 	return( 0 );
 }

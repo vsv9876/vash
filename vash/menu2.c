@@ -99,15 +99,15 @@ char *cmdlbl;   /* вывеска для показа вместо выполняемой команды */
 	int c;
 
 	/* первоначальный показ на экране */
-	cp_set(y0, 0, TXT);
+	cp_set(clm._y0, 0, TXT);
 	er_eop();
 	itmshow();
-	w_page(vf, 0);
+	w_page(clm._vf, 0);
 
 	for ( ;; ) {
 
-		i = itm - itmofs;
-		vfp = vf;
+		i = clm._itm - clm._itmofs;
+		vfp = clm._vf;
 		vfp += i;
 
 		cod = r_line( vfp, 0 );
@@ -125,9 +125,9 @@ char *cmdlbl;   /* вывеска для показа вместо выполняемой команды */
 		case ' ':
 			/* записать временный файл */
 			if ((fptmp = fopen(tmpflnm, "w")) != NULL) {
-				if (fseek(fpmenu, lblofs[ itm], 0) < 0)
+				if (fseek(fpmenu, lblofs[ clm._itm], 0) < 0)
 					return(0);
-				count = lblsize[ itm];
+				count = lblsize[ clm._itm];
 				while(--count >= 0
 				&& (c = getc(fpmenu)) != EOF) {
 					putc(c, fptmp);
@@ -135,7 +135,7 @@ char *cmdlbl;   /* вывеска для показа вместо выполняемой команды */
 				}
 				fclose(fptmp);
 				/*VARARGS*/
-				sprintf(cmdlbl, "#+%s", lbls[itm]);
+				sprintf(cmdlbl, "#+%s", lbls[clm._itm]);
 				/* можно выполнять ком.файл */
 				return(1);
 			}
@@ -147,7 +147,7 @@ char *cmdlbl;   /* вывеска для показа вместо выполняемой команды */
 			er_pag();
 			cwdshow();
 			w_emsg("");
-			itmshow(); w_page(vf, 0);
+			itmshow(); w_page(clm._vf, 0);
 			break;
 		case KB_AL:
 		case KB_AU:
@@ -180,29 +180,29 @@ char *mfile;    /* имя файла программы меню */
 	}
 
 	savelm = clm;
-	cp_set(y0-1, 0, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
+	cp_set(clm._y0 - 1, 0, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
 	er_eop();
 
 	/* инициализация меню */
-	itms   = lbls;          /* указатели на строки меню */
-	itmmax = lblmax;        /* количество пунктов */
-	vf     = (LINE *)0;
-	itmlen = maxco/2;
-	ltmpl  = &tmplate;
+	clm._itms   = lbls;          /* указатели на строки меню */
+	clm._itmmax = lblmax;        /* количество пунктов */
+	clm._vf     = (LINE *)0;
+	clm._itmlen = maxco/2;
+	clm._ltmpl  = &tmplate;
 
-	itm    = lblsi;         /* текущий пункт меню */
-	yy_max = 10;
-	itmofs = 0;
-	while((itm - itmofs) >= yy_max)
-		itmofs += yy_max;
+	clm._itm    = lblsi;         /* текущий пункт меню */
+	clm._yy_max = 10;
+	clm._itmofs = 0;
+	while((clm._itm - clm._itmofs) >= clm._yy_max)
+		clm._itmofs += clm._yy_max;
 	itmini();
-	yy = 10;
-	x0 = itmlen/2 - 1;
+	clm._yy = 10;
+	clm._x0 = clm._itmlen/2 - 1;
 	pre_vf();
 
 	/* СОХРАНИТЬ СВИТОК */
-	if (y0_top > y0) {
-		y0_top = y0;
+	if (y0_top > clm._y0) {
+		y0_top = clm._y0;
 		scrlnl();
 	}
 
@@ -218,7 +218,7 @@ char *mfile;    /* имя файла программы меню */
 	}
 /*      lblsi = itm;       новое значение текущего пункта меню */
 
-	free((char *)vf); vf = (LINE *)0;
+	free((char *)clm._vf); clm._vf = (LINE *)0;
 	fclose(fpmenu);
 	clm = savelm;
 

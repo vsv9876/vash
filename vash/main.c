@@ -48,9 +48,9 @@ ashexit(ok)
 #ifdef RETRO
 	cp_set(-1, 0, TXT);
 #else
-	cp_set(y0, 0, TXT);
+	cp_set(clm._y0, 0, TXT);
 	er_eop();
-	cp_set(y0, 0, TXT);
+	cp_set(clm._y0, 0, TXT);
 #endif
 	io_set(IO_TTYPE);
 #ifdef RETRO
@@ -95,10 +95,10 @@ char **argv;
        char *s;
 
        /* инициализация главного меню */
-       itms   = itms1;
-       ltmpl  = &tmplate;
-       itmbsz = ITMBUF;
-       yy_max = 10;
+       clm._itms   = itms1;
+       clm._ltmpl  = &tmplate;
+       clm._itmbsz = ITMBUF;
+       clm._yy_max = 10;
 
        ashstd = ".ashstd";
 
@@ -136,11 +136,11 @@ char **argv;
 					*p++ = *envsup++;
 				}
 				*p = '\0';
-				yy_max = atoi(linenoa);
-				if (yy_max < 2)
-					yy_max = 2;
-				if (yy_max > (maxli - 4))
-					yy_max = maxli - 4;
+				clm._yy_max = atoi(linenoa);
+				if (clm._yy_max < 2)
+					clm._yy_max = 2;
+				if (clm._yy_max > (maxli - 4))
+					clm._yy_max = maxli - 4;
 				break;
 			case 'p':
 				panelf++;
@@ -175,14 +175,14 @@ char **argv;
 				usage();
 				break;
 			case 'b':
-				itmbsz = atoi(&argv[0][2]);
-				if (itmbsz <= 0) {
+				clm._itmbsz = atoi(&argv[0][2]) * 1024;
+				if (clm._itmbsz <= 0) {
 					fprintf(stderr, "-b flag bad usage...");
 					usage();
 				}
 				continue;
 			case '1':
-				xx1 = 1;
+				clm._xx1 = 1;
 				continue;
 			case 'p':
 				panelf = 0;
@@ -237,7 +237,7 @@ char **argv;
 		signal( SIGINT, SIG_IGN );
 		signal( SIGQUIT, SIG_IGN );
 
-		u_menu(vf, "mainh.lb");
+		u_menu(clm._vf, "mainh.lb");
 		ashexit(0);
 	} else {
 		/* ошибки (плохо установлен ash, не читается реперный файл */

@@ -151,7 +151,7 @@ clritm()
     register int i;
     register LINE *l;
 
-    for (l = vf,i = 0; l->size && i < yy; l++,i++) {
+    for (l = clm._vf,i = 0; l->size && i < clm._yy; l++,i++) {
 	cp_set(l->line, l->colu, TXT); er_eol();
     }
 }
@@ -166,7 +166,7 @@ scrlnl()
 
 	if (scrolf) {
 		io_set(IO_TTYPE);
-		for (i = y0; i < maxli; i++)
+		for (i = clm._y0; i < maxli; i++)
 			putc('\n', stdout);
 		io_set(IO_VIDEO);
 	}
@@ -194,33 +194,33 @@ itmshow()
 
 	itmnav[0] = '\0';
 	/* показать положение окна */
-	if (yy*xx < itmmax) {  /* если не все файлы на экране... */
+	if (clm._yy * clm._xx < clm._itmmax) {  /* если не все файлы на экране... */
 		/* отцентрировать... */
 /*
 		showco = (maxco - (itmmax/yy))/2;
 		if (showco < 0) showco = 0;
 */
 		showco = 2;
-		lxx = xx;
-		lyy = yy;
-		litmmax = itmmax;
-		showscale = ((itmmax/lyy) / (maxco - 16)) + 1 ;
+		lxx = clm._xx;
+		lyy = clm._yy;
+		litmmax = clm._itmmax;
+		showscale = ((clm._itmmax/lyy) / (maxco - 16)) + 1 ;
 
 		cp_set(maxli - 2, showco, TXT);
 
 		n = 0;
-		for (i = 0; i < itmmax && n < MAXLICO; i += yy) {
-			if (i >= itmofs && i < itmofs+(yy*xx)) {
+		for (i = 0; i < clm._itmmax && n < MAXLICO; i += clm._yy) {
+			if (i >= clm._itmofs && i < clm._itmofs+(clm._yy * clm._xx)) {
 				if (showscale == 1)
 					itmnav[n++] = '=';
 				else {
-					if (((i/yy) % showscale) == 0) itmnav[n++] = ':';
+					if (((i/clm._yy) % showscale) == 0) itmnav[n++] = ':';
 					else							itmnav[n++] = '%';
 				}
 			} else {
 				if (showscale == 1) itmnav[n++] = '-';
 				else {
-					if (((i/yy) % showscale) == 0) itmnav[n++] = '.';
+					if (((i/clm._yy) % showscale) == 0) itmnav[n++] = '.';
 				}
 			}
 		}

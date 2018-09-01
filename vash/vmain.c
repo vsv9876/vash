@@ -24,21 +24,21 @@ kbcod   cod;
 {
 	register int i;
 
-	if (itms[itm][1] == '/') {
+	if (clm._itms[clm._itm][1] == '/') {
 		w_emsg("it's directory");
 		return( 0);
 	}
-	for(i = 0; i < itmmax; i++) {
-		if (itms[i][0] == cod) {
+	for(i = 0; i < clm._itmmax; i++) {
+		if (clm._itms[i][0] == cod) {
 			w_emsg("redirection selected: ");
 			/* будет показан и символ типа файла: */
-			w_str(itms[i]);
+			w_str(clm._itms[i]);
 			return(0);
 		}
 	}
 	switch(cod) {
-	case '>': mark_o = itm; break;
-	case '<': mark_i = itm; break;
+	case '>': mark_o = clm._itm; break;
+	case '<': mark_i = clm._itm; break;
 	}
 	return(1);
 }
@@ -116,8 +116,8 @@ kbcod cod;
 		mark_i = -1;
 		mark_o = -1;
 	}
-	for (i = 0; i < itmmax; i++) {
-	    p = itms[i];
+	for (i = 0; i < clm._itmmax; i++) {
+	    p = clm._itms[i];
 		       /* Проверять по шаблону... */
 	    if (patcmp(pattfs, &p[2]))
 		switch(cod) {
@@ -145,7 +145,7 @@ kbcod cod;
 		}
 	}
 	unvisible = total;
-	for(line=vf; line->size != 0; line++) {
+	for(line=clm._vf; line->size != 0; line++) {
 		p = *(char **)line->varl;
 		switch(*p) {
 		case '>':
@@ -184,14 +184,14 @@ char *helpl;
 	int   cmdret;
 
 	/* первоначальный показ на экране */
-	cp_set(y0, 0, TXT);
+	cp_set(clm._y0, 0, TXT);
 	er_eop();
 	cwdshow();
 	itmshow();
-	w_page(vf, 0);
+	w_page(clm._vf, 0);
 	keyreq = 1;
 
-	itm = i = 0;
+	clm._itm = i = 0;
 	for ( ;; ) {
 		/* нет сообщений и требуется нарисовать панель */
 		if ( !ok_msg() && keyreq ) {
@@ -199,8 +199,8 @@ char *helpl;
 		}
 
 		showtime( 1 );  /* восстановить индикацию часов */
-		i = itm - itmofs;
-		cod = r_line( &vf[i], 0 );
+		i = clm._itm - clm._itmofs;
+		cod = r_line( &clm._vf[i], 0 );
 
 		if ( ok_msg() ) keyreq = 1;
 		w_emsg("");
@@ -208,9 +208,9 @@ char *helpl;
 		switch (cod) {
 		/* не встроенная команда, надо интерпретировать */
 		default:
-			w_line( &vf[i] );
+			w_line( &clm._vf[i] );
 			keyreq = 1;
-			if ((cmdret = vcmd(i, cod, vf)) > 0) {
+			if ((cmdret = vcmd(i, cod, clm._vf)) > 0) {
 				/* экран меню испорчен или
 				 * новое главное меню.
 				 */
@@ -226,14 +226,14 @@ char *helpl;
 				cwdshow();      /* вывески */
 				itmshow();      /* положение окна */
 				hlp_clr();		/* TODO check if right place?*/
-				w_page(vf, 0);  /* пункты меню */
+				w_page(clm._vf, 0);  /* пункты меню */
 			} else {
 				if (cmdret < 0)
 					keyreq = 0;
 			}
 			/* синхронизировать y0 и y0_top */
-			if (y0 < y0_top)
-				y0_top = y0;
+			if (clm._y0 < y0_top)
+				y0_top = clm._y0;
 			break;
 #ifdef HELPRETRO
 		case KB_HE:
@@ -245,7 +245,7 @@ char *helpl;
 			er_pag();
 			cwdshow();
 			w_emsg("");
-			itmshow(); w_page(vf, 0);
+			itmshow(); w_page(clm._vf, 0);
 			keyreq = 1;
 			break;
 		case '+':
@@ -254,14 +254,14 @@ char *helpl;
 			if (oneitm)     bell();
 			else
 #endif
-			w_line( &vf[i] );
+			w_line( &clm._vf[i] );
 			tutsel(cod);
 			keyreq = 1;
 			break;
 		case ' ':
 		case '<':
 		case '>':
-			w_line( &vf[i] );
+			w_line( &clm._vf[i] );
 /*                      if (oneitm) return;     */
 			cod = KB_AD;
 			/* проваливаемся... */

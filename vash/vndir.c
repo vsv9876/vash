@@ -118,8 +118,8 @@ tstat1()
 	strcpy(tstats, rwxmode(&cwdstat));
 	strcat(tstats, " -");
 	/* выяснить наличие пометки */
-	for (i=0; i < itmmax; i++)
-		if (*itms[i] == MONEY) {
+	for (i=0; i < clm._itmmax; i++)
+		if (*clm._itms[i] == MONEY) {
 			tstats[4] = '+'; break;
 		}
 	return(tstats);
@@ -190,39 +190,39 @@ itmrestor()
 	/*
 	 * ВОССТАНОВИТЬ ОСМЫСЛЕННОЕ ПОЛОЖЕНИЕ КУРСОРА
 	 */
-	for(itm = 0; itm < itmmax; itm++) {
-	    i = itm;
-	    cmdsub(itmnnm, "#@", itm);
+	for(clm._itm = 0; clm._itm < clm._itmmax; clm._itm++) {
+	    i = clm._itm;
+	    cmdsub(itmnnm, "#@", clm._itm);
 	    if (strcmp(itmcnm, itmnnm) == 0) {
 		goto adjust;
 	    }
 	}
 	if (itmci >= 0) {
-	    if (itmci < itmmax)
-		itm = itmci;    /* восстановить индекс */
+	    if (itmci < clm._itmmax)
+		clm._itm = itmci;    /* восстановить индекс */
 	    else
-		itm = itmmax - 1;
+		clm._itm = clm._itmmax - 1;
 	}
 	else    {
 	    /* СООТВЕТСТВИЕ НЕ УСТАНОВЛЕНО */
-	    itmofs = itm = 0;
-	    return;
+	    clm._itmofs = clm._itm = 0;
+	    return 0;
 	}
 adjust:
 	/* имя осталось в меню, надо
 	 * попытаться сохранить положение окна */
-	if (itm >= itmofs && itm <  (itmofs + (xx*yy)))
+	if (clm._itm >= clm._itmofs && clm._itm <  (clm._itmofs + (clm._xx * clm._yy)))
 	    return;
-	if (yy <= 0 || xx <= 0) {
+	if (clm._yy <= 0 || clm._xx <= 0) {
 		w_emsg("yy or xx are bad:");
-		printf("yy = %d, yy = %d", yy, xx);
+		printf("yy = %d, yy = %d", clm._yy, clm._xx);
 	}
-	dofs = (xx == 1 ? yy : (yy*(xx/2)));
+	dofs = (clm._xx == 1 ? clm._yy : (clm._yy * (clm._xx/2)));
 
 
 	/* ПОДОБРАТЬ НОВОЕ ПОЛОЖЕНИЕ ОКНА */
-	for(itmofs = 0;    ;itmofs += dofs)
-	    if (itm >= itmofs && itm <  (itmofs + (xx*yy)))
+	for(clm._itmofs = 0;    ;clm._itmofs += dofs)
+	    if (clm._itm >= clm._itmofs && clm._itm <  (clm._itmofs + (clm._xx * clm._yy)))
 		return;
 #ifdef RETRO
 	/* СООТВЕТСТВИЕ НЕ УСТАНОВЛЕНО */
@@ -295,8 +295,8 @@ vls()
 #endif
     if (index(Cfill, 'a')) aflag = 1;
 
-    len = itmlen = itmmax = 0;
-    itms[itmmax] = itmbp = itmbuf;
+    len = clm._itmlen = clm._itmmax = 0;
+    clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
     *itmbp++ = ' ';
 
     if ((dirp = opendir(Crepf)) != NULL) {
@@ -314,7 +314,7 @@ vls()
 			continue;
 
 		/* если места не хватает */
-		if (&itmbuf[itmbsz] <= &itmbp[len]) {
+		if (&clm._itmbuf[clm._itmbsz] <= &itmbp[len]) {
 			w_emsg(ediag("No mem for all menu items",
 				     "Нет места для всех пунктов меню"));
 			break;
@@ -379,15 +379,15 @@ vls()
 		strcpy(itmbp, fname);
 		itmbp += len;
 		*itmbp++ = '\0';
-		if ( len > itmlen ) itmlen = len;
-		if (itmmax >= ITMMAX)
+		if ( len > clm._itmlen ) clm._itmlen = len;
+		if (clm._itmmax >= ITMMAX)
 			break;  /* НО МОЖНО И ПРОСТО ОБРЕЗАТЬ */
 /*              if ((itmmax % 10) == 0) {
 			w_chr('#'); fflush(vttout);
 		}
  */
-		itmmax++;
-		itms[itmmax] = itmbp;
+		clm._itmmax++;
+		clm._itms[clm._itmmax] = itmbp;
 		*itmbp++ = ' ';
 	}
         closedir(dirp);
@@ -396,16 +396,16 @@ vls()
 	return(1); /* ERROR filling main menu */
     }
     *itmbp++ = '\0';
-    if (itmmax == 0) {
-	    strcpy(itmbuf, " /..");
+    if (clm._itmmax == 0) {
+	    strcpy(clm._itmbuf, " /..");
 	    len = 4;
-	    itmmax++;
+	    clm._itmmax++;
     }
-    if ( len > itmlen ) itmlen = len;
-    itmlen++;
+    if ( len > clm._itmlen ) clm._itmlen = len;
+    clm._itmlen++;
 /*  w_str("sort..."); fflush(vttout);
  */
-    qsort(itms, itmmax, sizeof(char *), scomp);
+    qsort(clm._itms, clm._itmmax, sizeof(char *), scomp);
 /*  w_str("done"); fflush(vttout);
  */
     return(0);  /* OK */
@@ -562,18 +562,18 @@ int newflag;    /* если 0, то только обновить каталог */
 #endif
 	if (samedir) {
 		/* сохранить прежний номер и содержимое пункта меню */
-		itmci = itm;
-		strcpy(itmcnm, &itms[itm][2]);
+		itmci = clm._itm;
+		strcpy(itmcnm, &clm._itms[clm._itm][2]);
 /*                cmdsub(itmcnm, "#@", itm);     */
 	}
 	else    {
 		itmci = -1;
 		itmlwd();
 	}
-	if (itmbuf != (char *)0)
-		free(itmbuf);
+	if (clm._itmbuf != (char *)0)
+		free(clm._itmbuf);
 	/* можно и автоматически подбирать размер itmbsz */
-	if ((itmbuf=malloc(itmbsz+1)) == (char *)0) {
+	if ((clm._itmbuf = malloc(clm._itmbsz + 1)) == (char *)0) {
 		w_emsg("No mem for main buffer...");
 		onintr(1);
 	}

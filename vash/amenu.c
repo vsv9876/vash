@@ -19,10 +19,10 @@ pre_vf()
 	int yyxx, x0x;
 	unsigned msize, pagesize;
 
-	if (vf != (LINE *)0)
-	    free((char *)vf);
+	if (clm._vf != (LINE *)0)
+	    free((char *)clm._vf);
 
-	msize = ((yy * xx) + 1) * sizeof(LINE);
+	msize = ((clm._yy * clm._xx) + 1) * sizeof(LINE);
 #ifdef BSDpagesize
 	pagesize = getpagesize();
 	if (msize < pagesize) {
@@ -30,35 +30,35 @@ pre_vf()
 	}
 #endif
 #ifndef RETRO
-	if ((vf=(LINE *)malloc(msize)) == (LINE *)0) {
+	if ((clm._vf=(LINE *)malloc(msize)) == (LINE *)0) {
 #else
-	if ((vf=(LINE *)calloc((yy * xx)+1, sizeof(LINE))) == (LINE *)0) {
+	if ((clm._vf=(LINE *)calloc((clm._yy * clm._xx)+1, sizeof(LINE))) == (LINE *)0) {
 #endif
 		/*VARARGS*/
 		fprintf(stderr, "No memory for vf[]\n");
 		fatal();
 	}
-	yyxx = yy * xx;
+	yyxx = clm._yy * clm._xx;
 	i = x0x = 0;
-	while( i < yyxx && i+itmofs < itmmax) {
-		for (j = 0; j < yy && i < yyxx && i+itmofs < itmmax; j++) {
+	while( i < yyxx && i + clm._itmofs < clm._itmmax) {
+		for (j = 0; j < clm._yy && i < yyxx && i + clm._itmofs < clm._itmmax; j++) {
 
-			vf[i] = *ltmpl; /* скопировать шаблон */
-			vf[i].colu = x0 + x0x; /* ((i / yy) * dx); */
-			vf[i].line = y0 + j;   /* (i % yy); */
-			vf[i].size = dx;
+			clm._vf[i] = *clm._ltmpl; /* скопировать шаблон */
+			clm._vf[i].colu = clm._x0 + x0x; /* ((i / yy) * dx); */
+			clm._vf[i].line = clm._y0 + j;   /* (i % yy); */
+			clm._vf[i].size = clm._dx;
 			/* надо учесть атрибут уже помеченных файлов */
-			if (*itms[i+itmofs] == MONEY) {
-				vf[i].attr = ATT|INP|NED|LFASTR;
+			if (*clm._itms[i + clm._itmofs] == MONEY) {
+				clm._vf[i].attr = ATT|INP|NED|LFASTR;
 			} else {
-				vf[i].attr = ltmpl->attr; /* TXT|INP|NED|LFASTR; */
+				clm._vf[i].attr = clm._ltmpl->attr; /* TXT|INP|NED|LFASTR; */
 			}
-			vf[i].varl = (char *)(&itms[i+itmofs]);
+			clm._vf[i].varl = (char *)(&clm._itms[i + clm._itmofs]);
 			i++;
 		}
-		x0x += dx;
+		x0x += clm._dx;
 	}
-	vf[i].size = 0;
+	clm._vf[i].size = 0;
 }
 
 int
@@ -72,59 +72,59 @@ kbcod cod;
 	register int i;
 	register int itmr;      /* ДУБЛИКАТ itm */
 
-	itmr = itm;
+	itmr = clm._itm;
 
 	/* СНАЧАЛА СМЕСТИТЬ ГЛАВНЫЙ ИНДЕКС */
 
 	switch (cod) {
 
 	case KB_AL:
-		itmr -= yy;
+		itmr -= clm._yy;
 		if (itmr < 0) itmr = 0;
 		break;
 	case KB_AU:
 		if (itmr > 0) itmr--;
 		break;
 	case KB_AD:
-		if (itmr < itmmax-1) itmr++;
+		if (itmr < clm._itmmax-1) itmr++;
 		break;
 	case KB_AR:
-		itmr += yy;
-		if (itmr >= itmmax) itmr = itmmax - 1;
+		itmr += clm._yy;
+		if (itmr >= clm._itmmax) itmr = clm._itmmax - 1;
 		break;
 	}
-	itm = itmr;
+	clm._itm = itmr;
 
 	/* поставить в соответствие значение itm
 	 * и положение курсора на экране
 	 */
-	i = itmr - itmofs;
-	if (i >= 0 && i < xx * yy) ;      /* ОКНО НЕ НАДО ДВИГАТЬ */
+	i = itmr - clm._itmofs;
+	if (i >= 0 && i < clm._xx * clm._yy) ;      /* ОКНО НЕ НАДО ДВИГАТЬ */
 	else {
 		switch (cod) {
 		case KB_AL:
-			itmofs -= ofsx;
-			if (itmofs < 0)
-				itmofs = 0;
+			clm._itmofs -= clm._ofsx;
+			if (clm._itmofs < 0)
+				clm._itmofs = 0;
 			break;
 		case KB_AU:
-			itmofs -= ofsy;   break;
+			clm._itmofs -= clm._ofsy;   break;
 		case KB_AR:
-			itmofs += ofsx;
-if (xx > 1 && itmofs >= (((itmmax / ofsy) - (ofsx / ofsy)) * ofsy))
-	itmofs = ((itmmax / ofsy) - (ofsx / ofsy)) * ofsy;
+			clm._itmofs += clm._ofsx;
+if (clm._xx > 1 && clm._itmofs >= (((clm._itmmax / clm._ofsy) - (clm._ofsx / clm._ofsy)) * clm._ofsy))
+	clm._itmofs = ((clm._itmmax / clm._ofsy) - (clm._ofsx / clm._ofsy)) * clm._ofsy;
 			break;
 		case KB_AD:
 		case ' ':
-			itmofs += ofsy;   break;
+			clm._itmofs += clm._ofsy;   break;
 		}
-		itm = itmr;     /* ВОССТАНОВИТЬ ВНЕШ. */
+		clm._itm = itmr;     /* ВОССТАНОВИТЬ ВНЕШ. */
 		clritm();
 		pre_vf();
 		itmshow();
-		w_page(vf, 0);
+		w_page(clm._vf, 0);
 	}
-	return(itm - itmofs);
+	return(clm._itm - clm._itmofs);
 }
 
 itmini()
@@ -134,39 +134,39 @@ itmini()
 {
 	int nxx;        /* КОЛИЧЕСТВО СТОЛБЦОВ НА ЭКРАНЕ */
 
-	yy = yy_max;
-	xx = xx1;
+	clm._yy = clm._yy_max;
+	clm._xx = clm._xx1;
 
-	if (xx1 != 1) {
-		xx = maxco/(itmlen + 1);
-		if (xx == 0) xx = 1;
+	if (clm._xx1 != 1) {
+		clm._xx = maxco/(clm._itmlen + 1);
+		if (clm._xx == 0) clm._xx = 1;
 	}
-	yy = (itmmax + xx - 1)/xx;        /* м.б. нужно меньше строчек... */
-	if (yy > yy_max) yy = yy_max;
-	nxx = (itmmax + yy - 1)/yy;        /* м.б. нужно меньше колонок... */
-	if (nxx < xx) xx = nxx;
+	clm._yy = (clm._itmmax + clm._xx - 1)/clm._xx;        /* м.б. нужно меньше строчек... */
+	if (clm._yy > clm._yy_max) clm._yy = clm._yy_max;
+	nxx = (clm._itmmax + clm._yy - 1)/clm._yy;        /* м.б. нужно меньше колонок... */
+	if (nxx < clm._xx) clm._xx = nxx;
 	/* если строка только одна */
-	if (yy == 1) {
-		yy = 2;
-		xx = (xx + 1)/2;
+	if (clm._yy == 1) {
+		clm._yy = 2;
+		clm._xx = (clm._xx + 1)/2;
 	}
-	x0 = ((maxco - ((itmlen + 1) * xx)) / (xx + 1));
-	dx = itmlen + 1 + x0;
+	clm._x0 = ((maxco - ((clm._itmlen + 1) * clm._xx)) / (clm._xx + 1));
+	clm._dx = clm._itmlen + 1 + clm._x0;
 /*      dx = itmlen + 1 + ((maxco - ((itmlen + 1) * xx)) / (xx + 1));   */
-	if (dx > maxco) dx = maxco;
+	if (clm._dx > maxco) clm._dx = maxco;
 
-	y0 = maxli - yy - 2;
-	x0 = (maxco - (dx*xx))/2;
+	clm._y0 = maxli - clm._yy - 2;
+	clm._x0 = (maxco - (clm._dx * clm._xx))/2;
 
-	if (xx == 1) {
-		ofsx = yy;
-		ofsy = yy/2;
-		x0 = (maxco - itmlen) / 2;
+	if (clm._xx == 1) {
+		clm._ofsx = clm._yy;
+		clm._ofsy = clm._yy/2;
+		clm._x0 = (maxco - clm._itmlen) / 2;
 	}
 	else  {
-		ofsx = yy * (xx - 1);
-		ofsy = yy;
+		clm._ofsx = clm._yy * (clm._xx - 1);
+		clm._ofsy = clm._yy;
 	}
-	if (x0 < 0) x0 = 0;
+	if (clm._x0 < 0) clm._x0 = 0;
 
 }

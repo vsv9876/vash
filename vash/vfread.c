@@ -21,26 +21,26 @@ FILE *fpread;
 	short len;
 	int c;
 
-	len = itmlen = itmmax = 0;
-	itms[itmmax] = itmbp = itmbuf;
+	len = clm._itmlen = clm._itmmax = 0;
+	clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
 	*itmbp++ = ' ';
 	*itmbp++ = ' ';
 	while ((c = getc(fpread)) != EOF) {
-		if (&itmbuf[itmbsz] == itmbp)
+		if (&clm._itmbuf[clm._itmbsz] == itmbp)
 			break;
 
 		if (c == '\n') {
 			/* конец очередной строки */
 			*itmbp++ = '\0';
-			if ( len > itmlen ) itmlen = len;
+			if ( len > clm._itmlen ) clm._itmlen = len;
 			len = 0 ;
-			if (itmmax >= ITMMAX)
+			if (clm._itmmax >= ITMMAX)
 				break;
-			if ((itmmax % 10) == 0) {
+			if ((clm._itmmax % 10) == 0) {
 				w_chr('#'); fflush(vttout);
 			}
-			itmmax++;
-			itms[itmmax] = itmbp;
+			clm._itmmax++;
+			clm._itms[clm._itmmax] = itmbp;
 			*itmbp++ = ' ';
 			*itmbp++ = ' ';
 		}
@@ -50,11 +50,11 @@ FILE *fpread;
 		}
 	}
 	*itmbp++ = '\0';
-	if (itmmax == 0) {
-		strcpy(itmbuf, " /..");
+	if (clm._itmmax == 0) {
+		strcpy(clm._itmbuf, " /..");
 		len = 4;
-		itmmax++;
+		clm._itmmax++;
 	}
-	if ( len > itmlen ) itmlen = len;
-	itmlen++;
+	if ( len > clm._itmlen ) clm._itmlen = len;
+	clm._itmlen++;
 }

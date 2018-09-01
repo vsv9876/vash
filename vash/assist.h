@@ -55,24 +55,24 @@ int     _ofsy;           /* ××ÅÒÈ/×ÎÉÚ */
 
 extern LINEMENU clm;    /* ôåëõýåå íåîà (current lines menu) */
 
-#define itms        clm._itms
-#define itmbuf      clm._itmbuf
-#define itmbsz      clm._itmbsz
-#define vf          clm._vf
-#define ltmpl       clm._ltmpl
-#define xx1         clm._xx1
-#define itm         clm._itm
-#define itmofs      clm._itmofs
-#define itmlen      clm._itmlen
-#define itmmax      clm._itmmax
-#define yy_max      clm._yy_max
-#define yy          clm._yy
-#define xx          clm._xx
-#define dx          clm._dx
-#define x0          clm._x0
-#define y0          clm._y0
-#define ofsx        clm._ofsx
-#define ofsy        clm._ofsy
+/*#define itms        clm._itms*/
+/*#define itmbuf      clm._itmbuf*/
+/*#define itmbsz      clm._itmbsz*/
+/*#define vf          clm._vf*/
+/*#define ltmpl       clm._ltmpl*/
+/*#define xx1         clm._xx1*/
+/*#define itm         clm._itm*/
+/*#define itmofs      clm._itmofs*/
+/*#define itmlen      clm._itmlen*/
+/*#define itmmax      clm._itmmax*/
+/*#define yy_max      clm._yy_max*/
+/*#define yy          clm._yy*/
+/*#define xx          clm._xx*/
+/*#define dx          clm._dx*/
+/*#define x0          clm._x0*/
+/*#define y0          clm._y0*/
+/*#define ofsx        clm._ofsx*/
+/*#define ofsy        clm._ofsy*/
 
 extern  char   *yesno[];
 extern  int     scrolf, oneitm, panelf, whodirf, xtermf, histf, histsn, clockf, cmailf, loginf;

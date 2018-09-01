@@ -299,7 +299,7 @@ kbcod cod;
 		if (cmdplast > 2 ) {
 			cmddel(cmd);
 			clritm();
-			itmmax = cmdplast;
+			clm._itmmax = cmdplast;
 /***
 			if (itm < cmdplast);
 			else    itm = cmdplast - 1;
@@ -308,7 +308,7 @@ kbcod cod;
  ***/
 			pre_vf();
 			itmshow();
-			w_page(vf, 0);
+			w_page(clm._vf, 0);
 			/* синхронизировать историю при удалении каждой команды */
 			if (histsn) cmdphist(homedir);
 		}
@@ -328,16 +328,16 @@ h_menu()
 	kbcod cod;
 
 	/* первоначальный показ на экране */
-	cp_set(y0, 0, TXT);
+	cp_set(clm._y0, 0, TXT);
 	w_str("!");	er_eop();
 	w_cmd(cmdpp);   /* ОСТАВИТЬ КОМАНДУ НА ЭКРАНЕ */
 	itmshow();
-	w_page(vf, 0);
+	w_page(clm._vf, 0);
 
 	for ( ;; ) {
 
-		i = itm - itmofs;
-		cod = r_line( &vf[i], 0 );
+		i = clm._itm - clm._itmofs;
+		cod = r_line( &clm._vf[i], 0 );
 
 		w_emsg("");
 
@@ -348,7 +348,7 @@ h_menu()
 		case KB_HE:      /* справка */
 			cp_set(-1, 0, TXT);
 			fprintf(vttout, "Command # %2d from %2d, %4d byte(s) (%2d%%)",
-			itm, cmdplast, cmdbot, (100*cmdbot)/CMDB);
+			clm._itm, cmdplast, cmdbot, (100*cmdbot)/CMDB);
 			break;
 		case KB_EX:      /* выход */
 		case ' ':       /* добавить */
@@ -359,7 +359,7 @@ h_menu()
 			er_pag();
 			cwdshow();
 			w_emsg("");
-			itmshow(); w_page(vf, 0);
+			itmshow(); w_page(clm._vf, 0);
 			break;
 #ifdef RETRO
 		case KB_DE:
@@ -402,7 +402,7 @@ char  *cmd;
 		bell(); return;
 	}
 	savelm = clm;
-	cp_set(y0-1, 0, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
+	cp_set(clm._y0 - 1, 0, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
 	/* сначала синхронизация истории из файла? */
 	/*TODO оптимизация перечитывания */
 	if (histsn) {
@@ -412,35 +412,35 @@ char  *cmd;
 	er_eop();
 
 	/* инициализация меню команд */
-	itms   = cmdp;          /* УКАЗАТЕЛИ НА СТРОКИ КОМАНД */
-	itmmax = cmdplast;      /* ПОСЛЕДНЯЯ КОМАНДА В ИСТОРИИ */
-	vf     = (LINE *)0;		/* hint to avoid new overlapping malloc? /* TODO WTF */
-	itmlen = maxco - ((strlen(pmtsh)) * 2); /*по феншую, отступ на промптер слева и справа*/
-	ltmpl  = &tmplate;
+	clm._itms   = cmdp;          /* УКАЗАТЕЛИ НА СТРОКИ КОМАНД */
+	clm._itmmax = cmdplast;      /* ПОСЛЕДНЯЯ КОМАНДА В ИСТОРИИ */
+	clm._vf     = (LINE *)0;		/* hint to avoid new overlapping malloc? /* TODO WTF */
+	clm._itmlen = maxco - ((strlen(pmtsh)) * 2); /*по феншую, отступ на промптер слева и справа*/
+	clm._ltmpl  = &tmplate;
 
-	itm    = cmdpi;         /* ТЕКУЩАЯ КОМАНДА */
+	clm._itm    = cmdpi;         /* ТЕКУЩАЯ КОМАНДА */
 	if (cmdpi < cmdplast);
-	else         itm -= 1;
-	yy_max = 10;
-	itmofs = 0;
-	while((itm - itmofs) >= yy_max)
-		itmofs += yy_max;
+	else         clm._itm -= 1;
+	clm._yy_max = 10;
+	clm._itmofs = 0;
+	while((clm._itm - clm._itmofs) >= clm._yy_max)
+		clm._itmofs += clm._yy_max;
 	itmini();
 	pre_vf();
 
 	/* СОХРАНИТЬ СВИТОК */
-	if (y0_top > y0) {
-		y0_top = y0;
+	if (y0_top > clm._y0) {
+		y0_top = clm._y0;
 		scrlnl();
 	}
 	cmdpp = cmd;    /* ДЛЯ КОПИРОВАНИЯ НОВОЙ КОМАНДЫ */
 
 	h_menu();
 
-	free((char *)vf); vf = (LINE *)0;
+	free((char *)clm._vf); clm._vf = (LINE *)0;
 	cp_set(y0_top, 0, TXT); er_eop();
 
-	cmdpi = itm;    /* НОВОЕ ЗНАЧ. ИНДЕКСА ИСТОРИИ */
-	vf = (LINE *)0;
+	cmdpi = clm._itm;    /* НОВОЕ ЗНАЧ. ИНДЕКСА ИСТОРИИ */
+	clm._vf = (LINE *)0;
 	clm = savelm;
 }

@@ -179,8 +179,8 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 				}
 				else    {
 fil_cd:
-					if (y0 < y0_top)
-					     y0_top = y0;
+					if (clm._y0 < y0_top)
+					     y0_top = clm._y0;
 					/* тут было заполнение меню */
 					return(1);
 				}

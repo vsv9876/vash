@@ -115,12 +115,12 @@ shstart()
 	showtime( 0 );                  /* погасить часы */
 	cp_set(0, 0, TXT); er_eol();    /* погасить cwd */
 
-	if (y0 > y0_top)
+	if (clm._y0 > y0_top)
 		cp_set(y0_top-1, 0, TXT);
 	else
-		cp_set(y0-1, 0, TXT);
+		cp_set(clm._y0 - 1, 0, TXT);
 
-	y0_top = y0;    /* установить границу свитка */
+	y0_top = clm._y0;    /* установить границу свитка */
 	er_eop();
 
 	io_set(IO_TTYPE);
@@ -192,7 +192,7 @@ int  execapnd;
 		cmdsub(&cmd2[i], "#@", mark_i);
 		strcat(&cmd2[i], " ");
 		while(cmd2[++i]);
-		itms[mark_i][0] = ' '; mark_i = -1;
+		clm._itms[mark_i][0] = ' '; mark_i = -1;
 /*                while(cmd2[++i]);     */
 	}
 	/* подставить аргументы */
@@ -200,16 +200,16 @@ int  execapnd;
 		if (*p == MONEY && p[1] == MONEY) {
 			p++; p++;
 			/* подставить */
-			for (j = 0; j < itmmax; j++) {
+			for (j = 0; j < clm._itmmax; j++) {
 	  /* проверка переполнения самая приблизительная */
 				if (i >= (NCARGS-MAXLICO)) {
 					fprintf(stderr, " *** %s ***\n",
 					"name substitution overflow");
 					return(-1);
 				}
-				if(itms[j][0] == MONEY) {
+				if(clm._itms[j][0] == MONEY) {
 				   /* вставить очередное имя */
-				   nm_ptr = nmsubs(&itms[j][2], Csubs);
+				   nm_ptr = nmsubs(&clm._itms[j][2], Csubs);
 				   sprintf(&cmd2[i], "%s ", nm_ptr);
 				   while(cmd2[++i]);
 #ifdef RETRO
@@ -230,7 +230,7 @@ int  execapnd;
 		while(cmd2[++i]);
 		cmdsub(&cmd2[i], "#@", mark_o);
 
-		itms[mark_o][0] = ' '; mark_o = -1;
+		clm._itms[mark_o][0] = ' '; mark_o = -1;
 	}
 
 	/* показать выполняемую команду: */

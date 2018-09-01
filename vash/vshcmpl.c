@@ -115,7 +115,7 @@ int hlp_clr() {
 	if (hlp_onscreen) {
 		hlp_onscreen = 0;
 		cur_co = 0;
-		for (cur_li = y0; cur_li <= maxli; cur_li++) {
+		for (cur_li = clm._y0; cur_li <= maxli; cur_li++) {
 			cp_set(cur_li, cur_co, TXT); er_eol();
 		}
 	}
@@ -130,14 +130,14 @@ int hlp_compl()
 	int cur_co; /*расчетная позиция курсора перед показом элемента */
 	int cur_li;
 
-	cur_li = y0; cur_co = 0;
+	cur_li = clm._y0; cur_co = 0;
 	slistn = sgglist->sl_size;
 	slist = sgglist->sl_last;
 
-	for (cur_li = maxli - 3; cur_li >= y0; cur_li--) {
+	for (cur_li = maxli - 3; cur_li >= clm._y0; cur_li--) {
 		cp_set(cur_li, cur_co, TXT); w_chr('*'); er_eol();
 	}
-	cur_li = y0;
+	cur_li = clm._y0;
 	cp_set(cur_li, cur_co, TXT|INP); /*er_eop();*/
 	sprintf(tmps, " <%s> [%d] ", s_debug[s_mode], slistn);
 	w_str(tmps);
