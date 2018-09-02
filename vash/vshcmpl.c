@@ -7,7 +7,6 @@
 #include "slist.h"
 
 /*#define DEBUGS 1*/
-#define DEDUP_PATH 1
 
 #define BUFSMAX 4000
 

@@ -8,8 +8,8 @@
 #define ITMBUF  2048    /* Размер буфера текста меню по умолчанию */
 
 #else
-	/* normal 32-bit commputers */
-#define ITMMAX  1200     /* Макс. количество пунктов меню */
+	/* normal 64/32-bit commputers */
+#define ITMMAX  120000     /* Макс. количество пунктов меню */
 #define ITMLEN  MAXLICO /*16      /* Длина строки пункта меню */
 #define ITMBUF  MAXLICO * ITMMAX /* 16384   /* Размер буфера текста меню по умолчанию */
 

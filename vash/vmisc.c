@@ -204,24 +204,32 @@ itmshow()
 		lxx = clm._xx;
 		lyy = clm._yy;
 		litmmax = clm._itmmax;
-		showscale = ((clm._itmmax/lyy) / (maxco - 16)) + 1 ;
+		showscale = ((clm._itmmax/lyy) / (maxco - 24)) + 1 ;
 
 		cp_set(maxli - 2, showco, TXT);
-
-		n = 0;
+#ifdef DEBUG_NAV
+		sprintf(itmnav, /*"%dK:*/"%d:%d ", /*clm._itmbsz/1024, */clm._itmmax, showscale);
+#endif
+		n = strlen(itmnav);
 		for (i = 0; i < clm._itmmax && n < MAXLICO; i += clm._yy) {
-			if (i >= clm._itmofs && i < clm._itmofs+(clm._yy * clm._xx)) {
-				if (showscale == 1)
-					itmnav[n++] = '=';
+			if (i < clm._itmofs || i >= clm._itmofs+(clm._yy * clm._xx)) {
+				if (showscale == 1) itmnav[n] = '-';
 				else {
-					if (((i/clm._yy) % showscale) == 0) itmnav[n++] = ':';
-					else							itmnav[n++] = '%';
+					if (itmnav[n] != ':' && itmnav[n] != '|') {
+						if (((i/clm._yy) % showscale) == 0) itmnav[n] = '-';
+						else 								itmnav[n] = '.';
+					}
 				}
 			} else {
-				if (showscale == 1) itmnav[n++] = '-';
+				if (showscale == 1)
+					itmnav[n] = '=';
 				else {
-					if (((i/clm._yy) % showscale) == 0) itmnav[n++] = '.';
+					if (((i/clm._yy) % showscale) == 0) itmnav[n] = ':';
+					else							itmnav[n] = '|';
 				}
+			}
+			if (showscale == 1 || ((i/clm._yy) % showscale) == 0) {
+				n++; itmnav[n] = '\0';
 			}
 		}
 		itmnav[n] = '\0';

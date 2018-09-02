@@ -435,7 +435,7 @@ int newflag;    /* если 0, то только обновить каталог */
 		free(itmbuf);
 	/* можно и автоматически подбирать размер itmbsz */
 	if ((itmbuf=malloc(itmbsz+1)) == (char *)0) {
-		w_emsg("Нет памяти для главного буфера...");
+		w_emsg("No memory allocated for main buffer (-b), stop");
 		onintr(1);
 	}
 
@@ -446,7 +446,7 @@ int newflag;    /* если 0, то только обновить каталог */
 		if (Cfill[0] == '\0'
 		||  (fpls = popen(Cfill, "r")) == NULL) {
 			fprintf(stderr,
-"\nОшибка при заполнении главного меню('%s') : %d\n", Cfill, errno);
+"\nerror while main buffer fill('%s') : %d\n", Cfill, errno);
 			fatal();
 		}
 		vfread(fpls);   /* ВНЕШНЯЯ КОМАНДА */

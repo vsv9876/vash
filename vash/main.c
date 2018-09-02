@@ -8,6 +8,8 @@
 /*NOXSTR*/
 char     tmpflss[] = "/tmp/ashXXXXXX";
 char    *tmpflnm = &tmpflss[0];
+int		tmpfd = -1;
+FILE   *tmpfp = NULL;
 /*YESXSTR*/
 /*extern  char *mkstemp();*/
 
@@ -222,7 +224,7 @@ char **argv;
        if (homedir != (char *)0) {
     	   cmdghist(homedir);
        }
-       tmpflnm = mkstemp(tmpflnm);      /* получить имя временного файла */
+       tmpfd = mkstemp(tmpflnm);      /* получить имя временного файла */
 /*         tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
 
 	/* Настроить нач. состояние области свитка */
