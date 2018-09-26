@@ -39,7 +39,7 @@ v_susp()
 
 	/* проверку на csh можно сделать и по другому */
 	if ((env = getenv("SHELL")) != NULL) {
-	    if( strcmp("/bin/csh", env) == 0 ) {
+	    if( strcmp("/bin/csh", env) == 0 || strcmp("/bin/bash", env) == 0) {
 
 		pid = getpid();
 		scrlst();       /* курсор в начало свитка */
@@ -55,8 +55,8 @@ v_susp()
 		return( TRUE );
 	    }
 	}
-	w_emsg(ediag("This is NOT a subshell of /bin/csh",
-		     "Не факт, что Вы работаете с /bin/csh"));
+	w_emsg(ediag("This is NOT a subshell of /bin/csh or /bin/bash",
+		     "Не факт, что Вы работаете с /bin/csh или /bin/bash"));
 	return(FALSE);
 }
 

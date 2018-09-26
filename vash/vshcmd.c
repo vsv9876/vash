@@ -47,6 +47,8 @@ scrlst()        /* курсор к началу свитка */
 }
 
 
+static char tmpstr[MAXLICO];
+
 vshcmd(cmd, cmdlbl)
 /*
  * выполнить команду /bin/sh
@@ -58,12 +60,14 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 	int syscod;             /* код возврата system */
 	int cmdrun;             /* ФЛАГ: КОМАНДА ЗАПУСКАЛАСЬ */
 	int justrun;            /* флаг: запускать, не редактировать */
+	int okwait;             /* флаг: после wait() ожидать подтверждения пробелом, если OK */
 	int slsize;				/* количество возможных окончаний */
 
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
 	cmdsize = maxco - 1 - pmtshsz;
 	justrun = 0;
+	okwait = 1;  /* флаг: после wait() не ожидать подтверждения пробелом, если OK */
 	cod = 0;
 
 	if (cmd == (char *)0) {
@@ -71,7 +75,8 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 	    ;
 	}
 	else {
-		if (*cmd == ':') {
+		if (*cmd == ':' || *cmd == ';') {
+			okwait = (*cmd == ';')? 0 : 1;
 			justrun = 1;
 			cod = KB_NL;
 			/* копируем команду полностью */
@@ -124,6 +129,7 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 			er_pag(); w_cmd(cmd0);
 			break;
 		case KB_TA:
+			/* completion */
 			if ((sgglist = sl_init()) != NULL) {
 				old_pos = pos;
 				if ((slsize = try_compl(&cmd0[0], &pos, maxco - 2)) < 0) bell();
@@ -160,7 +166,7 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 				char    *homedir;
 				if ((homedir=getenv("HOME")) == NULL) {
 					w_emsg(
-					"HOME=... not defined");
+					"env HOME= undefined");
 					return(0);
 				}
 				if (vchdir(homedir) < 0) {
@@ -195,29 +201,39 @@ std_shell:
 			syscod = vsystem(cmd0, cmdlbl);
 			justrun = 0;
 			if(syscod) {
-				at_set(TXT|INP);
-				printf(" [ Exit (%d/%d) ]\r",
+				at_set(ERR);
+				sprintf(tmpstr, "[ Exit (%d/%d) ]\r",
 				cod1(syscod), cod0(syscod));
+				w_str(tmpstr);
 			}
 			else {
-				at_set(TXT|INP);
-				printf(" [ ok ]\r");
+				if (okwait == 1) {
+					at_set(HDR);
+					sprintf(tmpstr, "[ ok ]\r");
+					w_str(tmpstr);
+				}
 			}
 			at_set(TXT);
-			do {
-				fflush(vttout);
-				fflush(stdout);
-				cod = r_cod(0);
-				at_set(ATT|INP);
-				/*VARARGS*/
-				if (cod == KB_NL)
-				 printf(" press SPACE bar or type command ");
+			if (okwait == 1) {
+				do {
+					fflush(vttout);
+					fflush(stdout);
+					cod = r_cod(0);
+					at_set(ATT|INP);
+					/*VARARGS*/
+					if (cod == KB_NL) {
+					  sprintf(tmpstr, " press SPACE bar or type command ");
+					  w_str(tmpstr);
+					}
+					at_set(TXT);
+					er_eol();
+					/*VARARGS*/
+					w_str("\r");
+				} while (cod == KB_NL);
+			} else {
 				at_set(TXT);
-				er_eol();
-				/*VARARGS*/
-				printf("\r");
-			} while (cod == KB_NL);
-
+				w_str("\r");
+			}
 			/* проверка завершения команды sh */
 			er_eol(); fflush(vttout);
 			scrlnl();

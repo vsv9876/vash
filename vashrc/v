@@ -1,4 +1,4 @@
-:
+#!/bin/sh
 #
 # Assistant for sh startup
 # Version for SVR4.x
@@ -61,14 +61,19 @@ ttyfull=`tty`
 #tty=`basename $ttyfull`
 tty=`echo $ttyfull|sed -e 's-/dev/--'`
 uname=`uname -n || hostname | sed -e 's/\..$*//' 2>/dev/null`
-ASHLBL=' '"$user@$uname $tty"' '
+#ASHLBL=' '"$user@$uname $tty"' '
+#
+# 
+# hint: if last sybol in ASHLBL is ':' (colon), vash append current working directory
+# since vash-1.26.4
+ASHLBL="$tty $user@$uname:"
 #"$user"' '
 
-case $PATH in
-*/usr/local/bin*)     ;;
-*)
-	PATH=$PATH:/usr/local/bin
-esac
+#case $PATH in
+#*/usr/local/bin*)     ;;
+#*)
+#	PATH=$PATH:/usr/local/bin
+#esac
 
 # .ashstd: #e - EDITOR, #m - PAGER
 #EDITOR=re

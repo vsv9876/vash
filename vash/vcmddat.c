@@ -43,6 +43,7 @@ keyshow(yes)
 	char    tmpstr[20];
 	int i, base, ofs;
 
+	/*ofs = 8;*/
 	ofs = maxco/10;
 	base = 0;
 

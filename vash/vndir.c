@@ -418,47 +418,64 @@ vls()
 cwdshow()
 {
 	char cwd_tmpstr[140]; /* cwdpath fraction to be shown, TODO change constant to some reasonable */
-	char user_tmpstr[140];
-	register int i;
+	char lbl_tmpstr[140];
+	register int x;
 	int     showli;     /* строка показа */
 	int     deltco;     /* если в последней строке экрана, то == 1 */
 	/*int     cwdirf = 1;		/* flag: cwdshow in console; TODO global flag via setup */
 	extern char *getwd();
 	extern char *getenv();
 	extern int mailf2;  /* см. chckmail */
-	int userlen; /* length of string about user */
-	char *userstr; /* env(ASHLBL) or username/logname if empty/notset */
+	int lblen; /* length of string about user */
+	char *ashlbl; /* env(ASHLBL) or  */
+	char *usrlbl; /* username/logname if ASHLBL is empty/notset*/
 
 	char mode_tmpstr[40]; /* mode and permissions fraction */
 
 	mailf2 = 1;
 
 	if (panelf) {
-	    showli = 0;         deltco = 0;
+#ifdef ONTOP_SCREEN
+		showli = 0;         deltco = 0;
+#else
+		if (clm._y0 > y0_top) {
+			showli = y0_top-1;
+			cp_set(y0_top-1, 0, TXT);
+		}
+		else {
+			showli = clm._y0 - 1;
+			cp_set(clm._y0 - 1, 0, TXT);
+		}
+		er_eop();
+		/*showli = y0_top-1 clm._y0 -1;*/ deltco = 0;
+#endif
 	} else {
 	    showli = maxli-1;   deltco = 1;
 	}
 
-	if ((userstr=getenv("ASHLBL")) == (char *)0) {
+	if ((ashlbl=getenv("ASHLBL")) == (char *)0) {
+		ashlbl = "";
 #ifdef SYSV
-		userstr = getenv("LOGNAME");
+		usrlbl = getenv("LOGNAME");
 #else
-		userstr = getenv("USER");
+		usrlbl = getenv("USER");
 #endif
+		if (usrlbl == (char *)0)
+			usrlbl = "Unknown USER";
+	} else {
+		usrlbl = NULL;
 	}
-	if (userstr == (char *)0)
-		userstr = "Unknown USER";
-	sprintf(user_tmpstr,
-	"%s%s", userstr, (getuid() == 0 ? "(su)" : ""));
-	userlen = strlen(user_tmpstr);
+
+	sprintf(lbl_tmpstr, "  %s", ashlbl);
+	lblen = strlen(lbl_tmpstr);
 
 	if (Crepf[0] != '\0') {
 		sprintf(mode_tmpstr,
-		" %s <%s>", Crepf, rwxmode(&cwdstat));
+		" %s <%s> %s", Crepf, rwxmode(&cwdstat), (usrlbl == NULL? "" : usrlbl));
 	} else {
 		strcpy(mode_tmpstr, " * ");
 	}
-	userlen += strlen(mode_tmpstr);
+	lblen += strlen(mode_tmpstr);
 
 #ifdef  pdp11
 	if (cwdpath[0] == '\0' && getwd(cwdpath) == 0) {
@@ -482,35 +499,56 @@ cwdshow()
 /*	sprintf(tmpstr, "[ %s ]", cwdpath); */
 	if (xtermf) {
 		w_raw("\033]0;");
-		w_str(user_tmpstr);
+		w_str(lbl_tmpstr);
 
-		w_str(":");
+		w_str(cwdpath);
+		w_str(" ");
 		w_str(mode_tmpstr);
 		w_str(":");
 
-		w_str(cwdpath);
 		w_raw("\007"); /* terminate escape sequence for xterm window title */
 	}
 	if (whodirf) {
 		cp_set(showli, 0, HDR);
-		w_str(user_tmpstr);
-		w_str(" ");
+		/*w_str(mode_tmpstr);*/
 
-		at_set(ATT);
-		w_str(mode_tmpstr);
+		/*at_set(ATT);*/
+		w_str(lbl_tmpstr);
+		/*w_str(" ");*/
 
-		sprintf(cwd_tmpstr, "[ %s ]", cwdpath);
-		cp_set(showli, userlen, TXT); er_eol();
-		i = strlen(cwd_tmpstr);
-		i += deltco;
-		if (i > (maxco-userlen)) {
-			cp_set(showli, userlen + 1, HDR);
-			w_str(&cwd_tmpstr[i - maxco + userlen + 1 + deltco]);
+#define ONE_LINE_CONT
+#ifdef ONE_LINE_CONT
+		sprintf(cwd_tmpstr, "%s", cwdpath);
+		/*cp_set(showli, lblen, ATT);*/
+		x = strlen(cwd_tmpstr);
+		x += deltco;
+		if (x > (maxco-lblen)) {
+			/*cp_set(showli, lblen + 1, HDR);*/
+			w_str("<");
+			w_str(&cwd_tmpstr[x - maxco + lblen + 2 + deltco]);
 		}
 		else {
-			cp_set(showli, maxco - i - deltco, HDR);
+			/*cp_set(showli, maxco - x - deltco, HDR);*/
 			w_str(cwd_tmpstr);
 		}
+		x += lblen;
+		/*x += strlen(mode_tmpstr);*/
+		for (; x < maxco; x++) w_chr(' ');
+		w_str(mode_tmpstr);
+#else
+		sprintf(cwd_tmpstr, "[ %s ]", cwdpath);
+		cp_set(showli, lblen+1, HDR); er_eol();
+		x = strlen(cwd_tmpstr);
+		x += deltco;
+		if (x > (maxco-lblen)) {
+			cp_set(showli, lblen + 1, HDR);
+			w_str(&cwd_tmpstr[x - maxco + lblen + 1 + deltco]);
+		}
+		else {
+			cp_set(showli, maxco - x - deltco, HDR);
+			w_str(cwd_tmpstr);
+		}
+#endif
 	}
 #ifdef DEBUG
 	sprintf(cwd_tmpstr, "0x%07lx", (unsigned long)vf);

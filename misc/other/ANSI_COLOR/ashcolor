@@ -1,4 +1,4 @@
-#! /usr/local/bin/ash
+#! /usr/bin/vash
 #
 #
 # ANSI COLORS SETUP (For AT386/COLOR console)

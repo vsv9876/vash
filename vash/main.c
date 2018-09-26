@@ -227,14 +227,16 @@ char **argv;
        tmpfd = mkstemp(tmpflnm);      /* получить имя временного файла */
 /*         tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
 
-	/* Настроить нач. состояние области свитка */
-	y0_top = maxli - 1;
 	io_set(IO_VIDEO);
 	signal(SIGINT, onintr);
 
 /*NOXSTR*/
 	if ( cmdset(ashstd) && fil_vf(1) ) {
+		/* Настроить нач. состояние области свитка */
+		/*y0_top = maxli - clm._yy_max - 1;*/
+		y0_top = 0;
 		scrlnl();
+		y0_top = clm._y0;
 
 		signal( SIGINT, SIG_IGN );
 		signal( SIGQUIT, SIG_IGN );

@@ -1,5 +1,5 @@
 -+ переименовать проект, в том числе, префиксы имен настроечных файлов
-  - подходит vash, но остались .ashstd и другие
+  + vash OK, но остались .ashstd и др.
 
 -- Unicode/UTF-8 support for main list (filenames) and internas
 
@@ -10,32 +10,33 @@ linlib/vhset:
 + linlib: расширить набор операций редактирования
 
 ?- реинкарнация - перезапуск vash в том же окружении, с возобновлением контекста приложения
+- перехват изменения размеров окна терминала (LINES, COLUMNS) встроить в ash
+
 ?- restricted ash version, without command line editing/confirmation
 ?- общие настройки для .ashstd, и проч. .ash* через встроенный препроцессор
 - оптимизация файлов настройки (директива include?)
 - прочистить .ashmenu или сделать варианты BSD/SYSV
 
-- suspend должен работать не только при SHELL=/bin/csh
+-+? suspend должен работать не только при SHELL=/bin/csh
 - ^Z для SYSV (ISC) lin132/lin140 должен переопределяться
-- перехват изменения размеров окна терминала (LINES, COLUMNS) встроить в ash
 
 - linlib/vhset: наследование от stty cooked intr, erase.
 +? linlib/vhset: проверки на доступность /dev/tty, для сброса зависаний...
 
 + запуск команды $SHELL -c 'cmd' (имя SHELL брать из окружения)
 
-- history:
++ history:
   command history shareable with multiply sessions, like ksh
 - searching pattern across history (or select like in main lineset)
   separate parameterized command history cache and command history log
 - История команды cd (меню и подстановка параметров)
 - фильтр для показа в главном окне (по команде '_') 
-- command completion - at least, 'cd' and command from $path
-- добавить флаг "при старте перейти в каталог такой-то"...
++ command completion - at least, 'cd' and command from $path
+-? добавить флаг "при старте перейти в каталог такой-то"...
 - Поддержка проверки расширенных атрибутов файлов (rwx маловато будет)
 - работа с очень большими каталогами и номерами inode (уйти от статического выделения памяти под списки главного окна)
 
-- починить меню F2, сейчас там какие-то заглушки
++ починить меню F2, сейчас там какие-то заглушки (это были проблемы malloc)
 + навигатор окна vf --==- не должен выходить за границы одной строки
 
 + добавить регулирование предпочтений, сейчас только EDITOR, PAGER

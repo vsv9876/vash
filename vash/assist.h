@@ -82,4 +82,4 @@ extern  char   *vexdir; /* vash extra files directory */
 extern  char   *cwd;
 extern  int     t_file();
 
-extern  int     maxli, maxco;
+extern  int     maxli, maxco, y0_top;

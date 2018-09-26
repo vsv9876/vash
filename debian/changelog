@@ -1,6 +1,6 @@
-vash (1.26.3) unstable; urgency=medium
+vash (1.26.4) unstable; urgency=medium
 
-  * debug, upstream vash-1.26.3 unpublished
+  * debug, upstream vash-1.26.4 unpublished
 
  -- Sergey Vovk (testing only) <vsv@lab2.lo>  Mon, 18 Jul 2018 00:17:14 +0300
 

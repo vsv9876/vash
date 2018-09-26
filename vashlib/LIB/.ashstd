@@ -85,18 +85,18 @@
 	r?? ? *.[Z]          zcat < #@
 	r?? ? *.bz2          bzip2 -cd < #@
 	r?? ? *.gz           gzip -d < #@
-	r?? * *.src.rpm      rpm -qivp ./#@ | #m
-	r?? * *.rpm          rpm -qivp ./#@ | #m
-	r?? * *.deb          dpkg --info ./#@ | #m
+	r?? * *.src.rpm      ;rpm -qivp ./#@ | #m
+	r?? * *.rpm          ;rpm -qivp ./#@ | #m
+	r?? * *.deb          ;dpkg --info ./#@ | #m
 	r?? A *.a            ar t #@
 	r?? O *.o            :nm -np #@
 	r?? O *.si           :nm -np #@
 	r?? O *              nm -np #@
 	r?? D *.tar          tar -tvf #@
-	r?? D *              od -a #@ | #m
+	r?? D *              ;od -a #@ | #m
 	r?? T .a             :tail -f #@
 	r?? T a              :tail -f #@
-	r?? T *              :#m #@
+	r?? T *              ;#m #@
 	r?? E *              _msg file empty, zero length
 	r?? E *              :cat #@
 	r?x d *              :ls -aCF #@/.
@@ -131,7 +131,7 @@
 	r?? T [Mm]ake*.sh   ./#@
 	r?? T [Mm]ake*      make -f #@
 	r?? * *.tar         tar -xvf #@
-	r?? * *.man         nroff -man #@ | #m
+	r?? * *.man         ;nroff -man #@ | #m
 	r?? T *.lav         make #*.lb
 	r?? T *.la          make #*.lb
 	r?? T *.cv          make #*.c
@@ -166,17 +166,17 @@
 	rwx d *         :cd #@
 # vi не создает нового файла в каталоге
 # а red, например, создает...
-	rw? [TE] *      vi #@
+	rw? [TE] *      #e #@
 	rw? M *         elm -f ./#@
-#	r?? [OD] *      strings #@ | #m
+	r?? [OD] *      ;strings #@ | #m
 #+edw
 	rwx d *         :cd #@
-	r?? * *.src.rpm rpm -qlvp ./#@ | #m
-	r?? * *.rpm     rpm -qlvp ./#@ | #m
-	r?? * *.deb     dpkg --contents ./#@ | #m
+	r?? * *.src.rpm ;rpm -qlvp ./#@ | #m
+	r?? * *.rpm     ;rpm -qlvp ./#@ | #m
+	r?? * *.deb     ;dpkg --contents ./#@ | #m
 	rw? [TE] *      #e #@
 	rw? M *         elm -f #@
-	r?? [OD] *      strings #@ | #m
+	r?? [OD] *      ;strings #@ | #m
 # Копирование файлов (требуется еще один аргумент)
 # это место в ash так и осталось недоделано...
 # как изврат, применяется так:
@@ -235,6 +235,10 @@
 :0
 :EX
 	* *     exit
+#       Освежить стандартную настройку ash (при отладке этого файла)
+:IN
+    * * _cmdset .ashstd
+
 # Вызов подсказки
 :[?]
 :HE
@@ -244,10 +248,7 @@
 # см. выше +nl, +View
 :NL
 	??? ?   +nl
-#       Освежить стандартную настройку ash (при отладке этого файла)
-:^F
-[Z]
-	* *   _cmdset .ashstd
+
 :&
 #       Программа (настройка) ash для работы с процессами
 	* *     :ASH=l20ps; export ASH; exec vash .ashproc
@@ -314,14 +315,15 @@
 
 +Vedit
 # быстрый вызов vi, права доступа по записи не проверять
-	r?? [TE] * :vi #@
+	r?? [TE] * ;vi #@
 	r?? M * :elm -f #@
 
 :F
+:^F
 	* -   :file #@
 	* *   :file ##
 :L
-	* -   :ls -la | #m
+	* -   ;ls -la | #m
 	* *   :ls -ld ##
 :T
 #	* -   :cat #@
@@ -353,7 +355,7 @@
 :O
 # Закрыть файл или помеченную группу файлов для категории 'прочие'
 	* -     chmod -orwx #@
-	* *     chmod o-rwx ##
+	* *     chmod -orwx ##
 
 :[#]
 	* *     _file #@
