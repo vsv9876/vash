@@ -93,10 +93,10 @@
 	r?? O *.si           :nm -np #@
 	r?? O *              nm -np #@
 	r?? D *.tar          tar -tvf #@
-	r?? D *              ;od -a #@ | #m
+	r?? D *              :od -a #@ | #m
 	r?? T .a             :tail -f #@
 	r?? T a              :tail -f #@
-	r?? T *              ;#m #@
+	r?? T *              :#m #@
 	r?? E *              _msg file empty, zero length
 	r?? E *              :cat #@
 	r?x d *              :ls -aCF #@/.
@@ -118,7 +118,8 @@
 	r?? [DT] *.cpio.[Z]     zcat < #@ | cpio -idm
 	r?? [DT] *.cpio.[zp]    gzip -d < #@ | cpio -idm
 	r?? [DT] *.cpio.gz      gzip -d < #@ | cpio -idm
-    r?? * *.deb          sudo dpkg -i #@
+#    r?? [DT] *.deb          sudo dpkg -i #@
+    r?? [DT] *.deb          dpkg -x #@ /tmp/#@.d
     r?? * *.src.rpm      _msg did You mean 'rpmbuild bb #@ ?'
     r?? * *.rpm          sudo rpm -Uhv #@
 	r?? ? *.[zCp]           gzip -d #@
@@ -171,9 +172,9 @@
 	r?? [OD] *      ;strings #@ | #m
 #+edw
 	rwx d *         :cd #@
-	r?? * *.src.rpm ;rpm -qlvp ./#@ | #m
-	r?? * *.rpm     ;rpm -qlvp ./#@ | #m
-	r?? * *.deb     ;dpkg --contents ./#@ | #m
+	r?? [DT] *.src.rpm ;rpm -qlvp ./#@ | #m
+	r?? [DT] *.rpm     ;rpm -qlvp ./#@ | #m
+	r?? [DT] *.deb     ;dpkg --contents ./#@ | #m
 	rw? [TE] *      #e #@
 	rw? M *         elm -f #@
 	r?? [OD] *      ;strings #@ | #m

@@ -105,8 +105,9 @@ TERMLIB     = -lncurses
 #LINKER      = gcc -m32 $(DEBUG) -fno-builtin-function -static
 #
 # tested on gcc-6.1.1 Fedora 24
-DEBUG = -g 
-#DEBUG = 
+#DEBUG = -g
+DEBUG = -g -O0
+#DEBUG =
 #CC          = gcc -m32 $(DEBUG) -fno-builtin-function -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast \
 #
 # gcc --version >= 3.x <= 6.x
@@ -114,9 +115,10 @@ DEBUG = -g
 #	-Wno-implicit-int -Wno-int-conversion -Wno-incompatible-pointer-types \
 #	-Wno-implicit-function-declaration
 # gcc --version <= 3.x
-CC          = gcc $(DEBUG) -fno-builtin-function -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast \
-	-Wno-implicit-int \
-	-Wno-implicit-function-declaration
+CC          = gcc $(DEBUG) -fno-builtin-function \
+			-Wno-int-to-pointer-cast -Wno-pointer-to-int-cast \
+			-Wno-implicit-int \
+			-Wno-implicit-function-declaration
 #LINKER      = gcc -m32 $(DEBUG) -fno-builtin-function -static
 LINKER      = gcc $(DEBUG) -fno-builtin-function
 #

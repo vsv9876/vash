@@ -40,7 +40,7 @@ char  *str;
 
 	ssize = strlen(str);
 
-	ptr   = malloc(ssize + 2 + sizeof(SLIST_PTR));
+	ptr   = malloc(sizeof(SLIST_PTR) + ssize + 2);
 	/*ptr = malloc(sizeof(SLIST_PTR)); /* + ssize);*/
 	if (ptr != NULL) {
 		ptr->ssize = ssize;
@@ -71,7 +71,7 @@ SLIST_HEAD *sl_init()
 	SLIST *ptr;
 
 	head = malloc(sizeof(SLIST_HEAD));
-	if (ptr != NULL) {
+	if (head != NULL) {
 		head->sl_last = NULL;
 		head->sl_first = NULL;
 		head->sl_size = (size_t)0;

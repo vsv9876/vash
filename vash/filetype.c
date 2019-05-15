@@ -3,8 +3,8 @@
 
 #ifdef  SYSV
 #define PORTAR 1
-#include <string.h>
 #endif
+#include <string.h>
 #include <ar.h>
 
 #include <ctype.h>

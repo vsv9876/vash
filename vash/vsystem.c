@@ -1,6 +1,9 @@
 #include <sys/ioctl.h>
 #include <sys/param.h>
 
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
@@ -107,10 +110,11 @@ int execmode;
 #endif
 }
 
+extern int showtime();
 /*
  * Экранная преамбула запуска команды.
  */
-shstart()
+void shstart()
 {
 	showtime( 0 );                  /* погасить часы */
 	cp_set(0, 0, TXT); er_eol();    /* погасить cwd */
@@ -156,6 +160,7 @@ int  execmode;
 	return(vexec(argv[0], argv, execmode));
 }
 
+extern int cmdsub();
 /*
  * Формирование команды для /bin/sh.
  * Подстановка помеченных файлов.

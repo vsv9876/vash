@@ -1,3 +1,6 @@
+#include <sys/types.h>
+#include <unistd.h>
+
 #include <ediag.h>
 #include <stdio.h>      /* ϊαηομοχολ σταξδαςτξοκ βιβμιοτελι χχ/χωχ */
 #include "line.h"       /* ζακμ-ϊαηομοχολ LINLIB */
@@ -5,6 +8,9 @@
 #ifdef JCLsuspend
 
 #include <signal.h>
+
+#include "assist.h"
+
 
 #if !defined(SIGTSTP)
 v_susp()

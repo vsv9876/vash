@@ -66,7 +66,7 @@ char *cmd;
 	return(-1);
 }
 
-cmdsqz(reqsz)
+void cmdsqz(reqsz)
 /*
  * נען‏יףפיפר ףפבעשו כןםבמהש י ףצבפר */
 /**/

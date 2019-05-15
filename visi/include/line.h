@@ -240,7 +240,7 @@ extern  int     w_line(), w_page();
 /* lin(4) - функции уровня пользователя */
 extern  int     cvt_a(), cvt_sp(), cvt_lh(), cvt_hl(), tst_m();
 
-extern  int     w_msg(), w_emsg(), w_help(), u_page();
+extern  int     w_msg(), w_emsg(), w_help(), u_page(), d_page();
 extern  LINE	*b_page();
 
 #define er_page er_pag

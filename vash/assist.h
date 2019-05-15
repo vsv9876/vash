@@ -83,3 +83,17 @@ extern  char   *cwd;
 extern  int     t_file();
 
 extern  int     maxli, maxco, y0_top;
+
+extern int cmdphist(),visini(), cmdset(), fil_vf(), scrlst(), scrlnl(), cmdsub(), fatal(), clritm();
+extern int itmshow(), cmdghist(), u_menu(), itmadj(), itmini(), pre_vf(), patcmp();
+extern int vincmd(), vexcmd(), fnsplit(), vcmd(), cwdshow();
+extern int patcmp(), ok_msg();
+extern int gidchk(), filetype(), prefix();
+extern int try_compl(), hlp_compl(), hlp_clr(), cmdput(), vsystem(), showtime();
+extern int sl_chkdup();
+
+
+
+
+
+

@@ -107,13 +107,18 @@ if [ 1 -eq $onxterm ]; then
 	#eval `/usr/bin/resize -u`
 	#export TERMCAP
 	VASH=px$VASH
+	case $TERM in
+		screen) 
+			VASH=w$VASH
+			;;
+	esac
 else
     VASH=p$VASH
 fi
 # append clock on hardware console screen
 case $TERM in
 linux|pc*|vs100*|AT386)
-	VASH=cw$VASH
+	VASH=c$VASH
 esac
 
 export VASH

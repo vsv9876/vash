@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <unistd.h>
 #include <signal.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -46,6 +47,7 @@ usage()
 int     allcod = 1;
 
 ashexit(ok)
+int ok;
 {
 #ifdef RETRO
 	cp_set(-1, 0, TXT);
@@ -236,6 +238,7 @@ char **argv;
 		/*y0_top = maxli - clm._yy_max - 1;*/
 		y0_top = 0;
 		scrlnl();
+		/*y0_top = clm._y0 - 1;*/
 		y0_top = clm._y0;
 
 		signal( SIGINT, SIG_IGN );

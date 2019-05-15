@@ -466,7 +466,7 @@ cwdshow()
 		usrlbl = NULL;
 	}
 
-	sprintf(lbl_tmpstr, "  %s", ashlbl);
+	sprintf(lbl_tmpstr, "%s", ashlbl);
 	lblen = strlen(lbl_tmpstr);
 
 	if (Crepf[0] != '\0') {

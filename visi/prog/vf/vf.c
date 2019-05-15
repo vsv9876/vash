@@ -25,8 +25,10 @@ Initial revision
  error Программа предназначена исключительно для unix
 #endif
 
+/*
 extern  char *malloc();
 extern  char *calloc();
+*/
 
 char *itms[ITMMAX+1] = {0};
 char *itmbuf = (char *)0;
