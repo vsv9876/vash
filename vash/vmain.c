@@ -91,6 +91,50 @@ kbcod cod;
 static  char pattfs[22] = "*";  /* строка для шаблона пометки */
 /*YESXSTR*/
 
+static  int ed_ls(fill)
+/*
+ * тотальная пометка
+ */
+char *fill;
+{
+	kbcod cod;
+
+	register char *p;
+	register LINE *line;
+	extern kbcod pmtrstr(); /* ввод строки с промптером */
+	char prompts[100];
+	char newCfill[MAXLICO];
+	int maxlen;
+
+	maxlen = (MAXLICO > maxco ? maxco : MAXLICO) - 1;
+	/* если строка fill пустая, редактировать Cfill, иначе просто скопировать fill */
+	if (fill != (char *)0 && fill[0] != '\0') {
+		strcpy(Cfill, fill);
+		return 1;
+	}
+	else
+		strncpy(newCfill, Cfill, maxlen);
+
+	sprintf(prompts, " -f'ls'");
+	cod = pmtrstr(prompts, newCfill, maxco - strlen(prompts) - 2);
+	switch(cod) {
+	case KB_EX:
+		w_emsg("");
+		return 0;
+	case KB_NL:
+		strncpy(Cfill, newCfill, maxlen);
+	}
+	return(1);
+/*	else w_emsg("");*/
+}
+
+int f_ls(cmd)
+char *cmd;
+{
+	int ret;
+	return ed_ls(cmd);
+}
+
 static  int tutsel(cod)
 /*
  * тотальная пометка
@@ -106,7 +150,7 @@ kbcod cod;
 
 	total = 0;
 	/* ввести шаблон пометки */
-	sprintf(prompts, "Select [%c]", cod);
+	sprintf(prompts, " mark #%c", cod);
 	switch(pmtrstr(prompts, pattfs, 20)) {
 	case KB_EX:
 		w_emsg("");
@@ -162,11 +206,30 @@ kbcod cod;
 	}
 	if (total) {
 		w_msg(TXT, " ");
-		fprintf(vttout, "Selected: %3d", total);
+		fprintf(vttout, " # marked: %d", total);
 		if (unvisible)
-			fprintf(vttout, ", out of display: %3d", unvisible);
+			fprintf(vttout, ", not shown: %d", unvisible);
 	}
 	else w_emsg("");
+	return 0;
+}
+
+/* попытка: команды пометки вынести во внешние файлы .ashstd */
+int f_mark(cmd)
+char *cmd;
+{
+	kbcod cod;
+	cod = cmd[0]; /*переделать на нормальный макрос для kbcod */
+
+	switch (cod) {
+	case '+':
+	case '-':
+		tutsel(cod);
+		break;
+	default:
+		w_emsg("invalid arg for _mark");
+	}
+	return (0);
 }
 
 extern  int     y0_top;         /* defined in main.c */
@@ -206,7 +269,47 @@ char *helpl;
 		w_emsg("");
 
 		switch (cod) {
-		/* не встроенная команда, надо интерпретировать */
+#ifdef HELPRETRO
+		case KB_HE:
+			at_set(TXT);
+			w_help(helpl);
+			/* проваливаемся... */
+#endif
+		case KB_RE:
+			er_pag();
+			cwdshow();
+			w_emsg("");
+			itmshow(); w_page(clm._vf, 0);
+			keyreq = 1;
+			break;
+#ifdef NOEX_MARK
+		case '+':
+		case '-':
+#endif
+#ifdef VFRETRO
+			if (oneitm)     bell();
+			else
+#endif
+			w_line( &clm._vf[i] );
+#ifdef NOEX_MARK
+			tutsel(cod);
+#endif
+			keyreq = 1;
+			break;
+		case ' ':
+		case '<':
+		case '>':
+			w_line( &clm._vf[i] );
+/*                      if (oneitm) return;     */
+			cod = KB_AD;
+			/* проваливаемся... */
+		case KB_AD:
+		case KB_AR:
+		case KB_AL:
+		case KB_AU:
+			i = itmadj(cod);
+			break;
+			/* не встроенная команда, надо интерпретировать */
 		default:
 			w_line( &clm._vf[i] );
 			keyreq = 1;
@@ -234,42 +337,6 @@ char *helpl;
 			/* синхронизировать y0 и y0_top */
 			if (clm._y0 < y0_top)
 				y0_top = clm._y0;
-			break;
-#ifdef HELPRETRO
-		case KB_HE:
-			at_set(TXT);
-			w_help(helpl);
-			/* проваливаемся... */
-#endif
-		case KB_RE:
-			er_pag();
-			cwdshow();
-			w_emsg("");
-			itmshow(); w_page(clm._vf, 0);
-			keyreq = 1;
-			break;
-		case '+':
-		case '-':
-#ifdef VFRETRO
-			if (oneitm)     bell();
-			else
-#endif
-			w_line( &clm._vf[i] );
-			tutsel(cod);
-			keyreq = 1;
-			break;
-		case ' ':
-		case '<':
-		case '>':
-			w_line( &clm._vf[i] );
-/*                      if (oneitm) return;     */
-			cod = KB_AD;
-			/* проваливаемся... */
-		case KB_AD:
-		case KB_AR:
-		case KB_AL:
-		case KB_AU:
-			i = itmadj(cod);
 			break;
 		}
 	}

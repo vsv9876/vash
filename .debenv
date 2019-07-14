@@ -1,4 +1,13 @@
-#!/bin/bash
+#!/bin/sh
+
+# debug environment for vash 
+
+# usage:
+# . ./.debenv
+#
+# use with local non-packaged configuration files 
+# make; vash/vash
+#
 
 top=`pwd`
 export PATH=$top/visi/bin:$PATH

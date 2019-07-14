@@ -166,6 +166,7 @@ extern int cmdsub();
  * Подстановка помеченных файлов.
  * Показ команды перед выполнением.
  */
+static char out_str[800] = "";
 int shexec(cmd, cmdlbl, execmode, execapnd)
 char *cmd;      /* собственно команда, которую надо выполнить */
 char *cmdlbl;   /* строка для индикации, как правило == cmd */
@@ -181,6 +182,7 @@ int  execapnd;
 	int i;
 	register int j;
 	register char *p;
+	char psep;  /* сепаратор аргументов при подстановке, м. быть ' ' или ',' */
 	char *nm_ptr;
 
 	p = cmd;
@@ -202,7 +204,9 @@ int  execapnd;
 	}
 	/* подставить аргументы */
 	while( *p ) {
-		if (*p == MONEY && p[1] == MONEY) {
+		if (p[1] == MONEY || p[1] == ',') psep = p[1];
+		else 							psep = '\0';
+		if (*p == MONEY && psep) {
 			p++; p++;
 			/* подставить */
 			for (j = 0; j < clm._itmmax; j++) {
@@ -215,15 +219,20 @@ int  execapnd;
 				if(clm._itms[j][0] == MONEY) {
 				   /* вставить очередное имя */
 				   nm_ptr = nmsubs(&clm._itms[j][2], Csubs);
-				   sprintf(&cmd2[i], "%s ", nm_ptr);
-				   while(cmd2[++i]);
-#ifdef RETRO
-				   i--; cmd2[i++] = ' ';
-#endif
+				   if (sh_cpy(out_str, nm_ptr)) execmode = execmode & (~ASH_NOSH);
+				   sprintf(&cmd2[i], "%s ", out_str);
+
+				   while(cmd2[++i]) ;
+
+				   i--; cmd2[i++] = psep==MONEY?' ':psep;
 				}
 			}
+#ifndef RETRO
 			/* убрать последний пробел - он лишний */
-			cmd2[--i] = '\0';
+			if (cmd2[i - 1] == ' ') cmd2[--i] = '\0';
+
+#endif
+			/*cmd2[i] = '\0';*/
 		}
 		else    cmd2[i++] = *p++;
 	}

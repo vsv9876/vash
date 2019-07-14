@@ -183,7 +183,9 @@ all:  $(PROGRAM)
 
 program:        buildd $(PROGRAM)
 
-objs:           $(OBJS)
+objs:           $(OBJS) buildstamp
+
+buildstamp:;	$(SHELL) ./builddate		
 
 # xs.o:           strings
 #                 xstr
@@ -194,7 +196,7 @@ objs:           $(OBJS)
 
 # $(VISI_NEW)/libnew 
 ## linker ... $(LIBNEW) 
-$(PROGRAM):     buildd.h $(OBJS) $(LIBS) $(MAKEFILE)
+$(PROGRAM):     buildstamp $(OBJS) $(LIBS) $(MAKEFILE)
 		@echo "Loading $(PROGRAM) ... "
 		$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) $(STDLIBS) -o $(PROGRAM)
 		@echo " ...done"

@@ -311,7 +311,7 @@ int   size;     /* размер строки для ввода */
 	int   savedf;
 
 	pattl.size = size;
-	pattl.colu = strlen(pmtstr) + 3;
+	pattl.colu = strlen(pmtstr) + 1; /*3;*/
 	pattl.line = maxli - 1;
 	pattl.flag = 0;
 	pattl.attr = LVAR|INP;
@@ -361,8 +361,9 @@ int sufmode;            /* режим суффикса */
 	for (s = from; *s; s++)
 		if (*s == '.' )
 			saveds = s;
-	if (saveds == from ||
-			saveds[1] == '\0')
+	if (saveds != (char *)0 &&
+			(saveds == from ||
+					saveds[1] == '\0'))
 		saveds = (char *)0;
 	if (sufmode) {
 		/* скопировать суффикс */
@@ -382,14 +383,89 @@ int sufmode;            /* режим суффикса */
 }
 
 /*
+ * TODO: эксперимент с экранированием имен файлов c метасимволами (пока в этом файле...)
+ * три варианта экранирования метасимволов sh:
+ * - в одиночных кавычках
+ * - в двойных кавычках
+ * - без кавычек
+ *
+ * имена (файлов) подставляются в команду sh,
+ * а также участвуют в подстановках для пробы (#@, #*, и т.п.)
+ *
+ * соответственно, нужна прямая и обратная функция окавычивания строки,
+ * но можно обойтись только прямой функцией
+ *
+ * фозвращает 0, если имя было без метасимволов, 1 если пришлось экранировать
+ */
+int sh_cpy(outs, inps)
+register char *outs;
+register char *inps;
+{
+	int in_quote = 0; /* режим квотирования, если ноль то strcpy */
+	char c;
+	char *inps_keep;
+	int mode_quote = 0; /* 0 - простое экранирование каждого символа, 1 - кавычки вокруг строки */
+
+	inps_keep = inps;
+
+	while (*inps != '\0') {
+		c = *inps++;
+		switch (c) {
+		case '|':
+		case '\\': case '\'':
+		case ' ': case '\t': case '\r':
+		case '`': case '~':
+		case '!': case '@': case '#': case '"': case ';':
+		case '$': case '%': case '(': case ')':
+		case '[': case ']': case '{': case '}':
+		case '^': case '&': case '*': case '?':
+		case '<': case '>':
+				in_quote = 1;
+				break;
+		default:
+				in_quote = 0;
+				break;
+		}
+		if (mode_quote == 0) {
+			if (in_quote) {
+				*outs++ = '\\';
+			}
+			*outs++ = c;
+		}
+	}
+
+	if (mode_quote) {
+		inps = inps_keep;
+		if (in_quote == 0) {
+			strcpy(outs, inps);
+			return 0;
+		} else {
+			*outs++ = '\'';
+			while (*inps != '\0') {
+				if (*inps == '\'' /*|| *inps == '$'*/) {
+					*outs++ = '\'';
+					*outs++ = '\\';
+					*outs++ = *inps++;
+					*outs++ = '\'';
+				} else {
+					*outs++ = *inps++;
+				}
+			}
+			*outs++ = '\'';
+		}
+	}
+	*outs++ = '\0'; /* string termination after copy */
+	return 1;
+}
+
+/*
  * Подставить часть строки, определенную в настройке -@
  *
  * пока реализовано два варианта:
- * -@3          третье поле, номер поля задается числом
+ * -@3          в примере третье поле (разделенное пробелами), номер поля задается числом
  * -@20-32      вырезка всех знаков в строке между указанными колонками
  */
-
-static char out_str[200] = "";
+static char out_str[800] = "";
 char *nmsubs(inps, s)
 char *inps;
 char *s;        /* формат для подстановки */
@@ -442,6 +518,7 @@ char *s;        /* формат для подстановки */
 
 no_subs:
 		strcpy(out_str, inps);
+		/*sh_cpy(out_str, inps);*/
 	}
 	return(out_str);
 }

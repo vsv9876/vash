@@ -11,6 +11,9 @@ extern  int     vshcmd(), menu2();
 extern  int     fsh(), fmenu2();
 extern  int     ffile(), fmsg(), fmsgerr();
 extern  int     rescan();
+/* перенесены из встроенных фунций */
+extern  int		f_ls();	/* редактирование строки команды заполнения меню из .ashstd -@f */
+extern  int		f_mark(); /* пометка пунктов меню (имен файлов) + - > < */
 
 extern  char  *nmsubs();
 
@@ -31,6 +34,8 @@ FUNTAB funtab[] = {
 	{ "msg",        fmsg },
 	{ "err",        fmsgerr },
 	{ "rescan",     rescan },
+	{ "f_ls",		f_ls },
+	{ "mark",		f_mark },
 #ifdef DEBUG
 	{ "kshow",      kshow },
 #endif
@@ -149,7 +154,7 @@ register char *cmd;     /* встроенная функция */
 	/* установить соответствие */
 	for (ftp = funtab; ftp->ft_name; ftp++) {
 		if (strcmp(ftp->ft_name, keywd) == 0) {
-			if (keyf = ftp->ft_fun)
+			if (keyf = ftp->ft_fun) /* если функция найдена, ее и вызвать */
 				return((*keyf)(cmd));
 			else    break;
 		}
@@ -190,7 +195,7 @@ register int  i;        /* копия itm */
 	    case 'A':   /* vexdir contains library path, eg /usr/lib/vash */
 		strcpy(ptmp, vexdir);
 		break;
-	    case '@':   /* имя файла возле курсора */
+	    case '@':   /* имя файла возле курсора, или его часть если есть правило */
 		nm_ptr = nmsubs(&clm._itms[i][2], Csubs);
 		strcpy(ptmp, nm_ptr);
 		break;
