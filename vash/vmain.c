@@ -115,8 +115,8 @@ char *fill;
 	else
 		strncpy(newCfill, Cfill, maxlen);
 
-	sprintf(prompts, " -f'ls'");
-	cod = pmtrstr(prompts, newCfill, maxco - strlen(prompts) - 2);
+	sprintf(prompts, " ls/fill (-f):");
+	cod = pmtrstr(prompts, newCfill, maxco - strlen(prompts) - 20);
 	switch(cod) {
 	case KB_EX:
 		w_emsg("");

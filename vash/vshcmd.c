@@ -85,7 +85,7 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 		}
 		else {
 			/* копир. только то, что на экране */
-			strncpy(cmd0, cmd, (size_t)cmdsize);
+			strncpy(cmd0, cmd, (size_t)cmdsize); /*TODO: WTF*/
 			cmd0[cmdsize] = 0;
 		}
 		pos = strlen(cmd0);

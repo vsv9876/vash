@@ -1,4 +1,5 @@
 #include <string.h>
+#include "line.h"
 
 /* взято из текстов интерпретатора csh
  * DEMOS 2.08
