@@ -20,9 +20,9 @@
 #define CMDP 40         /* λομιώεστχο λοναξδ χ βυζεςε */
 #define CMDHL 8         /* λομιώεστχο λοναξδ χ νεξΰ ξα όλςαξε */
 #else
-#define CMDP 60         /* λομιώεστχο λοναξδ χ βυζεςε */
+#define CMDP 120         /* λομιώεστχο λοναξδ χ βυζεςε */
 #define CMDHL 8         /* λομιώεστχο λοναξδ χ νεξΰ ξα όλςαξε */
-#define CMDB CMDP * MAXLICO /* 8192       /* ΔΧΑ ΠΟΜΞΩΘ άΛÒΑΞΑΙΣΤΟÒΙΙ ΘΧΑΤΙΤ... */
+#define CMDB CMDP * MAXLICO /* 8192       /* ΔΧΑ ΠΟΜΞΩΘ άΛÒΑΞΑ ΙΣΤΟÒΙΙ ΘΧΑΤΙΤ... */
 #endif /* TINYSMALL */
 
 extern char *homedir;
