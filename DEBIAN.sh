@@ -9,6 +9,9 @@ make distclean
 make
 make DESTDIR=`pwd`/BLD install
 
+# install configs
+cp -rp etc `pwd`/BLD
+
 #cp -rp DEBIAN/ BLD
 set -x
 VERSNSH=`grep VERSN < configure.conf | sed -e 's/ //g' -e 's/-/ /'`

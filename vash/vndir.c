@@ -144,8 +144,6 @@ char *fname;            /* имя файла из меню */
 #else
 	staterr = stat(fname, &itmstat);
 #endif
-	/* надо бы сделать проверку на отсутствие ошибок... */
-	/* это она и есть */
 	if (staterr == 0) {
 	    /* выяснить тип файла */
 	    mode = itmstat.st_mode;
@@ -280,28 +278,19 @@ vls()
 #endif
     register char *itmbp;
     short len;
-    int     Lflag;  /* ФЛАГ: НЕ РАЗЛИЧАТЬ СИМВ. ССЫЛКИ */
-    int     Fflag;  /* ФЛАГ: ПОКАЗЫВАТЬ ТИП ФАЙЛА */
     int     aflag;  /* флаг: показывать все файлы */
-    struct  stat sb;
     char    *fname;
-    char    ftype;  /* СИМВОЛ ТИПА ФАЙЛА */
-    int     ok;
 
-    Lflag = Fflag = aflag = 0;
-    if (index(Cfill, 'F')) Fflag = 1;
-#if defined(S_IFLNK)
-    if (index(Cfill, 'L')) Lflag = 1;
-#endif
+    aflag = 0;
     if (index(Cfill, 'a')) aflag = 1;
 
     len = clm._itmlen = clm._itmmax = 0;
     clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
-    *itmbp++ = ' ';
+    *itmbp++ = ' '; /* 1st placeholder */
 
     if ((dirp = opendir(Crepf)) != NULL) {
       for (dp = readdir(dirp); dp != NULL; dp = readdir(dirp))
-	{
+      {
 /*              printf("%6ld %s\n", dp->d_ino, dp->d_name);
  */
 			/* здесь надо бы еще просчитать (в уме), как
@@ -310,72 +299,18 @@ vls()
 
 		if ( !aflag && dp->d_name[0] == '.'
 			    && strcmp(dp->d_name,"..") != 0)
-			/* скрытые имена */
+			/* skip hidden filenames */
 			continue;
 
-		/* если места не хватает */
 		if (&clm._itmbuf[clm._itmbsz] <= &itmbp[len]) {
 			w_emsg(ediag("No mem for all menu items",
 				     "Нет места для всех пунктов меню"));
 			break;
 		}
-		/* очередное имя занести в таблицу */
 		fname = dp->d_name;
 
-		/* определить тип файла */
-#if defined(S_IFLNK)
-		if (Fflag|Lflag) {
-			if(Lflag) {
-				ok =  stat(fname, &sb);
-				if (ok < 0)
-				/* пустые симлинки тоже пытаться показывать */
-				       ok = lstat(fname, &sb);
-			}
-			else    ok = lstat(fname, &sb);
-#else
-		if (Fflag) {
-			ok =  stat(fname, &sb);
-#endif
-			if (ok < 0) {
-				if (!Lflag) {
-#if defined (S_IFLNK)
-					if (lstat(fname, &sb) < 0) {
-					       w_emsg("Can't stat:");
-					       w_str(fname);
-					}
-#else
-					w_emsg("Can't stat:");
-					w_str(fname);
-#endif
-				}
-				else    {
-#ifdef RETRO
-					itmbp -= len;
-#endif
-					continue;
-				}
-			}
-			switch(sb.st_mode & S_IFMT) {
-#if defined(S_IFLNK)
-			case S_IFLNK:   ftype = '@'; break;
-#endif
-#if defined(S_IFIFO)
-			case S_IFIFO:   ftype = '='; break;
-#endif
-			case S_IFCHR:   ftype = '"'; break;
-			case S_IFBLK:   ftype = ':'; break;
-			case S_IFDIR:   ftype = '/'; break;
-			case S_IFREG:
-				if ((sb.st_mode & S_IEXEC) == S_IEXEC)
-					ftype = '*';
-				else    ftype = ' ';
-				break;
-			default:        ftype = '?'; break;
-			}
-			*itmbp++ = ftype;
-		}
-		else    *itmbp++ = ' ';
-		/* ОЧЕРЕДНОЕ ИМЯ ЗАНЕСТИ В ТАБЛИЦУ */
+		*itmbp++ = ' '; /* 2nd placeholder */
+		/* store current item into the table (after 2 placeholders) */
 		strcpy(itmbp, fname);
 		itmbp += len;
 		*itmbp++ = '\0';
@@ -389,7 +324,7 @@ vls()
 		clm._itmmax++;
 		clm._itms[clm._itmmax] = itmbp;
 		*itmbp++ = ' ';
-	}
+		}
         closedir(dirp);
     }
     else {
@@ -410,10 +345,107 @@ vls()
  */
     return(0);  /* OK */
 }
+
+char vlstype(fname)
+char *fname;
+/*
+ * returns one symbol (sorry, cast to char/wchar)
+ */
+{
+    int     Lflag;  /* ФЛАГ: НЕ РАЗЛИЧАТЬ СИМВ. ССЫЛКИ */
+    int     Fflag;  /* ФЛАГ: ПОКАЗЫВАТЬ ТИП ФАЙЛА */
+    int     aflag;  /* флаг: показывать все файлы */
+    struct  stat sb;
+    char    ftype;  /* СИМВОЛ ТИПА ФАЙЛА */
+    int     ok;
+
+    Lflag = Fflag = aflag = 0;
+    if (index(Cfill, 'F')) Fflag = 1;
+#if defined(S_IFLNK)
+    if (index(Cfill, 'L')) Lflag = 1;
+#endif
+    if (index(Cfill, 'a')) aflag = 1;
+
+	/* определить тип файла */
+#if defined(S_IFLNK)
+	if (Fflag|Lflag) {
+		if(Lflag) {
+			ok =  stat(fname, &sb);
+			if (ok < 0)
+			/* пустые симлинки тоже пытаться показывать */
+				   ok = lstat(fname, &sb);
+		}
+		else {
+			ok = lstat(fname, &sb);
+		}
+#else
+		if (Fflag) {
+			ok =  stat(fname, &sb);
+#endif
+			if (ok < 0) {
+				if (!Lflag) {
+#if defined (S_IFLNK)
+					if (lstat(fname, &sb) < 0) {
+						   w_emsg("Can't stat:");
+						   w_str(fname);
+					}
+#else
+					w_emsg("Can't stat:");
+					w_str(fname);
+#endif
+				}
+			}
+#if !defined (S_IFLNK)
+		}
+#endif
+		switch(sb.st_mode & S_IFMT) {
+#if defined(S_IFLNK)
+		case S_IFLNK:   ftype = '@'; break;
+#endif
+#if defined(S_IFIFO)
+		case S_IFIFO:   ftype = '='; break;
+#endif
+		case S_IFCHR:   ftype = '"'; break;
+		case S_IFBLK:   ftype = ':'; break;
+		case S_IFDIR:   ftype = '/'; break;
+		case S_IFREG:
+			if ((sb.st_mode & S_IEXEC) == S_IEXEC)
+				ftype = '*';
+			else    ftype = ' ';
+			break;
+		default:        ftype = '?'; break;
+		}
+	} else {
+		ftype = ' ';
+	}
+
+    return(ftype);  /* OK */
+}
+
+
+
+vlstag() {
+/*маркировать во втором байте тип файла, подобно ls -F */
+	int i;
+
+	char *fname;
+	char *s;
+
+	if (Crepf[0] == '\0') return; /* no markup with tags */
+	for(i=0; i<clm._itmmax; i++) {
+		fname = &clm._itms[i][2]; /* file name there */
+
+		s = clm._itms[i];
+		/*type of file symbol placed there*/
+		s[1] = (char)vlstype(fname);
+	}
+}
+
+
 /*
  * current working directory show (and other related info)
  * if xtermf, use xterm escapes '\E]0;'....'^G'
- * if panelf use
+ * if panelf is in use
  */
 cwdshow()
 {
@@ -565,6 +597,7 @@ cwdshow()
  *
  * Возвращает 1, если заполнено новое меню, иначе 0.
  */
+static int fil_first = 1; /*hint for 1st invocation - do it silently*/
 fil_vf(newflag)
 int newflag;    /* если 0, то только обновить каталог */
 {
@@ -616,7 +649,11 @@ int newflag;    /* если 0, то только обновить каталог */
 		onintr(1);
 	}
 
-	w_msg(TXT, Cfill); fflush(vttout);
+	if (fil_first) {
+		fil_first = 0;
+	} else {
+		w_msg(TXT, Cfill); fflush(vttout);
+	}
 
 	if (Cfill[0] != ':') { /* ВСТРОЕННАЯ КОМАНДА */
 	/*TODO substitution */
@@ -643,6 +680,8 @@ int newflag;    /* если 0, то только обновить каталог */
 	}
 	w_emsg("");
 
+	vlstag();
+
 	itmini();       /* ПОСЧИТАТЬ ГАБАРИТЫ МЕНЮ */
 	itmrestor();
 	pre_vf();       /* СОЗДАТЬ СТРАНИЦУ LINLIB ДЛЯ МЕНЮ */
@@ -665,7 +704,7 @@ char *cdarg;
 	else
 		strcpy(nwdpath, cdarg);
 
-	dcanon(nwdpath);        /* УБРАТЬ МУСОР ИЗ ПОНОГО ИМЕНИ */
+	dcanon(nwdpath);        /* canonicalize new path */
 
 	if (access(nwdpath, R_OK|X_OK)) {
 		w_emsg("directory unaccessible:");

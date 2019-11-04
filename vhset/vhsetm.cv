@@ -105,29 +105,28 @@ m_a  = ipm      -   -   pag_a   tst_m   " Video attributes "
 m_qu = ipm      -   -   mkquit  tst_m   " QUIT (discard changes) "
 m_ex = ipm      -   -   mkexit  tst_m   " EXIT (save setup) "
 lh   = v        -   -   -       -       namelh
-sp   = gh       -   -   -       -       "spacebar"
+sp   = gv       -   -   -       -       "spacebar"
 
 ---SCREEN
 =VHSET - video(display) hardware setup
 
-  LINLIB V3.4
+---#  LINLIB V3.4
 
-  Setup file:
-      .lh................................................................
+file:  .lh................................................................
 
-
----#	.m_m.......................
-	.m_a.......................
-        .m_k.......................
-
-  Exit from setup:
+---#  Exit from setup:
         .m_qu......................
+---#    .m_m.......................
+       	.m_a.......................
+        .m_k.......................
         .m_ex......................
 
+."Please, press a key:". 
+                .sp..... - select menu
+		.:HE.... - get help
+		.:NL.... - advance to next menu point
 
-  Please, point menu with cursor, then press .sp.....
-
-        .:?  or .:HE.... -- Help
+---#    .:?  or .:HE.... -- Help
 ---END
 
 static  char    helpf[] = "vhsetm.lb";

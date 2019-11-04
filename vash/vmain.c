@@ -88,7 +88,7 @@ kbcod cod;
 }
 
 /*NOXSTR*/
-static  char pattfs[22] = "*";  /* строка для шаблона пометки */
+static  char pattfs[42] = "*";  /* строка для шаблона пометки */
 /*YESXSTR*/
 
 static  int ed_ls(fill)
@@ -151,7 +151,7 @@ kbcod cod;
 	total = 0;
 	/* ввести шаблон пометки */
 	sprintf(prompts, " mark #%c", cod);
-	switch(pmtrstr(prompts, pattfs, 20)) {
+	switch(pmtrstr(prompts, pattfs, 40)) {
 	case KB_EX:
 		w_emsg("");
 		return 0;

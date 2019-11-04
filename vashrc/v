@@ -28,17 +28,18 @@
 #---------------------------------------------
 # environ-passed setup (VASH):
 #
-# h     history will be stored
+# h     history will be saved in file
+# S     history will be synced, or saved on exit if not specified
 # lNN   lines for filename menu (from 2 to 20), default 10
 # p     key help panel bar on
 # s     scroll cmd script but no clear screen
-# c     clock show,  uprigh corner of screen
+# c     clock show,  upright corner of screen
 # m     check mailbox (Biff)
 #
 # example for assist environ-passed setup:
 
 #VASH=l10pshcm
-VASH=
+#VASH=
 
 #---------------------------------------------
 # label for identification machine name, /dev/tty???,
@@ -73,16 +74,20 @@ ASHLBL="$tty $user@$uname:"
 #EDITOR=vi
 #PAGER=/usr/local/bin/m
 PAGER=less
+LESS=-qmeXR
 
-export ASHLBL PATH
-#export EDITOR PAGER
+export ASHLBL
+export PATH
+#export EDITOR
 export PAGER
+export LESS
 
 #stty kill '^u'
 
 PS1='v> '; export PS1
 
-VASH=l10shw
+if [ x${VASH} = x ]; then
+VASH=l10shwS
 
 # decoration on xterm window
 onxterm=0
@@ -113,9 +118,10 @@ console|linux|pc*|vs100*|AT386)
 esac
 
 export VASH
+fi
+
+#VASH_VEXDIR=/usr/lib/vash
 #debug: 
 #VASH_VEXDIR=$HOME/proj-ws/remix/vashlib/LIB
-export VASH_VEXDIR
-env|grep VASH
 
 exec vash "$@"

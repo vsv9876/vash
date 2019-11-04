@@ -15,7 +15,7 @@ DEST  = /usr
 TOPDIR = /tmp
 
 MAKECONF   = ./conf/Makefile
-BLDCFG	= ./configure.conf
+BLDCFG	= configure.conf
 
 BLD	= $(TOPDIR)/BLD
 #BLD	= .
@@ -83,11 +83,12 @@ cfg:
 #cfg:
 #	$(SHELL) -c './config'
 #	$(MAKE) $(BLDCFG)
-configure.conf:
-	@echo ''
-	@echo 'no ./configure.conf founds - please, run ./configure first'
-	@echo ''
-	/bin/true
+
+#configure.conf:
+#	@echo ''
+#	@echo 'no ./configure.conf founds - please, run ./configure first'
+#	@echo ''
+#	/bin/true
 
 #$(SHOWCONFIG):
 showconfig:
@@ -103,7 +104,7 @@ showconfig:
 	@echo CFLAGS_ASH=$(CFLAGS_ASH)
 	@echo CFLAGS_VISI=$(CFLAGS_VISI)
 
-compile:    $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
+compile:   configure.conf $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
 	cd $(VHSET); $(MAKE) all "DEST=$(DEST)"

@@ -1,5 +1,5 @@
 Name:           vash
-Version:        1.28.3
+Version:        1.29.1
 Release:        1%{?dist}
 Summary:        Visual Assistant Shell (vash)
 
@@ -21,6 +21,7 @@ features visual assistance for command line parameters, command string editing, 
 
 %define debug_package %{nil}
 
+
 %prep
 #%autosetup
 %setup -q
@@ -35,6 +36,10 @@ make
 %install
 #rm -rf $RPM_BUILD_ROOT
 %make_install
+mkdir -p %{buildroot}/etc/vhset
+install -m 664 ./etc/vhset/xterm %{buildroot}/etc/vhset/xterm
+install -m 664 ./etc/vhset/linux %{buildroot}/etc/vhset/linux
+install -m 664 ./etc/vhset/screen %{buildroot}/etc/vhset/screen
 
 %clean
 rm -rf %{buildroot}
@@ -46,6 +51,11 @@ rm -rf %{buildroot}
 /usr/bin/*
 /usr/lib/*
 #/usr/share/doc/*
+%dir /etc/vhset
+%config(noreplace) /etc/vhset/xterm
+%config(noreplace) /etc/vhset/linux
+%config(noreplace) /etc/vhset/screen
+
 
 %changelog
 * Mon Jul 15 2019 Sergey Vovk <vsv>

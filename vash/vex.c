@@ -11,7 +11,8 @@ extern  char   *versn;
 extern  char   *vexdir;
 extern  int     y0_top;
 
-char   *onoff[] = { "[ ]", "[x]", 0 };
+char   *onoff[] = { "( )", "(x)", 0 };
+/*char   *onoff[] = { " | ", " x ", 0 };*/
 
 extern  char    Cfill[];
 extern  char    Crepf[];

@@ -1,0 +1,49 @@
+0 000 000
+1 000 010
+2 020 022
+3 010>020
+4 010?020
+5-010*020
+6 022 020
+7!020 002
++
+:^KKPCtrl-K 
+:kuAUUP     
+:kdADDOWN   
+:klALLEFT   
+:krARRIGHT  
+:^JNLEnter  
+:deDE<---bs
+:^CEXCtrl-C 
+:k1HEF1     
+:^VPRCtrl-V 
+:^LRECtrl-L 
+:^ITATAB    
+:^AKHHome  
+:^EKEEnd   
+:^BPUPgUp  
+:^FPDPgDown
+:kDKDdel->  
+:kIINInsert
+:khKHHome  
+:@7KEEnd   
+:kPPUPgUp  
+:kNPDPgDown
+:k4PRPF4    
+:f0U0
+:f1U1
+:f2U2
+:f3U3
+:f4U4
+:f5U5
+:f6U6
+:f7U7
+:f8U8
+:f9U9
+:f.U.
+:f-U-
+:f,U,
+:^MNL
+:^HHE
+:^XEX
+:^RRE

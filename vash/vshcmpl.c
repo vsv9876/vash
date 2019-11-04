@@ -409,11 +409,20 @@ int maxpos; /* максимальное значение позиции в буфере строки */
     /* учесть нули за концом команды и поставить курсор перед ними */
     conold = 's'; contxt = 'n';
     argc = 0;
+    /*
+     * хак: после '|', '&', ';' попытаться трактовать как команду,
+     * сбрасывая сканер до argc=0 при обнаружении этих символов
+     */
     for (x_in = 0; x_in < *curpos && x_in < maxpos; x_in++) {
     	/* determine current context */
     	/* skip leading spaces and separators between args */
     	if (cmd[x_in] == ' ') /* || cmd[x_in] == '\0') */ {
     		contxt = 's'; /* todo '\ ' which is not separator */
+    	} else if (cmd[x_in] == ';'
+    			|| cmd[x_in] == '|'
+				|| cmd[x_in] == '&'
+				   ) {
+    		contxt = 'n'; conold = 's'; argc = 0;
     	} else {
     		contxt = 'a';
     	}

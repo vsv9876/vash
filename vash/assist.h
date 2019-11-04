@@ -92,8 +92,4 @@ extern int gidchk(), filetype(), prefix();
 extern int try_compl(), hlp_compl(), hlp_clr(), cmdput(), vsystem(), showtime();
 extern int sl_chkdup();
 
-
-
-
-
-
+extern int cvt_vf();

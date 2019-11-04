@@ -26,8 +26,8 @@ int     oneitm = 0;     /* флаг: разрешено указать только один пункт меню */
 int     panelf = 1;     /* флаг: показывать панель подсказки */
 int     whodirf = 1;    /* show whodir panel on screen */
 int     xtermf = 0;     /* show whodir panel on window title using xterm escape sequence */
-int     histf  = 0;     /* флаг: сохранять историю команд при выходе из vash */
-int		histsn = 1;		/* флаг: синхронизировать историю после каждой команды */
+int     histf  = 0;     /* флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
+int		histsn = 0;		/* флаг: синхронизировать историю после каждой команды */
 int     clockf = 1;     /* флаг: показывать часы */
 int     cmailf = 1;     /* флаг: проверять почту */
 int     loginf = 0;     /* флаг: главная оболочка, ppid() == 1 */
@@ -40,32 +40,32 @@ char *pmtsh;
 
 usage()
 {
-	fprintf(stderr, "Usage: vash [-1] [-bN] [-c] [-h] [-s] [-w] [-x] [-m] [-p]\n");
+	fprintf(stderr, "Usage: vash [-1] [-bN] [-c] [-h] [-S] [-s] [-w] [-x] [-m] [-p]\n");
 	exit(1);
 }
 
 int     allcod = 1;
 
-ashexit(ok)
+onexit(ok)
 int ok;
 {
 #ifdef RETRO
 	cp_set(-1, 0, TXT);
 #else
-	cp_set(clm._y0, 0, TXT);
+	cp_set(clm._y0-1, 0, TXT);
 	er_eop();
-	cp_set(clm._y0, 0, TXT);
+	cp_set(clm._y0-1, 0, TXT);
 #endif
 	io_set(IO_TTYPE);
 #ifdef RETRO
 	putchar('\n');
 #endif
-	if (ok == 0 && histf && homedir != (char *)0)
+	if (ok == 0 && histf && homedir != (char *)0 && histsn == 0) {
 		cmdphist(homedir);
-
+	}
 	unlink(tmpflnm);
 
-	exit(ok);
+/*	exit(ok);*/
 }
 
 /*ARGSUSED*/
@@ -73,7 +73,7 @@ void onintr(signo)
 {
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	ashexit(1);
+	onexit(1); exit(1);
 }
 
 static  LINE tmplate =
@@ -81,7 +81,8 @@ static  LINE tmplate =
        { 16, 0, 0, 0,
 	       TXT|INP|NED|LFASTR,
 		       (char *)0,
-			       cvt_sp,
+			       cvt_vf
+			   	   /*cvt_sp*/ ,
 			       t_file,
 				       (char*)0 };
 
@@ -129,7 +130,7 @@ char **argv;
 		char *p;
 
 		/* reset defaults in case environment setup is in use */
-		scrolf = histf = panelf = whodirf = xtermf = clockf = cmailf = 0;
+		scrolf = histf = histsn = panelf = whodirf = xtermf = clockf = cmailf = 0;
 		/*** yy_max = 10; */
 
 		while (c = *envsup++) {
@@ -160,6 +161,9 @@ char **argv;
 				break;
 			case 'h':
 				histf++;
+				break;
+			case 'S':
+				histsn++;
 				break;
 			case 'c':
 				clockf++;
@@ -203,6 +207,9 @@ char **argv;
 			case 'h':
 				histf = 0;
 				continue;
+			case 'S':
+				histsn = 0;
+				continue;
 			case 'c':
 				clockf = 0;
 				continue;
@@ -220,32 +227,37 @@ char **argv;
    		envshell = "/bin/sh";
    	}
 
-   	if ((homedir=getenv("HOME")) == (char *)0)
+   	if ((homedir=getenv("HOME")) == (char *)0) {
 	       histf = 0;
+   	}
 
-       if (homedir != (char *)0) {
-    	   cmdghist(homedir);
-       }
-       tmpfd = mkstemp(tmpflnm);      /* получить имя временного файла */
-/*         tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
-
+    if (homedir != (char *)0) {
+		cmdghist(homedir);
+	}
+    tmpfd = mkstemp(tmpflnm);      /* получить имя временного файла */
+/*  tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
+#ifdef DEBUG_VASH
+    int r;
+    read(0, r, 1);
+#endif
 	io_set(IO_VIDEO);
 	signal(SIGINT, onintr);
 
 /*NOXSTR*/
 	if ( cmdset(ashstd) && fil_vf(1) ) {
 		/* Настроить нач. состояние области свитка */
-		/*y0_top = maxli - clm._yy_max - 1;*/
-		y0_top = 0;
+		/* y0_top = maxli - clm._yy_max;/* - 1;*/
+
+		/*y0_top = 0;*/
+		y0_top = clm._y0 - 1;
 		scrlnl();
-		/*y0_top = clm._y0 - 1;*/
-		y0_top = clm._y0;
+		/*y0_top = clm._y0;*/
 
 		signal( SIGINT, SIG_IGN );
 		signal( SIGQUIT, SIG_IGN );
 
 		u_menu(clm._vf, "mainh.lb");
-		ashexit(0);
+		onexit(0); exit(0);
 	} else {
 		/* ошибки (плохо установлен ash, не читается реперный файл */
 		/* scrlnl(); */

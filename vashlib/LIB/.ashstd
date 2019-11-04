@@ -1,12 +1,12 @@
 #!/usr/bin/vash
 #
-# Visual Assistant Shell (vash) (C) Sergey Vovk, 1990,1993,2013,2016
+# Visual Assistant Shell (vash) (C) Sergey Vovk, 1990,1993,2013,2016,2019
 #
 # Стандартная настройка интерпретатора vash (ash)
-# Tue Jun  1 22:41:47 MVT 1993
+# since Tue Jun  1 22:41:47 MVT 1993
 #
 # Содержимое этого файла содержит информацию, которая может быть изменена
-# пользователем. Ответственность за любые исправления ложится на их автора.
+# пользователем. Ответственность за любые измененения ложится на их автора.
 #
 # Формат файлов настройки будет развиваться, подробности в конце файла.
 #
@@ -18,7 +18,7 @@
 #-------------------------------------------------------
 #       Названия клавиш:
 -1$
--2menu
+-2
 -3view
 -4edit
 -5cp
@@ -47,18 +47,20 @@
 	* ?	_mark +
 :-
 	* ?	_mark -
-:_
-	* ?	_mark _
-:[*]
+# :_
+# 	* ?	_mark _
+:[*_]
 	* ?	_f_ls
 
 # Редактирование последней команды sh:
+:HE
 :[1!]
 	r?x ?   _sh
 # Меню пользователя
 :2
 :U2
-	r?x ?   _menu2 .ashmenu
+#	r?x ?   _menu2 .ashmenu
+	* ?     _f_ls
 # Просмотр файла
 :3
 :U3
@@ -90,37 +92,44 @@
 	r?? [DT] *.cpio.[Z]  zcat < #@ | cpio -itv
 	r?? [DT] *.cpio.gz   gzip -d < #@ | cpio -itv
 	r?? [DT] *.cpio.[zpC] gzip -d < #@ | cpio -itv
-	r?? ? *.[zCp]        gzip -d < #@
-	r?? ? *.[Z]          zcat < #@
-	r?? ? *.bz2          bzip2 -cd < #@
-	r?? ? *.gz           gzip -d < #@
-	r?? * *.src.rpm      ;rpm -qivp ./#@ | #m
-	r?? * *.rpm          ;rpm -qivp ./#@ | #m
-	r?? * *.deb          ;dpkg --info ./#@ | #m
+	r?? [DT] *.[zCp]        gzip -d < #@
+	r?? [DT] *.[Z]          zcat < #@
+	r?? [DT] *.bz2          bzip2 -cd < #@
+	r?? [DT] *.gz           gzip -d < #@
+	r?? [DT] *.src.rpm   ;rpm -qivp ./#@ | #m
+	r?? [DT] *.rpm       ;rpm -qivp ./#@ | #m
+	r?? [DT] *.deb       ;dpkg --info ./#@ | #m
 	r?? A *.a            ar t #@
 	r?? O *.o            :nm -np #@
 	r?? O *.si           :nm -np #@
 	r?? O *              nm -np #@
-	r?? D *.tar          tar -tvf #@
+	r?? D *.tar          :tar -tvf #@
+	r?? D *.jar          :jar -tvf #@
 	r?? D *              :od -a #@ | #m
-	r?? T .a             :tail -f #@
-	r?? T a              :tail -f #@
+# dodo script companion, not in use
+# 	r?? T .a             :tail -f #@
+# 	r?? T a              :tail -f #@
 	r?? T *              :#m #@
-	r?? E *              _msg file empty, zero length
+# 	r?? E *              _msg file empty, zero length
+# interface files in /dev, /sys, ... - stat(2) show them as zero length regular files
 	r?? E *              :cat #@
 	r?x d *              :ls -aCF #@/.
 	r?? M *              frm -n #@
 #	??? ? *              _file #@
 	??? ? *              :ls -ld #@ ; file #@
 +nl
-	r?? ? *.tar.[Z]      zcat < #@ | tar -xvf -
-	r?? ? *.tar.[zZCp]   gzip -d < #@ | tar -xvf -
-	r?? ? *.tar.bz2      bzip2 -cd < #@ | tar -xvf -
-	r?? ? *.tar.gz       gzip -d < #@ | tar -xvf -
-	r?? ? *.tar.xz       xz -d < #@ | tar -xvf -
-	r?? ? *.taz          gzip -d < #@ | tar -xvf -
-	r?? ? *.tgz          gzip -d < #@ | tar -xvf -
-	r?? D *.zip          unzip -d #@
+#	r?x d .         _msg Купите на Привозе селедку и крутите ей мозги - мы стоим на Дерибасовской!  :)
+#	r?x d .         _msg let You buy a fish on Privoz and screw a brain for him - we stay here on Deribasovskaja :)
+	r?x d .         _rescan
+	r?x d *         :cd #@
+	r?? D *.tar.[Z]      zcat < #@ | tar -xvf -
+	r?? D *.tar.[zZCp]   gzip -d < #@ | tar -xvf -
+	r?? D *.tar.bz2      bzip2 -cd < #@ | tar -xvf -
+	r?? D *.tar.gz       gzip -d < #@ | tar -xvf -
+	r?? D *.tar.xz       xz -d < #@ | tar -xvf -
+	r?? D *.taz          gzip -d < #@ | tar -xvf -
+	r?? D *.tgz          gzip -d < #@ | tar -xvf -
+	r?? D *.zip          unzip #@
 	r?? D *.arj          unarj x #@
 	r?? D *.zoo          zoo x #@
 	r?? [DT] *.cpio         cpio -idm -I#@
@@ -128,23 +137,25 @@
 	r?? [DT] *.cpio.[zp]    gzip -d < #@ | cpio -idm
 	r?? [DT] *.cpio.gz      gzip -d < #@ | cpio -idm
 #    r?? [DT] *.deb          sudo dpkg -i #@
-    r?? [DT] *.deb          dpkg -x #@ /tmp/#@.d
-    r?? * *.src.rpm      _msg did You mean 'rpmbuild bb #@ ?'
-    r?? * *.rpm          sudo rpm -Uhv #@
-	r?? ? *.[zCp]           gzip -d #@
-	r?? ? *.[Z]             uncompress #@
-	r?? ? *.bz2             bzip2 -cd #@
-	r?? ? *.gz              gzip -d #@
+	r?? [DT] *.deb          dpkg-deb -x #@ /tmp/#@.d
+	r?? [DT] *.src.rpm      _msg did You mean 'rpmbuild bb #@ ?'
+	r?? [DT] *.rpm          sudo rpm -qp #@ --
+	r?? D *.[zCp]           gzip -d #@
+	r?? D *.[Z]             uncompress #@
+	r?? D *.bz2             bzip2 -cd #@
+	r?? D *.gz              gzip -d #@
 	r?? [ET] .*.b       rm -f .*.b .,resv.*
 	r?? [ET] *.b        rm -f *.b .,resv.*
 	r?? A *             ar xv #@
 	r?? T [Mm]ake*.sh   ./#@
 	r?? T [Mm]ake*      make -f #@
-	r?? * *.tar         tar -xvf #@
+	r?? [DT] *.tar      tar -xvf #@
+	r?? [DT] *.jar      jar -xvf #@
 	r?? * *.man         ;nroff -man #@ | #m
-	r?? T *.lav         make #*.lb
-	r?? T *.la          make #*.lb
-	r?? T *.cv          make #*.c
+# retro not in use
+# 	r?? T *.lav         make #*.lb
+# 	r?? T *.la          make #*.lb
+# 	r?? T *.cv          make #*.c
 	r?? T *.xpm         :sxpm #@ &
 	r?? T *.c           make #*.o
 	r?? T *.pl          make #*.pl
@@ -154,10 +165,7 @@
 # a.out ОС XENIX в SYSV выглядит как неопознанные данные...
 	??x [TOD] *     ./#@
 	--x [-] *       ./#@
-#	r?x d .         _msg Купите на Привозе селедку и крутите ей мозги - мы стоим на Дерибасовской!  :)
-#	r?x d .         _msg let You buy a fish on Privoz and crunch a brain for him - we are stay on Deribasovskaja :)
-	r?x d .         _rescan
-	r?x d *         :cd #@
+#       r?x d *		:cd #@
 	r?? M *         mailx -f #@
 #        r?? D *.bat     vpix z:#@
 #        r?? D *.com     vpix z:#@
@@ -178,15 +186,18 @@
 # а red, например, создает...
 	rw? [TE] *      #e #@
 	rw? M *         elm -f ./#@
-	r?? [OD] *      ;strings #@ | #m
+#	r?? [OD] *      ;strings #@ | #m
 #+edw
 	rwx d *         :cd #@
-	r?? [DT] *.src.rpm ;rpm -qlvp ./#@ | #m
-	r?? [DT] *.rpm     ;rpm -qlvp ./#@ | #m
-	r?? [DT] *.deb     ;dpkg --contents ./#@ | #m
-	rw? [TE] *      #e #@
-	rw? M *         elm -f #@
-	r?? [OD] *      ;strings #@ | #m
+	r?? ? *.src.rpm ;rpm -qlvp ./#@ | #m
+	r?? ? *.rpm     ;rpm -qvp ./#@ --fileprovide | #m # -c -R
+	r?? ? *.deb     ;dpkg --contents ./#@ | #m
+#	rw? [TE] *      #e #@
+	r?? [TE] *      ;#m #@
+#	rw? M *         elm -f #@
+#	r?? * *      ;ls -ld #@
+	r?? * *      ;strings #@ | #m
+
 # Копирование файлов (требуется еще один аргумент)
 # это место в ash так и осталось недоделано...
 # как изврат, применяется так:
@@ -243,15 +254,18 @@
 :^D
 	* *     :exit
 :0
-:EX
+##:EX
 	* *     exit
+:EX
+	* *	_msg please, use ^D (Ctrl-d) for quit
 #       Освежить стандартную настройку ash (при отладке этого файла)
 :IN
     * * _cmdset .ashstd
 
 # Вызов подсказки
-:[?]
-:HE
+# obsolete, will be removed - use man vash instead
+#:[?]
+#:HE
 	* * _cmdset .ashhelp
 
 # Полезное действие (выполнить, распаковать, войти в объект, и т.п.),
@@ -280,7 +294,7 @@
 #       Перейти в домашний каталог (HOME)
 	* *     :cd
 #:[U]
-:[:`]
+:[:]
 	* *     :cd ..
 
 :A
@@ -383,8 +397,9 @@
 #       но в принципе здесь возможна и другая точка зрения.
 # Диапазон зависит от кодовой таблицы, здесь КОИ-8
 
-:[Ю-Чю-ъ]
-	??? ?   _msg please, switch keyboard to en/latin
+#:[Ю-Чю-ъ]
+#	* *   _msg please, switch keyboard to en/latin
+
 
 #-------------------------------------------------------
 #:[#]
@@ -398,9 +413,17 @@
 #       #S - суффикс имени без точки
 :@
 	* *     _sh echo # s='#s' S='#S' *='#*' e='#e'
+:Z
+	* *	:exec vash
+	
+:??
+# 	* * _msg undefined key (.ashstd || termcap)
+ 	* * _msg undefined key
+# 	* * _msg #k
+# 	* * _sh #k
 
 :*
-	* * _msg Undefined key (.ashstd || termcap)
+	* * _msg key undefined, probably keyboard switched to wrong state
 
 #-----------------------------------------
 # Структура файла настройки (Формат будет меняться).

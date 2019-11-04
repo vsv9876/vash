@@ -454,6 +454,8 @@ int newflag;    /* ֵ׃ֹּ 0, װֿ װּֿ״ֻֿ ֲֿ־ֿ׳ֹװ״ ֱֻװֱַּֿ */
 	}
 	else    vls();          /* קףפעןוממבס כןםבמהב */
 
+	vlstag(); /* marker at the end of file name, stored in 2nd character of menu item, before fname */
+
 	w_emsg("");
 
 	itmini();       /* נןף‏יפבפר חבגבעיפש םומא */

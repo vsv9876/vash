@@ -7,10 +7,10 @@
 
 #define WSMAX 300
 
-char    Cfill[40];
-char    Crepf[40];
-char    Coutf[40];
-char    Csubs[40];
+char    Cfill[MAXLICO];/*[40];*/
+char    Crepf[MAXLICO];
+char    Coutf[MAXLICO];
+char    Csubs[MAXLICO];
 
 /*NOXSTR*/
 static  char dummy[] = "";

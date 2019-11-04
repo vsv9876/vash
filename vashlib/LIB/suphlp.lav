@@ -12,25 +12,32 @@ scrl    = ipa   -       onoff   cvt_a   -       sF
 hist    = ipa   -       onoff   cvt_a   -       hF
 clck    = ipa   -       onoff   cvt_a   -       cF
 ymax    = ipv   -       "%4d"   -       t_ymax  yy_max
----SCREEN
-=help for setup
 
-  each flag can be changed with ."selector".
+
+
+
+
+---SCREEN
   please, press .:HE.... again to get generic help about keyboard and screen
 
-flags:
-."history save". - command history will be saved on exit from vash
-."scroll"....... - scroll the command output if checked, otherwise clear screen
-."clock"........ - show current time at the right top of the screen
-		    on the end of the every command
-."keybar"....... - show description of keys 0-9 at the bottom of the screen
-."who+cwd"...... - who and current working directory shown on scren and/or
-		    on xterm window title
-."lines max".... - maximum lines for main menu will on the screen, on change,
-		    please, use .'= or .'U or .:NL.... to force rescan main menu
+ ."flags:  ".  ."description                                                 ". 
+ history/sync  keep history in file; sync every command or save on exit only 
+ scroll        keep comand listing on screen or clear screen after
+ panel/keybar  show description of keys 0-9
+ title(who)    title of session (user,host,current dir if configured)
+ title on xterm window if supported by X window manager
+ mail_biff     indicate new mail incoming
+ clock         show current time on the screen
+ lines max     maximum lines allowed for main menu on screen
 
-."setup for debug only". - it is better to don't touch if not sure
-    full description is in comments of .stdfile
+               ."readonly runtime parameters                                 ".
+ maxli/maxco   maximum lines/columns (size of the screen)
+ vexdir        directory where configuration files reside
 
-    maxli/maxco - current size of the screen, maximum lines/columns
+               ."setup parameter for debug only                              ".
+               NOTE: it's better to don't touch if not sure, read manual
+ -i:           input file, modification caused new scan of main menu
+ -f:           command for fill of main menu
+ -@:           substitution rule
+ -o:           parameter not used
 ---END

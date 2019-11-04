@@ -15,7 +15,7 @@ extern char    *pmtsh;/* = ".$"; /*"sh>" ;*/
 /*YESXSTR*/
 int pmtshsz;            /* размер подсказки */
 
-static  char cmd0[2 * MAXLICO + 2] = "";    /* ТЕКУЩАЯ КОМАНДА ОБОЛОЧКИ */
+static  char cmd0[MAXLICO + 2] = "";    /* ТЕКУЩАЯ КОМАНДА ОБОЛОЧКИ */
 static  int  cmdsize = 0;       /* МАКС. РАЗМЕР СТРОКИ */
 static  int  pos = 0;           /* позиция в строке */
 static  int old_pos = 0;		/* позиция курсора до попытки окончить ввод (completion),
@@ -47,7 +47,7 @@ scrlst()        /* курсор к началу свитка */
 }
 
 
-static char tmpstr[MAXLICO];
+static char tmpstr[MAXLICO*2];
 
 vshcmd(cmd, cmdlbl)
 /*
@@ -159,8 +159,9 @@ char *cmdlbl;   /* вывеска для показа вместо команды */
 				cmd = "";
 			}
 			/* конец работы? */
-			if(strcmp(cmd0, "exit")==0)
-				ashexit(0);
+			if(strcmp(cmd0, "exit")==0) {
+				onexit(0); exit(0);
+			}
 			/* домашний каталог */
 			if (strcmp(cmd0, "cd") == 0) {
 				char    *homedir;
