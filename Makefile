@@ -3,8 +3,8 @@ SHELL = /bin/sh
 
 #
 # Visual Assistant SHell, ASCII remix
-# 2016 by Sergey Vovk
-# GPL or MIT License on your taste
+# 1990-2019 (C) Sergey Vovk
+# License: GPL or MIT, on your taste
 # 
 
 # this is permanent, other value not tested yet.
@@ -65,30 +65,9 @@ help:
 	$(MAKE)	showconfig
 	#$(MAKE)	SHOWCONFIG=yes yes
 
-#$(BLDCFG): ./config
-#	/bin/sh -c "./config > $(BLDCFG)"
-#	#echo '#' `date` > $@
-#	echo '' >> $@
-#	echo 'TOPDIR	= '`pwd` >> $@
-#	echo '' >> $@
-#	echo 'DEST	= /usr' >> $@
-#	echo '' >> $@
-#	echo 'PATH	= '`pwd`'/visi/bin:'$(PATH) >> $@
-#	echo '' >> $@
-
 cfg:
-	./config
+	./configure
 #	$(MAKE) $(BLDCFG)
-
-#cfg:
-#	$(SHELL) -c './config'
-#	$(MAKE) $(BLDCFG)
-
-#configure.conf:
-#	@echo ''
-#	@echo 'no ./configure.conf founds - please, run ./configure first'
-#	@echo ''
-#	/bin/true
 
 #$(SHOWCONFIG):
 showconfig:
@@ -152,6 +131,7 @@ distclean:	clean
 			-name a \
 		')' -exec rm -f '{}' ';'
 	rm -rf $(BLDCFG) $(BLD)
+	touch $(BLDCFG)
 
 #$(BLD):
 #	mkdir -p $(BLD)

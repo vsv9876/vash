@@ -104,7 +104,7 @@
 	r?? O *.si           :nm -np #@
 	r?? O *              nm -np #@
 	r?? D *.tar          :tar -tvf #@
-	r?? D *.jar          :jar -tvf #@
+	r?? D *.[wj]ar       ;unzip -l #@ | #m
 	r?? D *              :od -a #@ | #m
 # dodo script companion, not in use
 # 	r?? T .a             :tail -f #@
@@ -150,7 +150,7 @@
 	r?? T [Mm]ake*.sh   ./#@
 	r?? T [Mm]ake*      make -f #@
 	r?? [DT] *.tar      tar -xvf #@
-	r?? [DT] *.jar      jar -xvf #@
+	r?? [DT] *.[wj]ar   unzip -x #@
 	r?? * *.man         ;nroff -man #@ | #m
 # retro not in use
 # 	r?? T *.lav         make #*.lb
@@ -416,12 +416,15 @@
 :Z
 	* *	:exec vash
 	
-:??
-# 	* * _msg undefined key (.ashstd || termcap)
- 	* * _msg undefined key
 # 	* * _msg #k
 # 	* * _sh #k
 
+# last resort keys
+:[A-Z]
+	* * _msg key is not assigned
+:??*
+# 	* * _msg undefined key (.ashstd || termcap)
+ 	* * _msg key unrecognized
 :*
 	* * _msg key undefined, probably keyboard switched to wrong state
 

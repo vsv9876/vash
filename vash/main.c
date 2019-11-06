@@ -249,7 +249,7 @@ char **argv;
 		/* y0_top = maxli - clm._yy_max;/* - 1;*/
 
 		/*y0_top = 0;*/
-		y0_top = clm._y0 - 1;
+		y0_top = clm._y0;/* - 1;*/
 		scrlnl();
 		/*y0_top = clm._y0;*/
 
