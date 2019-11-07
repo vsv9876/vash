@@ -102,7 +102,7 @@ char *str;
 
 	spp = (char **)line->varl;
 	v = *spp;
-	lsize = line->size - 1; /* magic symbol plased at index 1, after PMT placeholder */
+	lsize = line->size; /* - 1; /* magic symbol plased at index 1, after PMT placeholder */
 	if (line->attr & PMT) lsize -= 1; /* PMT causes a placeholder for marker '#'*/
 	rsize = strlen(v);
 	if (rsize >= lsize) {
