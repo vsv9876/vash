@@ -376,10 +376,14 @@
 #                       chmod +w лучше, но в SYSV umask не влияет на chmod
 	?-? ? *         chmod ug+w #@
 
+:U
+	* -     :du -sh
+	* *	:du -s ##
+
 :O
 # Закрыть файл или помеченную группу файлов для категории 'прочие'
-	* -     chmod -orwx #@
-	* *     chmod -orwx ##
+	* -     chmod o-rwx #@
+	* *     chmod o-rwx ##
 
 :[#]
 	* *     _file #@
