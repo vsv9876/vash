@@ -16,6 +16,7 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+#include <stdlib.h>
 /* #ifndef UW_20 */
 /* #include <sys/filio.h> */
 /* #endif */

@@ -88,8 +88,6 @@ static  LINE tmplate =
 
 char    *itms1[ITMMAX+1];       /* υλαϊατεμι ξα πυξλτω ημαχξοηο νεξΰ */
 
-#define VEXDIR "VASH_VEXDIR"
-
 main(argc, argv)
 int argc;
 char **argv;
@@ -109,6 +107,7 @@ char **argv;
 
        /* setup extra directory for all working files library, ashstd will be found in that place */
        if ((s = getenv(VEXDIR)) != (char *)0) vexdir = s;
+       if ((s = getenv(VPATH)) != (char *)0) vpath = s;
 
 #ifdef  VTTY
 	vtty();

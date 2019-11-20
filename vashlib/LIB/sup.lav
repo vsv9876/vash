@@ -3,14 +3,15 @@
 ---# versn   = c    "v1.18.x/remix"
 versn   = g    -       -       cvt_sp  -       versn
 vexdir  = v    -       -       cvt_sp  -       vexdir
+vpath   = v    -       -       cvt_sp  -       vpath
 buildd  = c    buildd
 
 hl      = gc    -       -       cvt_hl  -       "-"
 coprts  = c     coprts
-f       = ipv   -       -       -       -       f
-i       = ipv   -       -       -       -       i
-o       = ipv   -       -       -       -       o
-r       = ipv   -       -       -       -       r
+f       = ipv   -       -       cvt_s   -       f
+i       = ipv   -       -       cvt_s   -       i
+o       = ipv   -       -       cvt_s   -       o
+r       = ipv   -       -       cvt_s   -       r
 
 ---#    = ipa
 pF      = ia    -       onoff   cvt_a   -       pF
@@ -51,13 +52,14 @@ co      = v     -       "%d"   -       -       maxco
 ---#56789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890
 ---#
 ."setup parameters".............................. help: .:HE.... exit: .:EX.... 
-                                                   
+
 +  .hF h,history     .sF s,scroll          .ym. lines max
 +  .hS S,sync        .pF p,panel/keybar                            y0top: .yt
 +  .mF m,mail_biff   .wF w,title                                   maxco: .co
 +  .cF c,clock       .xF x,title on xterm                          maxli: .li
 +                                            
 +   vexdir: .vexdir..............................................
++   vpath:  .vpath...............................................
 
 =please, read manual about parameters below, use with caution
 

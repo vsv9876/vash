@@ -1,4 +1,11 @@
 
+#include "line.h"
+
+#ifndef assist_h_def
+#define assist_h_def
+#define VEXDIR "VASH_EXDIR"
+#define VPATH  "VASH_PATH"
+
 /* Основные константы внутренних таблиц меню */
 
 #ifdef TINYSMALL
@@ -79,6 +86,7 @@ extern  int     scrolf, oneitm, panelf, whodirf, xtermf, histf, histsn, clockf, 
 extern  char   *envshell;
 extern  char   *homedir;
 extern  char   *vexdir; /* vash extra files directory */
+extern  char   *vpath; /* vash library search path */
 extern  char   *cwd;
 extern  int     t_file();
 
@@ -92,4 +100,6 @@ extern int gidchk(), filetype(), prefix();
 extern int try_compl(), hlp_compl(), hlp_clr(), cmdput(), vsystem(), showtime();
 extern int sl_chkdup();
 
-extern int cvt_vf();
+extern int cvt_vf(), cvt_s();
+
+#endif /* assist_h_def */

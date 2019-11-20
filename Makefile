@@ -2,9 +2,9 @@
 SHELL = /bin/sh
 
 #
-# Visual Assistant SHell, ASCII remix
+# Visual Assistant Shell, ASCII remix
 # 1990-2019 (C) Sergey Vovk
-# License: GPL or MIT, on your taste
+# License: GPL or MIT or BSD, on your taste
 # 
 
 # this is permanent, other value not tested yet.
@@ -15,12 +15,12 @@ DEST  = /usr
 TOPDIR = /tmp
 
 MAKECONF   = ./conf/Makefile
-BLDCFG	= configure.conf
+BLDCFG	= conf.cfg
 
 BLD	= $(TOPDIR)/BLD
 #BLD	= .
 DESTDIR	= $(TOPDIR)/BLD
-VERSN	= "1.x(local)"
+VERSN	= "1."
 
 include $(BLDCFG)
 include $(MAKECONF)
@@ -65,8 +65,12 @@ help:
 	$(MAKE)	showconfig
 	#$(MAKE)	SHOWCONFIG=yes yes
 
+
 cfg:
-	./configure
+	@set -x; if [ -s "$(BLDCFG)" ]; then true; else ./configure; fi   
+
+#cfg:
+#	./configure
 #	$(MAKE) $(BLDCFG)
 
 #$(SHOWCONFIG):
@@ -83,7 +87,7 @@ showconfig:
 	@echo CFLAGS_ASH=$(CFLAGS_ASH)
 	@echo CFLAGS_VISI=$(CFLAGS_VISI)
 
-compile:   configure.conf $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
+compile:   cfg $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
 	cd $(VHSET); $(MAKE) all "DEST=$(DEST)"

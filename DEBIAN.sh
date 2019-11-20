@@ -1,6 +1,10 @@
 #!/bin/sh
 
-# dirty hack for Debian9
+#
+# dirty hack for Debian9 and probably for any debian-compatible -
+# only fakeroot and dpkg requred
+
+BLDCFG=conf.cfg
 
 arch=`dpkg --print-architecture`
 
@@ -14,7 +18,7 @@ cp -rp etc `pwd`/BLD
 
 #cp -rp DEBIAN/ BLD
 set -x
-VERSNSH=`grep VERSN < configure.conf | sed -e 's/ //g' -e 's/-/ /'`
+VERSNSH=`grep VERSN < $BLDCFG | sed -e 's/ //g' -e 's/-/ /'`
 eval $VERSNSH
 echo $VERSN
 read pkg ver <<EOF
@@ -27,5 +31,4 @@ cat DEBIAN/control |\
     -e 's/Version:.*$/Version: '"$ver/"	> BLD/DEBIAN/control
 
 fakeroot dpkg -b BLD
-mv BLD.deb vash_${ver}_${arch}.deb
-
+mv BLD.deb ../vash_${ver}_${arch}.deb

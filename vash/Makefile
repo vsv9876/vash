@@ -1,22 +1,27 @@
 
+
 SHELL         = /bin/sh
+
+#---------------------------------------------------
+
+# ash - Assistant Shell, since 1990
+# vash - Visual Assistant for Shell, remix 2016-2019
+#---------------------------------------------------
 
 ##
 ##      +----------+    библиотека ввода-вывода
-##     (C) LINLIB  !    для алфавитно-цифровых
+##     (c) linlib  !    для алфавитно-цифровых
 ##      +----------+    видеотерминалов
 ##
 ##      $Header$
 ##      $Log$
 ##
 
-#       СБОРКА ПРИКЛАДНОЙ ПРОГРАММЫ БЕЗ УСТАНОВКИ
-#       БИБЛИОТЕК LINLIB НА СТАНДАРТНЫЕ МЕСТА
+#       сборка прикладной программы без установки
+#       библиотек linlib на стандартные места
 
-#       ОБРАБОТКА ПРИ ПОМОЩИ xstr
-#       (СМ. ПРАВИЛА .c.o:  .cv.o)
-
-#	(v)ash remix
+#       обработка при помощи xstr
+#       (см. правила .c.o:  .cv.o)
 
 include		../conf/Makefile
 
@@ -33,6 +38,7 @@ EXECMODE      =  755
 DESTDIR       =
 #DEST          = /usr/local
 DESTLIB       = $(DESTDIR)$(DEST)/lib/$(PROGRAM)
+VPATH         = $(DESTDIR)$(DEST)/lib/$(PROGRAM)
 DESTBIN       = $(DESTDIR)$(DEST)/bin
 
 #CFLAGS_ASH    = -DJCLsuspend -DSYSV -DSVR4 -DMGROUPS
@@ -41,7 +47,8 @@ DESTBIN       = $(DESTDIR)$(DEST)/bin
 CFLAGS        = $(CFLAGS_ASH) \
 		-I$(VISI)/include\
 		-D'DESTLIB="$(DESTLIB)"' \
-		-D'VERSN="$(VERSN)"'
+		-D'VERSN="$(VERSN)"' \
+		-D'VPATH="$(VPATH)"'
 
 #CC            = cc -O
 #LINKER        = cc
@@ -153,9 +160,9 @@ SUFFIX        = .cv:sC
 #         $(CC) $(CFLAGS) -c $*.c
 #         rm -f $*.c
 #
-# ПЕРЕВОД СЕКЦИИ ДАННЫХ В СЕКЦИЮ КОДА
-# МОЖЕТ ПОНАДОБИТЬСЯ ДЛЯ ОВЕРЛЕЙНЫХ ПРОГРАММ И
-# СИСТЕМНЫХ ПРОГРАММ, СОБИРАЕМЫХ С КЛЮЧОМ ld -n,
+# перевод секции данных в секцию кода
+# может понадобиться для оверлейных программ и
+# системных программ, собираемых с ключом ld -n,
 # см. также п?авило data-to-text:
 # .cv.o:
 #         $(VCC) -o $*.c $<

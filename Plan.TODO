@@ -1,0 +1,60 @@
+    -- BUGS/FIX
+    - shebang в скриптах - должен быть (#!/usr/bin/vash)  
+    - переименовать проект, в том числе, префиксы имен настроечных файлов
+    - остались .ashstd, ASHLBL и другие, должны быть vash/VASH
+    -- DOC/MAN
+    - cleanup, readme, license
+  * - vash.1 en/ru
+    - linlib en
+    ------------------------------------------------------------------------------
+
+    -- LINLIB/VISI
+ ?? -- Unicode/UTF-8 support for main list (filenames) and internals
+ ** -- редактор строки должен уметь редактировать бесконечные строки в ограниченном окне линии,
+  - сделать флаг описания линии - line.h, vcc/lbp/vlbp
+  - сделать разбор флага и поведение r_line()
+  - модифицировать e_str - вызов w_str на границах линии, контроль выхода за границы буфера строки,
+  - размер буфера строки - большая константа, например 1K (наколотить внятные 1000 символов?! ;)
+  
+    --   скролить их по горизонтали. Не забыть про гистерезис <> показываемой части строки!
+    -- LINLIB/VHSET:
+    -- навести порядок vhset с нулевой страницей настройки (основные клавиши) -
+    --   похоже что 4 кнопки стрелок переопределять _никогда_ не требуется, но
+    -     должен быть выбор "языков" навигации/редактирования -
+    -     наверное, команды для редактирования строки и переходов между контекстами
+    -     должны быть более удобными, желательно выбор linlib/vi/emacs
+
+ *  - индикация режима редактирования через _msg в последней строке -
+    - от конца предпоследней строки будет правильно; скорректировать с часами и MAIL
+
+    ------------------------------------------------------------------------------
+    -
+    -- VHSET: настройка синонимов должна быть явной (сейчас она "спрятана")
+    - linlib/vhset: наследование от stty cooked intr, erase.
+    - ^Z для SYSV (ISC) lin132/lin140 must be redefined, also Del/BS, Ctl-W, Ctl-U
+
+    ------------------------------------------------------------------------------
+    -
+    -- VASH:
+ *  - TAB completion, must show next frame of candidates outside page window
+    - filter for main window and generic vf menu (on command '_')
+
+ *  -+?- execve() for vash itself with reexport of VASH flags
+
+ *  - оптимизация файлов настройки (директива include?)
+
+    - searching pattern across history (or select like in main lineset)
+    - separate command history cache and command history log
+    - special case for cd command history
+
+    -? add flag "on start jump to disrectory"
+    - extended attributes for files (rwx unsufficient)
+    - work with very big directories and inode numbers (уйти от статического выделения памяти под списки главного окна)
+
+    - убрать следы в .ashstd от F2:menu
+
+    - Часы - убрать секунды (или сделать опцию)
+********************************************************************
+    -- MEMO
+    -   a=F find . ! -path \*/.git/\* -type d | sed s,^./,, 
+

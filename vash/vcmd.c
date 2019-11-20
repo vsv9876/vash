@@ -167,6 +167,7 @@ register char *cmd;     /* встроенная функция */
  * выполнить подстановки #k,#@,#i,#o,#a,..., кроме ##.
  */
 extern char* vexdir;
+extern char* vpath;
 
 cmdsub(ptmp, p, i)
 register char *p;       /* откуда копировать */

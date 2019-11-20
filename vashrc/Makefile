@@ -45,7 +45,7 @@ all:  $(SCRIPTS)
 scripts:        $(SCRIPTS)
 
 clean:
-	rm -f *~ *.b *.bak
+	rm -f $(SCRIPTS) *~ *.b *.bak
 
 otherclean:
 
@@ -54,10 +54,11 @@ otherinst:
 
 #install:        $(SCRIPTS) $(DESTBIN) otherinst
 install:        $(SCRIPTS) $(DESTBIN)
-		chmod $(EXECMODE) $(SCRIPTS)
 		cp -p $(SCRIPTS) $(DESTBIN)
-# 		chmod $(EXECMODE) $(DESTBIN)/$(PROGRAM)
-# 		mv $(DESTBIN)/$(PROGRAM).new $(DESTBIN)/$(PROGRAM)
+
+.sh:	
+	cp -p $< $@
+	chmod 755 $@
 
 $(DEST)/bin:
 	mkdir -p $(DEST)/bin
@@ -69,3 +70,4 @@ $(DESTDIR):
 	mkdir -p $(DESTDIR)
 
 ###
+

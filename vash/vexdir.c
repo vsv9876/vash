@@ -5,5 +5,9 @@
  *              "/usr/local/lib/???/"
  */
 /*NOXSTR*/
+
+#include "assist.h"
+
 char   *vexdir = DESTLIB;
 char   *versn  = VERSN;
+char   *vpath  = VPATH;

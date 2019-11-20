@@ -11,7 +11,7 @@
 # Формат файлов настройки будет развиваться, подробности в конце файла.
 #
 # #A/.ashstd - this files
-# #A substituted with env=VASH_VEXDIR, by default is /usr/lib/vash
+# #A substituted with env=VASH_EXDIR, by default is /usr/lib/vash
 #
 # $HOME/.ashstd             - персональная версия этого файла
 #
@@ -271,6 +271,7 @@
 # Полезное действие (выполнить, распаковать, войти в объект, и т.п.),
 # см. выше +nl, +View
 :NL
+:[;]
 	??? ?   +nl
 
 :&
@@ -424,13 +425,13 @@
 # 	* * _sh #k
 
 # last resort keys
-:[A-Z]
-	* * _msg key is not assigned
+:[ -~]
+	* * _msg key is not assigned to any command
 :??*
 # 	* * _msg undefined key (.ashstd || termcap)
  	* * _msg key unrecognized
 :*
-	* * _msg key undefined, probably keyboard switched to wrong state
+	* * _msg please, switch keyboard to ASCII input mode
 
 #-----------------------------------------
 # Структура файла настройки (Формат будет меняться).

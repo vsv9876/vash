@@ -9,6 +9,7 @@ extern  char    coprts[];
 extern  char    buildd[];
 extern  char   *versn;
 extern  char   *vexdir;
+/*extern  char   *vlibpath;*/
 extern  int     y0_top;
 
 char   *onoff[] = { "( )", "(x)", 0 };
@@ -38,6 +39,7 @@ kbcod cod;
 IN_PORTS inport[] = {
 	/*NOSTRICT*/
 	{ "cvt_sp",     cvt_sp  },
+	{ "cvt_s",      cvt_s  },
 	{ "cvt_hl",     cvt_hl  },
 	{ "cvt_lh",     cvt_lh  },
 	{ "cvt_a",      cvt_a },
@@ -45,6 +47,7 @@ IN_PORTS inport[] = {
 	{ "buildd",     buildd },
 	{ "versn",      &versn },
 	{ "vexdir",     &vexdir },
+	{ "vpath",      &vpath },
 	{ "f",          Cfill },
 	{ "i",          Crepf },
 	{ "o",          Coutf },

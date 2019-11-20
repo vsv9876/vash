@@ -178,9 +178,9 @@ KBL kbl[KBLSIZE] = {
       { KBCOD('f','-'),   KBUSR('-'),   0         },
       { KBCOD('f',','),   KBUSR(','),   0         },
       { KBCTL(    'M'),   KB_NL,   0         },    /*==== aliases */
-      { KBCTL(    'H'),   KB_HE,   0         },
+      { KBCTL(    'H'),   KB_DE,   0         },
       { KBCTL(    'X'),   KB_EX,   0         },
-/*      { KBCOD('k','h'),   KB_EX,   0         }, */
+/*    { KBCOD('k','h'),   KB_EX,   0         }, */
       { KBCTL(    'R'),   KB_RE,   0         },
       { 0 },
 	};
