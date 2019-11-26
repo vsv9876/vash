@@ -125,6 +125,8 @@ clean:
 	cd $(VASH); $(MAKE) clean
 	cd vashlib/LIB; $(MAKE) clean
 	cd vashlib/LIB-$(ASHLIB); $(MAKE) clean
+	rm -f $(BLDCFG) 
+	touch $(BLDCFG)
 
 distclean:	clean
 	find . -name BLD -exec rm -rf '{}' ';'
@@ -136,8 +138,7 @@ distclean:	clean
 			-name '*.core' -o \
 			-name a \
 		')' -exec rm -f '{}' ';'
-	rm -rf $(BLDCFG) $(BLD)
-	touch $(BLDCFG)
+	rm -rf $(BLD)
 
 #$(BLD):
 #	mkdir -p $(BLD)
