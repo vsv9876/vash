@@ -39,7 +39,9 @@ VASHLIB	= ./vashlib
 
 #PATH	= $(TOPDIR)/visi/bin:$(PATH)
 
-all:	compile
+all:
+	$(MAKE) setup
+	$(MAKE) compile
 
 #all:	compile bld
 
@@ -66,7 +68,7 @@ help:
 	#$(MAKE)	SHOWCONFIG=yes yes
 
 
-cfg:
+setup:
 	@set -x; if [ -s "$(BLDCFG)" ]; then true; else ./configure; fi   
 
 #cfg:
@@ -87,7 +89,7 @@ showconfig:
 	@echo CFLAGS_ASH=$(CFLAGS_ASH)
 	@echo CFLAGS_VISI=$(CFLAGS_VISI)
 
-compile:   cfg $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
+compile:   $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
 	cd $(VHSET); $(MAKE) all "DEST=$(DEST)"

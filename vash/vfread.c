@@ -131,44 +131,4 @@ char *str;
 }
 
 
-int     cvt_s(line, cod, mod, str)
-/*--------------------------*/
-/*ВВОД СТРОКИ ПО УКАЗАТЕЛЮ */
-/*--------------------------*/
-/*TODO проверить на тавтологию поведения при отутствии поля line.varl, тогда эта функция попросту не нужна...*/
-LINE *line;
-kbcod cod;
-char *mod;
-char *str;
-{
-	char *sp;
-
-	int max_co;
-	int size;
-	register char *si;
-	register char *so;
-	register int i;
-
-	sp = (char *)line->varl;
-	size = line->size;
-	if (line->attr & PMT) size -= 1;
-	max_co = maxco-2;
-	if (str) {
-		if(*mod == 'r') {
-			strcpy(sp, str);
-			/*for (so=sp, si=str, i=size; *si!='\0' && i > 0; i--)
-				*so++ = *si++;
-			*so = '\0';*/
-		}
-		else    {
-			strncpy(str, sp, size);
-			if (strlen(sp) >= size) str[size] = '\0';
-			/*for (so=str, si=sp, i=size; *si!='\0' && i > 0; i--)
-				*so++ = *si++;
-			*so = '\0';*/
-		}
-	}
-	return(TRUE);
-}
-
 

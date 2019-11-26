@@ -4,15 +4,6 @@
 **      +----------+    ВИДЕОТЕРМИНАЛОВ
 **/
 
-/*
- *      $Header: vhseta.cv,v 1.1 90/08/17 11:01:41 vsv Exp $
- *
- *      $Log:	vhseta.cv,v $
-Revision 1.1  90/08/17  11:01:41  vsv
-Initial revision
-
- */
-
 #include <stdio.h>
 #include "line.h"
 #include "line0.h"
@@ -35,16 +26,16 @@ LPA     *lpa_p[2] = {
 
 extern  LINE linem[];
 LINE *
-getl5(line)
+getl4(line)
 /*-------------------------------------------------------*/
-/* вернуть указатель на базовую линию в 5й строке экрана */
+/* вернуть указатель на базовую линию в 4й строке экрана */
 /*-------------------------------------------------------*/
 register LINE *line;
 {
 	register LINE *l;
 
 	for (l=linem; l->size != 0; l++) {
-		if (l->line != 5)
+		if (l->line != 4)
 			continue;
 		if (l->colu == line->colu)
 			return( l );
@@ -86,7 +77,7 @@ char   *str;
 	int     i;
 	int     va;             /* видеоатрибуты ( флаги ) */
 	register int *ap;       /* указатель на атрибут */
-	register LINE *line5;   /* указатель на базовую линию в 5-й строке */
+	register LINE *line4;   /* указатель на базовую линию в 5-й строке */
 	register LPA *lpap;
 
 	va = *(int *)line->cvts;
@@ -99,7 +90,7 @@ char   *str;
 		strcpy(str, outstr);
 	} else {
 		if(cod == ' ' || cod == KB_DE) {
-			line5 = getl5(line);
+			line4 = getl4(line);
 
 			switch(cod) {
 			case ' ':
@@ -114,7 +105,7 @@ char   *str;
 			if((*ap) & va) { (*ap) = (*ap) & (~va); }
 			else           { (*ap) = (*ap) | ( va); }
 
-			w_line(line5);
+			w_line(line4);
 		}
 	}
 	return(TRUE);
@@ -167,73 +158,10 @@ char   *str;
 	return(TRUE);
 }
 
-/* "переключатели с нестандартной расцветкой: */
-
-#define USRATTR1 TXT|MID|PAD|NED
-#define USRATTR2 HDR|MID|PAD|NED
-#define USRATTR3 VAR|MID|PAD|NED
-#define USRATTR4 ALT|MID|PAD|NED
-#define USRATTR5 MSE|MID|PAD|NED
-#define USRATTR6 ERR|MID|PAD|NED
-#define USRATTR7 ATT|MID|PAD|NED
-#undef  LALT
-#define LALT TXT|MID|NED
-
 extern  int     cvt_hl();
----PAGE linem
----PORTS
-	LPA_B = 1;
-	LPA_PI = &lpa_pi;
-	W_so   = &wamask[0];
-	W_us   = &wamask[1];
-	W_vs   = &wamask[2];
-	W_md   = &wamask[3];
-	W_mr   = &wamask[4];
-	W_mb   = &wamask[5];
-	W_mk   = &wamask[6];
----TABLES
-	t = 1;
----LINES
-	P       = ia - -      cvt_pmt - LPA_B
-	TXT     = g1 - -      cvt_atr - " TXT "
-	HDR     = g2 - -      cvt_atr - " HDR "
-	VAR     = g3 - -      cvt_atr - " VAR "
-	ALT     = g4 - -      cvt_atr - " ALT "
-	MSE     = g5 - -      cvt_atr - " MSE "
-	ERR     = g6 - -      cvt_atr - " ERR "
-	ATT     = g7 - -      cvt_atr - " ATT "
-	so      = ia - W_so   cvt_va  - LPA_B
-	us      = ia - W_us   cvt_va  - LPA_B
-	vs      = ia - W_vs   cvt_va  - LPA_B
-	md      = ia - W_md   cvt_va  - LPA_B
-	mr      = ia - W_mr   cvt_va  - LPA_B
-	mb      = ia - W_mb   cvt_va  - LPA_B
-	mk      = ia - W_mk   cvt_va  - LPA_B
-	hl      = gc - -      cvt_hl  - "-"
----# WARNING!
----# Do not touch string 5 (contains .TXT. .HDR. ...), because
----# format conversion function for selector depends on screen coordinates of it.
+extern  int     cvt_s();
 
----SCREEN
-=Video and prompters setup
-
-
-+ Prompter:                     .P..  .t..  .t..  .t..  .t..  .t..  .t..
-+ .hl...................................................................
-+ displayed on output:          .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .ATT.
-+
-+           on input:
-+ .hl...................................................................
-+         :so  "outstand"       .so.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :us  "underline"      .us.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :vs  "background"     .vs.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :md  "bright"         .md.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :mr  "reverse"        .mr.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :mb  "blink"          .mb.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :mk                   .mk.  .t..  .t..  .t..  .t..  .t..  .t..
-+ .hl...................................................................
-
----END
+#include "attr.i"
 
 static  char    helpf[] = "vhseta.lb";
 

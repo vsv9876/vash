@@ -117,7 +117,11 @@ extern int showtime();
 void shstart()
 {
 	showtime( 0 );                  /* погасить часы */
-	cp_set(0, 0, TXT); er_eol();    /* погасить cwd */
+	/* это старый мусор, теперь самая верхняя строка ни при каких режимах не занята;
+	 * можно даже не гасить часы - их погасит er_eop() после показа команды.
+	 * TODO: режим IO_TTYPE перенести поближе к execve, здесь рановато...
+	 */
+	/*cp_set(0, 0, TXT); er_eol();    /* погасить cwd */
 
 	if (clm._y0 > y0_top)
 		cp_set(y0_top-1, 0, TXT);
@@ -125,9 +129,9 @@ void shstart()
 		cp_set(clm._y0 - 1, 0, TXT);
 
 	y0_top = clm._y0;    /* установить границу свитка */
-	er_eop();
+	at_set(0); /* er_eop(); /*HACK*/
 
-	io_set(IO_TTYPE);
+	/* io_set(IO_TTYPE); */
 }
 
 extern  int     mark_i;
@@ -251,12 +255,23 @@ int  execapnd;
 	if (cmdlbl == (char *)0) {
 		cmdlbl = cmd2;  /* саму команду и показать */
 	}
-	at_set(TXT);
+	/*Warning! no IO_TTYPE mode below this point, so at_set() illegal */
+//	at_set(TXT);
+//	at_set(TXT|INP);
+//	/* fprintf(vttout, "%s", pmtsh);*/
+//	/* w_str(pmtsh); */
+//	/*at_set(TXT);*/
+//	at_set(0); er_eop();
+//	fflush(vttout);
+//	printf("%s", pmtsh); /*only legal prompt in IO_TTYPE*/
+
+//	at_set(TXT);
 	at_set(TXT|INP);
-	fprintf(vttout, "%s", pmtsh);
-	/* w_str(pmtsh);*/
-	at_set(TXT);
+	w_str(pmtsh);
+	/*at_set(TXT);*/
+	at_set(0); er_eop();
 	fflush(vttout);
+	io_set(IO_TTYPE);
 
 	printf("%s", cmdlbl);
 	if (execmode & ASH_NOWAIT)
@@ -276,6 +291,11 @@ int  execapnd;
 
 		syscod = vexec(argv[0], argv, execmode);
 	}
+
+	/*moved from vsystem*/
+	fprintf(stdout, " "); fflush(stdout);
+	io_set(IO_VIDEO);
+
 	return(syscod);
 }
 
@@ -349,7 +369,8 @@ char *cmdlbl;   /* строка для индикации, как правило == cmd */
 	execmode |= (execargv ? ASH_NOSH : 0);
 	shstart();
 	syscod = shexec(cmdp, cmdlbl, execmode, execapnd);
-	fprintf(stdout, " "); fflush(stdout);
-	io_set(IO_VIDEO);
+// moved to shexec() for readability
+//	fprintf(stdout, " "); fflush(stdout);
+//	io_set(IO_VIDEO);
 	return(syscod);
 }

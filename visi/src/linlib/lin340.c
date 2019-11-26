@@ -96,7 +96,7 @@ register LINE    *line; /* ץכבתבפולר מב לימיא */
 
 	/* קשתןק ‏ועות w_line() ? */
 	if(onexit = ((posp == (int *)(-1)) ? 1 : 0))
-		attr &= ~INP;  /* מופ, w_line */
+		attr &= ~INP;  /* מופ, ׳ÙÚֿ׳ r_line */
 	cod = 0;
 
 inp_retry:

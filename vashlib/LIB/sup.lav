@@ -1,7 +1,8 @@
 ---PAGE sup
 ---LINES
 ---# versn   = c    "v1.18.x/remix"
-versn   = g    -       -       cvt_sp  -       versn
+---#versn   = g    -       -       cvt_sp  -       versn
+versn   = v    -       -       cvt_sp  -       versn
 vexdir  = v    -       -       cvt_sp  -       vexdir
 vpath   = v    -       -       cvt_sp  -       vpath
 buildd  = c    buildd

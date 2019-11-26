@@ -44,16 +44,60 @@ extern  LPA lpaout[];
 
 extern  LPA lpainp[];
 
-#define AWOLDS (A_SO|A_US|A_MD)
+#define AW_INIT_STATE (A_SO|A_US|A_MD)
 
 /* ףפבעןו ףלןקן בפעיגץפןק: */
-static  awolds = AWOLDS;        /* הלס מב‏בלב קףו קכלא‏ומן */
+static  awstate = AW_INIT_STATE;  /* הלס מב‏בלב קףו קכלא‏ומן */
+
+/*#define HACK_COLOR*/
+#ifdef HACK_COLOR
+at_set(aw_new)
+/*
+ * ץףפבמןקיפר קיהוןבפעיגץפש ׃ ֳ׳ֵװֱֹֽ, ֱָֻ v2
+ */
+register int aw_new;        /* ימהוכף י זלבחי בפעיגץפןק */
+{
+	extern SCREEN scrn;
+
+	register int aw_old;     /* ףלןקן ףפבעשט בפעיגץפןק */
+	register int aw;        /* מןקשו בפעיגץפש */
+
+	aw_old = awstate;
+	scrn.sc_at = (aw_new &= VIDEOM);
+	/* VCOLOR נןכב מו נןההועציקבופףס ... */
+	if(aw_new & INP)
+		aw = lpainp[aw_new & VIDEO].lpa_a;
+	else
+		aw = lpaout[aw_new & VIDEO].lpa_a;
+
+/*	if(&& aw == aw_old) return;         /* גיפש קיהון מו יתםומיליףר */
+	awstate = aw;                    /* תבנןםמיפר מב ףלוה. עבת */
+
+	/* ףמב‏בלב קףו קשכלא‏יפר */
+	if(aw_old & A_SO) {	w_raw(t_se); }
+	if(aw_old & A_US) { w_raw(t_ue); }
+	if(aw_old & (A_MD|A_MR|A_MB|A_MK)) { w_raw(t_me); }
+	/* w_raw("\033[0;37;44m"); /* ֶֿ־ ׀ֿ ױּֽֿÞֱ־ְֹ */
+	w_raw("\033[m"); /* HACK: װּֿ״ֻֿ Þװֿ ׳׃ֵ Üװֿ ׀ֱִֵּֿׂ־ֿ - ֱ ׳ִׂױַ ־ֵ ׃ֱֲֿׂװֱּֿ */
+
+	/* פונוער קכלא‏יפר */
+	if(aw_new != 0) {
+		if(aw & A_VS) {                  w_raw("\033[37;44m"); }
+		if(aw & A_SO) {	/*w_raw(t_so);*/ w_raw("\033[37m"); }
+		if(aw & A_US) {	/*w_raw(t_us);*/ w_raw("\033[36m"); }
+		if(aw & A_MD)   w_raw(t_md);
+		if(aw & A_MR)   w_raw(t_mr);
+		if(aw & A_MB) { /*w_raw(t_mb);*/ w_raw("\033[31m"); }
+		if(aw & A_MK) { /*w_raw(t_mk);*/ w_raw("\033[35m"); }
+	}
+}
+#else
 
 at_set(awi)
+register int awi;        /* ימהוכף י זלבחי בפעיגץפןק */
 /*--------------------------*/
 /* ץףפבמןקיפר קיהוןבפעיגץפש */
 /*--------------------------*/
-register int awi;        /* ימהוכף י זלבחי בפעיגץפןק */
 {
 	extern SCREEN scrn;
 
@@ -61,18 +105,20 @@ register int awi;        /* ימהוכף י זלבחי בפעיגץפןק */
 	register int aw;        /* מןקשו בפעיגץפש */
 
 	if(awi == 0) return;    /* מי‏וחן מו הולבפר */
-
-	awold = awolds;
+	awold = awstate;
 	scrn.sc_at = (awi &= VIDEOM);
 	/* VCOLOR נןכב מו נןההועציקבופףס ... */
 	if(awi & INP) aw = lpainp[awi & VIDEO].lpa_a;
 	else          aw = lpaout[awi & VIDEO].lpa_a;
 
 	if(aw == awold) return;         /* גיפש קיהון מו יתםומיליףר */
-	awolds = aw;                    /* תבנןםמיפר מב ףלוה. עבת */
+	awstate = aw;                    /* תבנןםמיפר מב ףלוה. עבת */
 
 	/* ףמב‏בלב קףו קשכלא‏יפר */
-	if(awold & A_SO) w_raw(t_se);
+
+	if(awold & A_SO) {
+		w_raw(t_se);
+	}
 	if(awold & A_US) w_raw(t_ue);
 	if(awold & (A_MD|A_MR|A_MB|A_MK)) w_raw(t_me);
 
@@ -83,8 +129,8 @@ register int awi;        /* ימהוכף י זלבחי בפעיגץפןק */
 	if(aw & A_MR) w_raw(t_mr);
 	if(aw & A_MB) w_raw(t_mb);
 	if(aw & A_MK) w_raw(t_mk);
-
 }
+#endif
 
 /*---------------------------*/
 /* ץףפבמןקכב נןתידיי כץעףןעב */
@@ -127,8 +173,11 @@ cp_fet()
 /*-------------------------------------------------*/
 er_pag()
 {
-	awolds = AWOLDS;
-	at_set(TXT);    /* Üֱֻׂ־ ֱַ׃ֹװ׃ׁ ֱװֲֹׂױװֽֿ װֵֻ׃װֱ (װֵֽ־ÙÊ ֶֿ־) */
+	/*awstate = AW_INIT_STATE;*/
+	/*at_set(TXT);    /* Üֱֻׂ־ ֱַ׃ֹװ׃ׁ ֱװֲֹׂױװֽֿ װֵֻ׃װֱ (װֵֽ־ÙÊ ֶֿ־) */
+	/*
+	 * ֵֽ־״Ûֵ ֿÛֲֹֻֿ, ֵ׃ֹּ ֲֹֻֽֿ־ֹֿׂ׳ֱװ״ ֱװֲֹׂױװÙ ֶֿ־ֱ ֹ ֱַÛֵ־ֵֹ ׀ֿ ֿװִֵּ״־ֿ׃װֹ
+	 */
 	w_raw(t_cl);
 
 }

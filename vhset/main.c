@@ -93,41 +93,7 @@ mkexit()
 	return(TRUE);
 }
 
-/* #undef  LVAR */
-/* #define LVAR TXT */
-
-static
----PAGE mainm
----LINES
-m_m  = ipm      -   -   pag_mk  tst_m   " Basic commands "
-m_k  = ipm      -   -   pag_k   tst_m   " Other commands "
-m_a  = ipm      -   -   pag_a   tst_m   " Video attributes "
-m_qu = ipm      -   -   mkquit  tst_m   " QUIT (discard changes) "
-m_ex = ipm      -   -   mkexit  tst_m   " EXIT (save setup) "
-lh   = v        -   -   -       -       namelh
-sp   = gv       -   -   -       -       "spacebar"
-
----SCREEN
-=VHSET - video(display) hardware setup
-
----#  LINLIB V3.4
-
-file:  .lh................................................................
-
----#  Exit from setup:
-        .m_qu......................
----#    .m_m.......................
-       	.m_a.......................
-        .m_k.......................
-        .m_ex......................
-
-."Please, press a key:". 
-                .sp..... - select menu
-		.:HE.... - get help
-		.:NL.... - advance to next menu point
-
----#    .:?  or .:HE.... -- Help
----END
+#include "mainp.i"
 
 static  char    helpf[] = "vhsetm.lb";
 
@@ -168,6 +134,7 @@ vmain()
 			w_help(helpf);
 			er_pag();
 			w_page(mainm);
+			break;
 		}
 	}
 }
@@ -177,9 +144,6 @@ vmain()
 #endif
 
 main()
-/*--------*/
-/*  MAIN  */
-/*--------*/
 {
     visini();
     hw_set();

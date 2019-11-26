@@ -60,21 +60,35 @@ EXTHDRS	      = $(VISI)/include/line.h \
 
 HDRS	      = vhset.h
 
-SRCS          = vhset0.cv \
-		vhseta.cv \
-		vhsetk.cv \
-		vhsetm.cv
+IPAGES	      = mainp.i \
+		keys0.i \
+		attr.i \
+		keys.i
 
-OBJS	      = vhset0.o \
-		vhseta.o \
-		vhsetk.o \
-		vhsetm.o
+#VPAGES        = mainp.cv
+
+SRCS          = keys0.cv \
+		keys0.c \
+		attr.cv \
+		attr.c \
+		keys.cv \
+		keys.c \
+		mainp.cv \
+		main.c
+
+OBJS	      = keys0.o \
+		attr.o \
+		keys.o \
+		main.o
 
 SUFFIX        = .cv:sC
 
 .SUFFIXES : .out .o .c .cm .f .e .r .y .yr .ye .l .s .cl .p .q \
-	    .cv .la .lav .lb
-.cv.c:
+	    .i .h .cv .la .lav .lb
+#.cv.c:
+#	$(VCC) -o $@ $<
+
+.cv.i:
 	$(VCC) -o $@ $<
 
 #.cv.o:
@@ -82,9 +96,11 @@ SUFFIX        = .cv:sC
 #	$(CC) $(CFLAGS) -c $*.c
 #	rm -f $*.c
 
-.cv.o:
-	$(VCC) -o $*.c $<
-	$(CC) $(CFLAGS) -c $*.c; rm -f $*.c
+# no more joined source files compiling directly to object files,
+# see .cv.i
+#.cv.o:
+#	$(VCC) -o $*.c $<
+#	$(CC) $(CFLAGS) -c $*.c; rm -f $*.c
 
 # ðåòå÷ïä óåëãéé äáîîùè ÷ óåëãéà ëïäá
 # íïöåô ðïîáäïâéôøóñ äìñ ï÷åòìåêîùè ðòïçòáíí é
@@ -122,7 +138,7 @@ $(PROGRAM):     $(OBJS) $(LIBS) $(MAKEFILE)
 		@echo " ...done"
 
 clean:
-	rm -f $(PROGRAM) $(OBJS) data-to-text $(NOTEXT)
+	rm -f $(PROGRAM) $(OBJS) $(IPAGES) data-to-text $(NOTEXT)
 	cd FORMS; make clean
 
 depend:
@@ -147,11 +163,11 @@ $(DESTBIN):
 	test -d $(DESTBIN)
 
 ###
-vhset0.o: /usr/include/stdio.h $(VISI)/include/line.h \
+keys0.o: keys0.i /usr/include/stdio.h $(VISI)/include/line.h \
 	$(VISI)/include/line0.h vhset.h
-vhseta.o: /usr/include/stdio.h $(VISI)/include/line.h \
+attr.o: attr.i /usr/include/stdio.h $(VISI)/include/line.h \
 	$(VISI)/include/line0.h $(VISI)/include/lineva.h
-vhsetk.o: /usr/include/stdio.h $(VISI)/include/line.h \
+keys.o: keys.i /usr/include/stdio.h $(VISI)/include/line.h \
 	$(VISI)/include/line0.h
-vhsetm.o: /usr/include/stdio.h $(VISI)/include/line.h \
+main.o: mainp.i /usr/include/stdio.h $(VISI)/include/line.h \
 	$(VISI)/include/line0.h $(VISI)/include/linebp.h vhset.h

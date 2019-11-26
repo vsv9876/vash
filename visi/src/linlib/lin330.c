@@ -26,7 +26,7 @@
 
 extern SCREEN scrn;
 
-int     edinsm = 0;     /* флаг: режим вставки */
+int     edinsm = 0;     /* флаг: режим вставки 1, замены 0(по умолчанию) */
 /* extern  int edinff;  */
 int     edinff = 1;     /* флаг: показывать состояние редактора строки */
 int     edshow = 1;     /* флаг: показывать строку до редактирования */
@@ -54,16 +54,46 @@ int     *ofsp;          /* указатель на величину смещения от нач. поля */
 
 static edinfo( infflg )
 register int infflg;
+/*
+ * Показать режим редактирования, см. ниже
+ */
+{
+/*	if ( !edinff )  return;*/
+#ifndef CP_SAV
+	cp_sav();
+#endif
+	cp_set(maxli-1, maxco-8, TXT);
+	er_eol();
+	cp_set(maxli-1, maxco-7, TXT|INP);
+	if ( infflg ) {
+		w_str("ed:");
+		if ( edinsm ) {
+			w_str("Ins");
+		} else {
+			w_str("Ovr");
+		}
+	} else {
+		cp_set(maxli-1, maxco-8, TXT);
+		er_eol();
+	}
+#ifndef CP_SAV
+	cp_fet();
+#endif
+
+}
+/*
+static showed()
 {
 	if ( !edinff )  return;
 	if ( infflg ) {
-		w_msg(scrn.sc_at, ":Edit:");
-		if ( edinsm )   w_str("<Insert>");
+		w_msg(scrn.sc_at, "ed:");
+		if ( edinsm )   w_str("Ins") else w_str("Ovr");
 
 	} else {
 		w_emsg("");
 	}
 }
+*/
 
 static int
 chgstr(s, size, ofs, cod)
@@ -127,15 +157,15 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕНИЯ ОТ НАЧ. ПОЛЯ */
 
 	register int i;
 	register int j;
-	register int  col;      /* ПОЗИЦИЯ И СТРОКА НА ЭКРАНЕ */
-		 int  lin;
-		 int  atr;
+	register int  column;      /* ПОЗИЦИЯ И СТРОКА НА ЭКРАНЕ */
+			 int  linenu;
+			 int  attrib; /* логический видеоатрибут */
 		 kbcod    cod;
 		 kbcod    ok;
 
-	col = scrn.sc_co;
-	lin = scrn.sc_li;
-	atr = scrn.sc_at;
+	column = scrn.sc_co;
+	linenu = scrn.sc_li;
+	attrib = scrn.sc_at;
 
 	edinfo(1);
 	/* заполнить пробелами конец строки */
@@ -145,7 +175,7 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕНИЯ ОТ НАЧ. ПОЛЯ */
 	str_l[size] = 0;
 	if (edshow) {
 		/* показать на экране перед редактированием */
-		cp_set(lin, col, atr);
+		cp_set(linenu, column, attrib);
 		j = 0;
 		while(j<size) w_chr(str_l[j++]);
 	}
@@ -154,7 +184,7 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕНИЯ ОТ НАЧ. ПОЛЯ */
 	/* ЦИКЛ РЕДАКТИРОВАНИЯ */
 	for( ;; ) {
 		if(i >= size) i = size-1;       /* ВСЕГДА ПРОВЕРЯТЬ!!! */
-		cp_set(lin, col+i, 0);
+		cp_set(linenu, column+i, attrib);
 
 		cod = r_cod(0);
 		/* ПРОТЕСТИРУЕМ ВВОД */
@@ -207,7 +237,7 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕНИЯ ОТ НАЧ. ПОЛЯ */
 				   else     goto ret;
 				   break;
 			case KB_TA: /*bell(); break;*/
-				/*cp_sav(); cp_set(-2, 1, ATT); w_str("ta"); cp_fet();*/
+				/*cp_sav(); cpa(-2, 1, ATT); w_str("ta"); cp_fet();*/
 				goto ret; break;
 #ifdef OLD_USE_TAB
 			case KB_TA: if(i == size-1) goto ret;
