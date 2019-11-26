@@ -255,7 +255,6 @@ int  execapnd;
 	if (cmdlbl == (char *)0) {
 		cmdlbl = cmd2;  /* саму команду и показать */
 	}
-	/*Warning! no IO_TTYPE mode below this point, so at_set() illegal */
 //	at_set(TXT);
 //	at_set(TXT|INP);
 //	/* fprintf(vttout, "%s", pmtsh);*/
@@ -266,12 +265,15 @@ int  execapnd;
 //	printf("%s", pmtsh); /*only legal prompt in IO_TTYPE*/
 
 //	at_set(TXT);
+	at_set(0); er_eop();
 	at_set(TXT|INP);
 	w_str(pmtsh);
 	/*at_set(TXT);*/
-	at_set(0); er_eop();
+	at_set(0);
 	fflush(vttout);
 	io_set(IO_TTYPE);
+
+	/*Warning! no IO_TTYPE mode below this point, stdio only */
 
 	printf("%s", cmdlbl);
 	if (execmode & ASH_NOWAIT)
