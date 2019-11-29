@@ -330,7 +330,7 @@ h_menu()
 
 	/* ΠΕÒΧΟΞΑήΑΜΨΞΩΚ ΠΟΛΑΪ ΞΑ άΛÒΑΞΕ */
 	cp_set(clm._y0, 0, TXT);
-	w_str("!");	er_eop();
+	w_str("!");	er_eop(FGBG);
 	w_cmd(cmdpp);   /* οσταχιτψ λοναξδυ ξα όλςαξε */
 	itmshow();
 	w_page(clm._vf, 0);
@@ -410,7 +410,7 @@ char  *cmd;
 		cmdghist(homedir);
 		w_str("=");
 	}
-	er_eop();
+	er_eop(FGBG);
 
 	/* ΙΞΙΓΙΑΜΙΪΑΓΙΡ ΝΕΞΐ ΛΟΝΑΞΔ */
 	clm._itms   = cmdp;          /* υλαϊατεμι ξα στςολι λοναξδ */
@@ -439,7 +439,7 @@ char  *cmd;
 	h_menu();
 
 	free((char *)clm._vf); clm._vf = (LINE *)0;
-	cp_set(y0_top, 0, TXT); er_eop();
+	cp_set(y0_top, 0, TXT); er_eop(FGBG);
 
 	cmdpi = clm._itm;    /* ξοχοε ϊξαώ. ιξδελσα ιστοςιι */
 	clm._vf = (LINE *)0;

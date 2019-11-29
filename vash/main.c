@@ -53,8 +53,8 @@ int ok;
 	cp_set(-1, 0, TXT);
 #else
 	cp_set(clm._y0-1, 0, TXT);
-	er_eop();
-	cp_set(clm._y0-1, 0, TXT);
+	er_eop(0);
+	cp_set(clm._y0-1, 0, 0);
 #endif
 	io_set(IO_TTYPE);
 #ifdef RETRO

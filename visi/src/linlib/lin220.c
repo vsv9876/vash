@@ -96,7 +96,7 @@ extern  KBF   kbf[];
 extern  char *tcapo[];
 
 
-static int cant()
+static int cannot()
 /*-------------*/
 /* היבחמןףפיכב */
 /*-------------*/
@@ -115,11 +115,11 @@ static int cant()
 
 }
 
+static int stripd(s1, s2)
 /*----------------------------------------*/
 /* יתגבקיפרףס ןפ ליהיעץא‎יט דיזע תבהועצכי */
 /* ‏יפבפר ית s2, ניףבפר ק s1              */
 /*----------------------------------------*/
-static int stripd(s1, s2)
 register char *s1, *s2;
 {
 	while(isdigit(*s2))
@@ -199,7 +199,7 @@ hw_set()
 		}
 	}
 	else    {
-		cant();
+		cannot();
 	}
 
 	/*---------------------------------*/

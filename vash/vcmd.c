@@ -330,7 +330,7 @@ register char *s;
 		kt1[i].kt_ib,
 		kt1[i].kt_ie,
 		kt1[i].kt_key);
-		cp_set((i%10)+2, 0, TXT); w_str(tmps); er_eol();
+		cp_set((i%10)+2, 0, TXT); w_str(tmps); er_eol(FGBG);
 		if ( (i+1) % 10 ) ;
 		else    { bell(); r_cod(0); er_pag(); }
 	}

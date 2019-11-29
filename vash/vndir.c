@@ -478,7 +478,7 @@ cwdshow()
 			showli = clm._y0 - 1;
 			cp_set(clm._y0 - 1, 0, TXT);
 		}
-		er_eop();
+		er_eop(FGBG);
 		/*showli = y0_top-1 clm._y0 -1;*/ deltco = 0;
 #endif
 	} else {

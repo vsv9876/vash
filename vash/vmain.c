@@ -248,7 +248,7 @@ char *helpl;
 
 	/* первоначальный показ на экране */
 	cp_set(clm._y0, 0, TXT);
-	er_eop();
+	er_eop(FGBG);
 	cwdshow();
 	itmshow();
 	w_page(clm._vf, 0);

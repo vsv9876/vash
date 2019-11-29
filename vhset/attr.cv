@@ -45,15 +45,15 @@
 	mr      = ia - W_mr   cvt_va  - LPA_B
 	mb      = ia - W_mb   cvt_va  - LPA_B
 	mk      = ia - W_mk   cvt_va  - LPA_B
-	hl      = gc - -      cvt_hl  - "-"
-	color   = igc - -     cvt_s   - "bw only hack"
+	hl      = gca - -      cvt_hl  - "."
+	color   = iac - -     -        - "bw only hack"
 ---# WARNING!
 ---# Do not touch string 4 (contains .TXT. .HDR. ...), because
 ---# format conversion function for selector depends on screen coordinates of it.
 ---SCREEN
 =Video and prompters setup
 
-+ Mode .color....... Prompter:  .P..  .t..  .t..  .t..  .t..  .t..  .t..
++                     Prompter: .P..  .t..  .t..  .t..  .t..  .t..  .t..
 + .hl...................................................................
 + displayed on output:          .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .ATT.
 +
@@ -65,11 +65,11 @@
 +         :mr  "reverse"        .mr.  .t..  .t..  .t..  .t..  .t..  .t..
 +         :mb  "blink"          .mb.  .t..  .t..  .t..  .t..  .t..  .t..
 +         :mk                   .mk.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :vs  "background"     .vs.  .t..  .t..  .t..  .t..  .t..  .t..
-+ .hl...................................................................
-+         :fg         .color.   .color.
-+         :bg         .color.   .color.
-+         :reverse    .color. 
-+ .hl...................................................................
-+         :              :      :     :     :     :     :     :     :
+---#+         :vs  "background"     .vs.  .t..  .t..  .t..  .t..  .t..  .t..
+  .hl...................................................................
+---#+         :fg
+---#+         :bg
+---#+         .color..
+---#+ .hl...................................................................
+---#+         :              :...   :...  :...  :...  :...  :...  :...  :...
 ---END

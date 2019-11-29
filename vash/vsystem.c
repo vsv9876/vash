@@ -265,11 +265,11 @@ int  execapnd;
 //	printf("%s", pmtsh); /*only legal prompt in IO_TTYPE*/
 
 //	at_set(TXT);
-	at_set(0); er_eop();
+	at_set(0); er_eop(0);
 	at_set(TXT|INP);
 	w_str(pmtsh);
-	/*at_set(TXT);*/
-	at_set(0);
+	/*at_set(TXT); at_set(0);*/
+	er_eop(0);
 	fflush(vttout);
 	io_set(IO_TTYPE);
 

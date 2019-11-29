@@ -30,7 +30,7 @@ register char *cmd;
 {
 	register int i;
 
-	cp_set(-1 /*y0-1*/, 0, TXT); er_eol();
+	cp_set(-1 /*y0-1*/, 0, TXT); er_eol(TXT);
 	at_set(TXT|INP);
 	/*if (getuid() == 0) pmtsh = ".#";*/
 	w_str(pmtsh);
@@ -41,8 +41,8 @@ register char *cmd;
 
 scrlst()        /* курсор к началу свитка */
 {
-	cp_set(y0_top, 0, TXT); er_eop();
-	cp_set(y0_top - 1, 0, TXT);
+	cp_set(y0_top, 0, TXT); er_eop(0);
+	cp_set(y0_top - 1, 0, 0);
 	fflush(vttout);
 }
 
@@ -226,17 +226,17 @@ std_shell:
 					  sprintf(tmpstr, " press SPACE bar or type command ");
 					  w_str(tmpstr);
 					}
-					at_set(TXT);
-					er_eol();
+					/*at_set(TXT); er_eol();*/
+					er_eop(0);
 					/*VARARGS*/
 					w_str("\r");
 				} while (cod == KB_NL);
 			} else {
-				at_set(TXT);
+				at_set(0);
 				w_str("\r");
 			}
 			/* проверка завершения команды sh */
-			er_eol(); fflush(vttout);
+			er_eol(0); fflush(vttout);
 			scrlnl();
 			showtime( 1 );          /* часы включить */
 

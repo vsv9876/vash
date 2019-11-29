@@ -55,6 +55,7 @@ typedef struct {
 typedef struct {
 	int     lpa_p;  /* ποδσλαϊλα */
 	int     lpa_a;  /* σμοχο ατςιβυτοχ */
+	char    lpa_gsr[16]; /* ANSI Color GSR, instant ASCII format */
 } LPA;
 #define LPASIZE 8
 
@@ -63,7 +64,8 @@ typedef struct {
 typedef struct {
 	bool    sc_li;  /* LIne - τελυύ. στςολα */
 	bool    sc_co;  /* COlumn - τελυύ. ποϊιγιρ χ στςολε */
-	short   sc_at;  /* ATtributes - τελυύεε σμοχο ατςιβυτοχ */
+	int     sc_at;  /* ATtributes - τελυύεε σμοχο ατςιβυτοχ */
+/*	char   *sc_ac;     w_sgr() arg - ANSI color */
 } SCREEN;
 
 /* χοϊνοφξοστι χωχοδα ξα τεςνιξαμ ιϊ /etc/termcap;

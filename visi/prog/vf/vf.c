@@ -251,7 +251,7 @@ clritm()
 
     for (i = 0; i < yy; i++) {
 	cp_set(i+y0, 0, TXT);
-	er_eol();
+	er_eol(FGBG);
     }
 }
 
@@ -287,7 +287,7 @@ LINE *helpl;
 
 	/* первоначальный показ на экране */
 	cp_set(y0, 0, TXT);
-	er_eop();
+	er_eop(FGBG);
 	itmshow();
 	w_page(mainl);
 

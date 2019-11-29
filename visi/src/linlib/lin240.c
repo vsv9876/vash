@@ -86,9 +86,12 @@ do_kbl()
 	kbcod   t_cods;    /* μοη. λοδ λμαχιϋι δμρ ποισλα */
 
 	register LPA *lpap;
+	LPA *lpapset[2]; /*0-lpaout, 1-lpainp*/
 	register char *s;
 	register int c;
 	register int   i;
+		int lpa_o;
+		int lpa_i;
 		 int ibeg;
 		 char *os;
 
@@ -213,6 +216,19 @@ cont1:
 			lpap->lpa_a  = (*s++ & 07) << 6;
 			lpap->lpa_a |= (*s++ & 07) << 3;
 			lpap->lpa_a |= (*s++ & 07);
+			/* ANSI Color GSR, with <TAB> separator(s)*/
+			if (*s++ == '\t') {
+				lpapset[0] = &lpaout[*str & 07];
+				lpapset[1] = &lpainp[*str & 07];
+				for(i = 0; i < 2; i++) {
+					lpap = lpapset[i];
+					for(os = lpap->lpa_gsr; *s != '\0' && *s != '\n' && *s != '\t'; *os++,*s++) {
+						*os = *s;
+					}
+					*os = '\0'; *s++; /* skip <TAB> before next GSR*/
+				}
+			}
+
 		}
 cont:
 		;

@@ -100,7 +100,7 @@ char *cmdlbl;   /* вывеска для показа вместо выполняемой команды */
 
 	/* первоначальный показ на экране */
 	cp_set(clm._y0, 0, TXT);
-	er_eop();
+	er_eop(FGBG);
 	itmshow();
 	w_page(clm._vf, 0);
 
@@ -181,7 +181,7 @@ char *mfile;    /* имя файла программы меню */
 
 	savelm = clm;
 	cp_set(clm._y0 - 1, 0, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
-	er_eop();
+	er_eop(FGBG);
 
 	/* инициализация меню */
 	clm._itms   = lbls;          /* указатели на строки меню */
@@ -211,7 +211,7 @@ char *mfile;    /* имя файла программы меню */
 	/*
 	free((char *)vf); vf = (LINE *)0;
 */
-	cp_set(y0_top, 0, TXT); er_eop();
+	cp_set(y0_top, 0, TXT); er_eop(FGBG);
 	for (; lblmax >= 0; lblmax--)
 	    if (lbls[ lblmax] != (char *)0) {
 		free(lbls[ lblmax]); lbls[ lblmax] = (char *)0;

@@ -47,13 +47,38 @@ extern  LPA lpainp[];
 #define AW_INIT_STATE (A_SO|A_US|A_MD)
 
 /* СТАРОЕ СЛОВО АТРИБУТОВ: */
-static  awstate = AW_INIT_STATE;  /* ДЛЯ НАЧАЛА ВСЕ ВКЛЮЧЕНО */
+static    int awstate = AW_INIT_STATE;  /* ДЛЯ НАЧАЛА ВСЕ ВКЛЮЧЕНО */
+static  char *acstate = (char *)0;
 
-/*#define HACK_COLOR*/
+#define HACK_COLOR
 #ifdef HACK_COLOR
+
+/* ANSI COLOR out/input, SGR sequence, indexed by LPA (0, TXT, HDR, ... )*/
+/* storage for SGR - this is a text for sprintf "\033[%sm", */
+/*
+extern  char *acout[];
+extern  char *acinp[];
+*/
+
+w_sgr(sgr)
+char *sgr;
+{
+	static char s_csi[40] = "";
+	char *s = s_csi;
+	if (sgr == (char *)0 || *sgr == '\0') {
+		sgr = lpaout[0].lpa_gsr;
+		acstate = (char *)0;
+	}
+	if (acstate == (char *)0 || acstate != sgr) {
+		sprintf(s_csi, "\033[%sm", sgr);
+		w_raw(s_csi);
+		acstate = sgr;
+	}
+}
+
 at_set(aw_new)
 /*
- * УСТАНОВИТЬ ВИДЕОАТРИБУТЫ с цветами, хак v2
+ * УСТАНОВИТЬ ВИДЕОАТРИБУТЫ с цветами, хак v3
  */
 register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 {
@@ -61,37 +86,64 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 
 	register int aw_old;     /* СЛОВО СТАРЫХ АТРИБУТОВ */
 	register int aw;        /* НОВЫЕ АТРИБУТЫ */
+	int  aix_new;	/* индекс для поиска по таблицам атрибутов */
+	char *acolor;	/* color to be set */
 
-	aw_old = awstate;
+	aw_old     = awstate;
+	/* VCOLOR (в составе VIDEOM) вероятно, не нужен, и вообще не нужен */
 	scrn.sc_at = (aw_new &= VIDEOM);
-	/* VCOLOR ПОКА НЕ ПОДДЕРЖИВАЕТСЯ ... */
-	if(aw_new & INP)
-		aw = lpainp[aw_new & VIDEO].lpa_a;
-	else
-		aw = lpaout[aw_new & VIDEO].lpa_a;
+	aix_new    = aw_new & VIDEO;
+	if(aw_new & INP) {
+		aw     = lpainp[aix_new].lpa_a;
+		acolor = lpainp[aix_new].lpa_gsr;
+	} else {
+		aw     = lpaout[aix_new].lpa_a;
+		acolor = lpaout[aix_new].lpa_gsr;
+	}
+	/* оптимизация повторной выдачи*/
+	/* if(aw == aw_old) return; /* биты атрибутов не менялись */
+	/* ЗАПОМНИТЬ для оптимизации повторной выдачи */
+	awstate = scrn.sc_at;
 
-/*	if(&& aw == aw_old) return;         /* БИТЫ ВИДЕО НЕ ИЗМЕНИЛИСЬ */
-	awstate = aw;                    /* ЗАПОМНИТЬ НА СЛЕД. РАЗ */
-
-	/* СНАЧАЛА ВСЕ ВЫКЛЮЧИТЬ */
-	if(aw_old & A_SO) {	w_raw(t_se); }
-	if(aw_old & A_US) { w_raw(t_ue); }
-	if(aw_old & (A_MD|A_MR|A_MB|A_MK)) { w_raw(t_me); }
-	/* w_raw("\033[0;37;44m"); /* фон по умолчанию */
-	w_raw("\033[0m"); /* HACK: только что все это проделано - а вдруг не сработало */
+	/* СНАЧАЛА ВСЕ погасить */
+	if(aw_old & A_SO) 					{ w_raw(t_se); }
+	if(aw_old & A_US)					{ w_raw(t_ue); }
+	if(aw_old & (A_MD|A_MR|A_MB|A_MK))	{ w_raw(t_me); }
+	w_sgr(0);
 
 	/* ТЕПЕРЬ ВКЛЮЧИТЬ */
 	if(aw_new != 0) {
-		if(aw & A_VS) {                  w_raw("\033[37;44m"); }
-		if(aw & A_SO) {	/*w_raw(t_so);*/ w_raw("\033[37m"); }
-		if(aw & A_US) {	/*w_raw(t_us);*/ w_raw("\033[36m"); }
-		if(aw & A_MD)   w_raw(t_md);
-		if(aw & A_MR)   w_raw(t_mr);
-		if(aw & A_MB) { /*w_raw(t_mb);*/ w_raw("\033[31m"); }
-		if(aw & A_MK) { /*w_raw(t_mk);*/ w_raw("\033[35m"); }
+		w_sgr(lpainp[0].lpa_gsr); /* FGBG, used as prefix of CGR */
+		w_sgr(acolor);
+		if(aw & A_SO) w_raw(t_so);
+		if(aw & A_US) w_raw(t_us);
+		if(aw & A_MD) w_raw(t_md);
+		if(aw & A_MR) w_raw(t_mr);
+		if(aw & A_MB) w_raw(t_mb);
+		if(aw & A_MK) w_raw(t_mk);
 	}
 }
 #else
+char *acout [LPASIZE] = {
+	"",				/* FGBG */
+	"",				/* TXT  */
+	"",				/* HDR  */
+	"",				/* VAR  */
+	"",				/* ALT  */
+	"",				/* MSE  */
+	"",				/* ERR  */
+	"",				/* ATT  */
+};
+char *acinp [LPASIZE] = {
+	"",				/* FGBG */
+	"",				/* TXT  */
+	"",				/* HDR  */
+	"",				/* VAR  */
+	"",				/* ALT  */
+	"",				/* MSE  */
+	"",				/* ERR  */
+	"",				/* ATT  */
+};
 
 at_set(awi)
 register int awi;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
@@ -140,8 +192,8 @@ register int awi;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 cp_set(li, co, at)
 int li, co, at;
 {
-	register char *p;
-	register int aa;
+	char *p;
+	int aa;
 	extern char *tgoto();
 
 	if(li < 0) li = (maxli+li);
@@ -157,58 +209,74 @@ int li, co, at;
 /*-----------------------------------------------------*/
 /* СОХРАНИТЬ/ВОССТАНОВИТЬ ПОЛОЖЕНИЕ И АТРИБУТЫ КУРСОРА */
 /*-----------------------------------------------------*/
-static int s_colu, s_line, s_attr;
+static int s_colu, s_line, s_attr, s_colr;
 cp_sav()
 {
 	s_colu = scrn.sc_co;
 	s_line = scrn.sc_li;
 	s_attr = scrn.sc_at;
+//	s_colr = scrn.sc_ac;
 }
 cp_fet()
 {
+//	w_csi(s_colr);
 	cp_set(s_line, s_colu, s_attr);
 }
 
-/*-------------------------------------------------*/
-/* СТЕРЕТЬ ЭКРАН, ДО КОНЦА ЭКРАНА, ДО КОНЦА СТРОКИ */
-/*-------------------------------------------------*/
 er_pag()
+/*
+ * erase (er) page at all, all screen erased
+ */
 {
 	/*awstate = AW_INIT_STATE;*/
 	/*at_set(TXT);    /* экран гасится атрибутом текста (темный фон) */
 	/*
-	 * меньше ошибок, если комбинировать атрибуты фона и гашение по отдельности
+	 * меньше ошибок, если комбинировать атрибуты фона и гашение по отдельности, но
+	 * старый код содержит массу применений этой функции - проще сблокировать
 	 */
+	at_set(FGBG);
 	w_raw(t_cl);
 
 }
 
-er_eop()
+er_eop(aw)
+/*
+ * erase to end of page
+ */
+int aw; /* (visual) attributes word */
 {
+	at_set(aw);
 	w_raw(t_cd);
 }
 
-er_eol()
+er_eol(aw)
+int aw; /* (visual) attributes word */
 {
+	at_set(aw);
 	w_raw(t_ce);
 }
 
+er_scr(from, to, aw)
+/*
+ * clear (erase) part of screen between lines 'from' and 'to' with attribute word 'aw'
+ */
 /*------------------------*/
 /* СТЕРЕТЬ УЧАСТОК ЭКРАНА */
 /*------------------------*/
-er_scr(from, to)
-register int from, to;
+int from;
+int to;
+int aw;
 {
 	while ( from <= to ) {
-		cp_set(from++, 0, TXT);
-		er_eol();
+		cp_set(from++, 0, aw);
+		er_eol(aw);
 	}
 }
 
-/*----------------------------*/
-/* ЗВОНОК ИЛИ ИМИТАЦИЯ ЗВОНКА */
-/*----------------------------*/
 bell()
+/*----------------------------*/
+/* ЗВОНОК ИЛИ ИМИТАЦИЯ ЗВОНКА */ /* TODO repaire */
+/*----------------------------*/
 {
 	if     ( t_vb[0] )    { w_raw(t_vb); }  /* ИМИТАЦИЯ: РЕВЕРС ФОНА */
 	else if( t_bl[0] )    { w_raw(t_bl); }

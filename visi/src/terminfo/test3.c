@@ -46,11 +46,11 @@ diag()
 		for(k=j,i=0; i<24; i++,j++) {   /* row */
 			switch(cod=r_key()) {
 			case '2' :
-				cp_set(1,1,TXT); er_eop();
+				cp_set(1,1,TXT); er_eop(TXT);
 				printf("PF2");
 				break;
 			case '3' :
-				cp_set(1,10,TXT); er_eol();
+				cp_set(1,10,TXT); er_eol(TXT);
 				printf("PF3");
 				break;
 			case -1 :

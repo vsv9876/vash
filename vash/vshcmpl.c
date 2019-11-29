@@ -115,7 +115,7 @@ int hlp_clr() {
 		hlp_onscreen = 0;
 		cur_co = 0;
 		for (cur_li = clm._y0; cur_li <= maxli; cur_li++) {
-			cp_set(cur_li, cur_co, TXT); er_eol();
+			cp_set(cur_li, cur_co, TXT); er_eol(FGBG);
 		}
 	}
 }
@@ -134,7 +134,7 @@ int hlp_compl()
 	slist = sgglist->sl_last;
 
 	for (cur_li = maxli - 3; cur_li >= clm._y0; cur_li--) {
-		cp_set(cur_li, cur_co, TXT); w_chr('*'); er_eol();
+		cp_set(cur_li, cur_co, TXT); w_chr('*'); er_eol(ATT);
 	}
 	cur_li = clm._y0;
 	cp_set(cur_li, cur_co, TXT|INP); /*er_eop();*/

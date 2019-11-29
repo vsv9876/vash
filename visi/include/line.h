@@ -163,6 +163,8 @@ typedef struct  {
 #define LVAR (VAR|PAD)
 #define LALT (ALT|MID|PAD|NED)
 #define LMSE (MSE|FLO)
+/* атрибут для заполнения фона при диалогах LINLIB */
+#define FGBG (INP)
 
 /*----------------------*/
 /* биты флагов задержек */

@@ -85,8 +85,8 @@ char   *str;
 
 	if(*mod == 'w') {
 		strcpy(outstr, " . .");
-		if(lpainp[i].lpa_a & va) outstr[3] = '+';
-		if(lpaout[i].lpa_a & va) outstr[1] = '+';
+		if(lpainp[i].lpa_a & va) outstr[3] = 'x';
+		if(lpaout[i].lpa_a & va) outstr[1] = 'x';
 		strcpy(str, outstr);
 	} else {
 		if(cod == ' ' || cod == KB_DE) {

@@ -74,7 +74,7 @@ register int infflg;
 		}
 	} else {
 		cp_set(maxli-1, maxco-8, TXT);
-		er_eol();
+		er_eol(FGBG);
 	}
 #ifndef CP_SAV
 	cp_fet();

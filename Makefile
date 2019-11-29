@@ -41,6 +41,7 @@ VASHLIB	= ./vashlib
 
 all:
 	$(MAKE) setup
+	$(MAKE) visi_lib
 	$(MAKE) compile
 
 #all:	compile bld
@@ -89,9 +90,11 @@ showconfig:
 	@echo CFLAGS_ASH=$(CFLAGS_ASH)
 	@echo CFLAGS_VISI=$(CFLAGS_VISI)
 
-compile:   $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
+visi_lib:; # $(BLDCFG) $(VISI)/include/line.h $(VISILIB_LIST)
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
+
+compile:   $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
 	cd $(VHSET); $(MAKE) all "DEST=$(DEST)"
 	cd $(VASH);   $(MAKE) all "DEST=$(DEST)" "CFLAGS_ASH=$(CFLAGS_ASH)" \
 		"VERSN=$(VERSN)"

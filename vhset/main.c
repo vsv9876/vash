@@ -65,12 +65,14 @@ mkexit()
 
 		/*---- атрибуты */
 		for(i=0; i<8; i++) {
-			fprintf(ofp, "%1d%c%03o%c%03o\n", i,
+			fprintf(ofp, "%1d%c%03o%c%03o\t%s\t%s\n", i,
 			lpaout[i].lpa_p, lpaout[i].lpa_a,
-			lpainp[i].lpa_p, lpainp[i].lpa_a        );
+			lpainp[i].lpa_p, lpainp[i].lpa_a,
+			lpaout[i].lpa_gsr,
+			lpainp[i].lpa_gsr);
 		}
 
-		/*---- доп. клавиатура */
+		/*---- доп. клавиатура. TODO: color mode index: 0==BW, 1==1st_color_set -- not yet implemented */
 		fprintf(ofp, "%c\n", (kpadon ? '+' : '-') );
 
 		/*---- клавиши */
@@ -83,11 +85,11 @@ mkexit()
 			if(kblp->t_knm) fprintf(ofp, "%s", kblp->t_knm);
 			putc('\n', ofp);
 		}
-		cp_set(-1, 0, TXT);
+		cp_set(-1, 0, 0);
 	} else {
 		er_pag();
-		printf("%s", "setup data was not saved in file");
-		cp_set(2, 0, TXT);
+		cp_set(2, 0, ERR); fflush(vttout);
+		printf("%s", "setup data file was not saved"); fflush(stdout);
 	}
 	ex_flg = 1;
 	return(TRUE);
@@ -151,6 +153,7 @@ main()
 
     vmain();
 
+    er_eop(0);
     io_set(IO_TTYPE);
     printf("\n");
     exit(0);

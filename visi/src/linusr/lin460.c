@@ -53,7 +53,7 @@ register char    *str ;         /* текст сообщения об ошибке */
 			w_str("Err: ");
 		}
 		w_str(str); w_str(" ");
-		at_set(TXT); er_eol();
+		at_set(TXT); er_eol(FGBG);
 	}
 }
 

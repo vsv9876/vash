@@ -152,7 +152,7 @@ clritm()
     register LINE *l;
 
     for (l = clm._vf,i = 0; l->size && i < clm._yy; l++,i++) {
-	cp_set(l->line, l->colu, TXT); er_eol();
+	cp_set(l->line, l->colu, TXT); er_eol(TXT);
     }
 }
 
