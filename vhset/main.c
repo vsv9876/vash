@@ -53,6 +53,8 @@ mkquit()
 extern  KBL kbl[];
 /* флаг: доп. клавиатура включена */
 extern  int     kpadon;
+extern int		gsrmode; /* initial monochrome */
+
 
 mkexit()
 {
@@ -73,7 +75,8 @@ mkexit()
 		}
 
 		/*---- доп. клавиатура. TODO: color mode index: 0==BW, 1==1st_color_set -- not yet implemented */
-		fprintf(ofp, "%c\n", (kpadon ? '+' : '-') );
+		fprintf(ofp, "%c", (kpadon ? '+' : '-'));
+		fprintf(ofp, "%1d\n", gsrmode);
 
 		/*---- клавиши */
 		for(kblp=kbl; kblp->t_cod; kblp++) {

@@ -66,6 +66,7 @@ extern  LPA     lpaout[];
 extern  KBL     kbl[];      /* οπισαξιε χοϊνοφξοστεκ τεςνιξαμα */
 extern  char   *filelh;    /* υλαϊατεμψ ξα ινρ ζακμα σ οπισαξιεν */
 extern  int     kpadon;    /* ζμαη: δοπομξιτεμψξαρ λμαχιατυςα χλμΰώεξα */
+extern int		gsrmode;   /* initial monochrome */
 
 #ifdef DEMOS2
 extern  char *getenv();
@@ -156,9 +157,11 @@ cont1:
 		if(isspace(*s))       continue;
 
 		/* χλμΰώιτψ δοπ. λμαχιατυςυ ? */
-		if     (*s == '+')      { w_raw(t_ks); kpadon = 1;      }
-		else if(*s == '-')      { w_raw(t_ke); kpadon = 0;      }
-
+		if (*s == '+' || *s == '-') {
+			if (*s == '+')      { w_raw(t_ks); kpadon = 1;      }
+			if (*s == '-')      { w_raw(t_ke); kpadon = 0;      }
+			if (isdigit(str[1]))	{		gsrmode = s[1] - '0'; }
+		}
 		/* λοδ ι ξαϊχαξιε λξοπλι ? */
 		else if(*s == ':') {
 			s++;

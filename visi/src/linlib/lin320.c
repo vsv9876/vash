@@ -49,6 +49,7 @@ extern  LPA lpainp[];
 /* СТАРОЕ СЛОВО АТРИБУТОВ: */
 static    int awstate = AW_INIT_STATE;  /* ДЛЯ НАЧАЛА ВСЕ ВКЛЮЧЕНО */
 static  char *acstate = (char *)0;
+extern  int gsrmode;
 
 #define HACK_COLOR
 #ifdef HACK_COLOR
@@ -56,65 +57,81 @@ static  char *acstate = (char *)0;
 /* ANSI COLOR out/input, SGR sequence, indexed by LPA (0, TXT, HDR, ... )*/
 /* storage for SGR - this is a text for sprintf "\033[%sm", */
 /*
+ * now incorporated into LPA sctructure:
 extern  char *acout[];
 extern  char *acinp[];
 */
 
-w_sgr(sgr)
-char *sgr;
+w_sgr(gsr)
+char *gsr;
 {
 	static char s_csi[40] = "";
 	char *s = s_csi;
-	if (sgr == (char *)0 || *sgr == '\0') {
-		sgr = lpaout[0].lpa_gsr;
+
+	if(gsrmode == 0) {
+		//awstate = AW_INIT_STATE;
+		return;
+	}
+	if (gsr == (char *)0 || *gsr == '\0') {
+		gsr = lpaout[0].lpa_gsr;
 		acstate = (char *)0;
 	}
-	if (acstate == (char *)0 || acstate != sgr) {
-		sprintf(s_csi, "\033[%sm", sgr);
+	if (acstate == (char *)0 || acstate != gsr) {
+		sprintf(s_csi, "\033[%sm", gsr);
 		w_raw(s_csi);
-		acstate = sgr;
+		acstate = gsr;
 	}
 }
 
 at_set(aw_new)
 /*
- * УСТАНОВИТЬ ВИДЕОАТРИБУТЫ с цветами, хак v3
+ * УСТАНОВИТЬ ВИДЕОАТРИБУТЫ, выбрать для установки  с цветами, хак v3
  */
 register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 {
 	extern SCREEN scrn;
 
 	register int aw_old;     /* СЛОВО СТАРЫХ АТРИБУТОВ */
+	char *ac_old;
 	register int aw;        /* НОВЫЕ АТРИБУТЫ */
+	char *ac;	/* color to be set */
 	int  aix_new;	/* индекс для поиска по таблицам атрибутов */
-	char *acolor;	/* color to be set */
 
-	aw_old     = awstate;
 	/* VCOLOR (в составе VIDEOM) вероятно, не нужен, и вообще не нужен */
-	scrn.sc_at = (aw_new &= VIDEOM);
+	aw_new &= VIDEOM; /* cleanup arg called, which may contain unsupported constants*/
+	aw_old = awstate;
+	ac_old = acstate;
+
+	scrn.sc_at = aw_new;
 	aix_new    = aw_new & VIDEO;
 	if(aw_new & INP) {
-		aw     = lpainp[aix_new].lpa_a;
-		acolor = lpainp[aix_new].lpa_gsr;
+		aw = lpainp[aix_new].lpa_a;
+		ac = lpainp[aix_new].lpa_gsr;
 	} else {
-		aw     = lpaout[aix_new].lpa_a;
-		acolor = lpaout[aix_new].lpa_gsr;
+		aw = lpaout[aix_new].lpa_a;
+		ac = lpaout[aix_new].lpa_gsr;
 	}
 	/* оптимизация повторной выдачи*/
-	/* if(aw == aw_old) return; /* биты атрибутов не менялись */
-	/* ЗАПОМНИТЬ для оптимизации повторной выдачи */
-	awstate = scrn.sc_at;
-
+	if(aw == aw_old && ac == ac_old) {
+		 /* биты атрибутов не менялись и расцветка тоже */
+		return;
+	}
 	/* СНАЧАЛА ВСЕ погасить */
 	if(aw_old & A_SO) 					{ w_raw(t_se); }
 	if(aw_old & A_US)					{ w_raw(t_ue); }
 	if(aw_old & (A_MD|A_MR|A_MB|A_MK))	{ w_raw(t_me); }
-	w_sgr(0);
+
+	/* ЗАПОМНИТЬ для оптимизации повторной выдачи */
+	awstate = aw; /*scrn.sc_at;*/
+	//acstate = ac;
 
 	/* ТЕПЕРЬ ВКЛЮЧИТЬ */
-	if(aw_new != 0) {
-		w_sgr(lpainp[0].lpa_gsr); /* FGBG, used as prefix of CGR */
-		w_sgr(acolor);
+	//if (ac != ac_old) {
+		/*w_sgr(0);*/
+		w_sgr(lpainp[0].lpa_gsr); /* FGBG, used as preamble of GCR */
+		w_sgr(ac);
+	//}
+	if(aw != 0) {
 		if(aw & A_SO) w_raw(t_so);
 		if(aw & A_US) w_raw(t_us);
 		if(aw & A_MD) w_raw(t_md);
@@ -166,10 +183,7 @@ register int awi;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	awstate = aw;                    /* ЗАПОМНИТЬ НА СЛЕД. РАЗ */
 
 	/* СНАЧАЛА ВСЕ ВЫКЛЮЧИТЬ */
-
-	if(awold & A_SO) {
-		w_raw(t_se);
-	}
+	if(awold & A_SO) w_raw(t_se);
 	if(awold & A_US) w_raw(t_ue);
 	if(awold & (A_MD|A_MR|A_MB|A_MK)) w_raw(t_me);
 

@@ -24,6 +24,13 @@ LPA     *lpa_p[2] = {
 	lpaout,         lpainp
 	};
 
+/* Color support for attr.cv page */
+char   *gsrms[] = {
+		" 0/BW only    ",
+		" 1/BW + color ",
+		0 };
+extern int		gsrmode;
+
 extern  LINE linem[];
 LINE *
 getl4(line)

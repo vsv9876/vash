@@ -36,26 +36,26 @@ LINE *phline;           /* ινρ ζακμα στςαξιγω HELP */
     w_page(page);
 
     while ( -1 ) {
-	cod = r_page( page, &cline, 0);
-	switch ( cod ) {
-	case ' ':
-		/* πεςεςισοχατψ ποσμε νεξΰ */
-		if((cline->attr & LMSE) == LMSE) {
-			er_pag();
+		cod = r_page( page, &cline, 0);
+		switch ( cod ) {
+		case ' ':
+			/* πεςεςισοχατψ ποσμε νεξΰ */
+			if((cline->attr & LMSE) == LMSE) {
+				er_pag();
+				w_page(page);
+			}
+			break;
+		case KB_EX :
+			/*NOBREAK*/
+			return;
+		case '?':
+		case KB_HE:
+			/* πολαϊατψ σπςαχοώξυΰ ιξζοςναγιΰ */
+			w_help(phline);
 			w_page(page);
+			break;
+		default:   w_emsg("");     /* ποηασιτψ σοοβύεξιε οβ οϋιβλε */
 		}
-		break;
-	case KB_EX :
-		/*NOBREAK*/
-		return;
-	case '?':
-	case KB_HE:
-		/* πολαϊατψ σπςαχοώξυΰ ιξζοςναγιΰ */
-		w_help(phline);
-		w_page(page);
-		break;
-	default:   w_emsg("");     /* ποηασιτψ σοοβύεξιε οβ οϋιβλε */
-	}
     }
 }
 

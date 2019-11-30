@@ -27,6 +27,7 @@
 	W_mr   = &wamask[4];
 	W_mb   = &wamask[5];
 	W_mk   = &wamask[6];
+	GSR    = &gsrmode;
 ---TABLES
 	t = 1;
 ---LINES
@@ -45,31 +46,36 @@
 	mr      = ia - W_mr   cvt_va  - LPA_B
 	mb      = ia - W_mb   cvt_va  - LPA_B
 	mk      = ia - W_mk   cvt_va  - LPA_B
+	fg      = ia - 0      cvt_ca  - LPA_B
+	bg      = ia - 0      cvt_ca  - LPA_B
 	hl      = gca - -      cvt_hl  - "."
-	color   = iac - -     -        - "bw only hack"
+	gsr     = aip - gsrms cvt_a   - GSR
+---#
 ---# WARNING!
 ---# Do not touch string 4 (contains .TXT. .HDR. ...), because
 ---# format conversion function for selector depends on screen coordinates of it.
+---# for example, columns of fields .t and .HDR must be the same
+---#
 ---SCREEN
 =Video and prompters setup
 
-+                     Prompter: .P..  .t..  .t..  .t..  .t..  .t..  .t..
-+ .hl...................................................................
-+ displayed on output:          .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .ATT.
-+
-+           prompted on input:
-+ .hl...................................................................
-+         :so  "outstand"       .so.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :us  "underline"      .us.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :md  "bright"         .md.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :mr  "reverse"        .mr.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :mb  "blink"          .mb.  .t..  .t..  .t..  .t..  .t..  .t..
-+         :mk                   .mk.  .t..  .t..  .t..  .t..  .t..  .t..
----#+         :vs  "background"     .vs.  .t..  .t..  .t..  .t..  .t..  .t..
-  .hl...................................................................
----#+         :fg
----#+         :bg
----#+         .color..
----#+ .hl...................................................................
----#+         :              :...   :...  :...  :...  :...  :...  :...  :...
++       prompt:             .P..  .t..  .t..  .t..  .t..  .t..  .t..     demo
++                           .hl........................................,/
++       output:             .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .ATT.  : 
++                                                                      : 
++       input:                                                         : BW
++	.hl............................................................;/
++	:so  "outstand"     .so.  .t..  .t..  .t..  .t..  .t..  .t..     
++	:us  "underline"    .us.  .t..  .t..  .t..  .t..  .t..  .t..
++	:md  "bright"       .md.  .t..  .t..  .t..  .t..  .t..  .t..
++	:mr  "reverse"      .mr.  .t..  .t..  .t..  .t..  .t..  .t..
++	:mb  "blink"        .mb.  .t..  .t..  .t..  .t..  .t..  .t..
+---#	:mk  "hidden"       .mk.  .t..  .t..  .t..  .t..  .t..  .t..
+---#+	:vs  "background"   .vs.  .t..  .t..  .t..  .t..  .t..  .t..    
++	.hl............................................................,
+---#+	fg:                 .fg   .t..  .t..  .t..  .t..  .t..  .t..   : 
+---#	bg:                 .bg   .t..  .t..  .t..  .t..  .t..  .t..   :      
+	rendering mode:     .gsr....................................   : color
+	.hl............................................................;/
+---#	:  :                :...  :...  :...  :...  :...  :...  :...  :........:
 ---END

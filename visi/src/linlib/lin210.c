@@ -186,55 +186,39 @@ KBL kbl[KBLSIZE] = {
 	};
 
 
-LPA lpaout[LPASIZE] = {
-	{       ' ',    0,          "0"     },
-	{       ' ',    0,          "37;44" },              /* TXT  */
-	{       ' ',    A_SO,       "36;40" },              /* HDR  */
-	{       ':',    A_MD,       "33"    },              /* VAR  */
-	{       ':',    A_MD,       "33"    },              /* ALT  */
-	{       '-',    A_MD,       "33"    },              /* MSE  */
-	{       ' ',    A_US|A_MD,  "33;41" },              /* ERR  */
-	{       '!',    A_SO,       "32;40" },              /* ATT  */
-};
-
-LPA lpainp[LPASIZE] = {
-	{       ' ',    0,          "37;44" },              /* FGBG */
-	{       ' ',    A_MD,       "31;49" },              /* TXT  */
-	{       ' ',    A_SO,       "36;44" },              /* HDR  */
-	{       '#',    A_SO,       "37;40" },              /* VAR  */
-	{       '?',    A_SO,       "37;40" },              /* ALT  */
-	{       '>',    A_SO,       "37;40" },              /* MSE  */
-	{       ' ',    A_US|A_MD,  "36;41" },              /* ERR  */
-	{       ' ',    A_MB,       "37;45" },              /* ATT  */
-};
-
 /*
  * TODO: line0.h
  *
  * ANSI color logical tables for SGR
  * note: there is no defined constant to index FGBG - it is simpy 0 (zero)
  *
- * Note: active code in w_sgr() from lin320.c and vhset/attr.c
+ * Note: active code is in w_sgr() from lin320.c and vhset/attr.c
+ *
+ * now a member of LPA strcture:
+ * char *acout [LPASIZE];
+ * char *acinp [LPASIZE];
+ *
  */
-#ifdef VISI_COLOR_HACK
-char *acout [LPASIZE] = {
-	"0",
-	"44;37",		/* TXT  */
-	"40;36",		/* HDR  */
-	"33",			/* VAR  */
-	"33",			/* ALT  */
-	"33",			/* MSE  */
-	"33;41",		/* ERR  */
-	"32;40",		/* ATT  */
+LPA lpaout[LPASIZE] = {
+	{       ' ',    0,          "0"     },
+	{       ' ',    0,          "37;44" },              /* TXT  */
+	{       ' ',    A_SO,       "36;40" },              /* HDR  */
+	{       ' ',    A_MD,       "33"    },              /* VAR  */
+	{       ' ',    A_MD,       "33"    },              /* ALT  */
+	{       '-',    A_MD,       "33"    },              /* MSE  */
+	{       ' ',    A_US|A_MB,  "33;41" },              /* ERR  */
+	{       '!',    A_SO,       "32;40" },              /* ATT  */
 };
-char *acinp [LPASIZE] = {
-	"44;37",		/* FGBG */
-	"37",			/* TXT  */
-	"40;36",		/* HDR  */
-	"33",			/* VAR  */
-	"33",			/* ALT  */
-	"33",			/* MSE  */
-	"36;41",		/* ERR  */
-	"36;41",		/* ATT  */
+
+LPA lpainp[LPASIZE] = {
+	{       ' ',    0,          "1;37;44", },             /* FGBG */
+	{       ' ',    A_MD,       "31;49" },              /* TXT  */
+	{       ' ',    A_SO,       "36;44" },              /* HDR  */
+	{       '#',    A_SO,       "37;40" },              /* VAR  */
+	{       '?',    A_SO,       "37;40" },              /* ALT  */
+	{       '*',    A_SO,       "37;40" },              /* MSE  */
+	{       ' ',    A_US|A_MD,  "36;41" },              /* ERR  */
+	{       ' ',    A_US,       "37;45" },              /* ATT  */
 };
-#endif
+
+int		gsrmode = 0; /* initial monochrome */
