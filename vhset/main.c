@@ -42,9 +42,9 @@ static  int ex_flg = 0; /* флаг: пора заканчивать */
 mkquit()
 {
 	er_pag();
-	cp_set(0, 0, TXT);
+	cp_set(0, 0, ATT);
 	printf("%s", "New setup is lost");
-	cp_set(2, 0, TXT);
+	cp_set(2, 0, CMD);
 	ex_flg = 1;
 	return(TRUE);
 }
@@ -53,7 +53,7 @@ mkquit()
 extern  KBL kbl[];
 /* флаг: доп. клавиатура включена */
 extern  int     kpadon;
-extern int		gsrmode; /* initial monochrome */
+extern int		sgrmode; /* initial monochrome */
 
 
 mkexit()
@@ -70,13 +70,13 @@ mkexit()
 			fprintf(ofp, "%1d%c%03o%c%03o\t%s\t%s\n", i,
 			lpaout[i].lpa_p, lpaout[i].lpa_a,
 			lpainp[i].lpa_p, lpainp[i].lpa_a,
-			lpaout[i].lpa_gsr,
-			lpainp[i].lpa_gsr);
+			lpaout[i].lpa_sgr,
+			lpainp[i].lpa_sgr);
 		}
 
 		/*---- доп. клавиатура. TODO: color mode index: 0==BW, 1==1st_color_set -- not yet implemented */
 		fprintf(ofp, "%c", (kpadon ? '+' : '-'));
-		fprintf(ofp, "%1d\n", gsrmode);
+		fprintf(ofp, "%1d\n", sgrmode);
 
 		/*---- клавиши */
 		for(kblp=kbl; kblp->t_cod; kblp++) {
@@ -88,11 +88,11 @@ mkexit()
 			if(kblp->t_knm) fprintf(ofp, "%s", kblp->t_knm);
 			putc('\n', ofp);
 		}
-		cp_set(-1, 0, 0);
+		cp_set(-1, 0, CMD);
 	} else {
 		er_pag();
 		cp_set(2, 0, ERR); fflush(vttout);
-		printf("%s", "setup data file was not saved"); fflush(stdout);
+		printf("%s", "cannot save file, setup data lost"); fflush(stdout);
 	}
 	ex_flg = 1;
 	return(TRUE);

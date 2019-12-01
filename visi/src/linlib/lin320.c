@@ -49,7 +49,7 @@ extern  LPA lpainp[];
 /* СТАРОЕ СЛОВО АТРИБУТОВ: */
 static    int awstate = AW_INIT_STATE;  /* ДЛЯ НАЧАЛА ВСЕ ВКЛЮЧЕНО */
 static  char *acstate = (char *)0;
-extern  int gsrmode;
+extern  int sgrmode;
 
 #define HACK_COLOR
 #ifdef HACK_COLOR
@@ -68,12 +68,12 @@ char *gsr;
 	static char s_csi[40] = "";
 	char *s = s_csi;
 
-	if(gsrmode == 0) {
+	if(sgrmode == 0) {
 		//awstate = AW_INIT_STATE;
 		return;
 	}
 	if (gsr == (char *)0 || *gsr == '\0') {
-		gsr = lpaout[0].lpa_gsr;
+		gsr = lpaout[0].lpa_sgr;
 		acstate = (char *)0;
 	}
 	if (acstate == (char *)0 || acstate != gsr) {
@@ -106,10 +106,10 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	aix_new    = aw_new & VIDEO;
 	if(aw_new & INP) {
 		aw = lpainp[aix_new].lpa_a;
-		ac = lpainp[aix_new].lpa_gsr;
+		ac = lpainp[aix_new].lpa_sgr;
 	} else {
 		aw = lpaout[aix_new].lpa_a;
-		ac = lpaout[aix_new].lpa_gsr;
+		ac = lpaout[aix_new].lpa_sgr;
 	}
 	/* оптимизация повторной выдачи*/
 	if(aw == aw_old && ac == ac_old) {
@@ -128,7 +128,8 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	/* ТЕПЕРЬ ВКЛЮЧИТЬ */
 	//if (ac != ac_old) {
 		/*w_sgr(0);*/
-		w_sgr(lpainp[0].lpa_gsr); /* FGBG, used as preamble of GCR */
+	/*w_sgr(lpainp[0].lpa_sgr); /* FGBG, used as preamble of GCR */
+	    w_sgr(lpaout[TXT].lpa_sgr); /* TXT as default background */
 		w_sgr(ac);
 	//}
 	if(aw != 0) {
@@ -243,12 +244,12 @@ er_pag()
  */
 {
 	/*awstate = AW_INIT_STATE;*/
-	/*at_set(TXT);    /* экран гасится атрибутом текста (темный фон) */
+	at_set(TXT);    /* экран гасится атрибутом текста для видеорежима */
 	/*
 	 * меньше ошибок, если комбинировать атрибуты фона и гашение по отдельности, но
 	 * старый код содержит массу применений этой функции - проще сблокировать
 	 */
-	at_set(FGBG);
+	/*at_set(FGBG);*//*experiment, TODO cleanup*/
 	w_raw(t_cl);
 
 }

@@ -31,7 +31,7 @@ register char *cmd;
 	register int i;
 
 	cp_set(-1 /*y0-1*/, 0, TXT); er_eol(TXT);
-	at_set(TXT|INP);
+	at_set(CMD|INP);
 	/*if (getuid() == 0) pmtsh = ".#";*/
 	w_str(pmtsh);
 	cp_set(-1 /*y0-1*/, pmtshsz, TXT);
@@ -41,8 +41,8 @@ register char *cmd;
 
 scrlst()        /* курсор к началу свитка */
 {
-	cp_set(y0_top, 0, TXT); er_eop(0);
-	cp_set(y0_top - 1, 0, 0);
+	cp_set(y0_top, 0, CMD); er_eop(CMD);
+	cp_set(y0_top - 1, 0, CMD);
 	fflush(vttout);
 }
 
@@ -214,7 +214,7 @@ std_shell:
 					w_str(tmpstr);
 				}
 			}
-			at_set(TXT);
+			at_set(CMD);
 			if (okwait == 1) {
 				do {
 					fflush(vttout);

@@ -115,7 +115,7 @@ int hlp_clr() {
 		hlp_onscreen = 0;
 		cur_co = 0;
 		for (cur_li = clm._y0; cur_li <= maxli; cur_li++) {
-			cp_set(cur_li, cur_co, TXT); er_eol(FGBG);
+			cp_set(cur_li, cur_co, TXT); er_eol(TXT);
 		}
 	}
 }

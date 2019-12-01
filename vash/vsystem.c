@@ -124,9 +124,9 @@ void shstart()
 	/*cp_set(0, 0, TXT); er_eol();    /* погасить cwd */
 
 	if (clm._y0 > y0_top)
-		cp_set(y0_top-1, 0, TXT);
+		cp_set(y0_top-1, 0, CMD);
 	else
-		cp_set(clm._y0 - 1, 0, TXT);
+		cp_set(clm._y0 - 1, 0, CMD);
 
 	y0_top = clm._y0;    /* установить границу свитка */
 	at_set(0); /* er_eop(); /*HACK*/
@@ -256,19 +256,9 @@ int  execapnd;
 		cmdlbl = cmd2;  /* саму команду и показать */
 	}
 //	at_set(TXT);
-//	at_set(TXT|INP);
-//	/* fprintf(vttout, "%s", pmtsh);*/
-//	/* w_str(pmtsh); */
-//	/*at_set(TXT);*/
-//	at_set(0); er_eop();
-//	fflush(vttout);
-//	printf("%s", pmtsh); /*only legal prompt in IO_TTYPE*/
-
-//	at_set(TXT);
 	at_set(0); er_eop(0);
-	at_set(TXT|INP);
+	at_set(0|INP);
 	w_str(pmtsh);
-	/*at_set(TXT); at_set(0);*/
 	er_eop(0);
 	fflush(vttout);
 	io_set(IO_TTYPE);

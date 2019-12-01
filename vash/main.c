@@ -52,9 +52,9 @@ int ok;
 #ifdef RETRO
 	cp_set(-1, 0, TXT);
 #else
-	cp_set(clm._y0-1, 0, TXT);
+	cp_set(clm._y0-1, 0, CMD);
 	er_eop(0);
-	cp_set(clm._y0-1, 0, 0);
+	cp_set(clm._y0-1, 0, CMD);
 #endif
 	io_set(IO_TTYPE);
 #ifdef RETRO

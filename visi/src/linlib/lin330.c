@@ -63,7 +63,7 @@ register int infflg;
 	cp_sav();
 #endif
 	cp_set(maxli-1, maxco-8, TXT);
-	er_eol();
+	er_eol(TXT);
 	cp_set(maxli-1, maxco-7, TXT|INP);
 	if ( infflg ) {
 		w_str("ed:");
@@ -74,7 +74,7 @@ register int infflg;
 		}
 	} else {
 		cp_set(maxli-1, maxco-8, TXT);
-		er_eol(FGBG);
+		er_eol(TXT);
 	}
 #ifndef CP_SAV
 	cp_fet();

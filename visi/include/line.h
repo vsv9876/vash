@@ -134,6 +134,7 @@ typedef struct  {
 /*---------------------------------------*/
 
 /*---- основные логические типы видеоатрибутов */
+#define CMD 0x0       /* команды терминала, режим за пределами visi */
 #define TXT 1       /* текст комментария (TEXT) */
 #define HDR 2       /* заголовок (HEADER)  */
 #define VAR 3       /* поле для ввода (VARIABLE) */
@@ -164,7 +165,7 @@ typedef struct  {
 #define LALT (ALT|MID|PAD|NED)
 #define LMSE (MSE|FLO)
 /* атрибут для заполнения фона при диалогах LINLIB */
-#define FGBG (INP)
+/*#define FGBG (INP)*/
 
 /*----------------------*/
 /* биты флагов задержек */

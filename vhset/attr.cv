@@ -6,6 +6,7 @@
 
 /* атрибуты видео, специально переопределенные для использования внутри vhset */
 
+#define USRATTR8 CMD|MID|PAD|NED
 #define USRATTR1 TXT|MID|PAD|NED
 #define USRATTR2 HDR|MID|PAD|NED
 #define USRATTR3 VAR|MID|PAD|NED
@@ -18,7 +19,7 @@
 
 ---PAGE linem
 ---PORTS
-	LPA_B = 1;
+	LPA_B = 0
 	LPA_PI = &lpa_pi;
 	W_so   = &wamask[0];
 	W_us   = &wamask[1];
@@ -27,11 +28,14 @@
 	W_mr   = &wamask[4];
 	W_mb   = &wamask[5];
 	W_mk   = &wamask[6];
-	GSR    = &gsrmode;
+	SGR    = &sgrmode;
+---#	SGR_B  = 0
+	SGRA   = &sgra;
 ---TABLES
 	t = 1;
 ---LINES
 	P       = ia - -      cvt_pmt - LPA_B
+	CMD     = g8 - -      cvt_atr - " cmd "
 	TXT     = g1 - -      cvt_atr - " TXT "
 	HDR     = g2 - -      cvt_atr - " HDR "
 	VAR     = g3 - -      cvt_atr - " VAR "
@@ -46,36 +50,39 @@
 	mr      = ia - W_mr   cvt_va  - LPA_B
 	mb      = ia - W_mb   cvt_va  - LPA_B
 	mk      = ia - W_mk   cvt_va  - LPA_B
-	fg      = ia - 0      cvt_ca  - LPA_B
-	bg      = ia - 0      cvt_ca  - LPA_B
-	hl      = gca - -      cvt_hl  - "."
-	gsr     = aip - gsrms cvt_a   - GSR
+	hl      = gca - -     cvt_hl  - "."
+	sgr     = ia - -      cvt_sgr -      LPA_B
+	sgrA    = v  - -      cvt_sg  - SGRA
+	sgrm    = ai - sgrms cvt_a   sgrtst SGR
 ---#
 ---# WARNING!
 ---# Do not touch string 4 (contains .TXT. .HDR. ...), because
 ---# format conversion function for selector depends on screen coordinates of it.
 ---# for example, columns of fields .t and .HDR must be the same
----#
+---# 
+---# place of .sgra line must be below .sgr line??? TODO cleanup this comment
 ---SCREEN
-=Video and prompters setup
+=visual/video attributes setup
 
-+       prompt:             .P..  .t..  .t..  .t..  .t..  .t..  .t..     demo
-+                           .hl........................................,/
-+       output:             .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .ATT.  : 
-+                                                                      : 
-+       input:                                                         : BW
-+	.hl............................................................;/
-+	:so  "outstand"     .so.  .t..  .t..  .t..  .t..  .t..  .t..     
-+	:us  "underline"    .us.  .t..  .t..  .t..  .t..  .t..  .t..
-+	:md  "bright"       .md.  .t..  .t..  .t..  .t..  .t..  .t..
-+	:mr  "reverse"      .mr.  .t..  .t..  .t..  .t..  .t..  .t..
-+	:mb  "blink"        .mb.  .t..  .t..  .t..  .t..  .t..  .t..
----#	:mk  "hidden"       .mk.  .t..  .t..  .t..  .t..  .t..  .t..
----#+	:vs  "background"   .vs.  .t..  .t..  .t..  .t..  .t..  .t..    
-+	.hl............................................................,
----#+	fg:                 .fg   .t..  .t..  .t..  .t..  .t..  .t..   : 
----#	bg:                 .bg   .t..  .t..  .t..  .t..  .t..  .t..   :      
-	rendering mode:     .gsr....................................   : color
-	.hl............................................................;/
----#	:  :                :...  :...  :...  :...  :...  :...  :...  :........:
++     prompt            .P..  .t..  .t..  .t..  .t..  .t..  .t..  .t..
++       .hl............................................................
++                       .CMD. .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .ATT.  
++     demo/test									
++									
++    .hl...............................................................
++    :so:outstand       .so.  .t..  .t..  .t..  .t..  .t..  .t..  .t..     
++    :us:underline      .us.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
++    :md:bright/bold    .md.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
++    :mr:reverse        .mr.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
++    :mb:blink          .mb.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
+---#+    :mk:hidden         .mk.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
+---#+    :vs:background     .vs.  .t..  .t..  .t..  .t..  .t..  .t..  .t..    
++    .hl...............................................................
++    mode: .sgrm.......	.sgr  .t.   .t..  .t..  .t..  .t..  .t..  .t..
+
++    SGR %:		.sgrA......							  
++
++              		
+	.hl.............................................................
+---#	:  :          :...  :...  :...  :...  :...  :...  :...  :...  :........:
 ---END

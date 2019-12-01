@@ -89,7 +89,9 @@ SUFFIX        = .cv:sC
 #	$(VCC) -o $@ $<
 
 .cv.i:
+	rm -f $@
 	$(VCC) -o $@ $<
+	chmod a-w $@
 
 #.cv.o:
 #	$(VCC) -o $*.c $<

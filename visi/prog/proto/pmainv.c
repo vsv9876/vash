@@ -17,7 +17,7 @@ static  int ex_flg;     /* זלבח: נןעב תבכבמ‏יקבפר */
 
 mkexit()
 {
-	cp_set(-1, 0, TXT);
+	cp_set(-1, 0, CMD);
 	ex_flg = 1;
 	return(TRUE);
 }
@@ -73,7 +73,7 @@ vmain()
 			break;
 		default :
 			w_emsg("");
-			cp_set(-1, 0, TXT);
+			cp_set(-1, 0, CMD);
 			printf("<%c%c>", cod1(cod), cod0(cod));
 			fflush(vttout);
 			break;

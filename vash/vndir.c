@@ -478,7 +478,7 @@ cwdshow()
 			showli = clm._y0 - 1;
 			cp_set(clm._y0 - 1, 0, TXT);
 		}
-		er_eop(FGBG);
+		er_eop(TXT);
 		/*showli = y0_top-1 clm._y0 -1;*/ deltco = 0;
 #endif
 	} else {
@@ -661,11 +661,11 @@ int newflag;    /* если 0, то только обновить каталог */
 	/*NOSTRICT*/
 		if (Cfill[0] == '\0'
 		||  (fpls = popen(tmpbuf, "r")) == NULL) {
-			cp_set(-1, 0, TXT);
+			cp_set(-1, 0, ERR);
 			io_set(IO_TTYPE);
 			fprintf(vttout, "\n");
 			fprintf(stdout, /* stderr */
-"\nMain menu build failed with error ('%s')\n", tmpbuf);/*Cfill);*/
+"\nFill command failed with error ('%s')\n", tmpbuf);/*Cfill);*/
 			perror(Cfill);
 			fatal();
 		}

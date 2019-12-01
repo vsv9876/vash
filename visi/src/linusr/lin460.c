@@ -43,7 +43,7 @@ register char    *str ;         /* текст сообщения об ошибке */
 	if (msgflg) {                   /* если строка на экране занята */
 		msgflg = 0;             /* погасить ее */
 		cp_set(-1, 0, TXT);
-		er_eol();
+		er_eol(TXT);
 	}
 	if (*str) {    /* если аргумент вызова непустая строка */
 		msgflg = 1;
@@ -53,7 +53,7 @@ register char    *str ;         /* текст сообщения об ошибке */
 			w_str("Err: ");
 		}
 		w_str(str); w_str(" ");
-		at_set(TXT); er_eol(FGBG);
+		at_set(TXT); er_eol(TXT);
 	}
 }
 

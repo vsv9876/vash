@@ -31,7 +31,7 @@ char    **text;         /* ףנעבקן‏משך פוכףפ */
 {
 	register i ;
 
-	er_scr(from, to, FGBG); /* TODO check using function help(), may be never used */
+	er_scr(from, to, TXT); /* TODO check using function help(), may be never used */
 
 	if(text) {
 		for( i=from; *text; i++) {

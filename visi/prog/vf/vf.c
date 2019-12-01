@@ -54,7 +54,7 @@ int     ofsy = 10;      /* ВВЕРХ/ВНИЗ */
 fatal()
 {
 	fprintf(stderr, "FATAL ERROR - exit\n");
-	cp_set(-1, 0, TXT);
+	cp_set(-1, 0, CMD);
 	io_set(IO_TTYPE);
 	exit(1);
 }
@@ -251,7 +251,7 @@ clritm()
 
     for (i = 0; i < yy; i++) {
 	cp_set(i+y0, 0, TXT);
-	er_eol(FGBG);
+	er_eol(TXT);
     }
 }
 
@@ -287,7 +287,7 @@ LINE *helpl;
 
 	/* первоначальный показ на экране */
 	cp_set(y0, 0, TXT);
-	er_eop(FGBG);
+	er_eop(TXT);
 	itmshow();
 	w_page(mainl);
 

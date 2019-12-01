@@ -66,7 +66,7 @@ extern  LPA     lpaout[];
 extern  KBL     kbl[];      /* οπισαξιε χοϊνοφξοστεκ τεςνιξαμα */
 extern  char   *filelh;    /* υλαϊατεμψ ξα ινρ ζακμα σ οπισαξιεν */
 extern  int     kpadon;    /* ζμαη: δοπομξιτεμψξαρ λμαχιατυςα χλμΰώεξα */
-extern int		gsrmode;   /* initial monochrome */
+extern int		sgrmode;   /* initial monochrome */
 
 #ifdef DEMOS2
 extern  char *getenv();
@@ -160,7 +160,7 @@ cont1:
 		if (*s == '+' || *s == '-') {
 			if (*s == '+')      { w_raw(t_ks); kpadon = 1;      }
 			if (*s == '-')      { w_raw(t_ke); kpadon = 0;      }
-			if (isdigit(str[1]))	{		gsrmode = s[1] - '0'; }
+			if (isdigit(str[1]))	{		sgrmode = s[1] - '0'; }
 		}
 		/* λοδ ι ξαϊχαξιε λξοπλι ? */
 		else if(*s == ':') {
@@ -225,7 +225,7 @@ cont1:
 				lpapset[1] = &lpainp[*str & 07];
 				for(i = 0; i < 2; i++) {
 					lpap = lpapset[i];
-					for(os = lpap->lpa_gsr; *s != '\0' && *s != '\n' && *s != '\t'; *os++,*s++) {
+					for(os = lpap->lpa_sgr; *s != '\0' && *s != '\n' && *s != '\t'; *os++,*s++) {
 						*os = *s;
 					}
 					*os = '\0'; *s++; /* skip <TAB> before next GSR*/

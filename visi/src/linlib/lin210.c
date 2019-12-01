@@ -221,4 +221,4 @@ LPA lpainp[LPASIZE] = {
 	{       ' ',    A_US,       "37;45" },              /* ATT  */
 };
 
-int		gsrmode = 0; /* initial monochrome */
+int		sgrmode = 0; /* initial monochrome */

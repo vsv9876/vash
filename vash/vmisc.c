@@ -24,10 +24,12 @@ showtime(on)
 /* Управление семафором часов и др. асинхронных заданий */
 {
 	nxtjflag = on;
+#ifdef RETRO
 	if ( !on && clockf) {
 		cp_set(1, maxco-8, TXT);
 		fprintf(vttout, "%8.8s", "");
 	}
+#endif
 }
 
 showclck()
@@ -50,7 +52,7 @@ showclck()
 #ifndef CP_SAV
 			cp_sav();
 #endif
-			cp_set(maxli-2/*1*/, maxco-8, ATT);
+			cp_set(maxli-2/*1*/, maxco-8, TXT|INP);
 			fprintf(vttout, "%02d:%02d'%02d",
 			tp->tm_hour, tp->tm_min, tp->tm_sec);
 #ifndef CP_SAV
@@ -175,7 +177,7 @@ scrlnl()
 
 fatal()
 {
-	cp_set(-1, 0, TXT);
+	cp_set(-1, 0, CMD);
 	io_set(IO_TTYPE);
 	fprintf(stderr, "FATAL ERROR - exit\n");
 	exit(1);
