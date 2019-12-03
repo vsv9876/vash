@@ -1,30 +1,30 @@
-0 000 000
-1 000 010
-2 023 001
-3>010#001
-4>010?001
-5-010*001
-6 062 000
-7!050 040
-+
-:^KKPCtrl-K 
-:kuAUUP     
-:kdADDOWN   
-:klALLEFT   
-:krARRIGHT  
-:^JNLEnter  
-:deDE<---bs
-:^CEXCtrl-C 
+0 000 010		32;49
+1 000 010	37;44	37
+2 022 022	37;49	36;49
+3 010#020	37	37;40
+4 010?020	37;45	37;40
+5-010*020	35	37;40
+6 012 012	37;41	36;41
+7!060 022	36	36;37
++1
+:^KKPctrl-K
+:kuAUup
+:kdADdown
+:klALleft
+:krARright
+:^JNLEnter
+:deDE<--
+:^CEXctrl-C
 :k1HEF1     
-:^VPRCtrl-V 
-:^LRECtrl-L 
-:^ITATAB    
+:^VPRctrl-V
+:^LREctrl-L
+:^ITA-->|
 :^AKHHome  
 :^EKEEnd   
 :^BPUPgUp  
-:^FPDPgDown
-:kDKDdel->  
-:kIINInsert
+:^FPDPgDn
+:kDKDDel
+:kIINIns
 :khKHHome  
 :@7KEEnd   
 :kPPUPgUp  
@@ -44,6 +44,6 @@
 :f-U-
 :f,U,
 :^MNL
-:^HHE
+:^HDE
 :^XEX
 :^RRE

@@ -30,11 +30,11 @@ register char *cmd;
 {
 	register int i;
 
-	cp_set(-1 /*y0-1*/, 0, TXT); er_eol(TXT);
+	cp_set(-1 /*y0-1*/, 0, CMD); er_eol(CMD);
 	at_set(CMD|INP);
 	/*if (getuid() == 0) pmtsh = ".#";*/
 	w_str(pmtsh);
-	cp_set(-1 /*y0-1*/, pmtshsz, TXT);
+	cp_set(-1 /*y0-1*/, pmtshsz, CMD);
 	for(i = 0; cmd[i] && i < cmdsize; i++)
 		w_chr(cmd[i]);
 }
