@@ -3,9 +3,11 @@
 # vash -- Visual Assistant Shell
 # src directory
 vashdir="$HOME/proj-ws/vash-1."
+#bintest=vash/vash
+bintest=.
 
 # debug env, reset my own regular setup
-if [ -x $vashdir/vash/vash ]; then
+if [ -x $vashdir/$bintest ]; then
     onpath=`echo $PATH|grep -c $vashdir/vash:`
     if [ $onpath -eq 0 ]; then
 	PATH=$vashdir/vash:$PATH;
@@ -17,10 +19,12 @@ if [ -x $vashdir/vash/vash ]; then
     export VASH_EXDIR
     VASH_PATH=$VASH_EXDIR:/usr/lib/vash
     export VASH_PATH
+    VHSET=$vashdir/etc/vhset
+    export VHSET
     ASHLBL='debug:'
     export ASHLBL
-    echo ''
-    echo "		*** Warning: this is DEBUG version of vash ***"
-    echo ''
+    echo ' ***'
+    echo " *** Warning: this is DEBUG environment for $vashdir ***"
+    echo ' ***'
 fi
 exec /usr/bin/v "$@"

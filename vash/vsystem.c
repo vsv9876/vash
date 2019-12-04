@@ -44,7 +44,7 @@ int execmode;
 	int forked;             /* флаг: есть порожденный процесс */
 	int syscod;
 	void (*sigint)();
-	/* реакция на сигнал уже была установлена SIG_IGN,
+	/* реакция на сигнал(ы) уже была установлена SIG_IGN,
 	   здесь повторяется для надежности, после окончательной
 	   отладки надо убрать */
 	sigint = signal( SIGINT, SIG_IGN);
@@ -71,7 +71,9 @@ int execmode;
 			signal( SIGINT, SIG_DFL );
 			signal( SIGQUIT, SIG_DFL );
 		}
-		/* здесь переопределить станд. файлы */
+		/* здесь переопределить станд. файлы, -- man credentials(7) ?*/
+		//setsid();
+		//setpgrp();
 		/*...*/
 
 #ifndef LUNIX
@@ -79,7 +81,7 @@ int execmode;
 #else
 		execvp(argv0, argv);
 #endif
-		fprintf(stderr, "ASH Can't exec %s\n", argv0);
+		fprintf(stderr, "%s: vash cannot exec\n", argv0);
 		if (forked)
 			exit(1);
 		else    {
@@ -102,6 +104,7 @@ int execmode;
 
 		signal( SIGINT, sigint );
 		signal( SIGQUIT, SIG_IGN );
+		/*signal (SIGTSTP, SIG_IGN);*/
 		return(syscod);
 	}
 #ifdef lint
@@ -181,7 +184,7 @@ int  execapnd;
 	 * макс. длина аргументов + длина префикса "exec "
 	 */
 	char cmd2[NCARGS + 6];
-	char *argv[5];
+	char *argv[7];
 	int syscod;         /* код возврата команды */
 	int i;
 	register int j;
@@ -277,7 +280,7 @@ int  execapnd;
 		syscod = avexec(cmd2, cmdlbl, execmode);
 	else {
 		argv[0] = envshell; /* "sh";*/
-		argv[1] = "-c";
+		argv[1] = "-c"; /* please, do not hack -cli for bash :) */
 		argv[2] = cmd2;
 		argv[3] = (char *)0;
 

@@ -74,6 +74,17 @@ if [ x${PAGER} = x ]; then
     LESS=-qmeXR
     export LESS
 fi
+# make ~/.bashrc aliases workable
+# (in extern shell only via setup mode
+#  or string terminated with ';')
+
+# make sure your .bashrc contains option: 
+#	shopt -s expand_aliases
+# https://emacs.stackexchange.com/questions/3447/cannot-set-terminal-process-group-error-when-running-bash-script
+if [ x"$SHELL" !=x && `basename $SHELL` = bash ]; then
+	BASH_ENV="$HOME/.bashrc"
+	export BASH_ENV
+fi
 
 #stty kill '^u'
 

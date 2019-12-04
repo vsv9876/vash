@@ -66,7 +66,7 @@ register int infflg;
 	er_eol(TXT);
 	cp_set(maxli-1, maxco-7, TXT|INP);
 	if ( infflg ) {
-		w_str("ed:");
+		w_str(":");
 		if ( edinsm ) {
 			w_str("Ins");
 		} else {
