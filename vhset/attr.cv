@@ -31,6 +31,7 @@
 	SGR    = &sgrmode;
 ---#	SGR_B  = 0
 	SGRA   = &sgra;
+	SGRATS = &sgrats[0];
 ---TABLES
 	t = 1;
 ---LINES
@@ -51,8 +52,9 @@
 	mb      = ia - W_mb   cvt_va  - LPA_B
 	mk      = ia - W_mk   cvt_va  - LPA_B
 	hl      = gca - -     cvt_hl  - "."
-	sgr     = ia - -      cvt_sgr -      LPA_B
-	sgrA    = v  - -      cvt_sg  - SGRA
+	sgr     = ia - -      cvt_sgr - LPA_B
+---#	sgrA    = v  - -      cvt_sg  - SGRA
+	sgrATS  = v  - -      -       - SGRATS
 	sgrm    = ai - sgrms cvt_a   sgrtst SGR
 ---#
 ---# WARNING!
@@ -79,10 +81,9 @@
 ---#+    :vs:background     .vs.  .t..  .t..  .t..  .t..  .t..  .t..  .t..    
 +    .hl...............................................................
 +    mode: .sgrm.......	.sgr  .t.   .t..  .t..  .t..  .t..  .t..  .t..
-
-+    SGR %:		.sgrA......							  
-+
+---#+          	      %	.sgrA......							  
++		       	.sgrATS....
++	.hl.............................................................
 +              		
-	.hl.............................................................
 ---#	:  :          :...  :...  :...  :...  :...  :...  :...  :...  :........:
 ---END

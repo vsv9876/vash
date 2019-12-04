@@ -81,7 +81,8 @@ fi
 # make sure your .bashrc contains option: 
 #	shopt -s expand_aliases
 # https://emacs.stackexchange.com/questions/3447/cannot-set-terminal-process-group-error-when-running-bash-script
-if [ x"$SHELL" !=x -a `basename $SHELL` = bash ]; then
+
+if [ x"$SHELL" != x -a x`basename $SHELL` = xbash ]; then
 	BASH_ENV="$HOME/.bashrc"
 	export BASH_ENV
 fi
