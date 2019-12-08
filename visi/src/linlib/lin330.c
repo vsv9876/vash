@@ -62,9 +62,9 @@ register int infflg;
 #ifndef CP_SAV
 	cp_sav();
 #endif
-	cp_set(maxli-1, maxco-8, TXT);
+	cp_set(maxli-1, maxco-6, TXT);
 	er_eol(TXT);
-	cp_set(maxli-1, maxco-7, TXT|INP);
+	cp_set(maxli-1, maxco-5, TXT|INP);
 	if ( infflg ) {
 		w_str(":");
 		if ( edinsm ) {

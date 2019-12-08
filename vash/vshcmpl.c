@@ -134,7 +134,7 @@ int hlp_compl()
 	slist = sgglist->sl_last;
 
 	for (cur_li = maxli - 3; cur_li >= clm._y0; cur_li--) {
-		cp_set(cur_li, cur_co, TXT); w_chr('*'); er_eol(ATT);
+		cp_set(cur_li, cur_co, TXT); w_chr('*'); er_eol(TXT);
 	}
 	cur_li = clm._y0;
 	cp_set(cur_li, cur_co, TXT|INP); /*er_eop();*/

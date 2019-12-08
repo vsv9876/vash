@@ -24,15 +24,17 @@ LPA     *lpa_p[2] = {
 
 /* Color support for attr.cv page */
 char   *sgrms[] = {
-		"[0] BW(mono) ",
-		"[1] BW+color ",
+		"[0] monochrome ",
+		"[1] color ",
 		0 };
 extern int		sgrmode;
 
 extern  LINE linem[];
 LINE *linesgr = (LINE *)0;
+
 /*char *sgra = "";*/
-char *sgra = lpaout[0].lpa_sgr;
+char *sgra = lpaout[0].lpa_sgr; /* SGR code, common (global) pointer, between cvt_sgr, cvt_co, cvt_csel */
+
 char sgrats[20] = ""; /* SGR attrib tempopary string */
 extern int cvt_sg();
 
@@ -139,34 +141,66 @@ char *str;
 				/*w_line(line);*/
 				cp_set(line->line, line->colu, line->attr);
 				w_str(outstr);
-				if (!sgr_cset(line, cod, sgra))
+				if (!sgr_csel(line, cod, sgra))
 					return(FALSE);
 			}
 			w_line(line4); /* вызов перенесен в sgr_ed(), но теперь на месте, здесь */
+			w_line(linesgr);
+		} else {
+			if (linesgr != NULL) {
+				sgrats[0] = 0;
+				w_line(linesgr);
+			}
 		}
 	}
 	return (TRUE);
 }
 
-static char fgbg[] = "901234567";
-static char fgbg_cod[] = " -901234567";
-sgr_cset(line, cod, out)
-/*редактор атрибутов цвета (SGR composer)*/
-LINE *line;
-kbcod cod;
-char *out;
+static char fgbg[]     =    "012345679";
+static char fgbg_cod[] = "9- 01234567";
+int showcs(fgbg, cp, ci)
+char *fgbg; /* clear show area if NULL */
+char cp;	/* color pointer */
+int ci;    /* stripe color mode index 0 - for oreground, 2 - for background*/
 {
-	kbcod ed_cod;
-	register LINE *line4;	/* указатель на базовую линию в 4-й строке */
-	int posp;
-	int ic, cptrok;
-	char c; char *cptr; char *s;
-	char fg = 0;	/* scan SGR indexes - BG, FG, and iterators */
-	char bg = 0;
+	int i;	char *s;
+	char gp[2] = { '0', '7' }; /* black and white background for color sample strip */
+	char iFG[4] = { '3', '4', '4', '3' };
 
-	/* decode old SGR string, assums format like 34;44 or 44;34 only */
+	for (i=0; i<2; i++) {
+		cp_set(i+1+linesgr->line, linesgr->colu - 4 , CMD);
+		if (fgbg == NULL) {
+			er_eol(TXT);
+		} else {
+			for (s = fgbg; *s != '\0'; s++) {
+				w_str("\033[0m");
+				if (*s != cp) { w_str(" "); } else { w_str(" >"); }
+				w_raw("\033["); w_chr(iFG[ci]);
+				w_chr(gp[i]); w_chr(';'); w_chr(iFG[ci + 1]);
+				w_chr(*s); w_chr('m');
+				if (*s != cp) { w_str(" "); } else { w_str("*"); }
+				w_chr(*s);
+				if (*s != cp) { w_str(" "); } else { w_str("*"); }
+			}
+		}
+	}
+}
+
+/* decode old SGR string, assumed format like 34;44 or 44;34 only */
+sgr_decode(sgra, fgp, bgp)
+char *sgra;	/* string with SGR attributes to be scaned */
+char *fgp;
+char *bgp;
+{
+	int ic, cptrok;
+	char *s;
+	char *cptr;
+	char c;
+
 	cptrok = 0;
 	ic = 0;
+	*fgp = '\0';
+	*bgp = '\0';
 	s = sgra;
 	while (*s != '\0') {
 		c = *s;
@@ -175,46 +209,192 @@ char *out;
 			cptrok = 0;
 		} else {
 			switch(c) {
-			case	'3': cptrok = 1; cptr = &fg; break;
-			case	'4': cptrok = 1; cptr = &bg; break;
+			case	'3': cptrok = 1; cptr = fgp; break;
+			case	'4': cptrok = 1; cptr = bgp; break;
 			case	';': cptrok = 0; break;
 			default:	cptrok = 0; break; /* illegal, error detected... TODO complete*/
 			}
 		}
 		s++;
 	}
+}
+
+/*
+ * format SGR sctring with new parameters
+ */
+sgr_encode(s, fgp, bgp)
+char *s; /* output string */
+char *fgp;
+char *bgp;
+{
+	char fg, bg;
+	fg = *fgp;
+	bg = *bgp;
+
+	if (fg != '\0' && bg != '\0') {
+		sprintf(s, "3%c;4%c", fg, bg);
+	} else if (fg != '\0') {
+		s[0] = '3'; s[1] = fg; s[2] = '\0';
+	} else if (bg != '\0') {
+		s[0] = '4'; s[1] = bg; s[2] = '\0';
+	} else if (fg == '\0' && bg == '\0') {
+		s[0] = '\0';
+	}
+}
+
+cvt_co(line, cod, mod, str)
+/*---------------------*/
+/* формат для атрибута */
+/*---------------------*/
+LINE   *line;
+kbcod   cod;
+char   *mod;
+char   *str;
+{
+	char    outstr[20];      /* строка для формирования вывода */
+	int     lpax;			/* index for lpa[] */
+	char    fbx;			/* row on sceen page: 'fg' or 'bg' 1st char significant only, see attr.cv */
+	int		gv;
+	int		i;
+	register LINE *line4;   /* указатель на базовую линию в 5-й строке */
+	register LPA *lpap;
+
+	char *Wsgr;
+	char *Rsgr;
+	char *p;
+	char Wfg, Wbg, Rfg, Rbg;
+	Wfg = Wbg = Rfg = Rbg = 0;
+
+	fbx = line->cvts[0];
+	lpax = (int)line->varl; /* lpa*[] index*/
+	if (!(fbx == 'f' || fbx == 'b')) {
+		w_msg(ERR, "internal, cvt_co(): line.cvts has wrong value");
+		return(FALSE);
+	}
+	Wsgr = &lpaout[lpax].lpa_sgr[0];
+	sgr_decode(Wsgr, &Wfg, &Wbg);
+
+	Rsgr = &lpainp[lpax].lpa_sgr[0];
+	sgr_decode(Rsgr, &Rfg, &Rbg);
+
+	if(*mod == 'r') {
+		if(cod == ' ' || cod == KB_DE) {
+			line4 = getl4(line);
+
+			/* select what to decode for further modification */
+			switch (cod) {
+			case ' ':
+				if (fbx == 'f') p = &Wfg; else p = &Wbg;
+				break;
+			case KB_DE:
+				if (fbx == 'f') p = &Rfg; else p = &Rbg;
+				break;
+			}
+
+			/* do sircle around selection of SGR code number (fgbg[] array) */
+			gv = *p;
+			switch(gv) {
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':	gv = gv + 1; break; /* next code in ASCII table */
+			case '7':	gv = '9'; break;
+			case '9':	gv =   0; break;
+			case 0:     gv = '0'; break;
+			}
+			*p = (char)gv;
+
+			/* prepare and store new result of SGR */
+			switch (cod) {
+			case ' ':
+				sgr_encode(Wsgr, &Wfg, &Wbg);
+				break;
+			case KB_DE:
+				sgr_encode(Rsgr, &Rfg, &Rbg);
+				break;
+			}
+
+			strcpy(outstr, " .!.");
+			if (fbx == 'f') {
+				outstr[1] = Wfg ? Wfg : '-';
+				outstr[3] = Rfg ? Rfg : '-';
+			}
+			if (fbx == 'b') {
+				outstr[1] = Wbg ? Rbg : '-';
+				outstr[3] = Rbg ? Rbg : '-';
+			}
+
+			/* hint in case of TXT attribute - affected all screen view */
+			if (lpax == 1)
+				sgrtst(line, cod);
+			else
+				w_line(line4);
+		}
+	}
+	if(*mod == 'w') {
+		strcpy(outstr, " .|.");
+
+		if (fbx == 'f') {
+			outstr[1] = Wfg ? Wfg : '-';
+			outstr[3] = Rfg ? Rfg : '-';
+		}
+		if (fbx == 'b') {
+			outstr[1] = Wbg ? Wbg : '-';
+			outstr[3] = Rbg ? Rbg : '-';
+		}
+	}
+	strcpy(str, outstr);
+	return(TRUE);
+}
+
+sgr_csel(line, cod, out)
+/*редактор атрибутов цвета (SGR composer-selector)*/
+LINE *line;
+kbcod cod;
+char *out;
+{
+	kbcod ed_cod;
+	register LINE *line4;	/* указатель на базовую линию в 4-й строке */
+	int posp;
+
+	char c;/* char *cptr; char *s;*/
+	char fg = 0;	/* scan SGR indexes - BG, FG, and iterators */
+	char bg = 0;
+	int i;
+/*	char gp[2] = { '0', '7' }; /* black and white background for color sample strip */
+
+	sgr_decode(sgra, &fg, &bg);
 
 	if ((getlsgr(line, sgrats)) == (LINE *)0) {
 		return(FALSE);
 	}
-	/* show foreground color sample strip, ask new number */
-	cp_set(2+linesgr->line, linesgr->colu - 4 , TXT);
-	w_str("FG->");
-	for (s = fgbg; *s != '\0'; s++) {
-		w_raw("\033[40;3"); w_chr(*s); w_chr('m');
-		if (*s == fg) { w_raw(" *"); } else { w_str("  "); }
-		w_chr(*s); w_str(" ");
-	}
+	/* сhеck before edit, prepare for this a line */
+	strcpy(sgrats, sgra);
+	w_line(linesgr);
+
+	/* show foreground samples colors */
+	showcs(fgbg, fg, 2);
 	c = ed_cod = r_cod(0);
-	if (strchr(fgbg_cod, c) == NULL)
+	if (strchr(fgbg_cod, c) == NULL) {
+		w_msg(ATT|INP, "please, use key from list:"); at_set(ATT); w_str(fgbg_cod);
 		return(FALSE);
+	}
+	w_msg(TXT, "");
 	if (c == '-') fg = '\0'; /* clear color */
 	else if (c != ' ') fg = c; /* remain the same color */
-	/* show background in front of foreground */
-	cp_set(2+linesgr->line, linesgr->colu - 4, TXT);
-	w_str("BG->");
-	for (s = fgbg; *s != '\0'; s++) {
-		w_raw("\033[4"); w_chr(*s); w_str(";3"); w_chr(fg!=0?fg:"9"); w_chr('m');
-		if (*s == bg) w_raw(" *"); else w_str("  ");
-		w_chr(*s); w_str(" ");
-	}
+	showcs(NULL, 0, 0);
+
+	/* show background sample colors */
+	showcs(fgbg, bg, 0);
 	c = ed_cod = r_cod(0);
 	if (strchr(fgbg_cod, c) == NULL)
 		return(FALSE);
 	if (c == '-') bg = '\0';
-	else if (c != ' ') bg = c;
-	cp_set(2+linesgr->line, linesgr->colu - 4, 0);
-	er_eol(TXT);
+	else if (strchr(fgbg, c) != NULL) bg = c;
+	showcs(NULL, 0, 0);
 
 	/* prepare new result of SGR */
 	if (fg && bg) {
@@ -229,15 +409,6 @@ char *out;
 
 	/* store new SGR (no check for changes done) */
 	strcpy(out, sgrats);
-/*	linesgr->attr |= INP;
-	posp = 0;
-	w_line(linesgr, &posp);
-	ed_cod = r_line(linesgr, &posp);
-	linesgr->attr &= (~INP);
-
-	line4 = getl4(line);  тут будет показан результат с учетом новых параметров SGR
-	w_line(line4);
-*/
 	return(TRUE);
 }
 
@@ -302,6 +473,7 @@ char   *str;
 			}
 			ap = &(lpap[ i ].lpa_a);
 
+			/* do toggle modification */
 			if((*ap) & va) { (*ap) = (*ap) & (~va); }
 			else           { (*ap) = (*ap) | ( va); }
 
@@ -311,6 +483,7 @@ char   *str;
 	return(TRUE);
 }
 
+#if 0
 cvt_sg(line, cod, mod, str) /*TODO*/ /*основа - копипаста из cvt_sp*/
 /*---------------------*/
 /* формат для атрибута */
@@ -343,6 +516,7 @@ char   *str;
 	}
 	return(TRUE);
 }
+#endif
 
 cvt_pmt(line, cod, mod, str)
 /*----------------------*/
@@ -401,11 +575,15 @@ sgrtst(line, cod)
 LINE *line;
 kbcod cod;
 {
+    switch(cod) {
+    case(' '):
+    case(KB_DE):
 	at_set(0);
-//	return(TRUE);
 	er_pag();
 	w_page(linem);
-	return(TRUE);
+	break;
+     }
+     return(TRUE);
 }
 
 static  char    helpf[] = "vhseta.lb";
