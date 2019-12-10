@@ -41,8 +41,10 @@
     ------------------------------------------------------------------------------
     -
     -- VASH:
+ *  - list main menu with PgUp/PgDown/Home/End - now only arrow navigation implemented
  *  - TAB completion, must show next frame of candidates outside page window
     - filter for main window and generic vf menu (on command '_')
+    - BASH_ENV, alias_expand into v.sh
 
  *  -+?- execve() for vash itself with reexport of VASH flags
 

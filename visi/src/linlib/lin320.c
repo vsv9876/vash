@@ -67,9 +67,11 @@ char *gsr;
 {
 	static char s_csi[40] = "";
 	char *s = s_csi;
+	char *fmt;
 
-	if(sgrmode == 0) {
+	if(sgrmode <= 1) {
 		//awstate = AW_INIT_STATE;
+		/* dumb, monochrome */
 		return;
 	}
 	if (gsr == (char *)0 || *gsr == '\0') {
@@ -97,6 +99,9 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	char *ac;	/* color to be set */
 	int  aix_new;	/* индекс для поиска по таблицам атрибутов */
 
+	/* dumb mode, without attributes at all - in some cases its wrong - vt52 has so/se attribute */
+	if (sgrmode == 0) return;
+
 	/* VCOLOR (в составе VIDEOM) вероятно, не нужен, и вообще не нужен */
 	aw_new &= VIDEOM; /* cleanup arg called, which may contain unsupported constants*/
 	aw_old = awstate;
@@ -113,7 +118,7 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	}
 	/* оптимизация повторной выдачи*/
 	if(aw == aw_old && ac == ac_old) {
-		 /* биты атрибутов не менялись и расцветка тоже */
+		 /* биты атрибутов не менялись; и расцветка тоже */
 		return;
 	}
 	/* СНАЧАЛА ВСЕ погасить */

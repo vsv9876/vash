@@ -53,7 +53,7 @@ mkquit()
 extern  KBL kbl[];
 /* флаг: доп. клавиатура включена */
 extern  int     kpadon;
-extern int		sgrmode; /* initial monochrome */
+extern int		sgrmode;
 
 
 mkexit()

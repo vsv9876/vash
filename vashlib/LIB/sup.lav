@@ -1,8 +1,8 @@
 ---PAGE sup
 ---LINES
 ---# versn   = c    "v1.18.x/remix"
----#versn   = g    -       -       cvt_sp  -       versn
-versn   = v    -       -       cvt_sp  -       versn
+versn	= g    -       -       cvt_sp  -       versn
+---#versn	= v    -       -       cvt_sp  -       versn
 vexdir  = v    -       -       cvt_sp  -       vexdir
 vpath   = v    -       -       cvt_sp  -       vpath
 buildd  = c    buildd
@@ -29,9 +29,9 @@ xF      = ia    -       onoff   cvt_a   -       xF
 ym      = iv    -       "%3d"   -       t_ymax  yy_max
 
 y0      = v     -       "%d"   -       -       y0
-yt      = v     -       "%d"   -       -       y0_top
-li      = v     -       "%d"   -       -       maxli
-co      = v     -       "%d"   -       -       maxco
+yt      = g     -       "%d"   -       -       y0_top
+li      = g     -       "%d"   -       -       maxli
+co      = g     -       "%d"   -       -       maxco
 
 ---# use for debug in SCREEN section
 ---#    y0:     .y0.
@@ -55,19 +55,20 @@ co      = v     -       "%d"   -       -       maxco
 ."setup parameters".............................. help: .:HE.... exit: .:EX.... 
 
 +  .hF h,history     .sF s,scroll          .ym. lines max
-+  .hS S,sync        .pF p,panel/keybar                            y0top: .yt
-+  .mF m,mail_biff   .wF w,title                                   maxco: .co
-+  .cF c,clock       .xF x,title on xterm                          maxli: .li
-+                                            
++  .hS S,sync        .pF p,panel/keybar                            maxco: .co
++  .mF m,mail_biff   .wF w,title                                   maxli: .li
++  .cF c,clock       .xF x,title on xterm                          y0top: .yt
++                                                                  
 +   vexdir: .vexdir..............................................
 +   vpath:  .vpath...............................................
 
-=please, read manual about parameters below, use with caution
+debug internals below: consult manual, use with caution, please
 
 + -i: .i.........................................................
 + -f: .f.........................................................
 + -@: .r.........................................................
-+ -o: .o.........................................................
+---#+ -o: .o.........................................................
++
 +
 + version: .versn...............   .coprts.....................................
 +   build: .buildd......           ."vash, Visual Assistant Shell            ".

@@ -12,6 +12,8 @@
 extern LPA lpainp[];
 extern LPA lpaout[];
 
+extern int cvt_co(); /* function there below */
+
 int     lpa_pi = 0;     /* òåöéí éúíåîåîéñ áôòéâõôï÷ (îá ÷÷ïäå/îá ÷ù÷ïäå) */
 
 int     wamask[10] = {
@@ -24,8 +26,10 @@ LPA     *lpa_p[2] = {
 
 /* Color support for attr.cv page */
 char   *sgrms[] = {
-		"[0] monochrome ",
-		"[1] color ",
+		"/0/ dumb       ",
+		"/1/ monochrome ",
+		"/2/ color      ",
+		"/3/ color256   ",
 		0 };
 extern int		sgrmode;
 
@@ -56,19 +60,19 @@ char *varl;
 	return( (LINE *)(0) );
 }
 
-LINE *getl4(line)
-/*-------------------------------------------------------*/
-/* ×ÅÒÎÕÔØ ÕËÁÚÁÔÅÌØ ÎÁ ÂÁÚÏ×ÕÀ ÌÉÎÉÀ × 4Ê ÓÔÒÏËÅ ÜËÒÁÎÁ */
-/*-------------------------------------------------------*/
+ref_co(line, cod)
 register LINE *line;
+kbcod   cod;
+/* refresh lines with fg/bg direct togglers */
 {
 	register LINE *l;
 
 	for (l=linem; l->size != 0; l++) {
-		if (l->line != 4)
+		if (l->cvtf != cvt_co)
 			continue;
-		if (l->colu == line->colu)
-			return( l );
+		if (l->colu != line->colu)
+			continue;
+		w_line(l);
 	}
 	return( (LINE *)(0) );
 }
@@ -88,10 +92,36 @@ char   *str;
 		attr = line->attr & VIDEO;
 		strcpy(str, line->varl);
 
-		cp_set(line->line + 1, line->colu, attr|INP);
+		cp_set(line->line + 2, line->colu, attr|INP);
+		/* emulate prompt behavior for input mode - find prompt symbol, show it at 1st position */
+		w_chr((char)(lpainp[attr].lpa_p));
+
 		w_str(line->varl);
+
+/*
+		if (attr & TXT)
+			repage();
+*/
 	}
 	return(TRUE);
+}
+
+LINE *getl4(line)
+/*-------------------------------------------------------*/
+/* ×ÅÒÎÕÔØ ÕËÁÚÁÔÅÌØ ÎÁ ÂÁÚÏ×ÕÀ ÌÉÎÉÀ × 4Ê ÓÔÒÏËÅ ÜËÒÁÎÁ */
+/*-------------------------------------------------------*/
+register LINE *line;
+{
+	register LINE *l;
+
+	for (l=linem; l->size != 0; l++) {
+/*		if (l->line != 4)*/
+		if (l->cvtf != cvt_atr) /* independent of screen coordinates, more flexible */
+			continue;
+		if (l->colu == line->colu)
+			return( l );
+	}
+	return( (LINE *)(0) );
 }
 
 /* ËÏĞÉĞÁÓÔÁ ÉÚ cvt_va... */
@@ -145,6 +175,7 @@ char *str;
 					return(FALSE);
 			}
 			w_line(line4); /* ×ÙÚÏ× ĞÅÒÅÎÅÓÅÎ × sgr_ed(), ÎÏ ÔÅĞÅÒØ ÎÁ ÍÅÓÔÅ, ÚÄÅÓØ */
+			ref_co(line, cod);
 			w_line(linesgr);
 		} else {
 			if (linesgr != NULL) {
@@ -168,13 +199,13 @@ int ci;    /* stripe color mode index 0 - for oreground, 2 - for background*/
 	char iFG[4] = { '3', '4', '4', '3' };
 
 	for (i=0; i<2; i++) {
-		cp_set(i+1+linesgr->line, linesgr->colu - 4 , CMD);
+		cp_set(i+1+linesgr->line, linesgr->colu - 4 , ERR);
 		if (fgbg == NULL) {
 			er_eol(TXT);
 		} else {
 			for (s = fgbg; *s != '\0'; s++) {
 				w_str("\033[0m");
-				if (*s != cp) { w_str(" "); } else { w_str(" >"); }
+				if (*s != cp) { w_str(" "); } else { w_str(" *"); }
 				w_raw("\033["); w_chr(iFG[ci]);
 				w_chr(gp[i]); w_chr(';'); w_chr(iFG[ci + 1]);
 				w_chr(*s); w_chr('m');
@@ -183,6 +214,7 @@ int ci;    /* stripe color mode index 0 - for oreground, 2 - for background*/
 				if (*s != cp) { w_str(" "); } else { w_str("*"); }
 			}
 		}
+		er_eol(TXT);
 	}
 }
 
@@ -317,33 +349,33 @@ char   *str;
 				break;
 			}
 
-			strcpy(outstr, " .!.");
+			strcpy(outstr, " * *");
 			if (fbx == 'f') {
-				outstr[1] = Wfg ? Wfg : '-';
-				outstr[3] = Rfg ? Rfg : '-';
+				if (Wfg) outstr[1] = Wfg;
+				if (Rfg) outstr[3] = Rfg;
 			}
 			if (fbx == 'b') {
-				outstr[1] = Wbg ? Rbg : '-';
-				outstr[3] = Rbg ? Rbg : '-';
+				if (Wbg) outstr[1] = Wbg;
+				if (Rbg) outstr[3] = Rbg;
 			}
 
 			/* hint in case of TXT attribute - affected all screen view */
 			if (lpax == 1)
-				sgrtst(line, cod);
+				sgrtst(line, KB_NL); /*cod);*/
 			else
 				w_line(line4);
 		}
 	}
 	if(*mod == 'w') {
-		strcpy(outstr, " .|.");
+		strcpy(outstr, " - -");
 
 		if (fbx == 'f') {
-			outstr[1] = Wfg ? Wfg : '-';
-			outstr[3] = Rfg ? Rfg : '-';
+			if (Wfg) outstr[1] = Wfg;
+			if (Rfg) outstr[3] = Rfg;
 		}
 		if (fbx == 'b') {
-			outstr[1] = Wbg ? Wbg : '-';
-			outstr[3] = Rbg ? Rbg : '-';
+			if (Wbg) outstr[1] = Wbg;
+			if (Rbg) outstr[3] = Rbg;
 		}
 	}
 	strcpy(str, outstr);
@@ -543,11 +575,11 @@ char   *str;
 			case KB_DE:
 				  lpa_pi = 1; break;
 			}
-			w_msg(ATT, "Please, type a prompter char ");
+			w_msg(ATT, "Please, type a prompt symbol");
 			if (lpa_pi)
-				w_str("on input: ");
+				w_str(" on input: ");
 			else
-				w_str("on output: ");
+				w_str(" on output: ");
 
 			tmpcod = r_key();
 			if (tmpcod == 0 || cod1(tmpcod) != 0)
@@ -571,19 +603,35 @@ extern  int     sgrtst();
 
 #include "attr.i"
 
+repage()
+{
+	sgrtst(linem, KB_NL);
+}
+
 sgrtst(line, cod)
 LINE *line;
 kbcod cod;
 {
-    switch(cod) {
-    case(' '):
-    case(KB_DE):
-	at_set(0);
-	er_pag();
-	w_page(linem);
-	break;
-     }
-     return(TRUE);
+	LINE *l;
+	switch(cod) {
+
+	case(' '):
+	case(KB_DE):
+
+	case(KB_NL):
+		cp_set(0,0,CMD); er_eop(CMD);
+		/*er_pag();*/
+		/* find 1st line with HDR type wide of screen */
+		for (l=linem; l->size != 0; l++) {
+			if (!(l->colu == 0 && l->attr & (VIDEO & HDR)))
+				continue;
+			cp_set(l->line, l->colu, TXT);
+			er_eop(TXT);
+		}
+		w_page(linem);
+		break;
+	}
+	return(TRUE);
 }
 
 static  char    helpf[] = "vhseta.lb";
@@ -593,6 +641,112 @@ pag_a()
 /* ÎÁÓÔÒÏÊËÁ ÁÔÒÉÂÕÔÏ× */
 /*---------------------*/
 {
-	u_page(linem, helpf);
+	uspage(linem, helpf);
 	return(TRUE);
+}
+
+kbcod
+n_page(line_e, page, posp)
+/*-----------------*/
+/* şéôáôø óôòáîéãõ */
+/*-----------------*/
+LINE    *line_e;                /* óôòáîéãá äìñ òåäáëôéòï÷áîéñ  */
+LINE   **page;                  /* ôåëõıáñ ìéîéñ (óôáôõó)       */
+int    *posp;                   /* ğïúéãéñ ëõòóïòá ğòé òåäáëôéòï÷áîéé */
+{
+	int     cod;            /* ëïä, ÷ïú÷òáıáåíùê r_line()   */
+
+	register LINE *lni;             /* õëáúáôåìø îá ôåëõıõà ìéîéà */
+	register LINE *line ;           /* õëáúáôåìø îá ÷óà óôòáîéãõ */
+
+	line = line_e;
+	if(*page != (LINE *)NULL)
+		lni = *page;
+	else
+		lni = line_e;
+
+	/* ğòïğõóôéôø ôï, şôï îåìøúñ òåäáëôéòï÷áôø */
+	while( INP & ~(lni->attr)) {
+		lni++;
+		/* úáãéëìéôøóñ şåòåú îáşáìï */
+		if(lni->size == 0)
+			lni = line_e;
+	}
+
+	cod = r_line(lni, posp);
+
+	/* îáêôé õëáúáôåìø äìñ óìåäõàıåçï şôåîéñ */
+	switch( cod ) {
+	case KB_AR :
+		if ( (lni->flag & SUSR) == FALSE )
+			lni = fnd_ar(lni, line) ;
+		break ;
+	case KB_AL :
+		if ( (lni->flag & SUSL) == FALSE )
+			lni = fnd_al(lni, line) ;
+		break ;
+	case KB_AU :
+		if ( (lni->flag & SUSU) == FALSE )
+			lni = fnd_au(lni, line) ;
+		break ;
+	case KB_AD :
+		if ( (lni->flag & SUSD) == FALSE )
+			lni = fnd_ad(lni, line) ;
+		break ;
+	case KB_NL :
+		if ( (lni->flag & SUSNL) == FALSE )
+			lni = fnd_nxt(lni, line) ;
+		break ;
+	case KB_RE :
+		/*
+		er_pag();
+		w_page(line, 0);
+*/
+		repage();
+		break ;
+	default :
+		break;
+	}
+
+	*page = lni;    /* óïèòáîéôø õëáúáôåìø îá ôåë. ìéîéà!... */
+	return(cod);
+}
+
+uspage(page, phline)
+/*-----------------------------*/
+/* special for vhset
+/*-----------------------------*/
+LINE *page;
+LINE *phline;           /* pointer to instant page with help screen */
+{
+    kbcod   cod;
+    LINE *cline;
+
+    cline = page;
+    /*er_pag();*/
+    /*w_page(page);*/
+    repage();
+
+    while ( -1 ) {
+		cod = n_page( page, &cline, 0);
+		switch ( cod ) {
+		case ' ':
+			/* refresh after menu *//*not used there*/
+			if((cline->attr & LMSE) == LMSE) {
+				/*er_pag();*/
+				w_page(page);
+			}
+			break;
+		case KB_EX :
+			/*NOBREAK*/
+			return;
+		case '?':
+		case KB_HE:
+			w_help(phline);
+			/*w_page(page);*/
+			repage();
+			break;
+		default:   w_emsg("");     /* clear message string */
+		}
+    }
 }

@@ -6,14 +6,14 @@
 
 /* атрибуты видео, специально переопределенные для использования внутри vhset */
 
-#define USRATTR8 CMD|MID|PAD|NED
-#define USRATTR1 TXT|MID|PAD|NED
-#define USRATTR2 HDR|MID|PAD|NED
-#define USRATTR3 VAR|MID|PAD|NED
-#define USRATTR4 ALT|MID|PAD|NED
-#define USRATTR5 MSE|MID|PAD|NED
-#define USRATTR6 ERR|MID|PAD|NED
-#define USRATTR7 ATT|MID|PAD|NED
+#define USRATTR8 CMD|MID|PAD|NED|PMT
+#define USRATTR1 TXT|MID|PAD|NED|PMT
+#define USRATTR2 HDR|MID|PAD|NED|PMT
+#define USRATTR3 VAR|MID|PAD|NED|PMT
+#define USRATTR4 ALT|MID|PAD|NED|PMT
+#define USRATTR5 MSE|MID|PAD|NED|PMT
+#define USRATTR6 ERR|MID|PAD|NED|PMT
+#define USRATTR7 ATT|MID|PAD|NED|PMT
 #undef  LALT
 #define LALT TXT|MID|NED
 
@@ -30,22 +30,22 @@
 	W_mk   = &wamask[6];
 	SGR    = &sgrmode;
 ---#	SGR_B  = 0
-	SGRA   = &sgra;
-	SGRATS = &sgrats[0];
+---#	SGRA   = &sgra;
+	SGRAT  = &sgrats[0];
 ---#	CO_fg  = "0";
 ---#	CO_bg  = "1";
 ---TABLES
 	t = 1;
 ---LINES
 	P       = ia - -      cvt_pmt - LPA_B
-	CMD     = g8 - -      cvt_atr - " cmd "
-	TXT     = g1 - -      cvt_atr - " TXT "
-	HDR     = g2 - -      cvt_atr - " HDR "
-	VAR     = g3 - -      cvt_atr - " VAR "
-	ALT     = g4 - -      cvt_atr - " ALT "
-	MSE     = g5 - -      cvt_atr - " MSE "
-	ERR     = g6 - -      cvt_atr - " ERR "
-	ATT     = g7 - -      cvt_atr - " ATT "
+	CMD     = g8 - -      cvt_atr - "cmd "
+	TXT     = g1 - -      cvt_atr - "TXT "
+	HDR     = g2 - -      cvt_atr - "HDR "
+	VAR     = g3 - -      cvt_atr - "VAR "
+	ALT     = g4 - -      cvt_atr - "ALT "
+	MSE     = g5 - -      cvt_atr - "MSE "
+	ERR     = g6 - -      cvt_atr - "ERR "
+	ATT     = g7 - -      cvt_atr - "ATT "
 	so      = ia - W_so   cvt_va  - LPA_B
 	us      = ia - W_us   cvt_va  - LPA_B
 	vs      = ia - W_vs   cvt_va  - LPA_B
@@ -56,45 +56,47 @@
 	hl      = gca - -     cvt_hl  - "."
 
 ---#	sgrA    = v  - -      cvt_sg  - SGRA
-	sgr     = ia - -      cvt_sgr - LPA_B
 
-	sgrATS  = v  - -      -       - SGRATS
+	sgrAT   = v  - -      -       - SGRAT 
 	sgrm    = ai - sgrms cvt_a   sgrtst SGR
+---#	sgrm    = i - sgrms cvt_a   sgrtst SGR
+	mode    = g  - -      -       - "mode:"
 
 	fg      = ia - "f"   cvt_co  - LPA_B
 	bg      = ia - "b"   cvt_co  - LPA_B
+	sgr     = ia - -     cvt_sgr - LPA_B
 ---#
----# WARNING!
----# Do not touch string 4 (contains .TXT. .HDR. ...), because
+---# WARNING! please, keep in mind that
+---# column of elements in string 4 (contains .TXT. .HDR. ...) must be equal
+---# an column of corresponding element in matrox of attribute selectors (contains .t) -
 ---# format conversion function for selector depends on screen coordinates of it.
 ---# for example, columns of fields .t and .HDR must be the same
 ---# 
----# place of .sgra line must be below .sgr line??? TODO cleanup this comment
+---# place of .sgraAT line must be below .sgr line
 ---SCREEN
-=visual/video attributes setup
-
-+    .hl...............................................................
-+    .sgrm........    	.P..  .t..  .t..  .t..  .t..  .t..  .t..  .t..  pmt
-+			.CMD. .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .ATT. out
-+									in
-+    .hl...............................................................
-+    :so:outstand       .so.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
-+    :us:underline      .us.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
-+    :md:bright/bold    .md.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
-+    :mr:reverse        .mr.  .t..  .t..  .t..  .t..  .t..  .t..  .t..        
-+    :mb:blink          .mb.  .t..  .t..  .t..  .t..  .t..  .t..  .t..        
-+    .hl...............................................................
-+    color         fg:	.fg.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
-+	           bg:	.bg.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
-+	         menu:	.sgr  .t.   .t..  .t..  .t..  .t..  .t..  .t..
-+    .hl...............................................................
-+			.sgrATS....
+		   .CMD. .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .ATT.
 +
++
++
+=setup visual attributes                                              
++          pmt	   .P..  .t..  .t..  .t..  .t..  .t..  .t..  .t..    dumb
++
++    outstand/so:  .so.  .t..  .t..  .t..  .t..  .t..  .t..  .t..    vt100
++   underline/us:  .us.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
++ bright/bold/md:  .md.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
++     reverse/mr:  .mr.  .t..  .t..  .t..  .t..  .t..  .t..  .t..        
++       blink/mb:  .mb.  .t..  .t..  .t..  .t..  .t..  .t..  .t..        
++
++	       fg: .fg.  .t..  .t..  .t..  .t..  .t..  .t..  .t..    ANSI
++	       bg: .bg.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
++	    color: .sgr  .t.   .t..  .t..  .t..  .t..  .t..  .t..
++        color256:  <<not yet>>
+	."mode:".. .sgrm.......... .sgrAT
 ---#	:  :          :...  :...  :...  :...  :...  :...  :...  :...  :........:
+---#+    .hl...............................................................
 ---#+	.hl............................................
 ---#+									
----#+    :mk:hidden         .mk.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
----#+    :vs:background     .vs.  .t..  .t..  .t..  .t..  .t..  .t..  .t..    
----#+          	      %	.sgrA......							  
+---#+    :mk/hidden         .mk.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
+---#+    :vs/background     .vs.  .t..  .t..  .t..  .t..  .t..  .t..  .t..    
 
 ---END

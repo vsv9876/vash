@@ -156,7 +156,7 @@ cont1:
 	while( fgets(s=str, 98, lhfp), feof(lhfp)==0) {
 		if(isspace(*s))       continue;
 
-		/* קכלא‏יפר הןנ. כלבקיבפץעץ ? */
+		/* keypad mode (+/-), SGR mode (0,1,2,3) */
 		if (*s == '+' || *s == '-') {
 			if (*s == '+')      { w_raw(t_ks); kpadon = 1;      }
 			if (*s == '-')      { w_raw(t_ke); kpadon = 0;      }
