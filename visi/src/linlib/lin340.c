@@ -107,11 +107,17 @@ out_string:
 
 	i = attr & VIDEO;
 
+#ifdef RETRO_FILCH
 	/*==== ρχξοε ϊαπομξεξιε πςι οτσυτστχιι ατςιβυτοχ */
 	if (((line->attr & INP) == 0 ) && (lpaout[i].lpa_a == 0))
 			filch = '_';
 	else            filch = ' ';
-
+#else
+	filch = ' ';
+	if ((line->attr & VIDEO) == HDR) {
+		filch = lpaout[HDR].lpa_p;
+	}
+#endif
 	/*==== ποδσλαϊλα */
 	if(attr & PMT) {
 		eds++; base++; size--;

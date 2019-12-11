@@ -55,7 +55,7 @@ typedef struct {
 typedef struct {
 	int     lpa_p;  /* ποδσλαϊλα */
 	int     lpa_a;  /* σμοχο ατςιβυτοχ */
-	char    lpa_sgr[16]; /* ANSI Color SGR, instant ASCII format (not coded) */
+	char    lpa_sgr[20]; /* ANSI Color SGR, instant ASCII format (not coded), 38;5;256;48;5;000 */
 } LPA;
 #define LPASIZE 8
 

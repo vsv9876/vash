@@ -14,12 +14,11 @@ extern LPA lpaout[];
 
 extern int cvt_co(); /* function there below */
 
-int     lpa_pi = 0;     /* òåöéí éúíåîåîéñ áôòéâõôï÷ (îá ÷÷ïäå/îá ÷ù÷ïäå) */
-
 int     wamask[10] = {
 	A_SO,   A_US,   A_VS,   A_MD,	A_MR,   A_MB,   A_MK,	0,      0,      0,
 	};
 
+int     lpa_pi = 0;     /* òåöéí éúíåîåîéñ áôòéâõôï÷ (îá ÷÷ïäå/îá ÷ù÷ïäå) */
 LPA     *lpa_p[2] = {
 	lpaout,         lpainp
 	};
@@ -92,7 +91,7 @@ char   *str;
 		attr = line->attr & VIDEO;
 		strcpy(str, line->varl);
 
-		cp_set(line->line + 2, line->colu, attr|INP);
+		cp_set(line->line + 1, line->colu + 1, attr|INP); /* couple of lines shown with ofset between them */
 		/* emulate prompt behavior for input mode - find prompt symbol, show it at 1st position */
 		w_chr((char)(lpainp[attr].lpa_p));
 
@@ -136,32 +135,29 @@ char *str;
 {
 	char outstr[20];	/* ÓÔÒÏËÁ ÄÌÑ ÆÏÒÍÉÒÏ×ÁÎÉÑ ×Ù×ÏÄÁ */
 	int i;
-//	int     va;             /* ×ÉÄÅÏÁÔÒÉÂÕÔÙ ( ÆÌÁÇÉ ) */
 	int posp;
 	register LINE *line4;	/* ÕËÁÚÁÔÅÌØ ÎÁ ÂÁÚÏ×ÕÀ ÌÉÎÉÀ × 4-Ê ÓÔÒÏËÅ */
 	register LPA *lpap;
 	char *sgr_v;
 
-//	va = *(int *)line->cvts;
 	i = (int) line->varl;
 	if (*mod == 'w') {
-		strcpy(outstr, " . .");
+		strcpy(outstr, ". .");
 		strcpy(str, outstr);
 	} else {
-		/*hack. TODO cleanup */
-		strcpy(outstr, " . .");
+		strcpy(outstr, ". .");
 		strcpy(str, outstr);
 
 		if (cod == ' ' || cod == KB_DE) {
 			line4 = getl4(line); /* ÔÕÔ ÂÕÄÅÔ ÐÏËÁÚÁÎ ÒÅÚÕÌØÔÁÔ */
 			/*×ÙÂÒÁÔØ, ÇÄÅ ÂÕÄÅÔ ÎÁÓÔÒÏÅÎ ÒÅÚÕÌØÔÁÔ */
-			switch (cod) {
-			case ' ':
-				outstr[1] = '%'; /*lpap = lpa_p[0];*/
+			switch (lpa_pi) {
+			case 0:
+				outstr[0] = '%'; /*lpap = lpa_p[0];*/
 				sgr_v = &lpaout[i].lpa_sgr[0];
 				break;
-			case KB_DE:
-				outstr[3] = '%'; /*lpap = lpa_p[1];*/
+			case 1:
+				outstr[2] = '%'; /*lpap = lpa_p[1];*/
 				sgr_v = &lpainp[i].lpa_sgr[0];
 				break;
 			}
@@ -169,7 +165,7 @@ char *str;
 
 				sgra = sgr_v;
 				/*w_line(line);*/
-				cp_set(line->line, line->colu, line->attr);
+				cp_set(line->line, line->colu + 1, line->attr); /* PMT sure + 1*/
 				w_str(outstr);
 				if (!sgr_csel(line, cod, sgra))
 					return(FALSE);
@@ -177,6 +173,8 @@ char *str;
 			w_line(line4); /* ×ÙÚÏ× ÐÅÒÅÎÅÓÅÎ × sgr_ed(), ÎÏ ÔÅÐÅÒØ ÎÁ ÍÅÓÔÅ, ÚÄÅÓØ */
 			ref_co(line, cod);
 			w_line(linesgr);
+			if (i == TXT)
+				repage();
 		} else {
 			if (linesgr != NULL) {
 				sgrats[0] = 0;
@@ -190,6 +188,7 @@ char *str;
 static char fgbg[]     =    "012345679";
 static char fgbg_cod[] = "9- 01234567";
 int showcs(fgbg, cp, ci)
+/* show color strip */
 char *fgbg; /* clear show area if NULL */
 char cp;	/* color pointer */
 int ci;    /* stripe color mode index 0 - for oreground, 2 - for background*/
@@ -205,11 +204,11 @@ int ci;    /* stripe color mode index 0 - for oreground, 2 - for background*/
 		} else {
 			for (s = fgbg; *s != '\0'; s++) {
 				w_str("\033[0m");
-				if (*s != cp) { w_str(" "); } else { w_str(" *"); }
+				if (*s != cp) { w_str(""); } else { w_str("*"); }
 				w_raw("\033["); w_chr(iFG[ci]);
 				w_chr(gp[i]); w_chr(';'); w_chr(iFG[ci + 1]);
 				w_chr(*s); w_chr('m');
-				if (*s != cp) { w_str(" "); } else { w_str("*"); }
+				if (*s != cp) { w_str(""); } else { w_str("*"); }
 				w_chr(*s);
 				if (*s != cp) { w_str(" "); } else { w_str("*"); }
 			}
@@ -314,37 +313,53 @@ char   *str;
 			line4 = getl4(line);
 
 			/* select what to decode for further modification */
-			switch (cod) {
-			case ' ':
+			switch (lpa_pi) {
+			case 0:
 				if (fbx == 'f') p = &Wfg; else p = &Wbg;
 				break;
-			case KB_DE:
+			case 1:
 				if (fbx == 'f') p = &Rfg; else p = &Rbg;
 				break;
 			}
 
 			/* do sircle around selection of SGR code number (fgbg[] array) */
 			gv = *p;
-			switch(gv) {
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':	gv = gv + 1; break; /* next code in ASCII table */
-			case '7':	gv = '9'; break;
-			case '9':	gv =   0; break;
-			case 0:     gv = '0'; break;
+			if (cod == ' ') {
+				switch(gv) {
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':	gv = gv + 1; break; /* next code in ASCII table */
+				case '7':	gv = '9'; break;
+				case '9':	gv = 0;   break;
+				case 0:     gv = '0'; break;
+				}
+			}
+			if (cod == KB_DE) {
+				switch(gv) {
+				case '0':	gv = 0; break;
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':	gv = gv - 1; break; /* previouse code in ASCII table */
+				case '9':	gv = '7'; break;
+				case 0:     gv = '9'; break;
+				}
 			}
 			*p = (char)gv;
 
 			/* prepare and store new result of SGR */
-			switch (cod) {
-			case ' ':
+			switch (lpa_pi) {
+			case 0:
 				sgr_encode(Wsgr, &Wfg, &Wbg);
 				break;
-			case KB_DE:
+			case 1:
 				sgr_encode(Rsgr, &Rfg, &Rbg);
 				break;
 			}
@@ -367,15 +382,15 @@ char   *str;
 		}
 	}
 	if(*mod == 'w') {
-		strcpy(outstr, " - -");
+		strcpy(outstr, "- -");
 
 		if (fbx == 'f') {
-			if (Wfg) outstr[1] = Wfg;
-			if (Rfg) outstr[3] = Rfg;
+			if (Wfg) outstr[0] = Wfg;
+			if (Rfg) outstr[2] = Rfg;
 		}
 		if (fbx == 'b') {
-			if (Wbg) outstr[1] = Wbg;
-			if (Rbg) outstr[3] = Rbg;
+			if (Wbg) outstr[0] = Wbg;
+			if (Rbg) outstr[2] = Rbg;
 		}
 	}
 	strcpy(str, outstr);
@@ -392,11 +407,10 @@ char *out;
 	register LINE *line4;	/* ÕËÁÚÁÔÅÌØ ÎÁ ÂÁÚÏ×ÕÀ ÌÉÎÉÀ × 4-Ê ÓÔÒÏËÅ */
 	int posp;
 
-	char c;/* char *cptr; char *s;*/
+	char c;
 	char fg = 0;	/* scan SGR indexes - BG, FG, and iterators */
 	char bg = 0;
 	int i;
-/*	char gp[2] = { '0', '7' }; /* black and white background for color sample strip */
 
 	sgr_decode(sgra, &fg, &bg);
 
@@ -487,19 +501,19 @@ char   *str;
 	i = (int)line->varl;
 
 	if(*mod == 'w') {
-		strcpy(outstr, " . .");
-		if(lpainp[i].lpa_a & va) outstr[3] = 'x';
-		if(lpaout[i].lpa_a & va) outstr[1] = 'x';
+		strcpy(outstr, ". ."); /* on PMT spec: ". ." + outstr indexes 0,2 */
+		if(lpainp[i].lpa_a & va) outstr[2] = 'x';
+		if(lpaout[i].lpa_a & va) outstr[0] = 'x';
 		strcpy(str, outstr);
 	} else {
 		if(cod == ' ' || cod == KB_DE) {
 			line4 = getl4(line);
 
-			switch(cod) {
-			case ' ':
+			switch(lpa_pi) {
+			case 0:
 				lpap = lpa_p[0];
 				break;
-			case KB_DE:
+			case 1:
 				lpap = lpa_p[1];
 				break;
 			}
@@ -510,6 +524,8 @@ char   *str;
 			else           { (*ap) = (*ap) | ( va); }
 
 			w_line(line4);
+			if (i == TXT)/* && cod == ' ')*/
+				repage();
 		}
 	}
 	return(TRUE);
@@ -569,12 +585,6 @@ char   *str;
 		lpaout[i].lpa_p, lpainp[i].lpa_p);
 	} else {
 		if (cod == ' ' || cod == KB_DE) {
-			switch(cod) {
-			case ' ':
-				  lpa_pi = 0; break;
-			case KB_DE:
-				  lpa_pi = 1; break;
-			}
 			w_msg(ATT, "Please, type a prompt symbol");
 			if (lpa_pi)
 				w_str(" on input: ");
@@ -600,8 +610,76 @@ char   *str;
 extern  int     cvt_hl();
 extern  int     cvt_s();
 extern  int     sgrtst();
+extern  int     cvt_pi();
+extern  int     cvt_pim();
 
+/*
+ * LINE linem[] **************************************************************
+ */
 #include "attr.i"
+
+cvt_pi(line, cod, mod, str)
+LINE   *line;
+kbcod   cod;
+char   *mod;
+char   *str;
+{
+	char outs[30];
+	char *cvts;
+	size_t size = line->size;
+	cvts = line->cvts;
+
+	outs[0] = '\0';
+	if (mod[0] == 'w') {
+		/*strcpy(outs, pimode[lpa_pi]);*/
+		strcpy(outs, "       ");
+		if(lpa_pi == 0) {
+			outs[1] = cvts[0];
+			outs[3] = cvts[1];
+		}
+		else {
+			outs[1] = cvts[1];
+			outs[3] = cvts[0];
+		}
+	}
+	strcpy(str, outs);
+	return(TRUE);
+}
+
+static char *pimmsg[2] = {
+		"write (out)  ",
+		" read (input)"
+};
+cvt_pim(line, cod, mod, str)
+LINE   *line;
+kbcod   cod;
+char   *mod;
+char   *str;
+{
+	char outs[30];
+	size_t size = line->size;
+
+	outs[0] = '\0';
+	if (mod[0] == 'w') {
+		strcpy(outs, pimmsg[lpa_pi]);
+	}
+	strcpy(str, outs);
+	return(TRUE);
+}
+
+alt_pi()
+/* alternate mode: Input/Output; called from uspage() below */
+{
+	LINE *l;
+
+	lpa_pi = lpa_pi ? 0 : 1;
+
+	for(l=linem; l->size > 0; l++) {
+		if (l->cvtf == cvt_pi || l->cvtf == cvt_pim) {
+			w_line(l);			/*break;  multiply lines there */
+		}
+	}
+}
 
 repage()
 {
@@ -708,7 +786,7 @@ int    *posp;                   /* ðïúéãéñ ëõòóïòá ðòé òåäáëôéòï÷áîéé */
 		break;
 	}
 
-	*page = lni;    /* óïèòáîéôø õëáúáôåìø îá ôåë. ìéîéà!... */
+	*page = lni;    /* keep pointer to current line!... */
 	return(cod);
 }
 
@@ -730,8 +808,11 @@ LINE *phline;           /* pointer to instant page with help screen */
     while ( -1 ) {
 		cod = n_page( page, &cline, 0);
 		switch ( cod ) {
+		case KB_IN:
+			alt_pi();
+			break;
 		case ' ':
-			/* refresh after menu *//*not used there*/
+			/* refresh after menu *//* there no menu lines on this page */
 			if((cline->attr & LMSE) == LMSE) {
 				/*er_pag();*/
 				w_page(page);
