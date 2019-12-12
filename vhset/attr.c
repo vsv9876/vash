@@ -91,12 +91,11 @@ char   *str;
 		attr = line->attr & VIDEO;
 		strcpy(str, line->varl);
 
-		cp_set(line->line + 1, line->colu + 1, attr|INP); /* couple of lines shown with ofset between them */
+		cp_set(line->line + 1, line->colu + 2, attr|INP); /* couple of lines shown with ofset between them */
 		/* emulate prompt behavior for input mode - find prompt symbol, show it at 1st position */
 		w_chr((char)(lpainp[attr].lpa_p));
 
 		w_str(line->varl);
-
 /*
 		if (attr & TXT)
 			repage();
@@ -581,7 +580,7 @@ char   *str;
 	i = (int)line->varl;
 
 	if(*mod == 'w') {
-		sprintf(str, " %c %c",
+		sprintf(str, "%c %c",
 		lpaout[i].lpa_p, lpainp[i].lpa_p);
 	} else {
 		if (cod == ' ' || cod == KB_DE) {
@@ -602,6 +601,7 @@ char   *str;
 				}
 				w_msg(TXT, "");
 			}
+			w_line(getl4(line));
 		}
 	}
 	return(TRUE);
@@ -634,21 +634,22 @@ char   *str;
 		/*strcpy(outs, pimode[lpa_pi]);*/
 		strcpy(outs, "       ");
 		if(lpa_pi == 0) {
-			outs[1] = cvts[0];
-			outs[3] = cvts[1];
+			outs[0] = cvts[0];
+			outs[2] = cvts[1];
 		}
 		else {
-			outs[1] = cvts[1];
-			outs[3] = cvts[0];
+			outs[0] = cvts[1];
+			outs[2] = cvts[0];
 		}
 	}
 	strcpy(str, outs);
 	return(TRUE);
 }
 
-static char *pimmsg[2] = {
-		"write (out)  ",
-		" read (input)"
+static char *pimmsg[] = {
+		"on write  -->  ",
+		"  on read   -->",
+		"               "
 };
 cvt_pim(line, cod, mod, str)
 LINE   *line;
@@ -657,11 +658,18 @@ char   *mod;
 char   *str;
 {
 	char outs[30];
+	int xactive;
+
 	size_t size = line->size;
+	xactive = line->cvts[0] - '0'; /*iconv the special*/
 
 	outs[0] = '\0';
 	if (mod[0] == 'w') {
-		strcpy(outs, pimmsg[lpa_pi]);
+		if (lpa_pi == xactive) {
+			strcpy(outs, pimmsg[lpa_pi]);
+		} else {
+			strcpy(outs, pimmsg[2]);
+		}
 	}
 	strcpy(str, outs);
 	return(TRUE);
