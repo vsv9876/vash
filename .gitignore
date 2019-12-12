@@ -2,8 +2,11 @@
 .metadata
 .project
 .settings
+.*
 buildd.h
 *.o
 *.i
 *.lb
 *,v
+*.a
+*.so
