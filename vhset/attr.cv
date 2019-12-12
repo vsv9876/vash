@@ -82,9 +82,10 @@
 ---# place of .sgraAT line must be below .sgr line
 ---SCREEN
 .pimsg0.........   .CMD.  .TXT.  .HDR.  .VAR.  .ALT.  .MSE.  .ERR.  .ATT.
+
 .pimsg1.........
 
-=setup visual attributes                                                     
+=assign visual attributes
 +		   .pim.. .t     .t     .t     .t     .t     .t     .t  
 +             pmt: .P..   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
 +     outstand/so: .so.   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
