@@ -1,30 +1,30 @@
-0 000 010		32;49
-1 000:010	39;49	31;49
-2_020 020	36;49	35;47
-3 010#060	37	37;40
-4 010?060	36	36;40
-5-010>060	32	32;40
-6 010 010	37;41	33;41
-7!020 020	37;44	37;41
+0 000 010	0	32;49
+1 000|010	39;49	31;49
+2 001 001	36;49	36;44
+3 010"011	39	35;47
+4 010'001	35	35
+5-010>001	32	32
+6 010 010	33;41	36;41
+7!010 020	33;44	37;41
 +2
-:^KKPctrl-K
-:kuAUup
-:kdADdown
-:klALleft
-:krARright
-:^JNLEnter
-:deDE<--
-:^CEXctrl-C
+:^KKPCtrl-K 
+:kuAUUP     
+:kdADDOWN   
+:klALLEFT   
+:krARRIGHT  
+:^JNLEnter  
+:deDE<--bsp
+:^CEXCtrl-C 
 :k1HEF1     
-:^VPRctrl-V
-:^LREctrl-L
-:^ITA-->|
+:^VPRCtrl-V 
+:^LRECtrl-L 
+:^ITATAB    
 :^AKHHome  
 :^EKEEnd   
 :^BPUPgUp  
 :^FPDPgDn
-:kDKDDel
-:kIINIns
+:kDKDDel 
+:kIINInsert
 :khKHHome  
 :@7KEEnd   
 :kPPUPgUp  
