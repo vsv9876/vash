@@ -37,28 +37,36 @@ struct  keycaps {
 struct  keycaps *keyonp = keys0;        /* "горячие" клавиши */
 
 keyshow(yes)
+int yes;
 {
-    if (yes) {
 	register struct keycaps *k;
 	char    tmpstr[20];
 	int i, base, ofs;
+    if (yes) {
+		/*ofs = 8;*/
+		ofs = maxco/10;
+		if (ofs > 8) ofs = 8;  /* no expanded look, last key label followed with clear_to_end_of_line */
+		if ((ofs * 10) > maxco) ofs -= 1;
+		base = 0;
 
-	/*ofs = 8;*/
-	ofs = maxco/10;
-	base = 0;
-
-	for (i = 0, k = keyonp;
-	i < 10 && k->kc_key;
-	base += ofs, i++, k++) {
-	    if ( i )                    /* правый нижний угол - опасно */
-		w_chr(' ');
-	    cp_set(-1, base, TXT);
-	    w_chr(k->kc_key);
-	    sprintf(tmpstr, "%-6.6s", k->kc_cap);
-	    at_set(HDR);
-	    w_str(tmpstr);
-	    at_set(TXT);
-	}
+		for (i = 0, k = keyonp;
+				i <= 9 && k->kc_key;
+					base += ofs, i++, k++) {
+			if ( i ) {
+				/* right down corner is "dangerouse", so all labels shown shifted left */
+				at_set(TXT);
+				w_chr(' ');
+			}
+			cp_set(-1, base, TXT);
+			w_chr(k->kc_key);
+			sprintf(tmpstr, "%-6.6s", k->kc_cap);
+			at_set(HDR);
+			w_str(tmpstr);
+		}
+		/*er_eol(HDR);*//* does not work for monochrome attributes*/
+		for (i=base; i < maxco; i++) {
+			w_chr(' ');
+		}
     }
 }
 

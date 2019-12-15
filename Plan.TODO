@@ -50,7 +50,7 @@
  *  -+?- execve() for vash itself with reexport of VASH flags
 
  *  - оптимизация файлов настройки (директива include?)
-
+    -+ rescan dir: keep coursor near last known point, it is need more sofisticated comparizon (ex., rm -f ##)
     - searching pattern across history (or select like in main lineset)
     - separate command history cache and command history log
     - special case for cd command history
