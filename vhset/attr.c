@@ -164,7 +164,7 @@ char *str;
 
 				sgra = sgr_v;
 				/*w_line(line);*/
-				cp_set(line->line, line->colu + 1, line->attr); /* PMT sure + 1*/
+				cp_set(line->line, line->colu, line->attr); /* no PMT, if yes: colu + 1*/
 				w_str(outstr);
 				if (!sgr_csel(line, cod, sgra))
 					return(FALSE);
