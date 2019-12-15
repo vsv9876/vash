@@ -25,12 +25,12 @@ LPA     *lpa_p[2] = {
 
 /* Color support for attr.cv page */
 char   *sgrms[] = {
-		"/0/ dumb       ",
-		"/1/ monochrome ",
-		"/2/ color      ",
-		"/3/ color256   ",
+		"#0-dumb       ",
+		"#1-monochrome ",
+		"#2-color      ",
+		"#3-color256   ",
 		0 };
-extern int		sgrmode;
+extern int		sgrmode; /*global LINLIB mode*/
 
 extern  LINE linem[];
 LINE *linesgr = (LINE *)0;
@@ -816,6 +816,12 @@ LINE *phline;           /* pointer to instant page with help screen */
     while ( -1 ) {
 		cod = n_page( page, &cline, 0);
 		switch ( cod ) {
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+			sgrmode = cod - '0'; repage();
+			break;
 		case KB_IN:
 			alt_pi();
 			break;

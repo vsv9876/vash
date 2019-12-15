@@ -35,9 +35,9 @@ sp   = gv       -   -   -       -       "spacebar"
 
  Please, press a key:
 
-	.:NL.... -- advance to next menu point
-	.sp..... -- select menu
-	.:HE.... -- get help
+		.:NL.... -- advance to next menu point
+		.sp..... -- select menu
+		.:HE.... -- get help
 
 ---#    .:?  or .:HE.... -- Help
 ---END
