@@ -24,6 +24,10 @@ cF      = ia    -       onoff   cvt_a   -       cF
 mF      = ia    -       onoff   cvt_a   -       mF
 xF      = ia    -       onoff   cvt_a   -       xF
 
+---# TODO to be continued...
+F1	= c "."
+F2	= c "."
+
 ---# suspend on new line key before debug section below
 ---#ym      = iv    n       "%3d"   -       t_ymax  yy_max
 ym      = iv    -       "%3d"   -       t_ymax  yy_max
@@ -54,21 +58,21 @@ co      = g     -       "%d"   -       -       maxco
 ---#
 ."setup parameters".............................. help: .:HE.... exit: .:EX.... 
 
-+  .hF h,history     .sF s,scroll          .ym. lines max
-+  .hS S,sync        .pF p,panel/keybar                            maxco: .co
-+  .mF m,mail_biff   .wF w,title                                   maxli: .li
-+  .cF c,clock       .xF x,title on xterm                          y0top: .yt
++   .ym. lines max     .hF h,history     .sF s,scroll        .F1 sh -c allways
++       maxco: .co     .hS S,sync        .pF p,panel/keybar  .F2 "."
++       maxli: .li     .mF m,mail_biff   .wF w,title               
++       y0top: .yt     .cF c,clock       .xF x,xterm title         
 +                                                                  
 +   vexdir: .vexdir..............................................
 +   vpath:  .vpath...............................................
-
-debug internals below: consult manual, use with caution, please
-
-+ -i: .i.........................................................
-+ -f: .f.........................................................
-+ -@: .r.........................................................
----#+ -o: .o.........................................................
 +
++debug internals below: consult manual, use with caution, please
++
++-i .i.........................................................
++-f .f.........................................................
++-@ .r.........................................................
+---#+ -o: .o.........................................................
+
 +
 + version: .versn...............   .coprts.....................................
 +   build: .buildd......           ."vash, Visual Assistant Shell            ".

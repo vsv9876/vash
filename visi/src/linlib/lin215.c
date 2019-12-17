@@ -79,33 +79,49 @@ int on;
 	fflush(vttout);
 }
 
+static int last_c;
+char  r_chr() /* TODO: UTF8 support; wchar r_chr() */
+{
+	return (last_c & 0377);
+}
 
-kbcod r_cod(cod)
+kbcod r_cod(oldcod)
 /*------------------------*/
 /* ВЕРНУТЬ ЛОГИЧЕСКИЙ КОД */
 /*------------------------*/
-kbcod cod;
+kbcod oldcod;
 {
 	register KBL *kblp;
 	kbcod   bckc;
+	kbcod   newcod;
 
 	if(backcod) { bckc = backcod; backcod = 0; return(bckc); }
 
-	if(cod==0) {
-		cod=r_key();
+	if(oldcod==0) {
+		oldcod=r_key();
 	}
+	newcod = 0;
 	for(kblp=kbl; kblp->t_cod; kblp++) {
-		if(kblp->t_key == cod) {
-			cod = (kblp->t_cod);
+		if(kblp->t_key == oldcod) {
+			newcod = (kblp->t_cod);
 			break;
 		}
 	}
+	/* классифицировать клавишу, вернуть код группы;
+	 * TODO: перенести сюда часть кода из lin310.c: r_key()
+	 * */
+	if (newcod == 0 || newcod == -1) {
+		/*клавиша не опознана, но была нажата*/
+		return(-1);
+/*	} else if (newcod > 0 ...) {*/
+	}
 	/* ВКЛЮЧИТЬ/ВЫКЛЮЧИТЬ ДОПОЛНИТЕЛЬНУЮ КЛАВИАТУРУ */
-	if(cod == KB_KP) {
+	if(newcod == KB_KP) {
 		if(kpadon) { kpadon = 0; w_raw(t_ke); }
 		else       { kpadon = 1; w_raw(t_ks); }
 		fflush(vttout);
 	}
-	return(cod);
+	last_c = newcod;
+	return(newcod);
 }
 

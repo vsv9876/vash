@@ -675,12 +675,10 @@ char   *str;
 	return(TRUE);
 }
 
-alt_pi()
+show_pi()
 /* alternate mode: Input/Output; called from uspage() below */
 {
 	LINE *l;
-
-	lpa_pi = lpa_pi ? 0 : 1;
 
 	for(l=linem; l->size > 0; l++) {
 		if (l->cvtf == cvt_pi || l->cvtf == cvt_pim) {
@@ -822,8 +820,16 @@ LINE *phline;           /* pointer to instant page with help screen */
 		case '3':
 			sgrmode = cod - '0'; repage();
 			break;
+		case 'o':
+		case 'w':
+			lpa_pi = 0; show_pi();
+			break;
+		case 'i':
+		case 'r':
+			lpa_pi = 1; show_pi();
+			break;
 		case KB_IN:
-			alt_pi();
+			lpa_pi = lpa_pi ? 0 : 1; show_pi();
 			break;
 		case ' ':
 			/* refresh after menu *//* there no menu lines on this page */

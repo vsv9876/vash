@@ -1,7 +1,9 @@
 #include "line.h"
 
+#ifdef MSELINE_FUNCTION
 extern int fastmenu;  /* быстрый выбор: не только подвести курсор,
 			 но и выбрать пункт меню */
+#endif
 
 static
 int onmseline(cline)    /* проверка: курсор стоит на линии "пункт меню"? */
@@ -12,6 +14,7 @@ register LINE *cline;
 	return( 0 );
 }
 
+#ifdef MSELINE_FUNCTION
 LINE *mseline(linem, cline, cod)
 /*-------------------------------------------*/
 /* вернуть указатель на линию селектора меню */
@@ -47,3 +50,4 @@ register LINE *cline;    /* текущая линия страницы */
 	}
 	return(cline);
 }
+#endif
