@@ -55,10 +55,13 @@ extern  KBL kbl[KBLSIZE];
 
 int     kpadon = 0;     /* זלבח: נעבקבס הןנ. כלבקיבפץעב קכלא‏ומב */
 
+#define UNREAD_CHAR_RETRO
+#ifdef UNREAD_CHAR_RETRO
 /*------------------------------------------*/
 /* קועמץפר נען‏יפבממשך כןה קן קטןהמןך נןפןכ */
 /*------------------------------------------*/
 static  kbcod   backcod = 0;
+#endif
 
 unr_c(cod)
 kbcod   cod;
@@ -79,49 +82,66 @@ int on;
 	fflush(vttout);
 }
 
-static int last_c;
+int lastchr; /* last parsed printable code - TODO: there will be stored full utf8 encoded symbol from input */
 char  r_chr() /* TODO: UTF8 support; wchar r_chr() */
 {
-	return (last_c & 0377);
+	return (lastchr & 0377); /* 8-bit, no utf8 support yet */
 }
 
-kbcod r_cod(oldcod)
+kbcod r_cod(cod)
 /*------------------------*/
 /* קועמץפר לןחי‏וףכיך כןה */
 /*------------------------*/
-kbcod oldcod;
+kbcod cod;
 {
 	register KBL *kblp;
 	kbcod   bckc;
-	kbcod   newcod;
 
+#ifdef UNREAD_CHAR_RETRO
 	if(backcod) { bckc = backcod; backcod = 0; return(bckc); }
-
-	if(oldcod==0) {
-		oldcod=r_key();
+#endif
+	if(cod==0) {
+		cod=r_key();
 	}
-	newcod = 0;
+
+	lastchr = cod;
+	if (cod == 0 || cod == -1) {
+		/*ֱֻּ׳ֹÛֱ ־ֵ ֿ׀ֿÚ־ֱ־ֱ, ־ֿ ֲÙֱּ ־ֱײֱװֱ*/
+		return(-1);
+	}
+
 	for(kblp=kbl; kblp->t_cod; kblp++) {
-		if(kblp->t_key == oldcod) {
-			newcod = (kblp->t_cod);
+		if(kblp->t_key == cod) {
+			cod = (kblp->t_cod);
 			break;
 		}
 	}
+	/* ןגעבגןפכב עץףףכיט י במחליךףכיט נו‏בפמשט כןהןק *//*TODO : utf8 parsing will be there*/
+
+	if(((cod < 0377)&&(cod > 0277))
+		|| ((cod > 037)&&(cod < 0177))) {
+			return(cod);
+	}
+#if 0
+	else if(cod == 0177) {
+		/* ASCII DEL*/
+		return(KBCOD('d','e'));
+	}
+	else if(cod > 0 && cod < 040) {
+		/* Nonprintable ASCII*/
+		return( KBCTL(cod + ('A'-'\001'))) ;
+	}
+#endif
 	/* ֱֻּ׃׃ֳֶֹֹֹֿׂ׳ֱװ״ ֱֻּ׳ֹÛױ, ׳ֵׂ־ױװ״ ִֻֿ ַׂױ׀׀Ù;
 	 * TODO: ׀ֵֵׂ־ֵ׃װֹ ׃ְֱִ Þֱ׃װ״ ֱִֻֿ ֹÚ lin310.c: r_key()
 	 * */
-	if (newcod == 0 || newcod == -1) {
-		/*ֱֻּ׳ֹÛֱ ־ֵ ֿ׀ֿÚ־ֱ־ֱ, ־ֿ ֲÙֱּ ־ֱײֱװֱ*/
-		return(-1);
-/*	} else if (newcod > 0 ...) {*/
-	}
+
 	/* קכלא‏יפר/קשכלא‏יפר הןנןלמיפולרמץא כלבקיבפץעץ */
-	if(newcod == KB_KP) {
+	if(cod == KB_KP) {
 		if(kpadon) { kpadon = 0; w_raw(t_ke); }
 		else       { kpadon = 1; w_raw(t_ks); }
 		fflush(vttout);
 	}
-	last_c = newcod;
-	return(newcod);
+	return(cod);
 }
 

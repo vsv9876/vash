@@ -85,7 +85,7 @@ int cod;
 /*---------------------*/
 /* ÷åòîõôø ëïä ëìá÷éûé */
 /*---------------------*/
-r_key()
+kbcod r_key()
 {
 	register kbcod cod ;
 	register pars ;         /* k_pars() = */
@@ -93,21 +93,25 @@ r_key()
 	cod = ttyinp();
 	if(cod == -1)
 		return( -1);    /* áóéîèòïîîùê òåöéí - âåú ïöéäáîéñ */
+#ifdef KOI8_RETRO
 	else
 		cod &= 0377;    /* ðïäá÷éôø úîáëï÷ïå òáóûéòåîéå int=char */
 
 	if(cod > 0200 && cod < 0300)
 		cod &= 0177;    /* á ÷äòõç "òõóóëéê" #,%,?, é ô.ä. */
-
+#endif
 	/* ôåòíéîáìï-úá÷éóéíùê ëïä */
-	if(cod != (pars=k_pars(cod)))
-		return(pars);
+	pars = k_pars(cod);
+	if(cod != pars)
+		return(pars); /* OK, key recognized from termcap/terminfo database */
 
-	/* ïâòáâïôëá òõóóëéè é áîçìéêóëéè ðåþáôîùè ëïäï÷ */
+	/* code below moved to r_cod() - lin215.c */
+#if 0
+	/* ïâòáâïôëá òõóóëéè é áîçìéêóëéè ðåþáôîùè ëïäï÷ *//*TODO : utf8 parsing will be there*/
 	else if(((cod < 0377)&&(cod > 0277))
 	|| ((cod > 037)&&(cod < 0177)))
 		return(cod);
-
+#endif
 	/* ASCII DEL */
 	else if(cod == 0177)
 		return(KBCOD('d','e'));
