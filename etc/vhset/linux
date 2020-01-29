@@ -1,11 +1,11 @@
-0 000 010	0	32;49
-1 000|010	39;49	31;49
+0 000 010	0	35;49
+1 000;000	37;40	33;49
 2 001 001	36;49	36;44
-3 010"011	39	35;47
-4 010'001	35	35
+3 010"001	39	34;47
+4 010'001	35	35;47
 5-010>001	32	32
-6 010 010	33;41	36;41
-7!010 020	33;44	37;41
+6 010 010	33;43	36;41
+7!020 020	34;46	37;41
 +2
 :^KKPCtrl-K 
 :kuAUUP     
@@ -13,7 +13,7 @@
 :klALLEFT   
 :krARRIGHT  
 :^JNLEnter  
-:deDE<--bsp
+:deDE<-del  
 :^CEXCtrl-C 
 :k1HEF1     
 :^VPRCtrl-V 
@@ -22,8 +22,8 @@
 :^AKHHome  
 :^EKEEnd   
 :^BPUPgUp  
-:^FPDPgDn
-:kDKDDel 
+:^FPDPgDown
+:kDKDdel->  
 :kIINInsert
 :khKHHome  
 :@7KEEnd   

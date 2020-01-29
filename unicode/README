@@ -1,0 +1,43 @@
+
+Test for source/binary between 8-bit locale koi8-r and Unicode,
+facepaw.jpg
+
+================================== xterm(UTF8)
+$ ./a.out
+argc=1
+'H'  -- %s = 8;  'Hello-Привет'  -- %ls = 25
+' '  -- %s = 8;  ' unicode- юникод'  -- %ls = 29
+'/'  -- %s = 8;  '/utf8/koi8/'  -- %ls = 18
+WCHAR_MAX=0x7fffffff
+WCHAR_MIN=0x80000000
+sizeof(wint_t)=4
+sizeof(wchar_t)=4
+MB_CUR_MAX=6
+$ ./a.out no_setlocale
+argc=2
+'H'  -- %s = 8;  '%ls = -1
+' '  -- %s = 8;  '%ls = -1
+'/'  -- %s = 8;  '/utf8/koi8/'  -- %ls = 18
+WCHAR_MAX=0x7fffffff
+WCHAR_MIN=0x80000000
+sizeof(wint_t)=4
+sizeof(wchar_t)=4
+MB_CUR_MAX=1
+$ env|grep LC_CTYPE
+LC_CTYPE=ru_RU.utf8
+ [ ok ]
+================================== xterm(KOI8R)
+$ ./a.out
+argc=1
+'H'  -- %s = 8;  'Hello-Привет'  -- %ls = 19
+' '  -- %s = 8;  ' unicode- юникод'  -- %ls = 23
+'/'  -- %s = 8;  '/utf8/koi8/'  -- %ls = 18
+WCHAR_MAX=0x7fffffff
+WCHAR_MIN=0x80000000
+sizeof(wint_t)=4
+sizeof(wchar_t)=4
+MB_CUR_MAX=1
+$ env|grep LC_CTYPE
+LC_CTYPE=ru_RU.koi8r
+ [ ok ]
+ 

@@ -9,7 +9,8 @@ case $# in
 *)      nice make "$@" >a 2>&1 & ;;
 esac
 pid=$!
-echo -n '' [$pid] Started...
+echo -n '
+' [$pid] Started...
 
 wait $pid
 ok=$?
@@ -18,10 +19,12 @@ ok=$?
 
 case $ok in
 0)
-	echo -n '' [$pid] Ready... '(' make "$@" ')'
+	echo -n '
+' [$pid] Ready... '(' make "$@" ')'
 	;;
 *)
-	echo -n '' [$pid] Exit $ok '(' make "$@" ')'
+	echo -n '
+' [$pid] Exit $ok '(' make "$@" ')'
 	;;
 esac
 ) &

@@ -1,5 +1,8 @@
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <locale.h>
+#include <wchar.h>
 #include <signal.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -16,25 +19,25 @@ FILE   *tmpfp = NULL;
 
 extern  char *getenv();
 
-int     y0_top = 0;   /* Начало свитка на экране */
+int     y0_top = 0;   /* п²п╟я┤п╟п╩п╬ я│п╡п╦я┌п╨п╟ п╫п╟ я█п╨я─п╟п╫п╣ */
 
 /*
  * flags:
  */
-int     scrolf = 1;     /* флаг: продвигать рулон, а не гасить экран */
-int     oneitm = 0;     /* флаг: разрешено указать только один пункт меню */
-int     panelf = 1;     /* флаг: показывать панель подсказки */
+int     scrolf = 1;     /* я└п╩п╟пЁ: п©я─п╬п╢п╡п╦пЁп╟я┌я▄ я─я┐п╩п╬п╫, п╟ п╫п╣ пЁп╟я│п╦я┌я▄ я█п╨я─п╟п╫ */
+int     oneitm = 0;     /* я└п╩п╟пЁ: я─п╟п╥я─п╣я┬п╣п╫п╬ я┐п╨п╟п╥п╟я┌я▄ я┌п╬п╩я▄п╨п╬ п╬п╢п╦п╫ п©я┐п╫п╨я┌ п╪п╣п╫я▌ */
+int     panelf = 1;     /* я└п╩п╟пЁ: п©п╬п╨п╟п╥я▀п╡п╟я┌я▄ п©п╟п╫п╣п╩я▄ п©п╬п╢я│п╨п╟п╥п╨п╦ */
 int     whodirf = 1;    /* show whodir panel on screen */
 int     xtermf = 0;     /* show whodir panel on window title using xterm escape sequence */
-int     histf  = 0;     /* флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
-int		histsn = 0;		/* флаг: синхронизировать историю после каждой команды */
-int     clockf = 1;     /* флаг: показывать часы */
-int     cmailf = 1;     /* флаг: проверять почту */
-int     loginf = 0;     /* флаг: главная оболочка, ppid() == 1 */
+int     histf  = 0;     /* я└п╩п╟пЁ: я│п╬я┘я─п╟п╫я▐я┌я▄ п╦я│я┌п╬я─п╦я▌ п╨п╬п╪п╟п╫п╢ п©я─п╦ п╡я▀я┘п╬п╢п╣ п╦п╥ vash, п╣я│п╩п╦ histsn != 1 */
+int		histsn = 0;		/* я└п╩п╟пЁ: я│п╦п╫я┘я─п╬п╫п╦п╥п╦я─п╬п╡п╟я┌я▄ п╦я│я┌п╬я─п╦я▌ п©п╬я│п╩п╣ п╨п╟п╤п╢п╬п╧ п╨п╬п╪п╟п╫п╢я▀ */
+int     clockf = 1;     /* я└п╩п╟пЁ: п©п╬п╨п╟п╥я▀п╡п╟я┌я▄ я┤п╟я│я▀ */
+int     cmailf = 1;     /* я└п╩п╟пЁ: п©я─п╬п╡п╣я─я▐я┌я▄ п©п╬я┤я┌я┐ */
+int     loginf = 0;     /* я└п╩п╟пЁ: пЁп╩п╟п╡п╫п╟я▐ п╬п╠п╬п╩п╬я┤п╨п╟, ppid() == 1 */
 
 char   *envshell;		/* env SHELL= */
-char   *homedir;        /* домашний каталог */
-char   *cwd;            /* текущий (рабочий) каталог */
+char   *homedir;        /* п╢п╬п╪п╟я┬п╫п╦п╧ п╨п╟я┌п╟п╩п╬пЁ */
+char   *cwd;            /* я┌п╣п╨я┐я┴п╦п╧ (я─п╟п╠п╬я┤п╦п╧) п╨п╟я┌п╟п╩п╬пЁ */
 
 char *pmtsh;
 
@@ -86,18 +89,27 @@ static  LINE tmplate =
 			       t_file,
 				       (char*)0 };
 
-char    *itms1[ITMMAX+1];       /* УКАЗАТЕЛИ НА ПУНКТЫ ГЛАВНОГО МЕНЮ */
+char    *itms1[ITMMAX+1];       /* пёп п░п≈п░п╒п∙п⌡п≤ п²п░ п÷пёп²п п╒п╚ п⌠п⌡п░п▓п²п·п⌠п· п°п∙п²п╝ */
 
 main(argc, argv)
 int argc;
 char **argv;
 {
-       char *envsup;   /* строка флагов из окружения */
-       char *ashstd;   /* имя файла настройки команд */
+       char *envsup;   /* я│я┌я─п╬п╨п╟ я└п╩п╟пЁп╬п╡ п╦п╥ п╬п╨я─я┐п╤п╣п╫п╦я▐ */
+       char *ashstd;   /* п╦п╪я▐ я└п╟п╧п╩п╟ п╫п╟я│я┌я─п╬п╧п╨п╦ п╨п╬п╪п╟п╫п╢ */
        int c;
        char *s;
 
-       /* инициализация главного меню */
+		if (!setlocale(LC_CTYPE, "")) {
+			fprintf(stderr, "Can't set the specified locale! "
+				"Check LANG, LC_CTYPE, LC_ALL.\n");
+			return 1;
+		} else {
+			mb_cur_max = MB_CUR_MAX;
+		}
+
+
+       /* п╦п╫п╦я├п╦п╟п╩п╦п╥п╟я├п╦я▐ пЁп╩п╟п╡п╫п╬пЁп╬ п╪п╣п╫я▌ */
        clm._itms   = itms1;
        clm._ltmpl  = &tmplate;
        clm._itmbsz = ITMBUF;
@@ -217,7 +229,7 @@ char **argv;
 				continue;
 			}
 		} else {
-			/* имя файла для интерпретации cmdset() */
+			/* п╦п╪я▐ я└п╟п╧п╩п╟ п╢п╩я▐ п╦п╫я┌п╣я─п©я─п╣я┌п╟я├п╦п╦ cmdset() */
 			ashstd = *argv;
 		}
 	}
@@ -233,8 +245,8 @@ char **argv;
     if (homedir != (char *)0) {
 		cmdghist(homedir);
 	}
-    tmpfd = mkstemp(tmpflnm);      /* получить имя временного файла */
-/*  tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
+    tmpfd = mkstemp(tmpflnm);      /* п©п╬п╩я┐я┤п╦я┌я▄ п╦п╪я▐ п╡я─п╣п╪п╣п╫п╫п╬пЁп╬ я└п╟п╧п╩п╟ */
+/*  tmpflnm = "/tmp/ash.tmp";        /* п©п╬п╩я┐я┤п╦я┌я▄ п╦п╪я▐ п╡я─п╣п╪п╣п╫п╫п╬пЁп╬ я└п╟п╧п╩п╟ */
 #ifdef DEBUG_VASH
     int r;
     read(0, r, 1);
@@ -244,7 +256,7 @@ char **argv;
 
 /*NOXSTR*/
 	if ( cmdset(ashstd) && fil_vf(1) ) {
-		/* Настроить нач. состояние области свитка */
+		/* п²п╟я│я┌я─п╬п╦я┌я▄ п╫п╟я┤. я│п╬я│я┌п╬я▐п╫п╦п╣ п╬п╠п╩п╟я│я┌п╦ я│п╡п╦я┌п╨п╟ */
 		/* y0_top = maxli - clm._yy_max;/* - 1;*/
 
 		/*y0_top = 0;*/
@@ -258,7 +270,7 @@ char **argv;
 		u_menu(clm._vf, "mainh.lb");
 		onexit(0); exit(0);
 	} else {
-		/* ошибки (плохо установлен ash, не читается реперный файл */
+		/* п╬я┬п╦п╠п╨п╦ (п©п╩п╬я┘п╬ я┐я│я┌п╟п╫п╬п╡п╩п╣п╫ ash, п╫п╣ я┤п╦я┌п╟п╣я┌я│я▐ я─п╣п©п╣я─п╫я▀п╧ я└п╟п╧п╩ */
 		/* scrlnl(); */
 		io_set(IO_TTYPE);
 		printf("\n");

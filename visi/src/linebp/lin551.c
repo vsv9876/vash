@@ -1,7 +1,7 @@
 #include "line.h"
 #include "linebp.h"
 
-char    *vexdir =        /* λαταμοη οπισαξικ στςαξιγ */
+char    *vexdir =        /* ΠΠΠΆΠΠ›ΠΠ“ ΠΠΠΠ΅ΠΠΠΠ™ Π΅ΠΆΠ ΠΠΠΠ¦ */
 #ifdef  DEMOS2
 	"/usr/new/lib/visi/";
 #endif

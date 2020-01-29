@@ -10,7 +10,7 @@ extern  char    Cfill[];
 extern  char    Crepf[];
 
 #ifdef RT11
- error Программа предназначена исключительно для unix
+ error п÷я─п╬пЁя─п╟п╪п╪п╟ п©я─п╣п╢п╫п╟п╥п╫п╟я┤п╣п╫п╟ п╦я│п╨п╩я▌я┤п╦я┌п╣п╩я▄п╫п╬ п╢п╩я▐ unix
 #endif
 
 LINEMENU clm = { 0 };
@@ -20,7 +20,7 @@ int     mark_o = -1;
 
 static  int     tstmark(cod)
 kbcod   cod;
-/* проверить уникальную пометку */
+/* п©я─п╬п╡п╣я─п╦я┌я▄ я┐п╫п╦п╨п╟п╩я▄п╫я┐я▌ п©п╬п╪п╣я┌п╨я┐ */
 {
 	register int i;
 
@@ -31,7 +31,7 @@ kbcod   cod;
 	for(i = 0; i < clm._itmmax; i++) {
 		if (clm._itms[i][0] == cod) {
 			w_emsg("redirection selected: ");
-			/* будет показан и символ типа файла: */
+			/* п╠я┐п╢п╣я┌ п©п╬п╨п╟п╥п╟п╫ п╦ я│п╦п╪п╡п╬п╩ я┌п╦п©п╟ я└п╟п╧п╩п╟: */
 			w_str(clm._itms[i]);
 			return(0);
 		}
@@ -45,7 +45,7 @@ kbcod   cod;
 
 int t_file(line, cod)
 /*
- * тест для пунктов меню (имен файлов)
+ * я┌п╣я│я┌ п╢п╩я▐ п©я┐п╫п╨я┌п╬п╡ п╪п╣п╫я▌ (п╦п╪п╣п╫ я└п╟п╧п╩п╬п╡)
  */
 register LINE *line;
 kbcod cod;
@@ -88,12 +88,12 @@ kbcod cod;
 }
 
 /*NOXSTR*/
-static  char pattfs[42] = "*";  /* строка для шаблона пометки */
+static  char pattfs[42] = "*";  /* я│я┌я─п╬п╨п╟ п╢п╩я▐ я┬п╟п╠п╩п╬п╫п╟ п©п╬п╪п╣я┌п╨п╦ */
 /*YESXSTR*/
 
 static  int ed_ls(fill)
 /*
- * тотальная пометка
+ * я┌п╬я┌п╟п╩я▄п╫п╟я▐ п©п╬п╪п╣я┌п╨п╟
  */
 char *fill;
 {
@@ -101,13 +101,13 @@ char *fill;
 
 	register char *p;
 	register LINE *line;
-	extern kbcod pmtrstr(); /* ввод строки с промптером */
+	extern kbcod pmtrstr(); /* п╡п╡п╬п╢ я│я┌я─п╬п╨п╦ я│ п©я─п╬п╪п©я┌п╣я─п╬п╪ */
 	char prompts[100];
 	char newCfill[MAXLICO];
 	int maxlen;
 
 	maxlen = (MAXLICO > maxco ? maxco : MAXLICO) - 1;
-	/* если строка fill пустая, редактировать Cfill, иначе просто скопировать fill */
+	/* п╣я│п╩п╦ я│я┌я─п╬п╨п╟ fill п©я┐я│я┌п╟я▐, я─п╣п╢п╟п╨я┌п╦я─п╬п╡п╟я┌я▄ Cfill, п╦п╫п╟я┤п╣ п©я─п╬я│я┌п╬ я│п╨п╬п©п╦я─п╬п╡п╟я┌я▄ fill */
 	if (fill != (char *)0 && fill[0] != '\0') {
 		strcpy(Cfill, fill);
 		return 1;
@@ -137,19 +137,19 @@ char *cmd;
 
 static  int tutsel(cod)
 /*
- * тотальная пометка
+ * я┌п╬я┌п╟п╩я▄п╫п╟я▐ п©п╬п╪п╣я┌п╨п╟
  */
 kbcod cod;
 {
 	register char *p;
 	register LINE *line;
 	register int i;
-	extern kbcod pmtrstr(); /* ввод строки с промптером */
+	extern kbcod pmtrstr(); /* п╡п╡п╬п╢ я│я┌я─п╬п╨п╦ я│ п©я─п╬п╪п©я┌п╣я─п╬п╪ */
 	char prompts[100];
 	int total, unvisible;
 
 	total = 0;
-	/* ввести шаблон пометки */
+	/* п╡п╡п╣я│я┌п╦ я┬п╟п╠п╩п╬п╫ п©п╬п╪п╣я┌п╨п╦ */
 	sprintf(prompts, " mark #%c", cod);
 	switch(pmtrstr(prompts, pattfs, 40)) {
 	case KB_EX:
@@ -162,15 +162,15 @@ kbcod cod;
 	}
 	for (i = 0; i < clm._itmmax; i++) {
 	    p = clm._itms[i];
-		       /* Проверять по шаблону... */
+		       /* п÷я─п╬п╡п╣я─я▐я┌я▄ п©п╬ я┬п╟п╠п╩п╬п╫я┐... */
 	    if (patcmp(pattfs, &p[2]))
 		switch(cod) {
 		case '+':
-			/* помечать только при явном указании */
+			/* п©п╬п╪п╣я┤п╟я┌я▄ я┌п╬п╩я▄п╨п╬ п©я─п╦ я▐п╡п╫п╬п╪ я┐п╨п╟п╥п╟п╫п╦п╦ */
 			if (p[2] == '.' && pattfs[0] != '.')
 				break;
 #ifdef RETRO
-			/* не помечать каталоги */
+			/* п╫п╣ п©п╬п╪п╣я┤п╟я┌я▄ п╨п╟я┌п╟п╩п╬пЁп╦ */
 			if (p[1] == '/')
 				break;
 #endif
@@ -214,12 +214,12 @@ kbcod cod;
 	return 0;
 }
 
-/* попытка: команды пометки вынести во внешние файлы .ashstd */
+/* п©п╬п©я▀я┌п╨п╟: п╨п╬п╪п╟п╫п╢я▀ п©п╬п╪п╣я┌п╨п╦ п╡я▀п╫п╣я│я┌п╦ п╡п╬ п╡п╫п╣я┬п╫п╦п╣ я└п╟п╧п╩я▀ .ashstd */
 int f_mark(cmd)
 char *cmd;
 {
 	kbcod cod;
-	cod = cmd[0]; /*переделать на нормальный макрос для kbcod */
+	cod = cmd[0]; /*п©п╣я─п╣п╢п╣п╩п╟я┌я▄ п╫п╟ п╫п╬я─п╪п╟п╩я▄п╫я▀п╧ п╪п╟п╨я─п╬я│ п╢п╩я▐ kbcod */
 
 	switch (cod) {
 	case '+':
@@ -236,17 +236,17 @@ extern  int     y0_top;         /* defined in main.c */
 
 u_menu(mainl, helpl)
 /*
- * работа со страницей меню
+ * я─п╟п╠п╬я┌п╟ я│п╬ я│я┌я─п╟п╫п╦я├п╣п╧ п╪п╣п╫я▌
  */
 register LINE *mainl;
 char *helpl;
 {
 	register int i;
 	kbcod cod;
-	int   keyreq;   /* флаг: требуется показать панель */
+	int   keyreq;   /* я└п╩п╟пЁ: я┌я─п╣п╠я┐п╣я┌я│я▐ п©п╬п╨п╟п╥п╟я┌я▄ п©п╟п╫п╣п╩я▄ */
 	int   cmdret;
 
-	/* первоначальный показ на экране */
+	/* п©п╣я─п╡п╬п╫п╟я┤п╟п╩я▄п╫я▀п╧ п©п╬п╨п╟п╥ п╫п╟ я█п╨я─п╟п╫п╣ */
 	cp_set(clm._y0, 0, TXT);
 	er_eop(TXT);
 	cwdshow();
@@ -256,12 +256,12 @@ char *helpl;
 
 	clm._itm = i = 0;
 	for ( ;; ) {
-		/* нет сообщений и требуется нарисовать панель */
+		/* п╫п╣я┌ я│п╬п╬п╠я┴п╣п╫п╦п╧ п╦ я┌я─п╣п╠я┐п╣я┌я│я▐ п╫п╟я─п╦я│п╬п╡п╟я┌я▄ п©п╟п╫п╣п╩я▄ */
 		if ( !ok_msg() && keyreq ) {
 			keyshow(panelf); keyreq = 0;
 		}
 
-		showtime( 1 );  /* восстановить индикацию часов */
+		showtime( 1 );  /* п╡п╬я│я│я┌п╟п╫п╬п╡п╦я┌я▄ п╦п╫п╢п╦п╨п╟я├п╦я▌ я┤п╟я│п╬п╡ */
 		i = clm._itm - clm._itmofs;
 		cod = r_line( &clm._vf[i], 0 );
 
@@ -273,7 +273,7 @@ char *helpl;
 		case KB_HE:
 			at_set(TXT);
 			w_help(helpl);
-			/* проваливаемся... */
+			/* п©я─п╬п╡п╟п╩п╦п╡п╟п╣п╪я│я▐... */
 #endif
 		case KB_RE:
 			er_pag();
@@ -302,39 +302,39 @@ char *helpl;
 			w_line( &clm._vf[i] );
 /*                      if (oneitm) return;     */
 			cod = KB_AD;
-			/* проваливаемся... */
+			/* п©я─п╬п╡п╟п╩п╦п╡п╟п╣п╪я│я▐... */
 		case KB_AD:
 		case KB_AR:
 		case KB_AL:
 		case KB_AU:
 			i = itmadj(cod);
 			break;
-			/* не встроенная команда, надо интерпретировать */
+			/* п╫п╣ п╡я│я┌я─п╬п╣п╫п╫п╟я▐ п╨п╬п╪п╟п╫п╢п╟, п╫п╟п╢п╬ п╦п╫я┌п╣я─п©я─п╣я┌п╦я─п╬п╡п╟я┌я▄ */
 		default:
 			w_line( &clm._vf[i] );
 			keyreq = 1;
 			if ((cmdret = vcmd(i, cod, clm._vf)) > 0) {
-				/* экран меню испорчен или
-				 * новое главное меню.
+				/* я█п╨я─п╟п╫ п╪п╣п╫я▌ п╦я│п©п╬я─я┤п╣п╫ п╦п╩п╦
+				 * п╫п╬п╡п╬п╣ пЁп╩п╟п╡п╫п╬п╣ п╪п╣п╫я▌.
 				 */
 				scrlst();
 				cp_sav();
 				if (fil_vf(0)) {
 					cp_fet();
-					scrlnl(); /* новый y0... */
+					scrlnl(); /* п╫п╬п╡я▀п╧ y0... */
 				}
 #ifdef  FULLTRUE
-				else    cp_sav(); /* необязательно */
+				else    cp_sav(); /* п╫п╣п╬п╠я▐п╥п╟я┌п╣п╩я▄п╫п╬ */
 #endif
-				cwdshow();      /* вывески */
-				itmshow();      /* положение окна */
+				cwdshow();      /* п╡я▀п╡п╣я│п╨п╦ */
+				itmshow();      /* п©п╬п╩п╬п╤п╣п╫п╦п╣ п╬п╨п╫п╟ */
 				hlp_clr();		/* TODO check if right place?*/
-				w_page(clm._vf, 0);  /* пункты меню */
+				w_page(clm._vf, 0);  /* п©я┐п╫п╨я┌я▀ п╪п╣п╫я▌ */
 			} else {
 				if (cmdret < 0)
 					keyreq = 0;
 			}
-			/* синхронизировать y0 и y0_top */
+			/* я│п╦п╫я┘я─п╬п╫п╦п╥п╦я─п╬п╡п╟я┌я▄ y0 п╦ y0_top */
 			if (clm._y0 < y0_top)
 				y0_top = clm._y0;
 			break;

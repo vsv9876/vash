@@ -25,11 +25,11 @@ signal(SIGINT, SIG_DFL);
 signal(SIGQUIT, SIG_DFL);
  */
 vfread(fpread)
-/*ÎÉËÏÇÄÁ ÎÅ ×ÙÚÙ×ÁÅÔÓÑ?!!!*/
+/*Ð½Ð¸ÐºÐ¾Ð³Ð´Ð° Ð½Ðµ Ð²Ñ‹Ð·Ñ‹Ð²Ð°ÐµÑ‚ÑÑ?!!!*/
 FILE *fpread;
 /*
- * úÁÐÏÌÎÉÔØ ÂÕÆÅÒ ÐÕÎËÔÏ× ÍÅÎÀ ÞÅÒÅÚ ×ÎÅÛÎÀÀ ËÏÍÁÎÄÕ:
- * ÐÏÓÞÉÔÁÔØ ÐÕÎËÔÙ, ÏÐÒÅÄÅÌÉÔØ ÍÁËÓ. ÄÌÉÎÕ ÐÕÎËÔÁ
+ * Ð—Ð°Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÑŒ Ð±ÑƒÑ„ÐµÑ€ Ð¿ÑƒÐ½ÐºÑ‚Ð¾Ð² Ð¼ÐµÐ½ÑŽ Ñ‡ÐµÑ€ÐµÐ· Ð²Ð½ÐµÑˆÐ½ÑŽÑŽ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñƒ:
+ * Ð¿Ð¾ÑÑ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð¿ÑƒÐ½ÐºÑ‚Ñ‹, Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»Ð¸Ñ‚ÑŒ Ð¼Ð°ÐºÑ. Ð´Ð»Ð¸Ð½Ñƒ Ð¿ÑƒÐ½ÐºÑ‚Ð°
  */
 {
 	register char *itmbp;
@@ -50,7 +50,7 @@ FILE *fpread;
 			break;
 
 		if (c == '\n') {
-			/* ËÏÎÅÃ ÏÞÅÒÅÄÎÏÊ ÓÔÒÏËÉ */
+			/* ÐºÐ¾Ð½ÐµÑ† Ð¾Ñ‡ÐµÑ€ÐµÐ´Ð½Ð¾Ð¹ ÑÑ‚Ñ€Ð¾ÐºÐ¸ */
 			*itmbp++ = '\0';
 			if ( len > clm._itmlen ) clm._itmlen = len;
 			len = 0 ;
@@ -93,8 +93,8 @@ char *str;
 {
 	register char **spp;
 	/*register int max_co;*/
-	size_t lsize;  /* size of significant part of LINE */
-	register size_t rsize; /* real size of string, defines place of ist symbol shown at the end of string */
+	size_t lsize;  				/* size of significant part of LINE */
+	register size_t rsize; 		/* real size of string will be shown */
 	register char *s;
 	register char *v;
 
@@ -111,7 +111,7 @@ char *str;
 
 	/* max_co = maxco-2; */
 	if (str) {
-		if(*mod == 'r') { /* never used on input, code may be removed because not used */
+		if(*mod == 'r') { /* never used on input, this part of code may be removed because not used */
 			; /*strcpy(*v, str);*/
 		}
 		if(*mod == 'w') {

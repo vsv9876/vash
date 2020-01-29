@@ -1,7 +1,7 @@
 /* tgoto [termcap]
 **
-** δμρ ισπομψϊοχαξιρ σοχνεστξο σ LINLIB v3.0
-** ξαδο βω ποδμεώιτψ πςογεδυςυ λοςςελτιςοχλι ζοςνατα %.
+** Π”Π›Π― ΠΠ΅ΠΠΠ›Π¬Π—ΠΠ’ΠΠΠΠ― Π΅ΠΠ’ΠΠ•Π΅ΠΆΠΠ Π΅ LINLIB v3.0
+** ΠΠΠ”Π Π‘Π« ΠΠΠ”Π›Π•Π§ΠΠΆΠ¬ ΠΠ ΠΠ¦Π•Π”Π£Π Π£ ΠΠΠ Π Π•ΠΠΆΠΠ ΠΠ’ΠΠ Π¤ΠΠ ΠΠΠΆΠ %.
 **
 **/
 #include <string.h>
@@ -12,8 +12,8 @@ char	*UP;
 char	*BC;
 
 /*
- * πςοηςαννα δμρ χωπομξεξιρ αδςεσαγιι λυςσοςα
- * CM ρχμρετσρ στςολοκ δμρ χωποξεξιρ αδςεσαγιι λυςσοςα.
+ * ΠΠ ΠΠ“Π ΠΠΠΠ Π”Π›Π― Π’Π«ΠΠΠ›ΠΠ•ΠΠΠ― ΠΠ”Π Π•Π΅ΠΠ¦ΠΠ ΠΠ£Π Π΅ΠΠ Π
+ * CM Π―Π’Π›Π―Π•ΠΆΠ΅Π― Π΅ΠΆΠ ΠΠΠΠ™ Π”Π›Π― Π’Π«ΠΠΠΠ•ΠΠΠ― ΠΠ”Π Π•Π΅ΠΠ¦ΠΠ ΠΠ£Π Π΅ΠΠ Π.
  * The following escapes are defined for substituting row/column:
  *
  *	%d	as in printf
@@ -38,7 +38,7 @@ tgoto(CM, destcol, destline)
 	char *CM;
 	int destcol, destline;
 {
-	static char bcount;             /* σώετώιλ χοϊχςατοχ δμρ %. */
+	static char bcount;             /* Π΅Π§Π•ΠΆΠ§ΠΠ Π’ΠΠ—Π’Π ΠΠΆΠΠ’ Π”Π›Π― %. */
 	static char result[64];
 	static char added[10];
 	char *cp = CM;
@@ -126,8 +126,8 @@ casedot:
 			 * because some terminals use ^I for other things,
 			 * like nondestructive space.
 			 */
-			bcount = 0;             /* σώετώιλ χοϊχςατοχ */
-			switch( which )  {      /* σμυώαεχ δοχομψξο νξοηο... */
+			bcount = 0;             /* Π΅Π§Π•ΠΆΠ§ΠΠ Π’ΠΠ—Π’Π ΠΠΆΠΠ’ */
+			switch( which )  {      /* Π΅Π›Π£Π§ΠΠ•Π’ Π”ΠΠ’ΠΠ›Π¬ΠΠ ΠΠΠΠ“Π... */
 				case '\t'    :
 				case 'n'&037 : bcount++;
 				case 0       :
@@ -136,7 +136,7 @@ casedot:
 				case 'o'&037 : bcount++; break;
 				default      : break;
 			}
-			while(bcount--) {       /* δΟπισωχαεν χοϊχςατ.. */
+			while(bcount--) {       /* Π”ΠΎΠΠΠ΅Π«Π’ΠΠ•Π Π’ΠΠ—Π’Π ΠΠΆ.. */
 				strcat(added, oncol ? (BC ? BC : "\b") : UP);
 				which++;
 			}

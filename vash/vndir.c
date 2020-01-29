@@ -61,29 +61,29 @@ int rescan()
 }
 
 /*
- * Вернуть строку прав доступа (rwx)
+ * п▓п╣я─п╫я┐я┌я▄ я│я┌я─п╬п╨я┐ п©я─п╟п╡ п╢п╬я│я┌я┐п©п╟ (rwx)
  */
 char *
 rwxmode(statp)
 struct stat *statp;
 {
 	static  char rwxs[4];
-	int umode;  /* реальные права доступа */
-	unsigned short userid;  /* идентификатор пользователя */
+	int umode;  /* я─п╣п╟п╩я▄п╫я▀п╣ п©я─п╟п╡п╟ п╢п╬я│я┌я┐п©п╟ */
+	unsigned short userid;  /* п╦п╢п╣п╫я┌п╦я└п╦п╨п╟я┌п╬я─ п©п╬п╩я▄п╥п╬п╡п╟я┌п╣п╩я▐ */
 
 
 	userid = getuid();
 
 	umode = statp->st_mode;
-	if (userid) { /* не является суперпользователем */
+	if (userid) { /* п╫п╣ я▐п╡п╩я▐п╣я┌я│я▐ я│я┐п©п╣я─п©п╬п╩я▄п╥п╬п╡п╟я┌п╣п╩п╣п╪ */
 	    if      (statp->st_uid == userid);
 /*          else if (stp->st_gid == getgid())   */
 	    else if (gidchk(statp->st_gid))
 		    umode <<= 3;
 	    else    umode <<= 6;
 	}
-	/* assistant shell, будучи запущенным от root,
-	 * смотрит на права владельца объекта (TODO дополнить acl)
+	/* assistant shell, п╠я┐п╢я┐я┤п╦ п╥п╟п©я┐я┴п╣п╫п╫я▀п╪ п╬я┌ root,
+	 * я│п╪п╬я┌я─п╦я┌ п╫п╟ п©я─п╟п╡п╟ п╡п╩п╟п╢п╣п╩я▄я├п╟ п╬п╠я┼п╣п╨я┌п╟ (TODO п╢п╬п©п╬п╩п╫п╦я┌я▄ acl)
 	 */
 	rwxs[0] = ((umode & S_IREAD) ? 'r' : '-');
 	rwxs[1] = ((umode & S_IWRITE)? 'w' : '-');
@@ -93,22 +93,22 @@ struct stat *statp;
 }
 
 /*
- * Функции формирования строки сравнения
- * для интерпретации команд.
+ * п╓я┐п╫п╨я├п╦п╦ я└п╬я─п╪п╦я─п╬п╡п╟п╫п╦я▐ я│я┌я─п╬п╨п╦ я│я─п╟п╡п╫п╣п╫п╦я▐
+ * п╢п╩я▐ п╦п╫я┌п╣я─п©я─п╣я┌п╟я├п╦п╦ п╨п╬п╪п╟п╫п╢.
  *
- * Формат выдачи:
+ * п╓п╬я─п╪п╟я┌ п╡я▀п╢п╟я┤п╦:
  * tstat1():
- *      "rwx +" права каталога, наличие пометки.
+ *      "rwx +" п©я─п╟п╡п╟ п╨п╟я┌п╟п╩п╬пЁп╟, п╫п╟п╩п╦я┤п╦п╣ п©п╬п╪п╣я┌п╨п╦.
  * tstat2():
- *      "rwx f filename"  права файла, его тип, имя файла.
+ *      "rwx f filename"  п©я─п╟п╡п╟ я└п╟п╧п╩п╟, п╣пЁп╬ я┌п╦п©, п╦п╪я▐ я└п╟п╧п╩п╟.
  */
 
 #ifdef RT11
-#define TSTATS  40      /* М. БЫТЬ НАДО И БОЛЬШЕ... */
+#define TSTATS  40      /* п°. п▒п╚п╒п╛ п²п░п■п· п≤ п▒п·п⌡п╛п╗п∙... */
 #else
 #define TSTATS  400
 #endif
-static  char    tstats[TSTATS];         /* строка для помещения образца */
+static  char    tstats[TSTATS];         /* я│я┌я─п╬п╨п╟ п╢п╩я▐ п©п╬п╪п╣я┴п╣п╫п╦я▐ п╬п╠я─п╟п╥я├п╟ */
 
 char *
 tstat1()
@@ -117,7 +117,7 @@ tstat1()
 
 	strcpy(tstats, rwxmode(&cwdstat));
 	strcat(tstats, " -");
-	/* выяснить наличие пометки */
+	/* п╡я▀я▐я│п╫п╦я┌я▄ п╫п╟п╩п╦я┤п╦п╣ п©п╬п╪п╣я┌п╨п╦ */
 	for (i=0; i < clm._itmmax; i++)
 		if (*clm._itms[i] == MONEY) {
 			tstats[4] = '+'; break;
@@ -127,15 +127,15 @@ tstat1()
 
 char *
 tstat2(fname)
-char *fname;            /* имя файла из меню */
+char *fname;            /* п╦п╪я▐ я└п╟п╧п╩п╟ п╦п╥ п╪п╣п╫я▌ */
 {
 	int   staterr;
 	struct stat itmstat;
-	u_short     mode;       /* права доступа и тип */
+	u_short     mode;       /* п©я─п╟п╡п╟ п╢п╬я│я┌я┐п©п╟ п╦ я┌п╦п© */
 #ifdef RETRO
-	char  ftypestr[4];      /* подстрока с типом файла */
+	char  ftypestr[4];      /* п©п╬п╢я│я┌я─п╬п╨п╟ я│ я┌п╦п©п╬п╪ я└п╟п╧п╩п╟ */
 #endif
-	register char ftype;    /* символ типа файла */
+	register char ftype;    /* я│п╦п╪п╡п╬п╩ я┌п╦п©п╟ я└п╟п╧п╩п╟ */
 
 #if defined(S_IFLNK)
 	if ((staterr = stat(fname, &itmstat)) < 0) {
@@ -145,7 +145,7 @@ char *fname;            /* имя файла из меню */
 	staterr = stat(fname, &itmstat);
 #endif
 	if (staterr == 0) {
-	    /* выяснить тип файла */
+	    /* п╡я▀я▐я│п╫п╦я┌я▄ я┌п╦п© я└п╟п╧п╩п╟ */
 	    mode = itmstat.st_mode;
 	    switch(mode & S_IFMT) {
 #if defined(S_IFLNK)
@@ -173,7 +173,7 @@ char *fname;            /* имя файла из меню */
 	else {
 	    sprintf(tstats, "??? ! ");
 	}
-	/* общий размер содержимого tstats м.быть больше TSTATS !?... */
+	/* п╬п╠я┴п╦п╧ я─п╟п╥п╪п╣я─ я│п╬п╢п╣я─п╤п╦п╪п╬пЁп╬ tstats п╪.п╠я▀я┌я▄ п╠п╬п╩я▄я┬п╣ TSTATS !?... */
 	strncat(tstats, fname, TSTATS-7);       /* !?... */
 	tstats[TSTATS-1] = '\0';
 	return(tstats);
@@ -181,12 +181,12 @@ char *fname;            /* имя файла из меню */
 
 itmrestor()
 {
-	char    itmnnm[ITMCNM+1];   /* новое имя */
+	char    itmnnm[ITMCNM+1];   /* п╫п╬п╡п╬п╣ п╦п╪я▐ */
 	register int i;
 	int dofs;       /* delta offset increment */
 
 	/*
-	 * ВОССТАНОВИТЬ ОСМЫСЛЕННОЕ ПОЛОЖЕНИЕ КУРСОРА
+	 * п▓п·п║п║п╒п░п²п·п▓п≤п╒п╛ п·п║п°п╚п║п⌡п∙п²п²п·п∙ п÷п·п⌡п·п√п∙п²п≤п∙ п пёп═п║п·п═п░
 	 */
 	for(clm._itm = 0; clm._itm < clm._itmmax; clm._itm++) {
 	    i = clm._itm;
@@ -197,18 +197,18 @@ itmrestor()
 	}
 	if (itmci >= 0) {
 	    if (itmci < clm._itmmax)
-		clm._itm = itmci;    /* восстановить индекс */
+		clm._itm = itmci;    /* п╡п╬я│я│я┌п╟п╫п╬п╡п╦я┌я▄ п╦п╫п╢п╣п╨я│ */
 	    else
 		clm._itm = clm._itmmax - 1;
 	}
 	else    {
-	    /* СООТВЕТСТВИЕ НЕ УСТАНОВЛЕНО */
+	    /* п║п·п·п╒п▓п∙п╒п║п╒п▓п≤п∙ п²п∙ пёп║п╒п░п²п·п▓п⌡п∙п²п· */
 	    clm._itmofs = clm._itm = 0;
 	    return 0;
 	}
 adjust:
-	/* имя осталось в меню, надо
-	 * попытаться сохранить положение окна */
+	/* п╦п╪я▐ п╬я│я┌п╟п╩п╬я│я▄ п╡ п╪п╣п╫я▌, п╫п╟п╢п╬
+	 * п©п╬п©я▀я┌п╟я┌я▄я│я▐ я│п╬я┘я─п╟п╫п╦я┌я▄ п©п╬п╩п╬п╤п╣п╫п╦п╣ п╬п╨п╫п╟ */
 	if (clm._itm >= clm._itmofs && clm._itm <  (clm._itmofs + (clm._xx * clm._yy)))
 	    return;
 	if (clm._yy <= 0 || clm._xx <= 0) {
@@ -218,29 +218,29 @@ adjust:
 	dofs = (clm._xx == 1 ? clm._yy : (clm._yy * (clm._xx/2)));
 
 
-	/* ПОДОБРАТЬ НОВОЕ ПОЛОЖЕНИЕ ОКНА */
+	/* п÷п·п■п·п▒п═п░п╒п╛ п²п·п▓п·п∙ п÷п·п⌡п·п√п∙п²п≤п∙ п·п п²п░ */
 	for(clm._itmofs = 0;    ;clm._itmofs += dofs)
 	    if (clm._itm >= clm._itmofs && clm._itm <  (clm._itmofs + (clm._xx * clm._yy)))
 		return;
 #ifdef RETRO
-	/* СООТВЕТСТВИЕ НЕ УСТАНОВЛЕНО */
+	/* п║п·п·п╒п▓п∙п╒п║п╒п▓п≤п∙ п²п∙ пёп║п╒п░п²п·п▓п⌡п∙п²п· */
 	itmofs = itm = 0;
 #endif
 }
 
 itmlwd()
 {
-	register int cwdlen;     /* ДЛИНА ИМЕНИ ТЕКУЩЕГО КАТАЛОГА */
+	register int cwdlen;     /* п■п⌡п≤п²п░ п≤п°п∙п²п≤ п╒п∙п пёп╘п∙п⌠п· п п░п╒п░п⌡п·п⌠п░ */
 	register char *p;
 
 	cwdlen = strlen(cwdpath);
 
 	/*
-	 * ПОСТАВИТЬ КУРСОР ПРОТИВ КАТАЛОГА, ИЗ
-	 * КОТОРОГО ПОДНЯЛИСЬ.
+	 * п÷п·п║п╒п░п▓п≤п╒п╛ п пёп═п║п·п═ п÷п═п·п╒п≤п▓ п п░п╒п░п⌡п·п⌠п░, п≤п≈
+	 * п п·п╒п·п═п·п⌠п· п÷п·п■п²п╞п⌡п≤п║п╛.
 	 */
 
-	if (prefix(cwdpath, lwdpath)) { /* ЕСЛИ ПОДНИМАЛИСЬ ВВЕРХ */
+	if (prefix(cwdpath, lwdpath)) { /* п∙п║п⌡п≤ п÷п·п■п²п≤п°п░п⌡п≤п║п╛ п▓п▓п∙п═п╔ */
 		if (cwdlen == 1 || lwdpath[cwdlen++] == '/') {
 			p = itmcnm;
 			while (lwdpath[cwdlen] && lwdpath[cwdlen] != '/')
@@ -260,14 +260,14 @@ scomp(p1, p2)
 register char **p1;
 register char **p2;
 {
-	/* сравнивать надо только часть items, которая есть имя файла */
+	/* я│я─п╟п╡п╫п╦п╡п╟я┌я▄ п╫п╟п╢п╬ я┌п╬п╩я▄п╨п╬ я┤п╟я│я┌я▄ items, п╨п╬я┌п╬я─п╟я▐ п╣я│я┌я▄ п╦п╪я▐ я└п╟п╧п╩п╟ */
 	return(strcmp( (*p1)+2, (*p2)+2));
 }
 
 vls()
 /*
- * ВСТРОЕННАЯ КОМАНДА ls.
- * посчитать пункты, определить макс. длину пункта
+ * п▓п║п╒п═п·п∙п²п²п░п╞ п п·п°п░п²п■п░ ls.
+ * п©п╬я│я┤п╦я┌п╟я┌я▄ п©я┐п╫п╨я┌я▀, п╬п©я─п╣п╢п╣п╩п╦я┌я▄ п╪п╟п╨я│. п╢п╩п╦п╫я┐ п©я┐п╫п╨я┌п╟
  */
 {
     DIR *dirp;
@@ -278,7 +278,7 @@ vls()
 #endif
     register char *itmbp;
     short len;
-    int     aflag;  /* флаг: показывать все файлы */
+    int     aflag;  /* я└п╩п╟пЁ: п©п╬п╨п╟п╥я▀п╡п╟я┌я▄ п╡я│п╣ я└п╟п╧п╩я▀ */
     char    *fname;
 
     aflag = 0;
@@ -293,8 +293,8 @@ vls()
       {
 /*              printf("%6ld %s\n", dp->d_ino, dp->d_name);
  */
-			/* здесь надо бы еще просчитать (в уме), как
-			   правильно учитывать len */
+			/* п╥п╢п╣я│я▄ п╫п╟п╢п╬ п╠я▀ п╣я┴п╣ п©я─п╬я│я┤п╦я┌п╟я┌я▄ (п╡ я┐п╪п╣), п╨п╟п╨
+			   п©я─п╟п╡п╦п╩я▄п╫п╬ я┐я┤п╦я┌я▀п╡п╟я┌я▄ len */
 		len = strlen(dp->d_name);
 
 		if ( !aflag && dp->d_name[0] == '.'
@@ -304,7 +304,7 @@ vls()
 
 		if (&clm._itmbuf[clm._itmbsz] <= &itmbp[len]) {
 			w_emsg(ediag("No mem for all menu items",
-				     "Нет места для всех пунктов меню"));
+				     "п²п╣я┌ п╪п╣я│я┌п╟ п╢п╩я▐ п╡я│п╣я┘ п©я┐п╫п╨я┌п╬п╡ п╪п╣п╫я▌"));
 			break;
 		}
 		fname = dp->d_name;
@@ -316,7 +316,7 @@ vls()
 		*itmbp++ = '\0';
 		if ( len > clm._itmlen ) clm._itmlen = len;
 		if (clm._itmmax >= ITMMAX)
-			break;  /* НО МОЖНО И ПРОСТО ОБРЕЗАТЬ */
+			break;  /* п²п· п°п·п√п²п· п≤ п÷п═п·п║п╒п· п·п▒п═п∙п≈п░п╒п╛ */
 /*              if ((itmmax % 10) == 0) {
 			w_chr('#'); fflush(vttout);
 		}
@@ -352,11 +352,11 @@ char *fname;
  * returns one symbol (sorry, cast to char/wchar)
  */
 {
-    int     Lflag;  /* ФЛАГ: НЕ РАЗЛИЧАТЬ СИМВ. ССЫЛКИ */
-    int     Fflag;  /* ФЛАГ: ПОКАЗЫВАТЬ ТИП ФАЙЛА */
-    int     aflag;  /* флаг: показывать все файлы */
+    int     Lflag;  /* п╓п⌡п░п⌠: п²п∙ п═п░п≈п⌡п≤п╖п░п╒п╛ п║п≤п°п▓. п║п║п╚п⌡п п≤ */
+    int     Fflag;  /* п╓п⌡п░п⌠: п÷п·п п░п≈п╚п▓п░п╒п╛ п╒п≤п÷ п╓п░п≥п⌡п░ */
+    int     aflag;  /* я└п╩п╟пЁ: п©п╬п╨п╟п╥я▀п╡п╟я┌я▄ п╡я│п╣ я└п╟п╧п╩я▀ */
     struct  stat sb;
-    char    ftype;  /* СИМВОЛ ТИПА ФАЙЛА */
+    char    ftype;  /* п║п≤п°п▓п·п⌡ п╒п≤п÷п░ п╓п░п≥п⌡п░ */
     int     ok;
 
     Lflag = Fflag = aflag = 0;
@@ -366,13 +366,13 @@ char *fname;
 #endif
     if (index(Cfill, 'a')) aflag = 1;
 
-	/* определить тип файла */
+	/* п╬п©я─п╣п╢п╣п╩п╦я┌я▄ я┌п╦п© я└п╟п╧п╩п╟ */
 #if defined(S_IFLNK)
 	if (Fflag|Lflag) {
 		if(Lflag) {
 			ok =  stat(fname, &sb);
 			if (ok < 0)
-			/* пустые симлинки тоже пытаться показывать */
+			/* п©я┐я│я┌я▀п╣ я│п╦п╪п╩п╦п╫п╨п╦ я┌п╬п╤п╣ п©я▀я┌п╟я┌я▄я│я▐ п©п╬п╨п╟п╥я▀п╡п╟я┌я▄ */
 				   ok = lstat(fname, &sb);
 		}
 		else {
@@ -425,7 +425,7 @@ char *fname;
 
 
 vlstag() {
-/*маркировать во втором байте тип файла, подобно ls -F */
+/*п╪п╟я─п╨п╦я─п╬п╡п╟я┌я▄ п╡п╬ п╡я┌п╬я─п╬п╪ п╠п╟п╧я┌п╣ я┌п╦п© я└п╟п╧п╩п╟, п©п╬п╢п╬п╠п╫п╬ ls -F */
 	int i;
 
 	char *fname;
@@ -452,12 +452,12 @@ cwdshow()
 	char cwd_tmpstr[140]; /* cwdpath fraction to be shown, TODO change constant to some reasonable */
 	char lbl_tmpstr[140];
 	register int x;
-	int     showli;     /* строка показа */
-	int     deltco;     /* если в последней строке экрана, то == 1 */
+	int     showli;     /* я│я┌я─п╬п╨п╟ п©п╬п╨п╟п╥п╟ */
+	int     deltco;     /* п╣я│п╩п╦ п╡ п©п╬я│п╩п╣п╢п╫п╣п╧ я│я┌я─п╬п╨п╣ я█п╨я─п╟п╫п╟, я┌п╬ == 1 */
 	/*int     cwdirf = 1;		/* flag: cwdshow in console; TODO global flag via setup */
 	extern char *getwd();
 	extern char *getenv();
-	extern int mailf2;  /* см. chckmail */
+	extern int mailf2;  /* я│п╪. chckmail */
 	int lblen; /* length of string about user */
 	char *ashlbl; /* env(ASHLBL) or  */
 	char *usrlbl; /* username/logname if ASHLBL is empty/notset*/
@@ -589,34 +589,34 @@ cwdshow()
 }
 
 /*
- * Заполнить главное меню.
- * Команда для заполнения указана в Cfill,
- * если нач. с ':', значит встроенная команда ls.
- * Если реперный файл не указан, внешняя команда заполнения
- * выполняется всегда.
+ * п≈п╟п©п╬п╩п╫п╦я┌я▄ пЁп╩п╟п╡п╫п╬п╣ п╪п╣п╫я▌.
+ * п п╬п╪п╟п╫п╢п╟ п╢п╩я▐ п╥п╟п©п╬п╩п╫п╣п╫п╦я▐ я┐п╨п╟п╥п╟п╫п╟ п╡ Cfill,
+ * п╣я│п╩п╦ п╫п╟я┤. я│ ':', п╥п╫п╟я┤п╦я┌ п╡я│я┌я─п╬п╣п╫п╫п╟я▐ п╨п╬п╪п╟п╫п╢п╟ ls.
+ * п∙я│п╩п╦ я─п╣п©п╣я─п╫я▀п╧ я└п╟п╧п╩ п╫п╣ я┐п╨п╟п╥п╟п╫, п╡п╫п╣я┬п╫я▐я▐ п╨п╬п╪п╟п╫п╢п╟ п╥п╟п©п╬п╩п╫п╣п╫п╦я▐
+ * п╡я▀п©п╬п╩п╫я▐п╣я┌я│я▐ п╡я│п╣пЁп╢п╟.
  *
- * Возвращает 1, если заполнено новое меню, иначе 0.
+ * п▓п╬п╥п╡я─п╟я┴п╟п╣я┌ 1, п╣я│п╩п╦ п╥п╟п©п╬п╩п╫п╣п╫п╬ п╫п╬п╡п╬п╣ п╪п╣п╫я▌, п╦п╫п╟я┤п╣ 0.
  */
 static int fil_first = 1; /*hint for 1st invocation - do it silently*/
 fil_vf(newflag)
-int newflag;    /* если 0, то только обновить каталог */
+int newflag;    /* п╣я│п╩п╦ 0, я┌п╬ я┌п╬п╩я▄п╨п╬ п╬п╠п╫п╬п╡п╦я┌я▄ п╨п╟я┌п╟п╩п╬пЁ */
 {
 	struct  stat newstat;
 	FILE *fpls;
-	int samedir;    /* ФЛАГ: ТОТ ЖЕ КАТАЛОГ */
+	int samedir;    /* п╓п⌡п░п⌠: п╒п·п╒ п√п∙ п п░п╒п░п⌡п·п⌠ */
 	char tmpbuf[120]; /* for substitution in Cfill */
 
 	if (Crepf[0] == '\0' && Cfill[0] != ':') {
 		samedir = 0;
 		/*
-		 * надо отключить оптимизацию
-		 * чтения главного меню
+		 * п╫п╟п╢п╬ п╬я┌п╨п╩я▌я┤п╦я┌я▄ п╬п©я┌п╦п╪п╦п╥п╟я├п╦я▌
+		 * я┤я┌п╣п╫п╦я▐ пЁп╩п╟п╡п╫п╬пЁп╬ п╪п╣п╫я▌
 		 */
 		cwdstat.st_ino = (ino_t)0;
 	}
 	else {
 		stat(Crepf, &newstat);
-		/* надо бы добавить проверку на отсутствие ошибок stat... */
+		/* п╫п╟п╢п╬ п╠я▀ п╢п╬п╠п╟п╡п╦я┌я▄ п©я─п╬п╡п╣я─п╨я┐ п╫п╟ п╬я┌я│я┐я┌я│я┌п╡п╦п╣ п╬я┬п╦п╠п╬п╨ stat... */
 
 		samedir = (cwdstat.st_dev   == newstat.st_dev
 			&& cwdstat.st_ino   == newstat.st_ino);
@@ -629,10 +629,10 @@ int newflag;    /* если 0, то только обновить каталог */
 		cwdstat = newstat;
 	}
 #ifdef  RETRO
-	cwdshow();      /* в принципе здесь это лишнее... */
+	cwdshow();      /* п╡ п©я─п╦п╫я├п╦п©п╣ п╥п╢п╣я│я▄ я█я┌п╬ п╩п╦я┬п╫п╣п╣... */
 #endif
 	if (samedir) {
-		/* сохранить прежний номер и содержимое пункта меню */
+		/* я│п╬я┘я─п╟п╫п╦я┌я▄ п©я─п╣п╤п╫п╦п╧ п╫п╬п╪п╣я─ п╦ я│п╬п╢п╣я─п╤п╦п╪п╬п╣ п©я┐п╫п╨я┌п╟ п╪п╣п╫я▌ */
 		itmci = clm._itm;
 		strcpy(itmcnm, &clm._itms[clm._itm][2]);
 /*                cmdsub(itmcnm, "#@", itm);     */
@@ -643,7 +643,7 @@ int newflag;    /* если 0, то только обновить каталог */
 	}
 	if (clm._itmbuf != (char *)0)
 		free(clm._itmbuf);
-	/* можно и автоматически подбирать размер itmbsz */
+	/* п╪п╬п╤п╫п╬ п╦ п╟п╡я┌п╬п╪п╟я┌п╦я┤п╣я│п╨п╦ п©п╬п╢п╠п╦я─п╟я┌я▄ я─п╟п╥п╪п╣я─ itmbsz */
 	if ((clm._itmbuf = malloc(clm._itmbsz + 1)) == (char *)0) {
 		w_emsg("No mem for main buffer...");
 		onintr(1);
@@ -655,7 +655,7 @@ int newflag;    /* если 0, то только обновить каталог */
 		w_msg(TXT, Cfill); fflush(vttout);
 	}
 
-	if (Cfill[0] != ':') { /* ВСТРОЕННАЯ КОМАНДА */
+	if (Cfill[0] != ':') { /* п▓п║п╒п═п·п∙п²п²п░п╞ п п·п°п░п²п■п░ */
 	/*TODO substitution */
 		cmdsub(tmpbuf, Cfill, 0);
 	/*NOSTRICT*/
@@ -669,11 +669,11 @@ int newflag;    /* если 0, то только обновить каталог */
 			perror(Cfill);
 			fatal();
 		}
-		vfread(fpls);   /* ВНЕШНЯЯ КОМАНДА */
+		vfread(fpls);   /* п▓п²п∙п╗п²п╞п╞ п п·п°п░п²п■п░ */
 		pclose(fpls);
 	}
 	else {
-	    if ( vls() ) {        /* ВСТРОЕННАЯ КОМАНДА */
+	    if ( vls() ) {        /* п▓п║п╒п═п·п∙п²п²п░п╞ п п·п°п░п²п■п░ */
 		w_emsg("Can't read '.' - use cd manually");
 		return(0);
 	    }
@@ -682,19 +682,19 @@ int newflag;    /* если 0, то только обновить каталог */
 
 	vlstag();
 
-	itmini();       /* ПОСЧИТАТЬ ГАБАРИТЫ МЕНЮ */
+	itmini();       /* п÷п·п║п╖п≤п╒п░п╒п╛ п⌠п░п▒п░п═п≤п╒п╚ п°п∙п²п╝ */
 	itmrestor();
-	pre_vf();       /* СОЗДАТЬ СТРАНИЦУ LINLIB ДЛЯ МЕНЮ */
+	pre_vf();       /* п║п·п≈п■п░п╒п╛ п║п╒п═п░п²п≤п╕пё LINLIB п■п⌡п╞ п°п∙п²п╝ */
 	return(1);
 }
 
 /*
- * СМЕНИТЬ КАТАЛОГ, ВЫДАТЬ ДИАГНОСТИКУ, НАСТРОИТЬ cwd, lwd;
+ * п║п°п∙п²п≤п╒п╛ п п░п╒п░п⌡п·п⌠, п▓п╚п■п░п╒п╛ п■п≤п░п⌠п²п·п║п╒п≤п пё, п²п░п║п╒п═п·п≤п╒п╛ cwd, lwd;
  */
 vchdir(cdarg)
 char *cdarg;
 {
-	char  nwdpath[400];     /* НОВЫЙ КАТАЛОГ */
+	char  nwdpath[400];     /* п²п·п▓п╚п≥ п п░п╒п░п⌡п·п⌠ */
 
 	if (*cdarg != '/') {
 		strcpy(nwdpath, cwdpath);

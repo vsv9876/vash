@@ -1,7 +1,7 @@
 /*
  * slist.h
  *
- *  Created on: 19 aug. 2018 Ç.
+ *  Created on: 19 aug. 2018 Ð³.
  *      Author: vsv
  */
 

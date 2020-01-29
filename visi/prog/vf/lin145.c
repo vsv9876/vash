@@ -6,7 +6,7 @@ static  char    devtty[] = "/dev/tty";
 vtty()
 {
 	if((vttout = fopen(devtty, "w")) == NULL) {
-		fprintf(stderr, "%s: Недоступен\n", devtty);
+		fprintf(stderr, "%s: п²п╣п╢п╬я│я┌я┐п©п╣п╫\n", devtty);
 		exit(1);
 	}
 	vtti = open(devtty, 0);

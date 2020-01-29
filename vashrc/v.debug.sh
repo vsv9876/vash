@@ -2,7 +2,7 @@
 
 # vash -- Visual Assistant Shell
 # src directory
-vashdir="$HOME/proj-ws/vash-1."
+vashdir="$HOME/proj-ws/vash-2."
 #bintest=vash/vash
 bintest=.
 

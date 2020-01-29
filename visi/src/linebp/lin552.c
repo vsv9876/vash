@@ -1,6 +1,6 @@
 #include "line.h"
 #include "linebp.h"
 
-/* στςαξιγα ποδσλαϊλι */
+/* Π΅ΠΆΠ ΠΠΠΠ¦Π ΠΠΠ”Π΅ΠΠΠ—ΠΠ */
 char    *phelp0 = "phelp0.lb";
 

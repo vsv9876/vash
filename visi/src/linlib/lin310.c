@@ -1,7 +1,7 @@
 /*
-**      +----------+    βιβμιοτελα χχοδα-χωχοδα
-**     (c) linlib  !    δμρ αμζαχιτξο-γιζςοχωθ
-**      +----------+    χιδεοτεςνιξαμοχ
+**      +----------+    Π‘ΠΠ‘Π›ΠΠΠΆΠ•ΠΠ Π’Π’ΠΠ”Π-Π’Π«Π’ΠΠ”Π
+**     (c) linlib  !    Π”Π›Π― ΠΠ›Π¤ΠΠ’ΠΠΆΠΠ-Π¦ΠΠ¤Π ΠΠ’Π«Π¥
+**      +----------+    Π’ΠΠ”Π•ΠΠΆΠ•Π ΠΠΠΠΠ›ΠΠ’
 **/
 
 /*
@@ -9,19 +9,19 @@
  *
  *      $Log:	lin310.c,v $
  * Revision 1.1  90/12/27  16:29:12  vsv
- * χεςσιρ LINLIB_3
+ * Π’Π•Π Π΅ΠΠ― LINLIB_3
  * 
  * Revision 3.3  89/08/29  15:16:44  vsv
- * χεςσιρ LINLIB_3
+ * Π’Π•Π Π΅ΠΠ― LINLIB_3
  * 
  * Revision 3.2  88/07/27  16:34:40  vsv
- * ςαβοτα σ λμαχιϋεκ 'DEL' πςιχεδεξα λ οβύενυ χιδυ
+ * Π ΠΠ‘ΠΠΆΠ Π΅ ΠΠ›ΠΠ’ΠΠ¨Π•Π™ 'DEL' ΠΠ ΠΠ’Π•Π”Π•ΠΠ Π ΠΠ‘Π©Π•ΠΠ£ Π’ΠΠ”Π£
  * 
  * Revision 3.1  88/06/27  15:20:48  vsv
- * ςεχιϊιρ αςθιχα RCS
+ * Π Π•Π’ΠΠ—ΠΠ― ΠΠ Π¥ΠΠ’Π RCS
  * 
  * Revision 3.0  87/12/21  12:19:24  vsv
- * πςεδχαςιτεμψξωκ χωπυσλ.
+ * ΠΠ Π•Π”Π’ΠΠ ΠΠΆΠ•Π›Π¬ΠΠ«Π™ Π’Π«ΠΠ£Π΅Π.
  * 
  */
 
@@ -33,9 +33,10 @@
 extern  int     ttyinp();
 extern  KBF     kbf[];
 
+int mb_cur_max = 1; /* used as multibyte encoding indicator */
 
 /*------------------------------------------------------*/
-/* χεςξυτψ cod, εσμι ξιώεηο ξε σοχπαμο, μιβο λοδ linlib */
+/* Π’Π•Π ΠΠ£ΠΆΠ¬ cod, Π•Π΅Π›Π ΠΠΠ§Π•Π“Π ΠΠ• Π΅ΠΠ’ΠΠΠ›Π, Π›ΠΠ‘Π ΠΠΠ” linlib */
 /*------------------------------------------------------*/
 kbcod  k_pars(cod)
 int cod;
@@ -43,12 +44,12 @@ int cod;
 	register int n;
 	register KBF *kbfp;
 	register char *esccod;
-	int  like;               /* ζμαη: εστψ ποθοφιε ϋαβμοξω */
+	int  like;               /* Π¤Π›ΠΠ“: Π•Π΅ΠΆΠ¬ ΠΠΠ¥ΠΠ–ΠΠ• Π¨ΠΠ‘Π›ΠΠΠ« */
 	char kbuf[10];
 
 	kbuf[0] = cod & 0177;
 	kbuf[1] = 0;
-	like = 1;               /* ξαδο σ ώεηο-το ξαώατψ */
+	like = 1;               /* ΠΠΠ”Π Π΅ Π§Π•Π“Π-ΠΆΠ ΠΠΠ§ΠΠΆΠ¬ */
 	for(n=1; like!=0; ) {
 
 		like = 0;
@@ -65,59 +66,99 @@ int cod;
 			if(n == 1)
 				return((kbcod)cod);
 			else
-				return( 0);     /* ξιώεηο ποθοφεηο */
+				return( 0);     /* ΠΠΠ§Π•Π“Π ΠΠΠ¥ΠΠ–Π•Π“Π */
 		}
 		else {
-			/* ΠΟΜΥήΙΤΨ ΛΟΔ ΛΟΔΟΧΟΚ ΠΟΣΜΕΔΟΧΑΤΕΜΨΞΟΣΤΙ -
-			 * ΪΔΕΣΨ ΕΣΤΨ ΤÒΥΔΞΟΣΤΙ,
-			 * ΣΧΡΪΑΞΞΩΕ Σ ΠΕÒΕΛΟΔΙÒΟΧΛΟΚ ΞΑ ΧΧΟΔΕ
-			 * Χ ΔÒΑΚΧΕÒΕ Ι Χ ΣΑΝΟΚ ΛΜΑΧΙΑΤΥÒΕ,
-			 * ΕΣΜΙ ΧΧΟΔΡΤΣΡ ÒΥΣΣΛΙΕ ΒΥΛΧΩ.
+			/* ΠΏΠΎΠ»ΡƒΡ‡ΠΈΡ‚Ρ ΠΊΠΎΠ΄ ΠΊΠΎΠ΄ΠΎΠ²ΠΎΠΉ ΠΏΠΎΡΠ»ΠµΠ΄ΠΎΠ²Π°Ρ‚ΠµΠ»ΡΠ½ΠΎΡΡ‚ΠΈ -
+			 * Π·Π΄ΠµΡΡ ΠµΡΡ‚Ρ Ρ‚Ρ€ΡƒΠ΄Π½ΠΎΡΡ‚ΠΈ,
+			 * ΡΠ²ΡΠ·Π°Π½Π½Ρ‹Πµ Ρ ΠΏΠµΡ€ΠµΠΊΠΎΠ΄ΠΈΡ€ΠΎΠ²ΠΊΠΎΠΉ Π½Π° Π²Π²ΠΎΠ΄Πµ
+			 * Π² Π΄Ρ€Π°ΠΉΠ²ΠµΡ€Πµ ΠΈ Π² ΡΠ°ΠΌΠΎΠΉ ΠΊΠ»Π°Π²ΠΈΠ°Ρ‚ΡƒΡ€Πµ,
+			 * ΠµΡΠ»ΠΈ Π²Π²ΠΎΠ΄ΡΡ‚ΡΡ Ρ€ΡƒΡΡΠΊΠΈΠµ Π±ΡƒΠΊΠ²Ρ‹.
 			 */
 /*                      cod=ttyinp();           */
 			kbuf[n++] = escseq(   ttyinp() );
 			kbuf[n  ] = 0;
 		}
 	}
-	return(KBCOD('O','O'));   /* ξα χσρλικ σμυώακ δμρ οτμαδλι */
+	return(KBCOD('O','O'));   /* ΠΠ Π’Π΅Π―ΠΠΠ™ Π΅Π›Π£Π§ΠΠ™ Π”Π›Π― ΠΠΆΠ›ΠΠ”ΠΠ */
 }
 
+/*
+ * ΡΠΎΠ±Ρ€Π°Ρ‚Ρ Unicode codepoint
+ */
+kbcod r_codep(cod)
+kbcod cod;
+{
+	unsigned int cc;      /* current byte from input stream */
+	unsigned int cbytes;  /* bytes count in codepoint */
+	unsigned int cbits;   /* bits encoded */
+	unsigned int cmask;   /* significant bits in current byte */
+
+	if (cod <= 0b01111111) return cod; /* ASCII */
+	cc = cod;
+	if         ((0b11111000 & cc) == 0b11110000) {
+		cmask = 0b00000111; cbits = 3; cbytes = 4;
+	} else if  ((0b11110000 & cc) == 0b11100000) {
+		cmask = 0b00001111; cbits = 4; cbytes = 3;
+	} else if  ((0b11100000 & cc) == 0b11000000) {
+		cmask = 0b00011111; cbits = 5; cbytes = 2;
+	}
+	cod = (cc & cmask);/* << cbits;*/
+	while (cbytes > 1) {
+		cbytes -= 1;
+		cc = ttyinp();
+		if ((0b11000000 & cc) != 0b10000000) return (0x0);/*(0xffffffff);*/
+		cod = cod << 6;
+		cod |= (cc & 0b00111111);
+	}
+	return cod;
+}
+
+int key7bit = 1; /* pass ascii-only */
+
 /*---------------------*/
-/* χεςξυτψ λοδ λμαχιϋι */
+/* Π’Π•Π ΠΠ£ΠΆΠ¬ ΠΠΠ” ΠΠ›ΠΠ’ΠΠ¨Π */
 /*---------------------*/
 kbcod r_key()
 {
-	register kbcod cod ;
+	register kbcod cod ; /* next byte from input stream */
 	register pars ;         /* k_pars() = */
 
 	cod = ttyinp();
 	if(cod == -1)
-		return( -1);    /* ασιξθςοξξωκ ςεφιν - βεϊ οφιδαξιρ */
+		return( -1);    /* ΠΠ΅ΠΠΠ¥Π ΠΠΠΠ«Π™ Π Π•Π–ΠΠ - Π‘Π•Π— ΠΠ–ΠΠ”ΠΠΠΠ― */
 #ifdef KOI8_RETRO
 	else
-		cod &= 0377;    /* ποδαχιτψ ϊξαλοχοε ςασϋιςεξιε int=char */
+		cod &= 0377;    /* ΠΠΠ”ΠΠ’ΠΠΆΠ¬ Π—ΠΠΠΠΠ’ΠΠ• Π ΠΠ΅Π¨ΠΠ Π•ΠΠΠ• int=char */
 
 	if(cod > 0200 && cod < 0300)
-		cod &= 0177;    /* α χδςυη "ςυσσλικ" #,%,?, ι τ.δ. */
+		cod &= 0177;    /* Π Π’Π”Π Π£Π“ "Π Π£Π΅Π΅ΠΠΠ™" #,%,?, Π ΠΆ.Π”. */
 #endif
-	/* τεςνιξαμο-ϊαχισινωκ λοδ */
+	/* ΠΆΠ•Π ΠΠΠΠΠ›Π-Π—ΠΠ’ΠΠ΅ΠΠΠ«Π™ ΠΠΠ” */
 	pars = k_pars(cod);
 	if(cod != pars)
 		return(pars); /* OK, key recognized from termcap/terminfo database */
 
-	/* code below moved to r_cod() - lin215.c */
 #if 0
-	/* οβςαβοτλα ςυσσλιθ ι αξημικσλιθ πεώατξωθ λοδοχ *//*TODO : utf8 parsing will be there*/
+	/* ΠΠ‘Π ΠΠ‘ΠΠΆΠΠ Π Π£Π΅Π΅ΠΠΠ¥ Π ΠΠΠ“Π›ΠΠ™Π΅ΠΠΠ¥ ΠΠ•Π§ΠΠΆΠΠ«Π¥ ΠΠΠ”ΠΠ’ *//*TODO : utf8 parsing will be there*/
 	else if(((cod < 0377)&&(cod > 0277))
 	|| ((cod > 037)&&(cod < 0177)))
 		return(cod);
 #endif
+	if (cod > 0177 && mb_cur_max > 1) {
+		cod = r_codep(cod);
+		if (key7bit) {	/* suppress upper codes from utf8/unicode table */
+			cod = L'\0';
+		}
+	}
 	/* ASCII DEL */
-	else if(cod == 0177)
+	if (cod == 0177) {
 		return(KBCOD('d','e'));
-
-	else if(cod > 0 && cod < 040)   /* Nonprintable ASCII */
-		return( KBCTL(cod + ('A'-'\001'))) ;
-	else
-		return(cod);   /* δμρ οτμαδλι */
+	}
+	else if(cod > 0 && cod < 040) {  /* Nonprintable ASCII */
+		return( KBCTL(cod + ('A'-'\001')));
+	}
+	else {
+		return(cod);   /* finish, parsed */
+	}
 }

@@ -1,7 +1,7 @@
 /*
-**      +----------+    βιβμιοτελα χχοδα-χωχοδα
-**     (c) linlib  !    δμρ αμζαχιτξο-γιζςοχωθ
-**      +----------+    χιδεοτεςνιξαμοχ
+**      +----------+    Π‘ΠΠ‘Π›ΠΠΠΆΠ•ΠΠ Π’Π’ΠΠ”Π-Π’Π«Π’ΠΠ”Π
+**     (c) linlib  !    Π”Π›Π― ΠΠ›Π¤ΠΠ’ΠΠΆΠΠ-Π¦ΠΠ¤Π ΠΠ’Π«Π¥
+**      +----------+    Π’ΠΠ”Π•ΠΠΆΠ•Π ΠΠΠΠΠ›ΠΠ’
 **/
 
 /*
@@ -9,92 +9,92 @@
  *
  *      $Log:	line0.h,v $
  * Revision 3.4  90/01/11  10:18:16  vsv
- * χεςσιρ V32
+ * Π’Π•Π Π΅ΠΠ― V32
  * 
  * Revision 3.3  89/08/29  16:21:42  vsv
- * χεςσιρ LINLIB_3
+ * Π’Π•Π Π΅ΠΠ― LINLIB_3
  * 
  * Revision 3.2  88/04/27  11:10:28  vsv
- * maxli, maxco χ ζακμε line.h, ταλ βομεε υδοβξο.
+ * maxli, maxco Π’ Π¤ΠΠ™Π›Π• line.h, ΠΆΠΠ Π‘ΠΠ›Π•Π• Π£Π”ΠΠ‘ΠΠ.
  * 
  * Revision 3.1  88/04/27  08:40:08  vsv
- * πεςεδεμαξο δμρ ποδδεςφλι
- * σιστενω VISI
+ * ΠΠ•Π Π•Π”Π•Π›ΠΠΠ Π”Π›Π― ΠΠΠ”Π”Π•Π Π–ΠΠ
+ * Π΅ΠΠ΅ΠΆΠ•ΠΠ« VISI
  * 
  */
 #ifndef line0_h_def
 #define line0_h_def
 
 /*
- * οπισαξιε χοϊνοφξοστεκ τεςνιξαμα
+ * ΠΠΠΠ΅ΠΠΠΠ• Π’ΠΠ—ΠΠΠ–ΠΠΠ΅ΠΆΠ•Π™ ΠΆΠ•Π ΠΠΠΠΠ›Π
  */
 
-/*#define  TTY_FULL       /* πομξωε χοϊνοφξοστι TERMCAP (τομψλο δμρ RT-11) */
-			/* σν. ταλφε TRMCAP.C */
+/*#define  TTY_FULL       /* ΠΠΠ›ΠΠ«Π• Π’ΠΠ—ΠΠΠ–ΠΠΠ΅ΠΆΠ TERMCAP (ΠΆΠΠ›Π¬ΠΠ Π”Π›Π― RT-11) */
+			/* Π΅Π. ΠΆΠΠΠ–Π• TRMCAP.C */
 /*
  * temporary buffer size for hf_set() internal usage,
  * must be conformed with BUFSIZ from termcap.c, for tgetent()...
  */
 #define TBUFSZ 2048
 
-/* οπισαξιε οδξοκ λμαχιϋι:
+/* ΠΠΠΠ΅ΠΠΠΠ• ΠΠ”ΠΠΠ™ ΠΠ›ΠΠ’ΠΠ¨Π:
  */
 typedef struct {
-	kbcod   t_key;  /* ζιϊ. λοδ ('ku') */
-	char   *t_cap;  /* ESC-λοδ (:ku=\EA:) */
-} KBF;  /* ζιϊιώεσλοε - λαλ οπισαξα χ termcap */
+	kbcod   t_key;  /* Π¤ΠΠ—. ΠΠΠ” ('ku') */
+	char   *t_cap;  /* ESC-ΠΠΠ” (:ku=\EA:) */
+} KBF;  /* Π¤ΠΠ—ΠΠ§Π•Π΅ΠΠΠ• - ΠΠΠ ΠΠΠΠ΅ΠΠΠ Π’ termcap */
 
 typedef struct {
-	kbcod   t_key;  /* ζιϊ. λοδ ('ku') */
-	kbcod   t_cod;  /* μοη. λοδ ('AU') */
-	char   *t_knm;  /* ξαϊχαξιε λμαχιϋι ("χχεςθ") */
-} KBL;  /* μοηιώεσλοε - σνωσμοχοκ λοδ ι ξαϊχαξιε */
+	kbcod   t_key;  /* Π¤ΠΠ—. ΠΠΠ” ('ku') */
+	kbcod   t_cod;  /* Π›ΠΠ“. ΠΠΠ” ('AU') */
+	char   *t_knm;  /* ΠΠΠ—Π’ΠΠΠΠ• ΠΠ›ΠΠ’ΠΠ¨Π ("Π’Π’Π•Π Π¥") */
+} KBL;  /* Π›ΠΠ“ΠΠ§Π•Π΅ΠΠΠ• - Π΅ΠΠ«Π΅Π›ΠΠ’ΠΠ™ ΠΠΠ” Π ΠΠΠ—Π’ΠΠΠΠ• */
 #define KBLSIZE 48
 
-/* ποδσλαϊλι ι χιδεοατςιβυτω */
+/* ΠΠΠ”Π΅ΠΠΠ—ΠΠ Π Π’ΠΠ”Π•ΠΠΠΆΠ ΠΠ‘Π£ΠΆΠ« */
 typedef struct {
-	int     lpa_p;  /* ποδσλαϊλα */
-	int     lpa_a;  /* σμοχο ατςιβυτοχ */
+	int     lpa_p;  /* ΠΠΠ”Π΅ΠΠΠ—ΠΠ */
+	int     lpa_a;  /* Π΅Π›ΠΠ’Π ΠΠΆΠ ΠΠ‘Π£ΠΆΠΠ’ */
 	char    lpa_sgr[20]; /* ANSI Color SGR, instant ASCII format (not coded), 38;5;256;48;5;000 */
 } LPA;
 #define LPASIZE 8
 
-/* τελυύεε σοστορξιε όλςαξα
+/* ΠΆΠ•ΠΠ£Π©Π•Π• Π΅ΠΠ΅ΠΆΠΠ―ΠΠΠ• Π­ΠΠ ΠΠΠ
  */
 typedef struct {
-	bool    sc_li;  /* LIne - τελυύ. στςολα */
-	bool    sc_co;  /* COlumn - τελυύ. ποϊιγιρ χ στςολε */
-	int     sc_at;  /* ATtributes - τελυύεε σμοχο ατςιβυτοχ */
+	bool    sc_li;  /* LIne - ΠΆΠ•ΠΠ£Π©. Π΅ΠΆΠ ΠΠΠ */
+	bool    sc_co;  /* COlumn - ΠΆΠ•ΠΠ£Π©. ΠΠΠ—ΠΠ¦ΠΠ― Π’ Π΅ΠΆΠ ΠΠΠ• */
+	int     sc_at;  /* ATtributes - ΠΆΠ•ΠΠ£Π©Π•Π• Π΅Π›ΠΠ’Π ΠΠΆΠ ΠΠ‘Π£ΠΆΠΠ’ */
 /*	char   *sc_ac;     w_sgr() arg - ANSI color */
 } SCREEN;
 
-/* χοϊνοφξοστι χωχοδα ξα τεςνιξαμ ιϊ /etc/termcap;
- * ινρ λμαχιατυςω δμρ ξαστςοκλι λμαχιϋ τοφε ϊδεσψ (lh= ... )
+/* Π’ΠΠ—ΠΠΠ–ΠΠΠ΅ΠΆΠ Π’Π«Π’ΠΠ”Π ΠΠ ΠΆΠ•Π ΠΠΠΠΠ› ΠΠ— /etc/termcap;
+ * ΠΠΠ― ΠΠ›ΠΠ’ΠΠΠΆΠ£Π Π« Π”Π›Π― ΠΠΠ΅ΠΆΠ ΠΠ™ΠΠ ΠΠ›ΠΠ’ΠΠ¨ ΠΆΠΠ–Π• Π—Π”Π•Π΅Π¬ (lh= ... )
  */
 extern char *tcapo[];
 
-#define t_cm  tcapo[0]  /* πςρναρ αδςεσαγιρ λυςσοςα */
-#define t_cl  tcapo[1]  /* στες. όλςαξ */
-#define t_cd  tcapo[2]  /* λοξεγ όλςαξα */
-#define t_ce  tcapo[3]  /* λοξεγ στςολι */
-#define t_ks  tcapo[4]  /* χλμ/χωλμ. δοπ. λμαχ. */
+#define t_cm  tcapo[0]  /* ΠΠ Π―ΠΠΠ― ΠΠ”Π Π•Π΅ΠΠ¦ΠΠ― ΠΠ£Π Π΅ΠΠ Π */
+#define t_cl  tcapo[1]  /* Π΅ΠΆΠ•Π . Π­ΠΠ ΠΠ */
+#define t_cd  tcapo[2]  /* ΠΠΠΠ•Π¦ Π­ΠΠ ΠΠΠ */
+#define t_ce  tcapo[3]  /* ΠΠΠΠ•Π¦ Π΅ΠΆΠ ΠΠΠ */
+#define t_ks  tcapo[4]  /* Π’ΠΠ›/Π’Π«ΠΠ›. Π”ΠΠ. ΠΠ›ΠΠ’. */
 #define t_ke  tcapo[5]
-#define t_cs  tcapo[6]  /* πςολςυτλα */
+#define t_cs  tcapo[6]  /* ΠΠ ΠΠΠ Π£ΠΆΠΠ */
 #define t_sr  tcapo[7]
 #define t_sf  tcapo[8]
-#define t_al  tcapo[9]  /* χσταχ/υδαμ. στςολι */
+#define t_al  tcapo[9]  /* Π’Π΅ΠΆΠΠ’/Π£Π”ΠΠ›. Π΅ΠΆΠ ΠΠΠ */
 #define t_dl  tcapo[10]
-#define t_so  tcapo[11] /* χωδεμεξιε */
+#define t_so  tcapo[11] /* Π’Π«Π”Π•Π›Π•ΠΠΠ• */
 #define t_se  tcapo[12]
-#define t_us  tcapo[13] /* ποδώεςλιχαξιε */
+#define t_us  tcapo[13] /* ΠΠΠ”Π§Π•Π ΠΠΠ’ΠΠΠΠ• */
 #define t_ue  tcapo[14]
-#define t_md  tcapo[15] /* ρςλοστψ */
-#define t_mr  tcapo[16] /* ςεχεςσ */
-#define t_mb  tcapo[17] /* νιηαξιε */
-#define t_mk  tcapo[18] /* ςανλα */
-#define t_me  tcapo[19] /* χσε υβςατψ */
-#define t_bl  tcapo[20] /* ϊχοξολ */
-#define t_vb  tcapo[21] /* χιδεοϊχοξολ */
-#define t_lh  tcapo[22] /* ινρ λμαχιατυςω (ςασϋιςεξιε LINLIB) */
+#define t_md  tcapo[15] /* Π―Π ΠΠΠ΅ΠΆΠ¬ */
+#define t_mr  tcapo[16] /* Π Π•Π’Π•Π Π΅ */
+#define t_mb  tcapo[17] /* ΠΠΠ“ΠΠΠΠ• */
+#define t_mk  tcapo[18] /* Π ΠΠΠΠ */
+#define t_me  tcapo[19] /* Π’Π΅Π• Π£Π‘Π ΠΠΆΠ¬ */
+#define t_bl  tcapo[20] /* Π—Π’ΠΠΠΠ */
+#define t_vb  tcapo[21] /* Π’ΠΠ”Π•ΠΠ—Π’ΠΠΠΠ */
+#define t_lh  tcapo[22] /* ΠΠΠ― ΠΠ›ΠΠ’ΠΠΠΆΠ£Π Π« (Π ΠΠ΅Π¨ΠΠ Π•ΠΠΠ• LINLIB) */
 
 #endif /* line0_h_def */
