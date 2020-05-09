@@ -33,7 +33,7 @@
 extern  int     ttyinp();
 extern  KBF     kbf[];
 
-int mb_cur_max = 1; /* used as multibyte encoding indicator */
+extern int mb_cur_max;
 
 /*------------------------------------------------------*/
 /* ВЕРНУТЬ cod, ЕСЛИ НИЧЕГО НЕ СОВПАЛО, ЛИБО КОД linlib */
@@ -107,14 +107,17 @@ kbcod cod;
 	while (cbytes > 1) {
 		cbytes -= 1;
 		cc = ttyinp();
-		if ((0b11000000 & cc) != 0b10000000) return (0x0);/*(0xffffffff);*/
+		if ((0b11000000 & cc) != 0b10000000) {
+		    /* Error: premature end of multibyte sequence */
+		    return (0x0); /*(0xffffffff);*/
+		}
 		cod = cod << 6;
 		cod |= (cc & 0b00111111);
 	}
 	return cod;
 }
 
-int key7bit = 1; /* pass ascii-only */
+int u8nopass = 0; /* pass ascii-only */
 
 /*---------------------*/
 /* ВЕРНУТЬ КОД КЛАВИШИ */
@@ -147,7 +150,7 @@ kbcod r_key()
 #endif
 	if (cod > 0177 && mb_cur_max > 1) {
 		cod = r_codep(cod);
-		if (key7bit) {	/* suppress upper codes from utf8/unicode table */
+		if (u8nopass) {	/* suppress upper codes from utf8/unicode table */
 			cod = L'\0';
 		}
 	}

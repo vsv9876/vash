@@ -67,6 +67,7 @@ IN_PORTS inport[] = {
 	{ "y0_top",     &y0_top },
 	{ "maxli",     	&maxli },
 	{ "maxco",     	&maxco },
+	{ "u8nopa",     &u8nopass },
 	{ 0,            0       },
 };
 

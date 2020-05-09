@@ -114,7 +114,8 @@
 # interface files in /dev, /sys, ... - stat(2) show them as zero length regular files
 	r?? E *              :cat #@
 	r?x d *              :ls -aCF #@/.
-	r?? M *              frm -n #@
+#	r?? M *              frm -n #@
+	r?? M *              mutt -Rf #@
 #	??? ? *              _file #@
 	??? ? *              :ls -ld #@ ; file #@
 +nl
@@ -124,7 +125,7 @@
 	r?x d *         :cd #@
 	r?? D *.tar.[Z]      zcat < #@ | tar -xvf -
 	r?? D *.tar.[zZCp]   gzip -d < #@ | tar -xvf -
-	r?? D *.tar.bz2      bzip2 -cd < #@ | tar -xvf -
+	r?? D *.tar.bz2      bzip2 -d < #@ | tar -xvf -
 	r?? D *.tar.gz       gzip -d < #@ | tar -xvf -
 	r?? D *.tar.xz       xz -d < #@ | tar -xvf -
 	r?? D *.taz          gzip -d < #@ | tar -xvf -
@@ -142,7 +143,7 @@
 	r?? [DT] *.rpm          sudo rpm -qp #@ --
 	r?? D *.[zCp]           gzip -d #@
 	r?? D *.[Z]             uncompress #@
-	r?? D *.bz2             bzip2 -cd #@
+	r?? D *.bz2             bzip2 -d #@
 	r?? D *.gz              gzip -d #@
 	r?? [ET] .*.b       rm -f .*.b .,resv.*
 	r?? [ET] *.b        rm -f *.b .,resv.*
@@ -166,7 +167,8 @@
 	??x [TOD] *     ./#@
 	--x [-] *       ./#@
 #       r?x d *		:cd #@
-	r?? M *         mailx -f #@
+#	r?? M *         mailx -f #@
+	r?? M *         mutt -f #@
 #        r?? D *.bat     vpix z:#@
 #        r?? D *.com     vpix z:#@
 #        r?? D *.exe     vpix z:#@
@@ -185,7 +187,8 @@
 # vi не создает нового файла в каталоге
 # а red, например, создает...
 	rw? [TE] *      #e #@
-	rw? M *         elm -f ./#@
+#	rw? M *         elm -f ./#@
+	rw? M *         mutt -f ./#@
 #	r?? [OD] *      ;strings #@ | #m
 #+edw
 	rwx d *         :cd #@
@@ -335,13 +338,13 @@
 # (echo как пример команды sh)
 	* *     for i in ## ;do echo $i; done
 
-:V
-	* *     +Vedit
-
-+Vedit
-# быстрый вызов vi, права доступа по записи не проверять
-	r?? [TE] * ;vi #@
-	r?? M * :elm -f #@
+#:V
+#	* *     +Vedit
+#
+#+Vedit
+## быстрый вызов vi, права доступа по записи не проверять
+#	r?? [TE] * ;vi #@
+#	r?? M * :elm -f #@
 
 :F
 :^F

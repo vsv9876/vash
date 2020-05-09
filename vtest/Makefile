@@ -1,7 +1,7 @@
 
 SHELL         = /bin/sh
 
-include		../Make.conf
+include		../conf/Makefile
 
 ##
 ##      +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
@@ -20,28 +20,36 @@ VISI          = ../visi
 VBIN          = $(VISI)/bin
 VLIB          = $(VISI)/lib
 
-PROGRAM       = vhset
+PROGRAM       = pmain
 EXECMODE      =  711
-DEST          = /usr/local
-DESTBIN       = $(DEST)/bin
+#DEST          = /usr/local
+DESTDIR       =
+DEST          = /usr
 
-CFLAGS        = -I$(VISI)/include
+DESTBIN       = $(DESTDIR)$(DEST)/bin
+DESTLIB       = $(DESTDIR)$(DEST)/lib
+
+CFLAGS        = -I$(VISI)/include \
+		-D'VEXDIR="$(DESTLIB)/$(PROGRAM)"'
 
 #CC            = cc -O
 #LINKER        = cc
 
 LDFLAGS       =
-# STDLIBS       = -ltermcap
-# STDLIBS       = -ltermnew
+#STDLIBS       = -ltermcap
+STDLIBS       = $(TERMLIB)
 LIBS          = \
 		$(VLIB)/liblinebp.a \
 		$(VLIB)/liblinusr.a \
 		$(VLIB)/libline.a \
-		$(VLIB)/libtermnew.a
+#		$(VLIB)/libtermnew.a
 
-VCC           = $(VBIN)/vcc
-VLBP          = $(VBIN)/vlbp
-LBP           = $(VBIN)/lbp
+#VCC           = $(VBIN)/vcc
+#VLBP          = $(VBIN)/vlbp
+#LBP           = $(VBIN)/lbp
+VCC           = vcc
+VLBP          = vlbp
+LBP           = lbp
 MAKEFILE      = Makefile
 
 EXTHDRS	      = $(VISI)/include/line.h \
@@ -50,33 +58,41 @@ EXTHDRS	      = $(VISI)/include/line.h \
 		$(VISI)/include/lineva.h \
 		/usr/include/stdio.h
 
-HDRS	      = vhset.h
+HDRS	      = 
 
-SRCS          = vhset0.cv \
-		vhseta.cv \
-		vhsetk.cv \
-		vhsetm.cv
+IPAGES	      = pmainv.i
 
-OBJS	      = vhset0.o \
-		vhseta.o \
-		vhsetk.o \
-		vhsetm.o
+#VPAGES        = pmainv.cv
+
+SRCS          = pmainv.cv \
+		pmainv.c \
+		pmain.c
+
+OBJS	      = pmain.o \
+		pmainv.o
 
 SUFFIX        = .cv:sC
 
 .SUFFIXES : .out .o .c .cm .f .e .r .y .yr .ye .l .s .cl .p .q \
-	    .cv .la .lav .lb
-.cv.c:
+	    .i .h .cv .la .lav .lb
+#.cv.c:
+#	$(VCC) -o $@ $<
+
+.cv.i:
+	rm -f $@
 	$(VCC) -o $@ $<
+	chmod a-w $@
 
 #.cv.o:
 #	$(VCC) -o $*.c $<
 #	$(CC) $(CFLAGS) -c $*.c
 #	rm -f $*.c
 
-.cv.o:
-	$(VCC) -o $*.c $<
-	$(CC) $(CFLAGS) -c $*.c; rm -f $*.c
+# no more joined source files compiling directly to object files,
+# see .cv.i
+#.cv.o:
+#	$(VCC) -o $*.c $<
+#	$(CC) $(CFLAGS) -c $*.c; rm -f $*.c
 
 # ПЕРЕВОД СЕКЦИИ ДАННЫХ В СЕКЦИЮ КОДА
 # МОЖЕТ ПОНАДОБИТЬСЯ ДЛЯ ОВЕРЛЕЙНЫХ ПРОГРАММ И
@@ -110,11 +126,11 @@ program:        $(PROGRAM)
 
 $(PROGRAM):     $(OBJS) $(LIBS) $(MAKEFILE)
 		@echo "Loading $(PROGRAM) ... "
-		@$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) $(STDLIBS) -o $(PROGRAM)
+		$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) $(STDLIBS) -o $(PROGRAM)
 		@echo " ...done"
 
 clean:
-	rm -f $(PROGRAM) $(OBJS) data-to-text $(NOTEXT)
+	rm -f $(PROGRAM) $(OBJS) $(IPAGES) data-to-text $(NOTEXT)
 #	cd FORMS; make clean
 
 depend:
@@ -126,24 +142,21 @@ calls:  $(SRCS)
 install:        $(DESTBIN) $(PROGRAM)
 		@echo "Install $(PROGRAM) to $(DESTBIN) ..."
 		cp $(PROGRAM) $(DESTBIN)
-#		cd FORMS; make install
+		cd FORMS; make install
 		@echo done
 
 update:		$(DESTBIN)/$(PROGRAM)
 
 $(DESTBIN)/$(PROGRAM): $(SRCS) $(LIBS) $(HDRS) $(EXTHDRS)
-		@make -f $(MAKEFILE) DEST=$(DEST) install
+		$(MAKE) -f $(MAKEFILE) DEST=$(DEST) install
 
 $(DESTBIN):
 	-mkdir -p $(DESTBIN)
 	test -d $(DESTBIN)
 
 ###
-vhset0.o: /usr/include/stdio.h $(VISI)/include/line.h \
-	$(VISI)/include/line0.h vhset.h
-vhseta.o: /usr/include/stdio.h $(VISI)/include/line.h \
-	$(VISI)/include/line0.h $(VISI)/include/lineva.h
-vhsetk.o: /usr/include/stdio.h $(VISI)/include/line.h \
-	$(VISI)/include/line0.h
-vhsetm.o: /usr/include/stdio.h $(VISI)/include/line.h \
-	$(VISI)/include/line0.h $(VISI)/include/linebp.h vhset.h
+pmain.o: pmain.c
+
+pmainv.o: pmainv.c pmainv.i
+
+#pmainv.c: pmainv.i

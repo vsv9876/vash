@@ -1,6 +1,6 @@
 Name:           vash
-Version:        1.31
-Release:        1%{?dist}
+Version:        2.0
+Release:        2%{?dist}
 Summary:        Visual Assistant Shell (vash)
 
 

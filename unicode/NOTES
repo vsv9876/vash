@@ -1,0 +1,85 @@
+u8cnt(wchar_t *s) посчитать количество utf-8 символов в строке (не байт)
+u8colu(wchar_t *s) количество колонок на экране занимаемых строкой utf-8
+
+//------------------------------------------------------------------------------
+wcs[n]cat(3)
+       #include <wchar.h>
+
+       wchar_t *wcscat(wchar_t *dest, const wchar_t *src);
+       wchar_t *wcsncat(wchar_t *dest, const wchar_t *src, size_t n);
+//------------------------------------------------------------------------------
+wcs[n]cpy(3)
+       #include <wchar.h>
+
+       wchar_t *wcscpy(wchar_t *dest, const wchar_t *src);
+       wchar_t *wcsncpy(wchar_t *dest, const wchar_t *src, size_t n);
+//------------------------------------------------------------------------------
+wcs[n]len(3)
+       #include <wchar.h>
+
+       size_t wcslen(const wchar_t *s);
+       size_t wcsnlen(const wchar_t *s, size_t maxlen); //glibc macro!?
+//------------------------------------------------------------------------------
+wcscoll(3p)
+       #include <wchar.h>
+
+       int wcscoll(const wchar_t *ws1, const wchar_t *ws2);
+       int wcscoll_l(const wchar_t *ws1, const wchar_t *ws2,
+           locale_t locale);
+//------------------------------------------------------------------------------
+wcs[n]cmp(3)
+       #include <wchar.h>
+
+       int wcscmp(const wchar_t *s1, const wchar_t *s2);
+       int wcsncmp(const wchar_t *s1, const wchar_t *s2, size_t n);
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+wcswidth(3)	determine columns needed for a fixed-size wide-character string
+       #define _XOPEN_SOURCE             /* See feature_test_macros(7) */
+       #include <wchar.h>
+
+       int wcswidth(const wchar_t *s, size_t n);
+       int wcwidth(wchar_t c);
+//------------------------------------------------------------------------------
+mb[r]len(3)	determine number of bytes in next multibyte character
+       #include <wchar.h>
+
+       size_t mbrlen(const char *s, size_t n, mbstate_t *ps);
+       #include <stdlib.h>
+
+       int mblen(const char *s, size_t n);
+//------------------------------------------------------------------------------
+mbrtowc(3)	convert a multibyte sequence to a wide character
+       #include <wchar.h>
+
+       size_t mbrtowc(wchar_t *pwc, const char *s, size_t n, mbstate_t *ps);
+//------------------------------------------------------------------------------
+wcsrtombs(3)	convert a wide-character string to a multibyte string
+       #include <wchar.h>
+
+       size_t wcsrtombs(char *dest, const wchar_t **src,
+                        size_t len, mbstate_t *ps);
+//------------------------------------------------------------------------------
+mbsrtowcs(3)	convert a multibyte string to a wide-character string
+       #include <wchar.h>
+
+       size_t 1(wchar_t *dest, const char **src,
+                         size_t len, mbstate_t *ps);
+
+//------------------------------------------------------------------------------
+wcs[n]rtombs
+       #include <stdlib.h>
+
+       size_t wcstombs(char *dest, const wchar_t *src, size_t n);
+//
+       #include <wchar.h>
+
+       size_t wcsrtombs(char *dest, const wchar_t **src,
+                        size_t len, mbstate_t *ps);
+       size_t wcsnrtombs(char *dest, const wchar_t **src, size_t nwc,
+                         size_t len, mbstate_t *ps);
+//------------------------------------------------------------------------------
+#include <wchar.h>
+WCHAR_MIN
+WCHAR_MAX
+WEOF

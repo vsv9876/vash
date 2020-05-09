@@ -32,6 +32,7 @@
  */
 
 #include <stdlib.h>
+#include <locale.h>
 #include <string.h>
 #include <ediag.h>
 #include <stdio.h>
@@ -52,7 +53,6 @@ int  vscan  = 0;        /* ФЛАГ: ОБРАЗ ЭКРАНА СКАНИРУЕТ�
 
 char    Esxerr[] = "%s: %d:Syntax err:  %s\n";
 char    Rsxerr[] = "%s: %d:Синтакс. ош.: %s\n";
-
 
 
 /* КОНСТАНТЫ ПРЕПРОЦЕССОРА */
@@ -155,9 +155,18 @@ char *argv[];
 
 	_setediag();
 
+	if (!setlocale(LC_CTYPE, "")) {
+		fprintf(stderr, "Can't set the specified locale! "
+			"Check LANG, LC_CTYPE, LC_ALL.\n");
+		return 1;
+	} else {
+		mb_cur_max = MB_CUR_MAX;
+	}
+
 	if (argc <  2) {
 		usage(argv[0]);
 	}
+
 	for ( acnt=1; acnt < argc ; acnt++ ) {
 		if ( (int)argv[acnt][0] == '-' ) {
 			switch( (int)argv[acnt][1] ) {
@@ -326,7 +335,7 @@ c_ports(name)
 /*---------------------------------------*/
 char *name;
 {
-	static char nm_fnd[82]; /* ЗНАЧЕНИЕ ИМЕНИ (СТРОКА ПОСЛЕ "ИМЯ=") */
+	static char nm_fnd[80+2]; /* ЗНАЧЕНИЕ ИМЕНИ (СТРОКА ПОСЛЕ "ИМЯ=") */
 	register NM_DEF *hpp;   /* ОПРЕДЕЛЕНИЕ ИМЕНИ */
 	register char *res;     /* РЕЗУЛЬТАТ */
 
@@ -523,7 +532,7 @@ int siz;        /* РАЗМЕР ПОЛЯ */
 		if(*from == 'p' || *from++ == 'P') prompted = 1;
 		from++;
 	}
-#endif VLBP
+#endif
 #ifdef VCC
 	comma = 0;
 	while(*from) {
@@ -533,7 +542,7 @@ int siz;        /* РАЗМЕР ПОЛЯ */
 			prompted = 1;
 		from++;
 	}
-#endif VCC
+#endif
 	from = lbpo;
 	while(*from) {
 		if(*from == '$' && from[1] == '#') {      /* РАЗМЕР ПОЛЯ */
@@ -619,7 +628,7 @@ int     typ;            /* 'h', 'c', 'k', '?' */
 	}
 	subst(siz);        /* СДЕЛАТЬ ПОДСТАНОВКИ */
 }
-#endif VCC
+#endif
 
 #ifdef VLBP
 
@@ -680,7 +689,7 @@ int     typ;
 	}
 	subst(siz);        /* СДЕЛАТЬ ПОДСТАНОВКИ */
 }
-#endif VLBP
+#endif
 
 
 mk_lin(li, co)

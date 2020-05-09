@@ -24,6 +24,8 @@ cF      = ia    -       onoff   cvt_a   -       cF
 mF      = ia    -       onoff   cvt_a   -       mF
 xF      = ia    -       onoff   cvt_a   -       xF
 
+u8nopa  = ia    -       onoff   cvt_a   -       u8nopa
+
 ---# TODO to be continued...
 F1	= c "."
 F2	= c "."
@@ -58,14 +60,14 @@ co      = g     -       "%d"   -       -       maxco
 ---#
 ."setup parameters".............................. help: .:HE.... exit: .:EX.... 
 
-+   .ym. lines max     .hF h,history     .sF s,scroll        .F1 sh -c allways
-+       maxco: .co     .hS S,sync        .pF p,panel/keybar  .F2 "."
-+       maxli: .li     .mF m,mail_biff   .wF w,title               
-+       y0top: .yt     .cF c,clock       .xF x,xterm title         
-+                                                                  
 +   vexdir: .vexdir..............................................
 +   vpath:  .vpath...............................................
 +
++   .ym. lines max     .hF h,history     .sF s,scroll        .F1 sh -c allways
++       maxco: .co     .hS S,sync        .pF p,panel/keybar  .u8nopa only ASCII
++       maxli: .li     .mF m,mail_biff   .wF w,title               
++       y0top: .yt     .cF c,clock       .xF x,xterm title         
++                                                                  
 +debug internals below: consult manual, use with caution, please
 +
 +-i .i.........................................................

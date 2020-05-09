@@ -136,55 +136,54 @@ char *tcapo[] = {
 
 /* СВЯЗЬ ФИЗИЧЕСКИХ И ЛОГИЧЕСКИХ КОДОВ, А ТАКЖЕ ИМЕН КЛАВИШ */
 KBL kbl[KBLSIZE] = {
-		/*==== main set */
-      { KBCTL(    'K'),   KB_KP,   "Ctrl-K " },    /* KEYPAD ON */
-      { KBCOD('k','u'),   KB_AU,   "UP     " },		/* arrow keys */
-      { KBCOD('k','d'),   KB_AD,   "DOWN   " },
-      { KBCOD('k','l'),   KB_AL,   "LEFT   " },
-      { KBCOD('k','r'),   KB_AR,   "RIGHT  " },
-      { KBCTL(    'J'),   KB_NL,   "Enter  " },
-      { KBCOD('d','e'),   KB_DE,   "<-del  " }, /* delete left from cursor */
-      { KBCTL(    'C'),   KB_EX,   "Ctrl-C " },	/* exit */
-      { KBCOD('k','1'),   KB_HE,   "F1     " }, /* help screen */
-      { KBCTL(    'V'),   KB_PR,   "Ctrl-V " }, /* prefix for complex keyboard commands */
-      { KBCTL(    'L'),   KB_RE,   "Ctrl-L " }, /* refresh/redraw page content on screen */
-      { KBCTL(    'I'),   KB_TA,   "TAB    " },
-	  { KBCTL(    'A'), KB_KH,    "Home  " },
-	  { KBCTL(    'E'), KB_KE,    "End   " },
-	  { KBCTL(    'B'), KB_PU,    "PgUp  " },
-	  { KBCTL(    'F'), KB_PD,    "PgDown" },
-	  /* extended for linlib 4 since 2017-05 */
-	  /* delUnderCursor, insert, home, end, PageUp, PageDown */
-      { KBCOD('k','D'),   KB_KD,   "del->  " },
-	  { KBCOD('k','I'), KB_IN,    "Insert" },
-	  { KBCOD('k','h'), KB_KH,    "Home  " },
-	  { KBCOD('@','7'), KB_KE,    "End   " },
-	  { KBCOD('k','P'), KB_PU,    "PgUp  " },
-	  { KBCOD('k','N'), KB_PD,    "PgDown" },
-	  /**/
-      { KBCOD('k','4'),   KB_PR,   "PF4    " },
-		/*==== extended set */
-      { KBCOD('f','0'),   KBUSR('0'),   0         },
-      { KBCOD('f','1'),   KBUSR('1'),   0         },
-      { KBCOD('f','2'),   KBUSR('2'),   0         },
-      { KBCOD('f','3'),   KBUSR('3'),   0         },
-      { KBCOD('f','4'),   KBUSR('4'),   0         },
-      { KBCOD('f','5'),   KBUSR('5'),   0         },
-      { KBCOD('f','6'),   KBUSR('6'),   0         },
-      { KBCOD('f','7'),   KBUSR('7'),   0         },
-      { KBCOD('f','8'),   KBUSR('8'),   0         },
-      { KBCOD('f','9'),   KBUSR('9'),   0         },
-      { KBCOD('f','.'),   KBUSR('.'),   0         },
-      { KBCOD('f','-'),   KBUSR('-'),   0         },
-      { KBCOD('f',','),   KBUSR(','),   0         },
-      { KBCTL(    'M'),   KB_NL,   0         },    /*==== aliases */
-      { KBCTL(    'H'),   KB_DE,   0         },
-      { KBCTL(    'X'),   KB_EX,   0         },
-/*    { KBCOD('k','h'),   KB_EX,   0         }, */
-      { KBCTL(    'R'),   KB_RE,   0         },
-      { 0 },
+	/*==== main set */
+	{ KBCTL(    'K'),   KB_KP,   "Ctrl-K " },    /* KEYPAD ON */
+	{ KBCOD('k','u'),   KB_AU,   "UP     " },		/* arrow keys */
+	{ KBCOD('k','d'),   KB_AD,   "DOWN   " },
+	{ KBCOD('k','l'),   KB_AL,   "LEFT   " },
+	{ KBCOD('k','r'),   KB_AR,   "RIGHT  " },
+	{ KBCTL(    'J'),   KB_NL,   "Enter  " },
+	{ KBCOD('d','e'),   KB_DE,   "<-del  " }, /* delete left from cursor */
+	{ KBCTL(    'C'),   KB_EX,   "Ctrl-C " },	/* exit */
+	{ KBCOD('k','1'),   KB_HE,   "F1     " }, /* help screen */
+	{ KBCTL(    'V'),   KB_PR,   "Ctrl-V " }, /* prefix for complex keyboard commands */
+	{ KBCTL(    'L'),   KB_RE,   "Ctrl-L " }, /* refresh/redraw page content on screen */
+	{ KBCTL(    'I'),   KB_TA,   "TAB    " },
+	{ KBCTL(    'A'), KB_KH,    "Home  " },
+	{ KBCTL(    'E'), KB_KE,    "End   " },
+	{ KBCTL(    'B'), KB_PU,    "PgUp  " },
+	{ KBCTL(    'F'), KB_PD,    "PgDown" },
+	/* extended for linlib 4 since 2017-05 */
+	/* delUnderCursor, insert, home, end, PageUp, PageDown */
+	{ KBCOD('k','D'),   KB_KD,   "del->  " },
+	{ KBCOD('k','I'), KB_IN,    "Insert" },
+	{ KBCOD('k','h'), KB_KH,    "Home  " },
+	{ KBCOD('@','7'), KB_KE,    "End   " },
+	{ KBCOD('k','P'), KB_PU,    "PgUp  " },
+	{ KBCOD('k','N'), KB_PD,    "PgDown" },
+	/**/
+	{ KBCOD('k','4'),   KB_PR,   "PF4    " },
+	/*==== extended set */
+	{ KBCOD('f','0'),   KBUSR('0'),   0         },
+	{ KBCOD('f','1'),   KBUSR('1'),   0         },
+	{ KBCOD('f','2'),   KBUSR('2'),   0         },
+	{ KBCOD('f','3'),   KBUSR('3'),   0         },
+	{ KBCOD('f','4'),   KBUSR('4'),   0         },
+	{ KBCOD('f','5'),   KBUSR('5'),   0         },
+	{ KBCOD('f','6'),   KBUSR('6'),   0         },
+	{ KBCOD('f','7'),   KBUSR('7'),   0         },
+	{ KBCOD('f','8'),   KBUSR('8'),   0         },
+	{ KBCOD('f','9'),   KBUSR('9'),   0         },
+	{ KBCOD('f','.'),   KBUSR('.'),   0         },
+	{ KBCOD('f','-'),   KBUSR('-'),   0         },
+	{ KBCOD('f',','),   KBUSR(','),   0         },
+	{ KBCTL(    'M'),   KB_NL,   0         },    /*==== aliases */
+	{ KBCTL(    'H'),   KB_DE,   0         },
+	{ KBCTL(    'X'),   KB_EX,   0         },
+/*	{ KBCOD('k','h'),   KB_EX,   0         }, */
+	{ KBCTL(    'R'),   KB_RE,   0         },
+	{ 0 },
 	};
-
 
 /*
  * TODO: line0.h

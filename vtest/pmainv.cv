@@ -1,0 +1,35 @@
+/*
+**      +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
+**     (c) linlib  !    ДЛЯ АЛФАВИТНО-ЦИФРОВЫХ
+**      +----------+    ВИДЕОТЕРМИНАЛОВ
+**/
+
+/*
+ *      $Header$
+ *      $Log$
+ */
+
+
+
+---PAGE linem
+---LINES
+m_exit  = ipm      -   -   mkexit  tst_m   " Конец работы "
+
+s_var   = ipv      -   -   cvt_s   -	u8s    
+s_raw   = ipv      -   -   -       -	u8s    
+s_tst   = ipv      -   -   cvt_s   -	u8s    
+
+---SCREEN
+=тестирование исполняющей библиотеки LINLIB V4-Unicode
+
+			.m_exit...............................
+
+		str_var	.s_var....
+		str_raw	.s_raw....
+		str_tst	.s_tst....
+
+
+   .:?  .:HE....  Вывод Подсказки (Help)
+
+	.:NL....  показать буфер строки
+---END

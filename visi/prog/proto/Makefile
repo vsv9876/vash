@@ -72,7 +72,7 @@ $(PROGRAM):     $(OBJS) $(LIBS) $(MAKEFILE)
 		@$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) $(LIBS) $(STDLIBS) -o $(PROGRAM)
 		@echo " ...готово"
 
-clean:;         @rm -f $(OBJS)
+clean:;         @rm -f $(OBJS) $(PROGRAM)
 
 depend:;        @mkmf -f $(MAKEFILE) PROGRAM=$(PROGRAM) DEST=$(DEST)
 
