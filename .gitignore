@@ -11,3 +11,11 @@ conf.cfg
 *,v
 *.a
 *.so
+vash
+vhset
+pmain
+a.out
+bin
+lbp
+vcc
+vlpb
