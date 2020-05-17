@@ -37,9 +37,9 @@
 #include <ediag.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <wchar.h>
 #include "line.h"
 #include "linebp.h"
-
 #include "vgen.h"
 
 /*extern  char *malloc();*/
@@ -54,11 +54,14 @@ int  vscan  = 0;        /* ФЛАГ: ОБРАЗ ЭКРАНА СКАНИРУЕТ�
 char    Esxerr[] = "%s: %d:Syntax err:  %s\n";
 char    Rsxerr[] = "%s: %d:Синтакс. ош.: %s\n";
 
+/*
+#if ! defined(DEBUG)
+#define MAKE_VCC
+#undef MAKE_VLBP
+#endif
+*/
 
-/* КОНСТАНТЫ ПРЕПРОЦЕССОРА */
-#define LBPOSIZ 200             /* РАЗМЕР ВРЕМЕННОЙ СТРОКИ */
-
-#ifdef VCC
+#ifdef MAKE_VCC
 char    pag_id[] = "---PAGE";   /* НАЧАЛО ОПРЕДЕЛЕНИЯ СТРАНИЦЫ */
 #endif
 
@@ -106,13 +109,13 @@ typedef struct {
 
 HEAP    shp  = {0};     /* КУЧА СТРОК ОПИСАНИЙ lbp */
 
-char    *scrp = 0;      /* БУФЕР ОБРАЗА ЭКРАНА = malloc(80*24); */
+wchar_t    *scrp = 0;      /* БУФЕР ОБРАЗА ЭКРАНА = malloc(80*24); */
 
 /* УКАЗАТЕЛИ СКАНИРОВАНИЯ ЭКРАНА */
 int     cur_li = 0;     /* СТРОКА */
 /*int     cur_co = 0;     /* ПОЗИЦИЯ */
 
-char lbpo[LBPOSIZ] = {0};       /* БУФЕР ФОРМИРОВАНИЯ СТРОКИ В ФОРМАТЕ lbp */
+char lbpo[LBPOSIZE] = {0};       /* БУФЕР ФОРМИРОВАНИЯ СТРОКИ В ФОРМАТЕ lbp */
 
 /*---- ФАЙЛЫ: ИМЕНА И УКАЗАТЕЛИ НА ПОТОКИ */
 char ifn[50];
@@ -126,13 +129,13 @@ FILE *hvfp;
 usage(s)
 char *s;
 {
-#ifdef VLBP
+#ifdef MAKE_VLBP
 
 	fprintf(stderr,
 	"ВЫЗОВ:\n %s [-h file.hv] [-o file.la] file.lav\n",
 	s);
 #endif
-#ifdef VCC
+#ifdef MAKE_VCC
 	fprintf(stderr,
 	"ВЫЗОВ:\n %s [-o file.c] file.cv\n",
 	s);
@@ -150,11 +153,12 @@ main(argc, argv)
 int  argc;
 char *argv[];
 {
-	register acnt;
+	register int acnt;
 	char *s;
 
 	_setediag();
 
+	/*TODO locale constant UTF8 + diag msg*/
 	if (!setlocale(LC_CTYPE, "")) {
 		fprintf(stderr, "Can't set the specified locale! "
 			"Check LANG, LC_CTYPE, LC_ALL.\n");
@@ -196,7 +200,7 @@ char *argv[];
 		exit(1);
 	}
 	/* ЗАПРОСИТЬ ПАМЯТЬ ДЛЯ ОБРАЗА ЭКРАНА */
-	if ( (scrp=malloc(80*24))==NULL ) {
+	if ( (scrp=calloc(4, MAX_BUF_CO * MAX_BUF_LI))==NULL ) {
 		fprintf(stderr, ediag(Enomem, Rnomem), "scrp");
 		exit(1);
 	}
@@ -208,48 +212,48 @@ char *argv[];
 		}
 	}
 
-#ifdef VCC
+#ifdef MAKE_VCC
     /*----------- В ОДНОМ ФАЙЛЕ М.БЫТЬ БОЛЬШЕ ОДНОЙ СТРАНИЦЫ */
-    while(fgets(lbpo, LBPOSIZ, ifp), feof(ifp) == 0) {
+    while(fgets(lbpo, LBPOSIZE, ifp), feof(ifp) == 0) {
 
       if (str_eq(lbpo, pag_id) == 0) {
-	printf("%s", lbpo);             /* ТЕКСТ НА СИ */
+    	  printf("%s", lbpo);             /* ТЕКСТ НА СИ */
       }
       else {
-	s = lbpo + strlen(pag_id);      /* СНАЧАЛА НАЙТИ ИМЯ СТРАНИЦЫ */
-	while(isspace(*s)) s++;
-	s[ strlen(s) - 1 ] = '\0';
-
-	printf("LINE %s[] = {\n", s);  /* НАЧАЛО ОПИСАНИЯ СТРАНИЦЫ */
-
+    	  s = lbpo + strlen(pag_id);      /* СНАЧАЛА НАЙТИ ИМЯ СТРАНИЦЫ */
+    	  while(isspace(*s)) s++;
+    	  s[ strlen(s) - 1 ] = '\0';
+    	  printf("LINE %s[] = {\n", s);  /* НАЧАЛО ОПИСАНИЯ СТРАНИЦЫ */
 #endif
-	/* ИНИЦИАЛИЗИРОВАТЬ КУЧУ СТРОК (РАЗМЕР_БУФЕРА, КОЛИЧЕСТВО_СТРОК) */
-	ini_hs( &shp, HSSIZE, 200);
+		/* ИНИЦИАЛИЗИРОВАТЬ КУЧУ СТРОК (РАЗМЕР_БУФЕРА, КОЛИЧЕСТВО_СТРОК) */
+		ini_hs( &shp, HS_SIZE, HS_MAXNUM);
 
-	/* ЗАПОЛНИТЬ КУЧУ СТРОК С ОПРЕДЕЛЕНИЯМИ ИМЕН;
-	 * ЗАПОЛНИТЬ БУФЕР ЭКРАНА ИЗ СЕКЦИИ SCREEN;
-	 */
-	cur_li = 0;    /* СКАНИРОВАНИЕ ЭКРАНА НАЧАТЬ СНАЧАЛА */
-	pass1();
-	if ( cnterr ) {
-		fprintf(stderr,
+		/* ЗАПОЛНИТЬ КУЧУ СТРОК С ОПРЕДЕЛЕНИЯМИ ИМЕН;
+		 * ЗАПОЛНИТЬ БУФЕР ЭКРАНА ИЗ СЕКЦИИ SCREEN;
+		 */
+		cur_li = 0;    /* СКАНИРОВАНИЕ ЭКРАНА НАЧАТЬ СНАЧАЛА */
+
+		pass1();
+
+		if ( cnterr ) {
+			fprintf(stderr,
 ediag("PASS1: Errors detected: %d\n", "PASS1: ОБНАРУЖЕНО ОШИБОК: %d\n"),
-		cnterr);
-		exit(1);
-	}
-	/* СКАНИРОВАТЬ ЭКРАН, ЗАПИСАТЬ ФАЙЛ.la */
-	scan_s();
+			cnterr);
+			exit(1);
+		}
+		/* СКАНИРОВАТЬ ЭКРАН, ЗАПИСАТЬ ФАЙЛ.la */
+		scan_s();
 
-	/* ЕСЛИ ЗАТРЕБОВАН ФАЙЛ.hv, ЗАПИСАТЬ ЕГО,
-	 * НО ПОКА НЕПОНЯТНО КАК ЭТО ЛУЧШЕ СДЕЛАТЬ */
+		/* ЕСЛИ ЗАТРЕБОВАН ФАЙЛ.hv, ЗАПИСАТЬ ЕГО,
+		 * НО ПОКА НЕПОНЯТНО КАК ЭТО ЛУЧШЕ СДЕЛАТЬ */
 /*      do_hv();        */
 
-#ifdef VCC
-	des_hs( &shp ); /* УНИЧТОЖИТЬ КУЧУ СТРОК */
+#ifdef MAKE_VCC
+		des_hs( &shp ); /* УНИЧТОЖИТЬ КУЧУ СТРОК */
 
-	printf( "%s\n\n",   "{ 0 }, };"  );
+		printf( "%s\n\n",   "{ 0 }, };"  );
 
-      } /*---------- КОНЕЦ СТРАНИЦЫ */
+		} /*---------- КОНЕЦ СТРАНИЦЫ */
     } /*--------- ПРОДОЛЖИТЬ ПОИСК ДРУГИХ ОПИСАНИЙ СТРАНИЦ */
 #endif
 
@@ -315,7 +319,6 @@ linptr_t siz;
 int strnum;
 {
 	/*extern char *malloc();*/
-
 	if((( hp->top = malloc(siz)) != NULL )
 	&& (( hp->nmd =
 	  (NM_DEF *)malloc(sizeof(NM_DEF)* strnum)) != NULL )) {
@@ -335,7 +338,7 @@ c_ports(name)
 /*---------------------------------------*/
 char *name;
 {
-	static char nm_fnd[80+2]; /* ЗНАЧЕНИЕ ИМЕНИ (СТРОКА ПОСЛЕ "ИМЯ=") */
+	static char nm_fnd[MAX_BUF_CO/*80*/+2]; /* ЗНАЧЕНИЕ ИМЕНИ (СТРОКА ПОСЛЕ "ИМЯ=") */
 	register NM_DEF *hpp;   /* ОПРЕДЕЛЕНИЕ ИМЕНИ */
 	register char *res;     /* РЕЗУЛЬТАТ */
 
@@ -357,7 +360,7 @@ c_lines(lbps)
 /*---------------------------------------------------------*/
 register char *lbps;
 {
-	static  nm_ret[100];    /* СТРОКА РЕЗУЛЬТАТА */
+	static  char nm_ret[100];    /* СТРОКА РЕЗУЛЬТАТА */
 			/* ЭЛЕМЕНТЫ СТРОКИ В ФОРМАТЕ lbp: */
 	char    fldtyp[20];     /* ТИП ПОЛЯ, НАПР "ipa" */
 	char    susflg[20];     /* ФЛАГИ ЗАДЕРЖКИ */
@@ -527,13 +530,13 @@ int siz;        /* РАЗМЕР ПОЛЯ */
 	prompted = 0;
 	to = subs;
 	from = lbpo;
-#ifdef VLBP
+#ifdef MAKE_VLBP
 	while(!isspace(*from)) {
 		if(*from == 'p' || *from++ == 'P') prompted = 1;
 		from++;
 	}
 #endif
-#ifdef VCC
+#ifdef MAKE_VCC
 	comma = 0;
 	while(*from) {
 		if(*from == ',') comma++;
@@ -561,7 +564,7 @@ int siz;        /* РАЗМЕР ПОЛЯ */
 
 }
 
-#ifdef VCC
+#ifdef MAKE_VCC
 
 mk_vcc(siz, li, co, s, typ)
 /*----------------------------------------*/
@@ -570,27 +573,33 @@ mk_vcc(siz, li, co, s, typ)
 int     siz;
 int     li;
 int     co;
-register char *s;       /* СОДЕРЖИМОЕ ПОЛЯ */
+register wchar_t *s;    /* СОДЕРЖИМОЕ ПОЛЯ */
 int     typ;            /* 'h', 'c', 'k', '?' */
 {
 	/* РЕЗУЛЬТАТ ПОПАДАЕТ В СТРОКУ lbpo;
 	 * ФУНКЦИИ mk_lbp И mk_vcc ОЧЕНЬ ПОХОЖИ,
-	 * ОДНА СДЕЛАНА ИЗ ДРУГОЙ;
+	 * ОДНА СДЕЛАНА ИЗ ДРУГОЙ копипастой;
 	 * ПОДСТАНОВКИ И ВЫВОД В ФАЙЛ ДЕЛАЮТСЯ
 	 * ФУНКЦИЕЙ subst;
 	 */
-	static  char nm_fnd[82];        /* ИМЯ, КОТОРОЕ НУЖНО НАЙТИ */
+	static  char mb_s[8]; /* символ в кодировке UTF-8, включая терминатор строки '\0' */
+			char *mb_ptr;
+	static  char nm_fnd[MAX_BUF_CO + 2/*82=80+2*/];        /* ИМЯ, КОТОРОЕ НУЖНО НАЙТИ */
 	register NM_DEF *hpp;           /* ОПРЕДЕЛЕНИЕ ИМЕНИ */
 	register char *os;
 	register char *o2s;
 
 	if(typ == '?') {        /* ПОЛЕ С ИМЕНЕМ, НАДО СДЕЛАТЬ ПОДСТАНОВКУ */
-		strcpy(nm_fnd, s); strcat(nm_fnd, "=");
+		/*strcpy(nm_fnd, s);*/
+		sprintf(nm_fnd, "%ls", s);
+		strcat(nm_fnd, "=");
 		if(((hpp=fnd_nm(nm_fnd)) != (NM_DEF *)NULL)
 		&& ((hpp->nmt) != DPORT)) {
 			os = (hpp->nms);
 			while(*os++ != '=');    /* НАЙТИ ЗНАЧЕНИЕ ИМЕНИ */
-			  strcpy(nm_fnd, os); strcat(nm_fnd, "=");
+			  strcpy(nm_fnd, os);
+			  /*sprintf(nm_fnd, "%s", os);*/
+			  strcat(nm_fnd, "=");
 			  if(hpp->nmt == DTABLE) {   /* РАСШИР. ТАБЛ. */
 			  sprintf(lbpo,
 			  "{ %2d,%2d,%2d, SUST|%s, 0,0,0,0, %s },",
@@ -605,7 +614,7 @@ int     typ;            /* 'h', 'c', 'k', '?' */
 		} else {
 			/* УМОЛЧАНИЕ: СТРОКА ДЛЯ ВВОДА */
 			sprintf(lbpo,
-			"{ %2d,%2d,%2d, 0, LVAR|INP|PMT, 0,0,0, %s },",
+			"{ %2d,%2d,%2d, 0, LVAR|INP|PMT, 0,0,0, %ls },",
 			siz, li, co, s);
 		}
 	} else
@@ -617,20 +626,24 @@ int     typ;            /* 'h', 'c', 'k', '?' */
 		*os++ = '"';
 		while(*s) {
 			if(*s == '"') *os++ = '\\';
-			*os++ = *s++;
+			//sprintf(os++, "%lc", *s++);
+			sprintf(mb_s, "%lc", *s++);
+			for(mb_ptr = mb_s; *mb_ptr != '\0'; mb_ptr++) {
+				*os++ = *mb_ptr;
+			}
 		}
 		strcpy(os, "\" },");
 	} else
 	if(typ == 'k') {
 		sprintf(lbpo,
-   "{ %2d,%2d,%2d, 0, VAR|MID|PAD, 0, cvt_lh, 0, \"%s\" },",
+   "{ %2d,%2d,%2d, 0, VAR|MID|PAD, 0, cvt_lh, 0, \"%ls\" },",
 		siz, li, co, s);
 	}
 	subst(siz);        /* СДЕЛАТЬ ПОДСТАНОВКИ */
 }
 #endif
 
-#ifdef VLBP
+#ifdef MAKE_VLBP
 
 mk_lbp(siz, li, co, s, typ)
 /*-------------------------------*/
@@ -639,16 +652,20 @@ mk_lbp(siz, li, co, s, typ)
 int     siz;
 int     li;
 int     co;
-register char *s;
+register wchar_t *s;
 int     typ;
 {
-	static  char nm_fnd[82];        /* ИМЯ, КОТОРОЕ НУЖНО НАЙТИ */
+	static  char mb_s[8]; /* символ в кодировке UTF-8, включая терминатор строки '\0' */
+			char *mb_ptr;
+	static  char nm_fnd[MAX_BUF_CO + 2/*82=80+2*/];        /* ИМЯ, КОТОРОЕ НУЖНО НАЙТИ */
 	register NM_DEF *hpp;           /* ОПРЕДЕЛЕНИЕ ИМЕНИ */
 	register char *os;
 	register char *o2s;
 
 	if(typ == '?') {        /* ПОЛЕ С ИМЕНЕМ, НАДО СДЕЛАТЬ ПОДСТАНОВКУ */
-		strcpy(nm_fnd, s); strcat(nm_fnd, "=");
+		/*strcpy(nm_fnd, s);*/
+		sprintf(nm_fnd, "%ls", s);
+		strcat(nm_fnd, "=");
 		if(((hpp=fnd_nm(nm_fnd)) != (NM_DEF *)NULL)
 		&& ((hpp->nmt) != DPORT)) {
 			os = (hpp->nms);
@@ -669,7 +686,7 @@ int     typ;
 		       }
 		} else {
 			sprintf(lbpo,
-			"ip\t%2d %2d %2d\t- - - - %s",
+			"ip\t%2d %2d %2d\t- - - - %ls",
 			siz, li, co, s);
 		}
 	} else
@@ -679,12 +696,16 @@ int     typ;
 		*os++ = '"';
 		while(*s) {
 			if(*s == '"') *os++ = '"';  /* ТАКОВ ФОРМАТ lbp...*/
-			*os++ = *s++;
+			/**os++ = *s++;*/
+			sprintf(mb_s, "%lc", *s++);
+			for(mb_ptr = mb_s; *mb_ptr != '\0'; mb_ptr++) {
+				*os++ = *mb_ptr;
+			}
 		}
 		*os++ = '"'; *os = '\0';
 	} else
 	if(typ == 'k') {
-		sprintf(lbpo, "%c\t%2d %2d %2d\t- - cvt_lh - \"%s\"",
+		sprintf(lbpo, "%c\t%2d %2d %2d\t- - cvt_lh - \"%ls\"",
 			typ, siz, li, co, s);
 	}
 	subst(siz);        /* СДЕЛАТЬ ПОДСТАНОВКИ */
@@ -703,18 +724,18 @@ int co;
 	 * В БУФЕРЕ ОБРАЗА ЭКРАНА НЕ ОСТАВЛЯЕТСЯ
 	 * НИКАКОГО СЛЕДА ОТ ПОЛЯ - ВСЕ РАСПИСЫВАЕТСЯ ПРОБЕЛАМИ.
 	 */
-	register char *s;
-	register char *os;      /* УКАЗАТЕЛЬ ДЛЯ КОПИРОВАНИЯ */
-	char     *fbeg;         /* СИМВОЛ В ПОЗИЦИИ НАЧАЛА ПОЛЯ */
-	linptr_t spcnt;         /* СЧЕТЧИК ПРОБЕЛОВ В КОНЦЕ КОММЕНТАРИЯ */
-	static  char stro[80];  /* ЗДЕСЬ НАКОПИТЬ СТРОКУ СОДЕРЖИМОГО ПОЛЯ */
-	int  fldsiz;    /* РАЗМЕР ПОЛЯ */
-	int  li_lbp, co_lbp;    /* КООРДИНАТЫ ПОЛЯ ДЛЯ lbp */
-	int  typ;               /* ТИП ПОЛЯ (c,h,k,?) */
+	register wchar_t *s;
+	register wchar_t *os;    /* УКАЗАТЕЛЬ ДЛЯ КОПИРОВАНИЯ */
+	         wchar_t *fbeg;  /* СИМВОЛ В ПОЗИЦИИ НАЧАЛА ПОЛЯ */
+	static   wchar_t  stro[MAX_BUF_CO/*80*/];  /* ЗДЕСЬ НАКОПИТЬ СТРОКУ СОДЕРЖИМОГО ПОЛЯ */
+			 linptr_t spcnt; /* СЧЕТЧИК ПРОБЕЛОВ В КОНЦЕ КОММЕНТАРИЯ */
+			 int  fldsiz;    /* РАЗМЕР ПОЛЯ */
+			 int  li_lbp, co_lbp;    /* КООРДИНАТЫ ПОЛЯ ДЛЯ lbp */
+			 int  typ;               /* ТИП ПОЛЯ (c,h,k,?) */
 
 	spcnt = fldsiz = 0;
 	os = &stro[0];
-	fbeg = s = &scrp[80 * li + co];
+	fbeg = s = &scrp[MAX_BUF_CO/*80*/ * li + co];
 	li_lbp = li; co_lbp = co;       /* СОХРАНИТЬ КООРДИНАТЫ */
 	if(*fbeg == markl) {  /*--------------* ПОЛЕ С ИМЕНЕМ */
 		s++; fldsiz = 1; typ = '?';
@@ -723,7 +744,7 @@ int co;
 		if(fldsiz == 1) {       /* МОЖЕТ, ЭТО БЫЛО НЕ ИМЯ ПОЛЯ ?: */
 			if(fbeg[1] == '"') {         /* ЗАГОЛОВОК ? */
 				fldsiz = 2; s= &fbeg[2]; typ = 'h';
-				while(co++<80) {
+				while(co++<MAX_BUF_CO/*80*/) {
 					fldsiz++;
 					if (*s=='"' && s[1]==markl)
 						{ s++; break; }
@@ -747,14 +768,14 @@ ediag("Screen scan err:line %d, col %d\n", "Ош. сканирования: ст
 				li, co); cnterr++;
 			}
 		}
-		while(*s++ == markl && (co++)<80) {
+		while(*s++ == markl && (co++)<MAX_BUF_CO/*80*/) {
 			fldsiz++; }       /* НАКОПИТЬ ЕГО РАЗМЕР */
-		*os = '\0';
+		*os = L'\0';
 		goto fill_end;
 	} else
 	if(*fbeg == '=' && co_lbp == 0) { /*-----* ЗАГОЛОВОК НА ВСЮ ШИРИНУ */
 		co++; s++;
-		while(co++ < 80 ) {
+		while(co++ < MAX_BUF_CO/*80*/ ) {
 			if(*s==' ') {
 				if((spcnt++) >=4)    break;
 			} else {
@@ -762,16 +783,16 @@ ediag("Screen scan err:line %d, col %d\n", "Ош. сканирования: ст
 			}
 			*os++ = *s++;
 		}
-		*os = '\0'; os--;
-		while(*os == ' ') *os-- = '\0';
-		fldsiz = 80;
+		*os = L'\0'; os--;
+		while(*os == ' ') *os-- = L'\0';
+		fldsiz = MAX_BUF_CO/*80*/;
 		typ = 'h'; goto fill_end;
 	}
 	else {          /*---------------* ТЕКСТ КОММЕНТАРИЯ */
 /***
 		*os++ = *s++; co++;
 ***/
-		while((co++)<80 ) {
+		while((co++)<MAX_BUF_CO/*80*/ ) {
 			*os++ = *s++; fldsiz++;
 			if(*s==' ') {
 				if(s[1]   == markl)    break;
@@ -780,17 +801,17 @@ ediag("Screen scan err:line %d, col %d\n", "Ош. сканирования: ст
 				spcnt = 0;
 			}
 		}
-		*os = '\0';
-		while(*--os == ' ') { *os = '\0'; fldsiz--; }
+		*os = L'\0';
+		while(*--os == ' ') { *os = L'\0'; fldsiz--; }
 		typ = 'c';
 	}
 fill_end:
 
-#ifdef VLBP
+#ifdef MAKE_VLBP
 	/* ЗАПИСАТЬ СТРОКУ В ФОРМАТЕ lbp */
 	mk_lbp(fldsiz, li_lbp, co_lbp, stro, typ);
 #endif
-#ifdef VCC
+#ifdef MAKE_VCC
 	/* ЗАПИСАТЬ СТРОКУ ИНИЦИАЛИЗАЦИИ СТРУКТУРЫ LINE */
 	mk_vcc(fldsiz, li_lbp, co_lbp, stro, typ);
 
@@ -807,29 +828,30 @@ scan_s()
 {
 	register int li;        /* СТРОКА */
 	register int co;        /* ПОЗИЦИЯ */
-	char    *lbeg;          /* НАЧ. СТРОКИ В БУФЕРЕ ЭКРАНА */
+	wchar_t *lbeg;          /* НАЧ. СТРОКИ В БУФЕРЕ ЭКРАНА */
 	int     vertli;         /* НАЧ. ВЕРТИКАЛЬНОГО ПРОСМОТРА (СТРОКА)*/
 
 	/* СНАЧАЛА ЦИКЛ ПО СТРОКАМ */
 	for(li=0; vscan=0,li<cur_li; li++) {
-		lbeg = &scrp[ 80 * li ];
-		if(*lbeg == '+') {      /* ПРОСМОТР ПО ВЕРТИКАЛИ */
+		lbeg = &scrp[ MAX_BUF_CO * li ];
+		if(*lbeg == L'+') {      /* ПРОСМОТР ПО ВЕРТИКАЛИ */
 			vscan=1; vertli = li;
 			/* ЦИКЛ ПО ПОЗИЦИЯМ СТРОКИ */
-			for(co=1; co<80; co++) {
+			for(co=1; co<MAX_BUF_CO/*80*/; co++) {
 				/* ЦИКЛ ПО СТРОКАМ */
 				for(li=vertli;
-				lbeg = &scrp[80*li], *lbeg == '+';
-				li++) {
-					if(lbeg[co] != ' ')
+						lbeg = &scrp[MAX_BUF_CO/*80*/*li], *lbeg == L'+';
+							li++)
+				{
+					if(lbeg[co] != L' ')
 						mk_lin(li, co);
 				}
 			}
 			li--;
 		} else {        /* НОРМ. ПРОСМОТР ПО СТРОКАМ */
 			/* ЦИКЛ ПО ПОЗИЦИЯМ СТРОКИ */
-			for(co=0; co<80; co++) {
-				if(scrp[80*li+co] != ' ')
+			for(co=0; co<MAX_BUF_CO/*80*/; co++) {
+				if(scrp[MAX_BUF_CO/*80*/*li+co] != ' ')
 					mk_lin(li, co);
 			}
 		}
@@ -873,25 +895,32 @@ fil_sc()
 {
 	/* НУЖНО ВСЕГО ЛИШЬ ЗАМЕНИТЬ ПРОБЕЛАМИ
 	 * ТАБУЛЯЦИИ И ПУСТЫЕ КОНЦЫ СТРОК.
+	 * и сконвертировать в строку wchar_t
 	 */
 	int i;
-	char *s;
-	char *scr;
-	char *savescr;
+	wchar_t *s;
+	wchar_t *scr;
+	wchar_t *savescr;
+	static wchar_t wclbpo[LBPOSIZE];
+	int    len;
 	int   c;
 
-	s = lbpo;
-	savescr = scr = &scrp[ 80 * cur_li ];
-	for(i=0; i<80; i++) *scr++ = ' ';
+	/*s = lbpo; /* lbpo все еще в utf-8 */
+	/*fprintf(stderr, "lbpo:='%s'\n", lbpo); fflush(stderr);*/
+	len = u8wcsn(wclbpo, lbpo, LBPOSIZE);
+	s = wclbpo;
+
+	savescr = scr = &scrp[ MAX_BUF_CO * cur_li ];
+	for(i=0; i<MAX_BUF_CO; i++) *scr++ = L' ';
 	scr = savescr;
-	for(i=0;  i<80 ; i++) {
+	for(i=0;  i<MAX_BUF_CO ; i++) {
 		c = (int)*s++;
 		switch(c) {
-		case '\t' :     i +=(7 - (i%8));   break;
-		case '\0' :
-		case '\n' :     goto end_fil; break;
+		case L'\t' :     i +=(7 - (i%8));   break;
+		case L'\0' :
+		case L'\n' :     goto end_fil; break;
 		default:
-			scr[i] = (char)c;  break;
+			scr[i] = (wchar_t)c;  break;
 		}
 	}
 end_fil:
@@ -914,7 +943,7 @@ ins_hs()
 	register char *to;
 	int     consts;         /* ФЛАГ: СТРОКОВАЯ КОНСТАНТА */
 
-	static  char    tmps[200];
+	static  char    tmps[LBPOSIZE*2];
 
 	from = lbpo;
 
@@ -980,7 +1009,7 @@ pass1()
 	s = &lbpo[ strlen(vis_id) ];
 	skpflg = 1;
 
-	for ( nlin=1; fgets(lbpo, LBPOSIZ, ifp), feof(ifp) == 0; nlin++) {
+	for ( nlin=1; fgets(lbpo, LBPOSIZE, ifp), feof(ifp) == 0; nlin++) {
 
 		/* ЕСЛИ com_id -- УЗНАТЬ, КАКАЯ КОНКРЕТНО СЕКЦИЯ */
 		/* ПРОЧИТАТЬ СТРОКУ С КЛЮЧОМ scr_id,
@@ -998,7 +1027,7 @@ pass1()
 			}
 			/*--- ЭТИ СЕКЦИИ НАДО УЧИТЫВАТЬ */
 			else if (str_eq( s, scr_id )) {
-				skpflg = 0; lbptyp = 0;
+				skpflg = 0; lbptyp = 0; /* DSCREEN */
 			}
 			else if (str_eq( s, por_id )) {
 				skpflg = 0; lbptyp = DPORT;
@@ -1020,13 +1049,9 @@ pass1()
 					cnterr += 1;
 					/* ПРОПУСКАТЬ ПОСЛЕ ОШИБКИ */
 					skpflg = 1;
-				} else
-				if (skpflg == 0 && lbptyp == 0) {
-					/* НУ, ХОРОШО. НА ЭКРАНЕ ИНОГДА
-					 * БЫВАЕТ И НЕ ТАКОЕ... */
+				}
+				else if (skpflg == 0 && lbptyp == 0/*SCREEN*/) {
 					fil_sc(); /* СТРОКА ЭКРАНА */
-				} else {
-					;
 				}
 			}
 		} else {
@@ -1040,7 +1065,7 @@ pass1()
 				fil_sc();       /* ЗАПОЛНИТЬ СТРОКУ ЭКРАНА */
 			}
 		}
-	} ;
+	}
 	/* НОРМАЛЬНО ЕСТЬ ВЫХОД ПО КЛЮЧУ scr_id */
 	fprintf(stderr,
 	"%s: %d: section not found '%s%s'\n",

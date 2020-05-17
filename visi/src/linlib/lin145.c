@@ -13,6 +13,7 @@
  */
 
 #include <stdio.h>
+#include <locale.h>
 #include "line.h"
 
 static  char    devtty[] = "/dev/tty";
@@ -26,6 +27,13 @@ visini() {
     /* FILE *vttout = stderr; /* see line.h */
     /* FILE *vttout = stdout; /* see line.h */
     /* FILE *vttout = fdopen(0, "w+"); /* see line.h */
+
+	if (!setlocale(LC_CTYPE, "")) {
+			fprintf(stderr, "Can't set the specified locale! "
+					"Check LANG, LC_CTYPE, LC_ALL.\n");
+			exit(1);
+	}
+	setlocale(LC_COLLATE, "");
 
 	if((vttout = fopen(devtty, "w+")) == NULL) {
 		fprintf(stderr, "%s: no r/write access\n", devtty);

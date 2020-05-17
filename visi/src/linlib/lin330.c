@@ -19,33 +19,48 @@
  * 
  */
 
+#include <alloca.h>
 #include <stdio.h>
+#include <wchar.h>
 #include <ctype.h>
 #include "line.h"
 #include "line0.h"
 
-extern SCREEN scrn;
+extern SCRN scrn;
 
 int     edinsm = 1;     /* флаг: режим вставки 1, замены 0 */
 /* extern  int edinff;  */
 int     edinff = 1;     /* флаг: показывать состояние редактора строки */
 int     edshow = 1;     /* флаг: показывать строку до редактирования */
 
+/*static int edbak = 0;	/* флаг: копировать буфер редактирования обратно при выходе из e_str */
+
+
 re_str(str_l, size, ctst, ofsp)
 /*
  * Редактор строки без показа старого содержимого
  */
-register char    * str_l; /* строка для редактирования*/
-int     size;           /* размер поля редактирования */
-kbcod   (*ctst)();      /* тест для ввода печатаемых кодов */
-int     *ofsp;          /* указатель на величину смещения от нач. поля */
+char   *str_l;      /* строка для редактирования*/
+int     size;       /* размер поля редактирования */
+kbcod (*ctst)();    /* тест для ввода печатаемых кодов */
+int    *ofsp;       /* указатель на величину смещения от нач. поля */
 {
 	kbcod cod;
 	int     _edshow, _edinff, _edinsm;
+	wchar_t *wcsbuf;	/* буфер для строки во внутренней кодировке, снаружи e_str */
+	int len, len2;		/* занятая символами длина строки, до и после редактирования */
+	mbstate_t ps = { 0 };
+
+	wcsbuf = alloca(2*4*(MAXLICO)+1);
+
 	_edshow = edshow; edshow = 0;
 	_edinff = edinff; edinff = 0;
 	_edinsm = edinsm; edinsm = 1;
-	cod = e_str(str_l, size, ctst, ofsp);
+
+	len = u8wcs(wcsbuf, str_l);
+	cod = e_str(wcsbuf, size, ctst, ofsp);
+	len = wcsrtombs(str_l, &wcsbuf, 2*4*(MAXLICO)+1, &ps);
+
 	edshow = _edshow;
 	edinff = _edinff;
 	edinsm = _edinsm;
@@ -98,7 +113,7 @@ static showed()
 
 /* ВЫПОЛНИТЬ ИЗМЕНЕНИЯ И ПОКАЗАТЬ */
 static int chgstr(s, size, ofs, cod)
-register char *s;
+register wchar_t *s;
 int  size;
 int ofs;
 kbcod cod;
@@ -135,7 +150,7 @@ kbcod cod;
 		ofs += 1;
 	}
 
-	for(j=chg; j<=lend; j++) w_chr(s[j]);   /* НА ЭКРАН!!! */
+	for(j=chg; j<=lend; j++) w_wchr(s[j]);   /* НА ЭКРАН!!! */
 	return (ofs);
 }
 
@@ -144,7 +159,7 @@ kbcod e_str(str_l, size, ctst, ofsp)
 /*-----------------*/
 /* РЕДАКТОР СТРОКИ */
 /*-----------------*/
-register char    *str_l;  /* СТРОКА ДЛЯ РЕДАКТИРОВАНИЯ*/
+register wchar_t    *str_l;  /* СТРОКА ДЛЯ РЕДАКТИРОВАНИЯ*/
 int     size;           /* РАЗМЕР ПОЛЯ РЕДАКТИРОВАНИЯ */
 kbcod   (*ctst)();      /* ТЕСТ ДЛЯ ВВОДА ПЕЧАТАЕМЫХ КОДОВ */
 int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕНИЯ ОТ НАЧ. ПОЛЯ */
@@ -154,7 +169,6 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 	 *                -1, ЕСЛИ НАДО ЗАКОНЧИТЬ РЕДАКТИРОВАНИЕ;
 	 *              cod,  ЕСЛИ КОД ИЗМЕНЯЕТ СОДЕРЖИМОЕ СТРОКИ.
 	 */
-
 	register int i;
 	register int j;
 	register int  column;      /* ПОЗИЦИЯ И СТРОКА НА ЭКРАНЕ */
@@ -162,12 +176,18 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 			 int  attrib; /* логический видеоатрибут */
 		 kbcod    cod;
 		 kbcod    ok;
+	/*wchar_t  *str_l;	 /* СТРОКА ДЛЯ РЕДАКТИРОВАНИЯ, внутри этой функции */
 
 	column = scrn.sc_co;
 	linenu = scrn.sc_li;
 	attrib = scrn.sc_at;
 
 	edinfo(1);
+
+/*
+	str_l = alloca(sizeof(wchar_t) * (size+1));
+	u8wcs(str_l, ext_l);
+*/
 	/* заполнить пробелами конец строки */
 	j = 0;
 	while(j<size && str_l[j]) j++;
@@ -177,7 +197,7 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 		/* показать на экране перед редактированием */
 		cp_set(linenu, column, attrib);
 		j = 0;
-		while(j<size) w_chr(str_l[j++]);
+		while(j<size) w_wchr(str_l[j++]);
 	}
 	i = ofsp ? *ofsp : 0;
 
@@ -202,13 +222,13 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 				case KB_AL: i = 0; break;
 				case ' ':
 					   for(j=i; j<size; j++) {
-						w_chr(str_l[j] = ' ');
+						w_wchr(str_l[j] = ' ');
 					   }; break;
 				case KB_DE:
 					   for(j=i; j<size-1; j++) {
-					       w_chr(str_l[j] = str_l[j+1]);
+					       w_wchr(str_l[j] = str_l[j+1]);
 					   };
-					   w_chr(str_l[j] = ' ');
+					   w_wchr(str_l[j] = ' ');
 					   str_l[size] = '\0';
 					   break;
 				case KB_PR: edinsm=(edinsm ? 0 : 1);
@@ -226,9 +246,9 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 				   break;
 			case KB_KD:
 				   for(j=i; j<size-1; j++) {
-				       w_chr(str_l[j] = str_l[j+1]);
+				       w_wchr(str_l[j] = str_l[j+1]);
 				   };
-				   w_chr(str_l[j] = ' ');
+				   w_wchr(str_l[j] = ' ');
 				   str_l[size] = '\0';
 				   break;
 			/*----------------------------*/
@@ -252,7 +272,8 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 				   i = chgstr(str_l, size, i, cod);
 				   break;
 			default:
-				if(cod1(cod))   goto ret;/*НО МОЖНО И ЛУЧШЕ*/
+				/*if(cod1(cod))   goto ret;/*НО МОЖНО И ЛУЧШЕ*/
+				if(ISCTL(cod))   goto ret;
 				else            i=chgstr(str_l, size, i, cod);
 
 			}
@@ -267,5 +288,6 @@ ret:
 	for (i=size; --i>=0 && (str_l[i]==' ');) ;
 	str_l[++i] = 0;
 	edinfo(0);
+/*	wctomb(ext_l, str_l);*/
 	return(cod);
 }

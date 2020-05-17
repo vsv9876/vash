@@ -41,6 +41,24 @@ wcswidth(3)	determine columns needed for a fixed-size wide-character string
        int wcswidth(const wchar_t *s, size_t n);
        int wcwidth(wchar_t c);
 //------------------------------------------------------------------------------
+wc[r]tomb
+       #include <wchar.h>
+
+       size_t wcrtomb(char *s, wchar_t wc, mbstate_t *ps);
+       int wctomb(char *s, wchar_t wc);
+//------------------------------------------------------------------------------
+wcs[n]rtombs
+       #include <stdlib.h>
+
+       size_t wcstombs(char *dest, const wchar_t *src, size_t n);
+//
+       #include <wchar.h>
+
+       size_t wcsrtombs(char *dest, const wchar_t **src,
+                        size_t len, mbstate_t *ps);
+       size_t wcsnrtombs(char *dest, const wchar_t **src, size_t nwc,
+                         size_t len, mbstate_t *ps);
+//------------------------------------------------------------------------------
 mb[r]len(3)	determine number of bytes in next multibyte character
        #include <wchar.h>
 
@@ -66,18 +84,6 @@ mbsrtowcs(3)	convert a multibyte string to a wide-character string
        size_t 1(wchar_t *dest, const char **src,
                          size_t len, mbstate_t *ps);
 
-//------------------------------------------------------------------------------
-wcs[n]rtombs
-       #include <stdlib.h>
-
-       size_t wcstombs(char *dest, const wchar_t *src, size_t n);
-//
-       #include <wchar.h>
-
-       size_t wcsrtombs(char *dest, const wchar_t **src,
-                        size_t len, mbstate_t *ps);
-       size_t wcsnrtombs(char *dest, const wchar_t **src, size_t nwc,
-                         size_t len, mbstate_t *ps);
 //------------------------------------------------------------------------------
 #include <wchar.h>
 WCHAR_MIN

@@ -14,6 +14,15 @@
 #include <stdio.h>
 #include "line.h"       /* ФАЙЛ-ЗАГОЛОВОК LINLIB */
 
+#define STRSIZE 128
+
+static char u8s[STRSIZE] = "абвгдежзиклмн";
+static double v1;
+static double vd = 3.14;
+static double v2;
+static int	  vi = 111;
+static long   vl = 99999999;
+wchar_t wcs[STRSIZE/4] = L"";
 
 static  int ex_flg;     /* ФЛАГ: ПОРА ЗАКАНЧИВАТЬ */
 
@@ -24,11 +33,6 @@ mkexit()
 	ex_flg = 1;
 	return(TRUE);
 }
-
-#define STRSIZE 128
-
-static char u8s[STRSIZE] = "123абв";
-wchar_t wcs[STRSIZE/4] = L"";
 
 int sout()
 {
@@ -79,7 +83,7 @@ vmain()
 			 */
 			bell();
 			break;
-		case KB_NL:
+		case KB_TA:
 			sout();
 		default :
 			w_emsg("");

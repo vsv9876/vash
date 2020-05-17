@@ -109,16 +109,15 @@ typedef char  bool;     /* короткий формат для целых чи�
 #define KBUSR( c )      (tocod0( 'U' )|tocod1(c))
 #define KBCTL( c )      (tocod0( '^' )|tocod1(c))
 #define ISCTL( c )      (cod1(c) != 0 ? 1 : 0)
-#endif
+#endif /*KBCOD_INT16*/
 
 #ifdef KBCOD_INT32
 /* Unicode support on 32/64 bit architectures (sizeof(int)>=32)
  * kbcod contains mixed value:
- * mask for control logical code not cover byte 0 (printable ASCII)
- * and control logical code is outside Unicode/utf8 space in upper byte 3
- * Unicode character not masked/confused by control code mask
+ * mask for control logical code does not cover byte 0 (is printable ASCII),
+ * and control logical code is outside Unicode/utf8 space in upper byte 3;
+ * Unicode character is not masked/confused by control code mask.
  */
-
 #define cod0(c)       ((c)  & 0xff)       /* extract 1st symbol */
 #define cod1(c)   (((c)>>8) & 0xff)       /* extract 2nd symbol */
 #define tocod0(c)     ((c)  & 0x00ff)     /* prepare 1st symbol */
@@ -131,9 +130,9 @@ typedef char  bool;     /* короткий формат для целых чи�
 #define KBCTL( c )      (KBPRE|tocod0('^')|tocod1(c))
 /* check if kbcod is linlib control code */
 #define ISCTL( c )      (((c)&KBPRE) != 0 ? 1 : 0)
-#endif
+#endif /*KBCOD_INT32*/
 
-#define STRLEN MAXLICO+2 /*82       /* длина строки для ввода с клавиатуры */
+#define STRLEN MAXLICO+2 /*82       /* длина строки для ввода с клавиатуры TODO 4k buf */
 #ifndef FALSE           /* определение м.быть в др. месте */
 #define TRUE    1
 #define FALSE   0
@@ -276,6 +275,7 @@ extern  LINE	*b_page();
 extern  int mb_cur_max;
 extern  int u8nopass;
 extern  int u8len(), u8wcs(), u8wcsn();
+extern char *u8pxx();
 
 #define er_page er_pag
 #define r_str   e_str

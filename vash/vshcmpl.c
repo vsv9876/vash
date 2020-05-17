@@ -6,7 +6,7 @@
 #include "assist.h"
 #include "slist.h"
 
-/*#define DEBUGS 1*/
+/*#define DEBUGS 1 /*debug TAB completion printout*/
 
 #define BUFSMAX 4000
 
@@ -143,7 +143,7 @@ int hlp_compl()
 	cur_co += strlen(tmps) + 1;
 	for (n = slistn; n > 0 && slist != NULL && cur_li < maxli - 2 ; n--) {
 		s = sl_sstr(slist);
-		ssize = strlen(s);
+		ssize = strlen(s); /*размер на экране отличается*/
 		cp_set(cur_li, cur_co, TXT);
 		w_str(s);
 		cur_co += ssize + 2;
@@ -157,7 +157,7 @@ int hlp_compl()
 	return 1; /**/
 }
 
-/* returns elemens count or -1 if error, fill sugg.string if found exact one only */
+/* returns elements count or -1 if error; fill sugg.string if found exact one candidat */
 int sh_sugg(dirp, patt, from/*, insp*/)
 char *dirp;
 char *from;
@@ -174,7 +174,7 @@ char *patt;
 	SLIST *slist;
 
 	count = 0;
-	pattsz = strlen(patt);
+	pattsz = strlen(patt); /*тут нужен именно strlen*/
 
 	if ((inss = malloc((size_t)MAXLICO + 1)) == NULL) {
 		ok = -2; goto ret;
@@ -187,15 +187,15 @@ char *patt;
 		}
 		while(!feof(pipe)) {
 			s = fgets((s = filestr), BUFSMAX, pipe);
-			if (s != NULL && strncmp(patt, filestr, strlen(patt)) == 0) {
+			if (s != NULL && strncmp(patt, filestr, /*strlen(patt)*/pattsz) == 0) { /*тут нужен именно strlen*/
 					/*strncpy(inss, s + pattsz, MAXLICO);*/
 					/*skip trailing LF */
-					sz = strlen(filestr);
+					sz = strlen(filestr); /*тут нужен именно strlen*/
 					if (sz > 0 && filestr[sz-1] == '\n') {
 							filestr[sz-1] = '\0';
 					}
 					if (sl_chkdup(sgglist, filestr) == 0) {
-						if (sgg_valid(dirp, patt, filestr+strlen(patt))) {
+						if (sgg_valid(dirp, patt, filestr+/*strlen(patt)*/pattsz)) {
 						slist = sl_add(sgglist, filestr);
 						count++;
 					}

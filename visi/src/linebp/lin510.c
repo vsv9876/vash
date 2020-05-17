@@ -201,8 +201,8 @@ LINE *line;
 	char    *adj_ptr();
 
 	line->cvts = adj_ptr( (char *)line->cvts );
-	line->cvtf = adj_ptr( (char *)line->cvtf );
-	line->test = adj_ptr( (char *)line->test );
+	line->cvtf = adj_ptr( (char (*)())line->cvtf );
+	line->test = adj_ptr( (char (*)())line->test );
 	line->varl = adj_ptr( (char *)line->varl );
 }
 

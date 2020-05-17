@@ -15,21 +15,27 @@
 ---LINES
 m_exit  = ipm      -   -   mkexit  tst_m   " Конец работы "
 
-s_var   = ipv      -   -   cvt_s   -	u8s    
-s_raw   = ipv      -   -   -       -	u8s    
-s_tst   = ipv      -   -   cvt_s   -	u8s    
+s_raw   = ipv      -   -      -       -	u8s
+s_var   = ipv      -   -      cvt_s   -	u8s
+s_tst   = ipv      -   -      cvt_s   -	u8s
+s_vd	= ipv      -   "%6.3f" -       -	&vd
+s_vl	= ipv      -   "%ld"  -       -	&vl
+s_vi	= ipv      -   "%d"   -       -	&vi
+
 
 ---SCREEN
 =тестирование исполняющей библиотеки LINLIB V4-Unicode
 
-			.m_exit...............................
+			  .m_exit.......
 
-		str_var	.s_var....
-		str_raw	.s_raw....
-		str_tst	.s_tst....
+		str_raw   .s_raw....
+		str_var   .s_var....
+		str_tst   .s_tst....
+		s_double  .s_vd...
+		s_long    .s_vl.....
+		s_int     .s_vi.
 
+---#   .:?  .:HE....  Вывод Подсказки (Help)
 
-   .:?  .:HE....  Вывод Подсказки (Help)
-
-	.:NL....  показать буфер строки
+	.:TA....  показать буфер строки
 ---END

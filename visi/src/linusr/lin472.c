@@ -48,16 +48,10 @@ char *str;
 	if (str) {
 		if(*mod == 'r') {
 			strcpy(*spp, str);
-			/*for (so=*spp, si=str, i=size; *si!='\0' && i > 0; i--)
-				*so++ = *si++;
-			*so = '\0';*/
 		}
 		else    {
-			strncpy(str, *spp, size);
-			if (strlen(*spp) >= size) str[size] = '\0';
-			/*for (so=str, si=*spp, i=size; *si!='\0' && i > 0; i--)
-				*so++ = *si++;
-			*so = '\0';*/
+			/*strncpy*/u8mbsn(str, *spp, size);
+			/*if (strlen(*spp) >= size) str[size] = '\0';/*это обрезание лучше выполнять в [wr]_line*/
 		}
 	}
 #else
@@ -85,7 +79,7 @@ char *str;
 {
 	char *sp;
 
-	int max_co;
+	//int max_co;//TODO cleanup
 	int size;
 	register char *si;
 	register char *so;
@@ -94,20 +88,14 @@ char *str;
 	sp = (char *)line->varl;
 	size = line->size;
 	if (line->attr & PMT) size -= 1;
-	max_co = maxco-2;
+	//max_co = maxco-2;
 	if (str) {
 		if(*mod == 'r') {
 			strcpy(sp, str);
-			/*for (so=sp, si=str, i=size; *si!='\0' && i > 0; i--)
-				*so++ = *si++;
-			*so = '\0';*/
 		}
 		else    {
-			strncpy(str, sp, size);
-			if (strlen(sp) >= size) str[size] = '\0';
-			/*for (so=str, si=sp, i=size; *si!='\0' && i > 0; i--)
-				*so++ = *si++;
-			*so = '\0';*/
+			/*strncpy*/u8mbsn(str, sp, size);
+			/*if (strlen(sp) >= size) str[size] = '\0';/* миссия [wr]_line*/
 		}
 	}
 	return(TRUE);

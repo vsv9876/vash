@@ -34,9 +34,8 @@ char *argv[];
 
     while(1) {
 	printf("\n-->");
-	fgets(ins, 120, stdin);
+	if (NULL==fgets(ins, 120, stdin)) break;
 	n = strlen(ins);
-// 	len = wcslen(inp);
 	p = ins;
 	wcscpy(inp, L"--------------------------------");
 	len = mbsrtowcs(inp, &p, 11, &ps);

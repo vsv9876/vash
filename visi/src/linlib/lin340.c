@@ -30,6 +30,7 @@
  */
 
 #include <stdio.h>
+#include <wchar.h>
 #include <string.h>
 #include "line.h"
 #include "line0.h"
@@ -39,6 +40,7 @@ extern LPA lpaout[];
 
 extern int allcod;
 
+/*#define FLOAT_CVT /*not supported, use line->cvtf instead, please*/
 
 /*----------------------------*/
 /* ВЫВЕСТИ ПО ФОРМАТАМ printf */
@@ -49,7 +51,7 @@ register char *ou;      /* СТРОКА, КУДА ПОМЕСТИТЬ ВЫВОД 
 register char *fo;      /* ФОРМАТ printf */
 register char *va;      /* УКАЗАТЕЛЬ НА ПЕРЕМЕННУЮ */
 {
-#ifdef DOUBLE
+#ifdef FLOAT_CVT
 	if(index(fo, 'f') || index(fo, 'e') || index(fo, 'g'))
 		/* ФОРМАТЫ С ПЛАВАЮЩЕЙ ТОЧКОЙ */
 		return( sprintf(ou, fo, *(double *)va) );
@@ -75,22 +77,27 @@ r_line(line, posp)
 register LINE    *line; /* УКАЗАТЕЛЬ НА ЛИНИЮ */
 	 int     *posp; /* ПОЗИЦИЯ, С КОТОРОЙ НАЧАТЬ РЕДАКТИРОВАТЬ */
 {
-	register char *s;
-	register int  i;
 	kbcod   cod;            /* КОД ПОСЛЕДНЕЙ КЛАВИШИ */
 	int     attr;           /* СЛОВО АТРИБУТОВ */
 	int     cvterror;       /* ФЛАГ ОШИБКИ ФОРМАТА */
 	int     tsterror;       /* ФЛАГ ОШИБКИ ТЕСТА */
 	int     midcnt;         /* СЧЕТЧИК ДЛЯ ВЫРАВНИВАНИЯ ПО ЦЕНТРУ */
 	int     filch;          /* ЗНАК ДЛЯ ЗАПОЛНЕНИЯ */
-	int     wksl;           /* ДЛИНА СТРОКИ ПЕРЕД ВЫРАВНИВАНИЕМ */
+	int     slen;           /* ДЛИНА СТРОКИ ПЕРЕД ВЫРАВНИВАНИЕМ */
 	int     size;           /* РАЗМЕР ПОЛЯ */
-	int     flo;            /* ФЛАГ: ФОРМАТ ЗАБЛОКИРОВАН */
+	int     fmtlock;            /* ФЛАГ: ФОРМАТ ЗАБЛОКИРОВАН */
 	int     onexit;         /* ФЛАГ: КОНЕЦ РАБОТЫ */
-	char   *eds;            /* СТРОКА ДЛЯ РЕДАКТОРА */
-	int     base;           /* НАЧАЛО ПОЛЕЗНОЙ ИНФОРМАЦИИ:
-				**   СМЕЩЕНИЕ ОТ ПОДСКАЗКИ */
-	char    wks[STRLEN];    /* РАБОЧАЯ СТРОКА */
+	int     base;           /* НАЧАЛО ПОЛЕЗНОЙ ИНФОРМАЦИИ: СМЕЩЕНИЕ ОТ ПОДСКАЗКИ */
+
+ register
+    int  i;
+	wchar_t *editptr;         /* начало строки для редактора, после промптера */
+ register
+    wchar_t *wcsptr;
+	wchar_t  wcsbuf[STRLEN];  /* рабочая строка во внутренней кодировке */
+
+	char    u8buf[4*STRLEN + 2]; /*промежуточная строка для в кодировке UTF-8*/
+	int		u8size;			     /* размер в символах в промежуточной строке*/
 
 	attr = line->attr;
 
@@ -102,8 +109,10 @@ register LINE    *line; /* УКАЗАТЕЛЬ НА ЛИНИЮ */
 inp_retry:
 out_string:
 	cvterror = tsterror = 0;
-	s = eds = wks;
-	base = 0; size = line->size;
+	wcsptr = wcsbuf;
+	editptr = wcsbuf;
+	base = 0;
+	size = line->size;
 
 	i = attr & VIDEO;
 
@@ -120,48 +129,53 @@ out_string:
 #endif
 	/*==== ПОДСКАЗКА */
 	if(attr & PMT) {
-		eds++; base++; size--;
-		if(attr & INP)  *s++ = lpainp[i].lpa_p;
-		else            *s++ = lpaout[i].lpa_p;
+		editptr++; base++; size--;
+		if(attr & INP)  *wcsptr++ = lpainp[i].lpa_p;
+		else            *wcsptr++ = lpaout[i].lpa_p;
 	}
 	/*==== ФОРМАТ НА ВЫВОД */
-	if( !(flo = ((attr & FLO) == FLO))) { /*=== ЕСЛИ НЕ БЛОКИРОВАН */
+	if( !(fmtlock = ((attr & FLO) == FLO))) { /*=== ЕСЛИ НЕ БЛОКИРОВАН */
 		if(line->cvtf) {                /* ЧЕРЕЗ ФУНКЦИЮ */
-			(*(line->cvtf))(line, cod, "w", s);
+			(*(line->cvtf))(line, cod, "w", u8buf); u8size = u8wcs(wcsptr, u8buf);
 		}
 		else if(line->cvts) {           /* В СТИЛЕ printf */
-			docvts(s, line->cvts, line->varl);
+			docvts(u8buf, line->cvts, line->varl); u8size = u8wcs(wcsptr, u8buf);
 		}
 		else {                          /* ПРОСТО СТРОКА */
-			eds = line->varl;
-			goto string_simple; }
+			/* editptr = line->varl; /*varl показывает на UTF-8, а нужно wchar_t*/
+			/*u8size = u8wcs(wcsptr, line->varl);/* ниже, string_simple: */
+			editptr = wcsptr;
+			goto string_simple;
+		}
 	} else {
 string_simple:
-		strncpy(s, line->varl, size); s[size] = 0;
+		//strncpy(s, line->varl, size); s[size] = 0;
+		u8size = u8wcsn(wcsptr, line->varl, size); wcsptr[size] = 0;
 	}
 
-	wksl = strlen(s);
+	/* slen = strlen(s);*/
+	slen = wcslen(wcsptr);
 
 	/*==== ВЫРАВНИВАНИЕ */
 	if(attr & MID) {
-		if((midcnt=((size-wksl)/2)) > 0) {
-			for(i= wksl+= midcnt; i>=midcnt; i--)
-				s[i] = s[i-midcnt];
-			while(i >= 0) s[i--] = filch;
+		if((midcnt=((size-slen)/2)) > 0) {
+			for(i= slen+= midcnt; i>=midcnt; i--)
+				wcsptr[i] = wcsptr[i-midcnt];
+			while(i >= 0) wcsptr[i--] = filch;
 		}
 	}
 	/*==== ЗАПОЛНЕНИЕ */
 	if(attr & PAD) {
-		for(i=wksl; i<size;)    s[i++] = filch; s[size] = 0;
+		for(i=slen; i<size;)    wcsptr[i++] = filch; wcsptr[size] = 0;
 	}
 	/*==== КУРСОР, ВИДЕО (НЕ ЗАБЫТЬ ПОДСКАЗКУ) */
 	cp_set(line->line, line->colu, attr);
 
 	/*==== ПОКАЗАТЬ */
 	if ( (posp != (int *)(-1)) && (attr & (LFASTR|NED)) == (LFASTR|NED) )
-		w_chr(*wks);    /* только для r_line */
+		w_wchr(*wcsbuf);    /* только для r_line */
 	else
-		w_str(wks);
+		w_wcstr(wcsbuf);
 
 	if(onexit || posp == (int *)(-1)) return(cod);    /* КОНЕЦ ДЛЯ ВЫЗОВА ЧЕРЕЗ w_line */
 
@@ -170,7 +184,7 @@ string_simple:
 
 	/*==== ЧИТАТЬ КОД ПЕРВОЙ КЛАВИШИ */
 	switch(cod = r_cod(0)) {
-	case KB_DE: *eds = '\0';
+	case KB_DE: *editptr = '\0';
 	case  ' ': if(posp != (int *)(-1) && posp) *posp=0;
 		   break;
 	default:
@@ -179,9 +193,9 @@ string_simple:
 		 * ПОСЛЕ РЕДАКТОРА СТРОКИ И КОДА KB_NL;
 		 */
 		if((attr & NED) == 0) {
-			if(allcod && cod1(cod) == 0) {
+			if(allcod && ISCTL(cod) == 0) { /*&& cod1(cod) == 0) {*/
 				unr_c(cod);     /* "ПРОЧИТАТЬ" НАЗАД */
-				*eds = '\0';    /* ОЧИСТИТЬ СТРОКУ */
+				*editptr = L'\0';    /* ОЧИСТИТЬ СТРОКУ */
 			} else
 	/*                if(cod1(cod) != 0)    *******/
 				goto inp_test;
@@ -197,9 +211,11 @@ edit_retry:
 	cp_set(line->line, base + line->colu, attr);
 
 	/*==== РЕДАКТОР, ХРАНИТЬ КОД */
-	cod = e_str(eds, size,
+	cod = e_str(editptr, size,
 		     /*==== ТЕСТ ДЛЯ РЕДАКТОРА ? */
 		    ((attr & EDT) ? (linptr_t)(line->test) : 0), posp);
+	/*после редактора вернуть все в UTF-8*/
+	u8size = wcstombs(u8buf, editptr);
 	/*
 	 * ЕСТЬ ТОНКОСТИ С ФОРМАТОМ ПОСЛЕ РЕДАКТОРА:
 	 *    НАДО РЕАГИРОВАТЬ ТОЛЬКО НА KB_NL
@@ -208,40 +224,39 @@ edit_retry:
 
 inp_format:
 	/*==== ФОРМАТ НА ВВОДЕ */
-	if(flo) goto inp_test;  /* М.БЫТЬ БЛОКИРОВАН... */
+	if(fmtlock) goto inp_test;  /* М.БЫТЬ БЛОКИРОВАН... */
 
 	if(line->cvtf) {
-		if(cvterror = !(*line->cvtf)(line, cod, "r", eds))
+		if(cvterror = !(*line->cvtf)(line, cod, "r", /*editptr*/u8buf))
 			bell();
 	} else if(line->cvts) {
-#ifdef DURA
+#ifdef FLOAT_CVT
 		/*
 		 * НЕ СОВСЕМ НАДЕЖНОЕ ПРЕОБРАЗОВАНИЕ НА ВВОДЕ :
-		 * У КОМПИЛЯТОРА децус РАБОТАЕТ ОДИН ФОРМАТ - %f
+		 * У КОМПИЛЯТОРА DECUS РАБОТАЕТ ОДИН ФОРМАТ - %f
 		 * (И НЕ ТОЛЬКО У DECUS  -- vsv, 15/02/87)
 		 */
 		if((index(line->cvts, 'f') != 0)
 		    || (index(line->cvts, 'g') != 0)
 		    || (index(line->cvts, 'e') != 0))       {
-			if(cvterror= (!sscanf(eds,"%f",line->varl)))
+			if(cvterror= (!sscanf(/*editptr*/u8buf, "%f", ((double *)line->varl))))
 				bell();
 		}
-		/* ТО, ЧТО ВЫШЕ, МОЖНО УБРАТЬ, ЕСЛИ КОМУ МЕШАЕТ */
-		else    {
-			if(cvterror= (!sscanf(eds,line->cvts,line->varl)))
-				bell();
-		}
-#endif DURA
-		if(cvterror= (!sscanf(eds,line->cvts,line->varl)))
+		else
+#endif
+		if(cvterror= (!sscanf(/*editptr*/u8buf, line->cvts, line->varl))) {
 			bell();
-
+		}
+	} else {
+		/*просто строка - вернуть содержимое после редактирования*/
+		strcpy(line->varl, u8buf);
 	}
 	/*==== ОШИБКА ФОРМАТА ? */
 	if(cvterror && onexit == 0 ) goto edit_retry;
 
 inp_test:
 	/*==== ТЕСТ ПОСЛЕ РЕДАКТОРА ? */
-	if( flo || !(attr & EDT) ) {
+	if( fmtlock || !(attr & EDT) ) {
 		tsterror = !(line->test ? (*line->test)(line, cod) : TRUE);
 	}
 	/*==== ЕСТЬ ОШИБКА ? */

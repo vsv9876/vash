@@ -267,7 +267,7 @@
 
 # Вызов подсказки
 # obsolete, will be removed - use man vash instead
-#:[?]
+:[?]
 #:HE
 	* * _cmdset .ashhelp
 

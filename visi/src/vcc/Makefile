@@ -9,7 +9,7 @@ SHELL   = /bin/sh
 #  ПРИМЕЧАНИЕ:
 #       Из одного и того же текста получается две программы.
 
-CC      = cc
+#CC      = gcc -g -O0
 
 DEST    = ../../bin
 CFLAGS  = -I../../include
@@ -33,13 +33,13 @@ LIBS          = \
 all:    vlbp    vcc
 
 vcc:    vcc.c vgen.h $(LIBS)
-	$(CC) -o vcc -DVCC $(CFLAGS) vcc.c $(LIBS)
+	$(CC) -o vcc -DMAKE_VCC $(CFLAGS) vcc.c $(LIBS)
 
 vlbp:   vcc.c vgen.h $(LIBS)
-	$(CC) -o vlbp -DVLBP $(CFLAGS) vcc.c $(LIBS)
+	$(CC) -o vlbp -DMAKE_VLBP $(CFLAGS) vcc.c $(LIBS)
 
 install: vcc vlbp
-	-strip vcc vlbp
+#	-strip vcc vlbp
 	mv vcc vlbp $(DEST)
 
 clean:; -rm -f *.o

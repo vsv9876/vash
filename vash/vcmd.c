@@ -230,7 +230,7 @@ register int  i;        /* копия itm */
 	    case 'S':   /* последний суффикс имени файла, без точки */
 		fnsplit(ptmp, &clm._itms[i][2], 2);
 		break;
-#ifdef DEVELOPE
+#ifdef DEVELOPE_NEVER_USED
 	    case 'n':   /* новое имя для создания/переименования */
 	    case 'a':   /* строка пользователя */
 	    case 'b':   /* строка пользователя */

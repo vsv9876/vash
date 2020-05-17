@@ -128,6 +128,7 @@ clean:
 	cd $(VASH); $(MAKE) clean
 	cd vashlib/LIB; $(MAKE) clean
 	cd vashlib/LIB-$(ASHLIB); $(MAKE) clean
+	cd vtest; $(MAKE) clean
 	rm -f $(BLDCFG) 
 	touch $(BLDCFG)
 

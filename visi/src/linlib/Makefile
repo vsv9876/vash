@@ -56,6 +56,7 @@ OBJS          = lin100.o \
 		lin140.o \
 		lin145.o \
 		lin150.o \
+		lin151.o \
 		lin180.o \
 		lin210.o \
 		lin215.o \
@@ -76,6 +77,7 @@ SRCS          = lin100.c \
 		lin140.c \
 		lin145.c \
 		lin150.c \
+		lin151.c \
 		lin180.c \
 		lin210.c \
 		lin215.c \

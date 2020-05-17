@@ -66,7 +66,7 @@ typedef struct {
 	bool    sc_co;  /* COlumn - ТЕКУЩ. ПОЗИЦИЯ В СТРОКЕ */
 	int     sc_at;  /* ATtributes - ТЕКУЩЕЕ СЛОВО АТРИБУТОВ */
 /*	char   *sc_ac;     w_sgr() arg - ANSI color */
-} SCREEN;
+} SCRN;
 
 /* ВОЗМОЖНОСТИ ВЫВОДА НА ТЕРМИНАЛ ИЗ /etc/termcap;
  * ИМЯ КЛАВИАТУРЫ ДЛЯ НАСТРОЙКИ КЛАВИШ ТОЖЕ ЗДЕСЬ (lh= ... )

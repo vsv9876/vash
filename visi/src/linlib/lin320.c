@@ -38,7 +38,7 @@
 
 extern  char *UP;
 extern  char *BC;
-SCREEN scrn = { 0 };
+SCRN scrn = { 0 };
 
 extern  LPA lpaout[];
 
@@ -91,7 +91,7 @@ at_set(aw_new)
  */
 register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 {
-	extern SCREEN scrn;
+	extern SCRN scrn;
 
 	register int aw_old;     /* СЛОВО СТАРЫХ АТРИБУТОВ */
 	char *ac_old;
@@ -174,7 +174,7 @@ register int awi;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 /* УСТАНОВИТЬ ВИДЕОАТРИБУТЫ */
 /*--------------------------*/
 {
-	extern SCREEN scrn;
+	extern SCRN scrn;
 
 	register int awold;     /* СЛОВО СТАРЫХ АТРИБУТОВ */
 	register int aw;        /* НОВЫЕ АТРИБУТЫ */
