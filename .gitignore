@@ -4,6 +4,7 @@
 .settings
 .*
 buildd.h
+conf.cfg
 *.o
 *.i
 *.lb
