@@ -203,7 +203,7 @@ int  execapnd;
 	if (mark_i >= 0) {
 		strcat(&cmd2[i], "<");
 		while(cmd2[++i]);
-		cmdsub(&cmd2[i], "#@", mark_i);
+		cmdsub(&cmd2[i], "#@", mark_i, 1);
 		strcat(&cmd2[i], " ");
 		while(cmd2[++i]);
 		clm._itms[mark_i][0] = ' '; mark_i = -1;
@@ -249,7 +249,7 @@ int  execapnd;
 /*                sprintf(&cmd2[i], " >%s", &itms[mark_o][2]);  */
 		strcat(&cmd2[i], " >");
 		while(cmd2[++i]);
-		cmdsub(&cmd2[i], "#@", mark_o);
+		cmdsub(&cmd2[i], "#@", mark_o, 1);
 
 		clm._itms[mark_o][0] = ' '; mark_o = -1;
 	}
@@ -311,7 +311,6 @@ char *cmdlbl;   /* строка для индикации, как правило
 	int syscod;
 
 	execmode = 0;
-
 	execargv = execapnd = 1;
 	if (strncmp(cmd, "exec ", 5) == 0) {
 		execmode |= ASH_NOFORK;
@@ -333,7 +332,7 @@ char *cmdlbl;   /* строка для индикации, как правило
 				}
 				continue;
 			}
-		/* разделители процессов */
+		/* разделители процессов как метатсимволы sh */
 		case '|': case ';':
 		case '(': case ')':
 		case '{': case '}':
@@ -345,11 +344,12 @@ char *cmdlbl;   /* строка для индикации, как правило
 		case '<': case '>':
 		case '*': case '@': case '?':
 		case '!': case '$': case '^':
-		case '\'': case '"': case '`':
+		case '\'': case '"': case '`': case '~': case '\\':
 			execargv = 0;
 			break;
+		/*подстановки, обрабатываемые на следующем шаге*/
 		case MONEY:
-			if (p[1] == MONEY) {
+			if (p[1] == MONEY || p[1] == '\'') {
 				p++; p++;
 				continue;
 			}

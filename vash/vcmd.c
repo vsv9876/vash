@@ -1,3 +1,4 @@
+#include <alloca.h>
 #include <ctype.h>
 #include <stdio.h>
 #include "line.h"
@@ -118,7 +119,7 @@ LINE    *mainl; /* указатель на страницу меню */
 		}
 		/* получить образец второго условия, найти совпадение */
 /*                cmdsub(file, &itms[itm][2]);  */
-		cmdsub(file, "#@", clm._itm);
+		cmdsub(file, "#@", clm._itm, 0);
 		patp = tstat2(file);
 		for (pcp=ktp->kt_tab, i=ktp->kt_ib; i <= ktp->kt_ie; i++) {
 			if (pcp[i].pc_pat == (char *)0)
@@ -170,24 +171,30 @@ register char *cmd;     /* встроенная функция */
 extern char* vexdir;
 extern char* vpath;
 
-cmdsub(ptmp, p, i)
+int cmdsub(ptmp_sh, p, i, sh_esc)
+/*возвращает то же, что и nmsubs - необходимость обработки экранированных символов /bin/sh*/
 register char *p;       /* откуда копировать */
-register char *ptmp;    /* куда копировать */
+register char *ptmp_sh;    /* куда копировать */
 register int  i;        /* копия itm */
+int sh_esc;			/*требуется экранирование для /bin/sh*/
 {
     extern char *getenv();
     register char *s;
     char *nm_ptr;
+    int sh_req = 0;	/* флаг - сделаны подстановки, требуется вызов /bin/sh*/
+    char *ptmp;
 
-    *ptmp = '\0';
+    ptmp = alloca(4*2*(MAXLICO+1));
+
+    *ptmp_sh = '\0';
     while (*p) {
 	if (*p == MONEY) {
 	    p++;
 	    switch(*p) {
 
 	    default:    /* пропустить без изменений */
-		*ptmp++ = MONEY;
-		*ptmp++ = *p++;
+		*ptmp_sh++ = MONEY;
+		*ptmp_sh++ = *p++;
 		continue;
 	    case 0:     /* КОНЕЦ */
 		break;
@@ -236,14 +243,20 @@ register int  i;        /* копия itm */
 	    case 'b':   /* строка пользователя */
 #endif
 	    }
+	    if (sh_esc) {
+	    	sh_req += sh_cpy(ptmp_sh, ptmp);
+	    } else {
+	    	strcpy(ptmp_sh, ptmp);
+	    }
 	    p++;
-	    while (*ptmp) ptmp++;
+	    while (*ptmp_sh) ptmp_sh++;
 	    continue;
 	}
 	else
-	    *ptmp++ = *p++;
+	    *ptmp_sh++ = *p++;
     }
-    *ptmp = '\0';       /* конец подстановки */
+    *ptmp_sh = '\0';       /* конец подстановки */
+    return(sh_req == 0 ? 0 : 1);
 }
 
 /*ARGSUSED*/
@@ -255,7 +268,7 @@ char *cmdlbl;   /* вывеска взамен команды */
 
 	if (cmd) {
 	    /* выполнить подстановки */
-	    cmdsub(tmpcmd, cmd, clm._itm);
+	    cmdsub(tmpcmd, cmd, clm._itm, 1);
 	    cmd = tmpcmd;
 	}
 	return( vshcmd(cmd, (char *)0) );
@@ -295,7 +308,7 @@ register char *cmd;
 {
 	char  file[140];
 
-	cmdsub(file, cmd, clm._itm);
+	cmdsub(file, cmd, clm._itm, 0);
 	w_msg(TXT, tstat2(file));
 	return( 0 );
 }

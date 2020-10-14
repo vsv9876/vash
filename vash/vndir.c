@@ -190,7 +190,7 @@ itmrestor()
 	 */
 	for(clm._itm = 0; clm._itm < clm._itmmax; clm._itm++) {
 	    i = clm._itm;
-	    cmdsub(itmnnm, "#@", clm._itm);
+	    cmdsub(itmnnm, "#@", clm._itm, 0);
 	    if (strcmp(itmcnm, itmnnm) == 0) {
 		goto adjust;
 	    }
@@ -657,7 +657,7 @@ int newflag;    /* если 0, то только обновить каталог
 
 	if (Cfill[0] != ':') { /* ВСТРОЕННАЯ КОМАНДА */
 	/*TODO substitution */
-		cmdsub(tmpbuf, Cfill, 0);
+		cmdsub(tmpbuf, Cfill, 0, 0);
 	/*NOSTRICT*/
 		if (Cfill[0] == '\0'
 		||  (fpls = popen(tmpbuf, "r")) == NULL) {
@@ -695,7 +695,10 @@ vchdir(cdarg)
 char *cdarg;
 {
 	char  nwdpath[400];     /* НОВЫЙ КАТАЛОГ */
+	char  tmppath[400];
+	register char *p;
 
+	p = nwdpath;
 	if (*cdarg != '/') {
 		strcpy(nwdpath, cwdpath);
 		strcat(nwdpath, "/");
@@ -703,6 +706,13 @@ char *cdarg;
 	}
 	else
 		strcpy(nwdpath, cdarg);
+#ifdef TRY_SH_UNESCAPE
+		/*strcat(nwdpath, cdarg);*/
+		while (*p++);
+	}
+#endif
+	sh_unesc(tmppath, nwdpath); /*sh_cpy() reverse*/
+	strcpy(nwdpath, tmppath);
 
 	dcanon(nwdpath);        /* canonicalize new path */
 

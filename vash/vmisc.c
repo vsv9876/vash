@@ -460,6 +460,25 @@ register char *inps;
 	return 1;
 }
 
+/*декодировать строку имени файла, убрать экранирование /bin/sh*/
+sh_unesc(to, from)
+char *to;
+char *from;
+{
+	while(*from != '\0')
+	{
+		switch ((int)*from) {
+		case '\\':
+			from++;
+			break;
+		default:
+			break;
+		}
+		*to++ = *from++;
+	}
+	*to = '\0';
+}
+
 /*
  * Подставить часть строки, определенную в настройке -@
  *

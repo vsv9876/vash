@@ -18,9 +18,10 @@
 
 static char u8s[STRSIZE] = "абвгдежзиклмн";
 static double v1;
-static double vd = 3.14;
-static double v2;
-static int	  vi = 111;
+static double vd = 7.68123456789012345678;
+static float  vf = 3.14;
+static int	  vi = 54321;
+static short  vh = 123;
 static long   vl = 99999999;
 wchar_t wcs[STRSIZE/4] = L"";
 
@@ -34,7 +35,7 @@ mkexit()
 	return(TRUE);
 }
 
-int sout()
+static int sout()
 {
 	unsigned char *s;
 
@@ -42,6 +43,19 @@ int sout()
 	fprintf(vttout, " s_raw=\"%s\" " , u8s);
 	for (s = u8s; *s != '\0'; s++)
 		fprintf(vttout, "%2x ", (int)*s);
+	er_eol(HDR);
+}
+
+static int sout2()
+{
+	unsigned char *s;
+
+	cp_set(-2, 0, HDR);
+	fprintf(vttout, " vd=\"%.10lf\" " , vd);
+	fprintf(vttout, " vf=\"%.5f\" " , (double)vf);
+	fprintf(vttout, " vi=\"%d\" " , vi);
+	fprintf(vttout, " vi=\"%hd\" " , vh);
+	fprintf(vttout, " vl=\"%ld\" " , vl);
 	er_eol(HDR);
 }
 
@@ -76,6 +90,7 @@ vmain()
 		case KB_HE:
 			/* ВЫВОД СПРАВОЧНОЙ ИНФОРМАЦИИ */
 //			w_help(0); w_page(linem);
+			sout2();
 			break;
 		case KB_EX :
 			/* ЗВОНОК, ИЗ ЭТОЙ СТРАНИЦЫ

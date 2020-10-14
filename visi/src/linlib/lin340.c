@@ -40,26 +40,149 @@ extern LPA lpaout[];
 
 extern int allcod;
 
-/*#define FLOAT_CVT /*not supported, use line->cvtf instead, please*/
+#define FLOAT_CVT /*not supported, use line->cvtf instead, please*/
+
+#define DEBUG_R_LINE
+#ifdef DEBUG_R_LINE
+static int sout(lipos, ban, u8s)
+char *u8s;
+char *ban;
+int lipos;
+{
+	unsigned char *s;
+
+	cp_sav();
+	cp_set(lipos, 8, HDR);
+	fprintf(vttout, " %s=\"%s\" " , ban, u8s);
+	for (s = u8s; *s != '\0'; s++)
+		fprintf(vttout, "%2x ", (int)*s);
+	er_eol(HDR);
+	cp_fet();
+}
+static int dout(lipos, ban, u8s)
+char *u8s;
+char *ban;
+int lipos;
+{
+	unsigned char *s;
+
+	s = u8s;
+	cp_sav();
+	cp_set(lipos, 8, HDR);
+	fprintf(vttout, " %s: " , ban);
+	fprintf(vttout, " int=\"%d\" " , *(int *)s);
+	fprintf(vttout, " long=\"%ld\" " , *(long *)s);
+	fprintf(vttout, " short=\"%hd\" " , *(short *)s);
+	fprintf(vttout, " float=\"%f\" " , *(float *)s);
+	fprintf(vttout, " double=\"%lf\" " , *(double *)s);
+	er_eol(HDR);
+	cp_fet();
+}
+#else
+static int sout(s, colu)
+char *s;
+char *ban;
+int colu;
+{}
+static int dout(s, colu)
+char *s;
+char *ban;
+int colu;
+{}
+#endif
 
 /*----------------------------*/
-/* ВЫВЕСТИ ПО ФОРМАТАМ printf */
+/* ВЫВЕСТИ ПО ФОРМАТАМ sprintf */
 /*----------------------------*/
 static int
-docvts(ou, fo, va)
-register char *ou;      /* СТРОКА, КУДА ПОМЕСТИТЬ ВЫВОД */
-register char *fo;      /* ФОРМАТ printf */
-register char *va;      /* УКАЗАТЕЛЬ НА ПЕРЕМЕННУЮ */
+cvts_out(line, buf)
+LINE *line;
+char *buf;      /* СТРОКА, КУДА ПОМЕСТИТЬ ВЫВОД */
 {
+	char *fo;      /* ФОРМАТ printf */
+	char *va;      /* УКАЗАТЕЛЬ НА ПЕРЕМЕННУЮ */
+	int cvt_ok = 0;
+	long vl;
+	short vh;
+	int vi;
+
+	fo = line->cvts;
+	va = line->varl;
+
 #ifdef FLOAT_CVT
 	if(index(fo, 'f') || index(fo, 'e') || index(fo, 'g'))
 		/* ФОРМАТЫ С ПЛАВАЮЩЕЙ ТОЧКОЙ */
-		return( sprintf(ou, fo, *(double *)va) );
+		if (index(fo, 'l')) {
+			return( sprintf(buf, fo, (double)*((double *)va)) );
+		} else {
+			return( sprintf(buf, fo, (float)*((float *)va)) );
+		}
 	else
-		/* ДЛЯ ОСТАЛЬНЫХ ДОСТАТОЧНО И ТАК */
+		/* int, long, short */
 #endif
-		return( sprintf(ou, fo, *(long *)va) );
+	if(index(line->cvts, 's') == 0) { /* not a string conversion */
+		if(index(line->cvts, 'l') != 0) {
+			vl = (long)*((long *)va);
+			cvt_ok = sprintf(/*editptr*/buf, fo, vl);
+		} else if(index(line->cvts, 'h') != 0) {
+			vh = (short)*((short *)va);
+			cvt_ok = sprintf(/*editptr*/buf, fo, vh);
+		} else {
+			vi = (int)*((int *)va);
+			cvt_ok = sprintf(/*editptr*/buf, fo, vi);
+		}
+	} else {
+		/* string "%s" as last resort conversion */
+		cvt_ok = sprintf(/*editptr*/buf, fo, va);
+	}
+	return (cvt_ok != 0);
 }
+
+/*
+ * ввод по форматам sscanf
+ * возвращает код sscanf
+ */
+static int
+cvts_in(line, u8buf)
+LINE *line;
+char *u8buf;
+{
+	int cvt_ok;
+
+#ifdef FLOAT_CVT
+		/*
+		 * НЕ СОВСЕМ НАДЕЖНОЕ ПРЕОБРАЗОВАНИЕ НА ВВОДЕ :
+		 * У КОМПИЛЯТОРА DECUS РАБОТАЕТ ОДИН ФОРМАТ - %f
+		 * (И НЕ ТОЛЬКО У DECUS  -- vsv, 15/02/87)
+		 */
+		if((index(line->cvts, 'f') != 0)
+		|| (index(line->cvts, 'g') != 0)
+		|| (index(line->cvts, 'e') != 0))
+		{
+			if(index(line->cvts, 'l') != 0) {
+			    cvt_ok = sscanf(/*editptr*/u8buf, "%lf", ((double *)line->varl));
+			} else {
+			    cvt_ok = sscanf(/*editptr*/u8buf, "%f", ((float *)line->varl));
+			}
+		}
+		else
+#endif
+		if(index(line->cvts, 's') == 0) { /* not a string conversion */
+			if(index(line->cvts, 'l') != 0) {
+				cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, ((long *)line->varl));
+			} else if(index(line->cvts, 'h') != 0) {
+				cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, ((short *)line->varl));
+			} else {
+				cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, ((int *)line->varl));
+			}
+		} else {
+			/* string is last resort conversion */
+			cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, line->varl);
+		}
+	sout(-6, "cvts_in/u8buf", u8buf);
+	return (cvt_ok);
+}
+
 
 w_line(line)
 register LINE *line;
@@ -79,7 +202,7 @@ register LINE    *line; /* УКАЗАТЕЛЬ НА ЛИНИЮ */
 {
 	kbcod   cod;            /* КОД ПОСЛЕДНЕЙ КЛАВИШИ */
 	int     attr;           /* СЛОВО АТРИБУТОВ */
-	int     cvterror;       /* ФЛАГ ОШИБКИ ФОРМАТА */
+	int     cvt_ret;        /* код возврата из sscanf: OK если = 0 */
 	int     tsterror;       /* ФЛАГ ОШИБКИ ТЕСТА */
 	int     midcnt;         /* СЧЕТЧИК ДЛЯ ВЫРАВНИВАНИЯ ПО ЦЕНТРУ */
 	int     filch;          /* ЗНАК ДЛЯ ЗАПОЛНЕНИЯ */
@@ -108,7 +231,7 @@ register LINE    *line; /* УКАЗАТЕЛЬ НА ЛИНИЮ */
 
 inp_retry:
 out_string:
-	cvterror = tsterror = 0;
+	cvt_ret = tsterror = 0;
 	wcsptr = wcsbuf;
 	editptr = wcsbuf;
 	base = 0;
@@ -139,7 +262,8 @@ out_string:
 			(*(line->cvtf))(line, cod, "w", u8buf); u8size = u8wcs(wcsptr, u8buf);
 		}
 		else if(line->cvts) {           /* В СТИЛЕ printf */
-			docvts(u8buf, line->cvts, line->varl); u8size = u8wcs(wcsptr, u8buf);
+			cvts_out(line, u8buf);
+			u8size = u8wcs(wcsptr, u8buf);
 		}
 		else {                          /* ПРОСТО СТРОКА */
 			/* editptr = line->varl; /*varl показывает на UTF-8, а нужно wchar_t*/
@@ -215,7 +339,10 @@ edit_retry:
 		     /*==== ТЕСТ ДЛЯ РЕДАКТОРА ? */
 		    ((attr & EDT) ? (linptr_t)(line->test) : 0), posp);
 	/*после редактора вернуть все в UTF-8*/
+	sout(-3, "1) editptr<-e_str", (char *)editptr);
+	sout(-4, "2) u8buf->wcstombs", u8buf);
 	u8size = wcstombs(u8buf, editptr);
+	sout(-5, "3) e-str->u8buf", u8buf);
 	/*
 	 * ЕСТЬ ТОНКОСТИ С ФОРМАТОМ ПОСЛЕ РЕДАКТОРА:
 	 *    НАДО РЕАГИРОВАТЬ ТОЛЬКО НА KB_NL
@@ -227,36 +354,25 @@ inp_format:
 	if(fmtlock) goto inp_test;  /* М.БЫТЬ БЛОКИРОВАН... */
 
 	if(line->cvtf) {
-		if(cvterror = !(*line->cvtf)(line, cod, "r", /*editptr*/u8buf))
-			bell();
+		cvt_ret = (*line->cvtf)(line, cod, "r", /*editptr*/u8buf);
 	} else if(line->cvts) {
-#ifdef FLOAT_CVT
-		/*
-		 * НЕ СОВСЕМ НАДЕЖНОЕ ПРЕОБРАЗОВАНИЕ НА ВВОДЕ :
-		 * У КОМПИЛЯТОРА DECUS РАБОТАЕТ ОДИН ФОРМАТ - %f
-		 * (И НЕ ТОЛЬКО У DECUS  -- vsv, 15/02/87)
-		 */
-		if((index(line->cvts, 'f') != 0)
-		    || (index(line->cvts, 'g') != 0)
-		    || (index(line->cvts, 'e') != 0))       {
-			if(cvterror= (!sscanf(/*editptr*/u8buf, "%f", ((double *)line->varl))))
-				bell();
-		}
-		else
-#endif
-		if(cvterror= (!sscanf(/*editptr*/u8buf, line->cvts, line->varl))) {
-			bell();
-		}
+		cvt_ret = cvts_in(line, u8buf);
 	} else {
 		/*просто строка - вернуть содержимое после редактирования*/
 		strcpy(line->varl, u8buf);
+		sout(-9, "line->varl", line->varl);
+		cvt_ret = 1;
 	}
+	dout(-8, "4) line->varl", line->varl);
+	if(cvt_ret == 0)
+		    bell();
+	//TODO: else { COMMIT editing result back to line->varl }
 	/*==== ОШИБКА ФОРМАТА ? */
-	if(cvterror && onexit == 0 ) goto edit_retry;
+	if(cvt_ret == 0 && onexit == 0 ) goto edit_retry;
 
 inp_test:
 	/*==== ТЕСТ ПОСЛЕ РЕДАКТОРА ? */
-	if( fmtlock || !(attr & EDT) ) {
+	if(fmtlock || !(attr & EDT) ) {
 		tsterror = !(line->test ? (*line->test)(line, cod) : TRUE);
 	}
 	/*==== ЕСТЬ ОШИБКА ? */
