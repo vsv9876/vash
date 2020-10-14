@@ -42,7 +42,7 @@ extern int allcod;
 
 #define FLOAT_CVT /*not supported, use line->cvtf instead, please*/
 
-#define DEBUG_R_LINE
+/*#define DEBUG_R_LINE*/
 #ifdef DEBUG_R_LINE
 static int sout(lipos, ban, u8s)
 char *u8s;
@@ -79,12 +79,12 @@ int lipos;
 	cp_fet();
 }
 #else
-static int sout(s, colu)
+static int sout(colu, ban, s)
 char *s;
 char *ban;
 int colu;
 {}
-static int dout(s, colu)
+static int dout(colu, ban, s)
 char *s;
 char *ban;
 int colu;

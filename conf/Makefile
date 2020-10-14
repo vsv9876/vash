@@ -76,6 +76,7 @@ CFLAGS_VISI = -DUSE_TERMIOS
 CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX
 ASHLIB      = SVR4
 TERMLIB     = -ltermcap
+# try for old age distros:
 #TERMLIB     = -lncurses
 
 #
@@ -92,7 +93,7 @@ TERMLIB     = -ltermcap
 
 # Intel i686/x86_64
 # Fedora FC4 and later, tested up to Fedora fc23, with gcc 4.0.* and later
-# no compile optimization, no dynamic libraries, 32bit compatible with x64_64 also
+# no compile optimization, no dynamic libraries, 32bit compatible with x86_64 also
 #DEBUG       =
 # -g -O0 
 #CC          = c89 -m32 $(DEBUG) -fno-builtin-function -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -Wno-implicit-int -Wno-int-conversion -Wno-incompatible-pointer-types
