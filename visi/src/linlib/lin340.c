@@ -79,6 +79,7 @@ int lipos;
 	cp_fet();
 }
 #else
+/*
 static int sout(colu, ban, s)
 char *s;
 char *ban;
@@ -89,6 +90,7 @@ char *s;
 char *ban;
 int colu;
 {}
+*/
 #endif
 
 /*----------------------------*/
@@ -145,41 +147,43 @@ char *buf;      /* СТРОКА, КУДА ПОМЕСТИТЬ ВЫВОД */
 static int
 cvts_in(line, u8buf)
 LINE *line;
-char *u8buf;
+register char *u8buf;
 {
 	int cvt_ok;
 
 #ifdef FLOAT_CVT
-		/*
-		 * НЕ СОВСЕМ НАДЕЖНОЕ ПРЕОБРАЗОВАНИЕ НА ВВОДЕ :
-		 * У КОМПИЛЯТОРА DECUS РАБОТАЕТ ОДИН ФОРМАТ - %f
-		 * (И НЕ ТОЛЬКО У DECUS  -- vsv, 15/02/87)
-		 */
-		if((index(line->cvts, 'f') != 0)
-		|| (index(line->cvts, 'g') != 0)
-		|| (index(line->cvts, 'e') != 0))
-		{
-			if(index(line->cvts, 'l') != 0) {
-			    cvt_ok = sscanf(/*editptr*/u8buf, "%lf", ((double *)line->varl));
-			} else {
-			    cvt_ok = sscanf(/*editptr*/u8buf, "%f", ((float *)line->varl));
-			}
-		}
-		else
-#endif
-		if(index(line->cvts, 's') == 0) { /* not a string conversion */
-			if(index(line->cvts, 'l') != 0) {
-				cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, ((long *)line->varl));
-			} else if(index(line->cvts, 'h') != 0) {
-				cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, ((short *)line->varl));
-			} else {
-				cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, ((int *)line->varl));
-			}
+	/*
+	 * НЕ СОВСЕМ НАДЕЖНОЕ ПРЕОБРАЗОВАНИЕ НА ВВОДЕ :
+	 * У КОМПИЛЯТОРА DECUS РАБОТАЕТ ОДИН ФОРМАТ - %f
+	 * (И НЕ ТОЛЬКО У DECUS  -- vsv, 15/02/87)
+	 */
+	if((index(line->cvts, 'f') != 0)
+	|| (index(line->cvts, 'g') != 0)
+	|| (index(line->cvts, 'e') != 0))
+	{
+		if(index(line->cvts, 'l') != 0) {
+		    cvt_ok = sscanf(/*editptr*/u8buf, "%lf", ((double *)line->varl));
 		} else {
-			/* string is last resort conversion */
-			cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, line->varl);
+		    cvt_ok = sscanf(/*editptr*/u8buf, "%f", ((float *)line->varl));
 		}
-	sout(-6, "cvts_in/u8buf", u8buf);
+	}
+	else
+#endif
+	if(index(line->cvts, 's') == 0) { /* not a string conversion */
+		if(index(line->cvts, 'l') != 0) {
+			cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, ((long *)line->varl));
+		} else if(index(line->cvts, 'h') != 0) {
+			cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, ((short *)line->varl));
+		} else {
+			cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, ((int *)line->varl));
+		}
+	} else {
+		/* string is last resort conversion */
+		cvt_ok = sscanf(/*editptr*/u8buf, line->cvts, line->varl);
+	}
+#ifdef DEBUG_R_LINE
+	sout(-6, "cvts_in:u8buf", u8buf);
+#endif
 	return (cvt_ok);
 }
 
@@ -213,13 +217,13 @@ register LINE    *line; /* УКАЗАТЕЛЬ НА ЛИНИЮ */
 	int     base;           /* НАЧАЛО ПОЛЕЗНОЙ ИНФОРМАЦИИ: СМЕЩЕНИЕ ОТ ПОДСКАЗКИ */
 
  register
-    int  i;
+	int  i;
 	wchar_t *editptr;         /* начало строки для редактора, после промптера */
  register
-    wchar_t *wcsptr;
+	wchar_t *wcsptr;
 	wchar_t  wcsbuf[STRLEN];  /* рабочая строка во внутренней кодировке */
 
-	char    u8buf[4*STRLEN + 2]; /*промежуточная строка для в кодировке UTF-8*/
+	char    u8buf[4*STRLEN + 2]; /*промежуточная строка в кодировке UTF-8*/
 	int		u8size;			     /* размер в символах в промежуточной строке*/
 
 	attr = line->attr;
@@ -337,12 +341,16 @@ edit_retry:
 	/*==== РЕДАКТОР, ХРАНИТЬ КОД */
 	cod = e_str(editptr, size,
 		     /*==== ТЕСТ ДЛЯ РЕДАКТОРА ? */
-		    ((attr & EDT) ? (linptr_t)(line->test) : 0), posp);
+		    ((attr & EDT) ? line->test : 0), posp);
 	/*после редактора вернуть все в UTF-8*/
-	sout(-3, "1) editptr<-e_str", (char *)editptr);
-	sout(-4, "2) u8buf->wcstombs", u8buf);
-	u8size = wcstombs(u8buf, editptr);
-	sout(-5, "3) e-str->u8buf", u8buf);
+#ifdef DEBUG_R_LINE
+	sout(-3, "1) e_str; editptr", (char *)editptr);
+	sout(-4, "2) u8buf; wcstombs", u8buf);
+#endif
+	u8size = wcstombs(u8buf, editptr, /*size*/MAXLICO*4); /*like u8wcs, may be better limit*/
+#ifdef DEBUG_R_LINE
+	sout(-5, "3) e-str; u8buf", u8buf);
+#endif
 	/*
 	 * ЕСТЬ ТОНКОСТИ С ФОРМАТОМ ПОСЛЕ РЕДАКТОРА:
 	 *    НАДО РЕАГИРОВАТЬ ТОЛЬКО НА KB_NL
@@ -360,10 +368,14 @@ inp_format:
 	} else {
 		/*просто строка - вернуть содержимое после редактирования*/
 		strcpy(line->varl, u8buf);
-		sout(-9, "line->varl", line->varl);
+#ifdef DEBUG_R_LINE
+		sout(-9, "4) line->varl", line->varl);
+#endif
 		cvt_ret = 1;
 	}
-	dout(-8, "4) line->varl", line->varl);
+#ifdef DEBUG_R_LINE
+	dout(-8, "5) line->varl", line->varl);
+#endif
 	if(cvt_ret == 0)
 		    bell();
 	//TODO: else { COMMIT editing result back to line->varl }

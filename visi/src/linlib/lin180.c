@@ -22,15 +22,15 @@
  */
 
 /* копировать n символов UTF-8 в строку wchar_t */
-int u8wcsn(dst, src, n)
-char    *src;
+int u8wcsn(dst, s, n)
 wchar_t *dst;
+const char    *s;
 int      n;
 {
 	int len;
 	mbstate_t ps = { 0 };
 
-    len = mbsrtowcs(dst, &src, n, &ps);
+    len = mbsrtowcs(dst, &s, n, &ps);
 
 	return len;
 }
@@ -55,19 +55,20 @@ char *str;	/* multibyte string */
 }
 
 /* копировать n символов UTF-8, из строки в строку, завершить нулем */
-int u8mbsn(dst, src, n)
+int u8mbsn(dst, s, n)
 char *dst;
-char *src;
+char *s;
 int n;
 {
-	wchar_t *tmp;
+	wchar_t *tmp = alloca((n+1)*sizeof(wchar_t));;
+	const wchar_t *from = tmp;
 	mbstate_t ps = { 0 };
 	int len;
 
-	tmp = alloca((n+1)*sizeof(wchar_t));
-	u8wcsn(tmp, src, n);
+	/*tmp = alloca((n+1)*sizeof(wchar_t));*/
+	u8wcsn(tmp, s, n);
 	//tmp[n] = L'\0';
-	len = wcsnrtombs(dst, &tmp, n, 4*MAXLICO, &ps);
+	len = wcsnrtombs(dst, &from, n, 4*MAXLICO, &ps);
 	return(len);
 }
 

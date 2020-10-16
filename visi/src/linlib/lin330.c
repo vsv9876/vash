@@ -214,7 +214,7 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 		} else if(ok == 0) {
 			bell();
 		} else {
-			switch(cod = ok) {
+			switch(cod/* = ok*/) {
 			case KB_PR: /* ДОП. КОМАНДЫ РЕДАКТОРА СТРОКИ */
 				switch(r_cod(0)) {
 				case KB_AR: /* КОНЕЦ ЗНАЧАЩЕЙ ИНФ. */

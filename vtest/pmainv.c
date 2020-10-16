@@ -54,7 +54,7 @@ static int sout2()
 	fprintf(vttout, " vd=\"%.10lf\" " , vd);
 	fprintf(vttout, " vf=\"%.5f\" " , (double)vf);
 	fprintf(vttout, " vi=\"%d\" " , vi);
-	fprintf(vttout, " vi=\"%hd\" " , vh);
+	fprintf(vttout, " vh=\"%hd\" " , vh);
 	fprintf(vttout, " vl=\"%ld\" " , vl);
 	er_eol(HDR);
 }

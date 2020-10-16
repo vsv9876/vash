@@ -44,13 +44,13 @@
 /* #define USE_TERMIOS_386BSD  /* 386bsd, old versions BSDI,FreeBSD */
 /* #define USE_TERMIOS   /* POSIX */
 
-/* тип для арифметики над указателями, пока только для x86 */
-//(sizeof(char *) != sizeof(int))
-#if !defined LINPTR_DEFINED
-#define LINPTR_DEFINED
-#if defined __x86_64__
+/* тип для арифметики над указателями */
+/*(sizeof(char *) != sizeof(int))*/
+#if !defined LINEPTR_L
+#define LINEPTR_L
+#if defined __LP64__
 typedef unsigned long linptr_t;
-#elif defined __i386__
+#elif defined __LP32__
 typedef unsigned int linptr_t;
 #else
 typedef unsigned linptr_t;

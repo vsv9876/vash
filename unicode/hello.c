@@ -10,6 +10,15 @@
 #include <locale.h>
 #include <wchar.h>
 
+#if 8 <= sizeof(char *)
+typedef unsigned long linptr_t;
+#elif 4 == sizeof(char *)
+typedef unsigned int linptr_t;
+#else
+typedef unsigned linptr_t;
+#endif
+
+
 int main(argc, argv)
 int argc;
 char *argv[];
@@ -46,6 +55,7 @@ char *argv[];
     printf ("WCHAR_MIN=0x%x\n", WCHAR_MIN);
     printf ("sizeof(wint_t)=%d\n", sizeof(wint_t));
     printf ("sizeof(wchar_t)=%d\n", sizeof(wchar_t));
+    printf ("sizeof(linptr_t *)=%d\n", sizeof(linptr_t *));
     printf ("MB_CUR_MAX=%d\n", MB_CUR_MAX);
 
     return 0;
