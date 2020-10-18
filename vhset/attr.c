@@ -729,6 +729,7 @@ pag_a()
 	return(TRUE);
 }
 
+#ifdef DURA
 kbcod
 n_page(line_e, page, posp)
 /*-----------------*/
@@ -795,6 +796,7 @@ int    *posp;                   /* ПОЗИЦИЯ КУРСОРА ПРИ РЕДА
 	*page = lni;    /* keep pointer to current line!... */
 	return(cod);
 }
+#endif
 
 uspage(page, phline)
 /*-----------------------------*/
@@ -812,7 +814,8 @@ LINE *phline;           /* pointer to instant page with help screen */
     repage();
 
     while ( -1 ) {
-		cod = n_page( page, &cline, 0);
+/*		cod = n_page( page, &cline, 0);*/
+		cod = r_page( page, &cline, 0);
 		switch ( cod ) {
 		case '0':
 		case '1':
