@@ -170,18 +170,28 @@ char *cmd;
 }
 
 /*
- * Сохранить историю (буфер команд) в файл $HOME/.ashhist
- * а также положить ее туда.
- * Эти две подпрограммы вызываются из main() при старте и выходе из программы,
- * и для синхронизации истории между процессами, если установлен флаг histsn
+ * HISTORY support
+ *
+ * cmdphist() & cmdghist()
+ * put & get history file
+ *
+ * NOTE:
+ * assistant shell's history is not a full log of invoked commands like shell .history,
+ * but a common cache shared by another vash session (in concurrent way if histsn != 0)
+ *
+ * this two routines called from main() on vash start and exit regardless of histsn value
  */
+
+/* history cache file*/
 char *hfile = "/.ashhist";
 
 /*
+ * flag: last timestamp of hfile known in this process of vash
+ *
  * read history file, in case:
  *  1) first time
  *  2) file modified since last reading
- * write history file every time,
+ * write history file (after every command, if histsn!=0)
  * saving internal mark about st_mtime preventing useless read
  */
 
@@ -192,12 +202,15 @@ static time_t hflast = (time_t)0; /* zero for fisrt time comparizon */
  *
  * if histsn==0 (syncronize history is disabled),
  * do it once first time when program started
+ *
+ * returns 1, if get commands from history file
+ * returns 0, if no read done
  */
 cmdghist(hdp)
 char *hdp;
 {
 	FILE *fp;
-	static struct stat	hfstat;
+	struct stat	hfstat;
 	time_t      hftime;
 	char filename[200];
 	char cmdbuf[140]; /* one command from file, without trailing '\n' */
@@ -214,30 +227,31 @@ char *hdp;
 	if (histsn == 0) {
 		if (hflast != 0) return(1);
 	}
-	if (hflast != 0 && hflast == hftime) return(1);
+/*	if (hflast != 0 && hflast == hftime) return(1);*/
+	if (hflast < hftime) {
+		hflast = hftime;
+		if ((fp = fopen(filename, "r")) == NULL) return(0);
 
-	hflast = hftime;
-	if ((fp = fopen(filename, "r")) == NULL) return(0);
+		/* cmdb[CMDB+1];   /* БУФЕР КОМАНД */
+		/* *cmdp[CMDP+1];   /* УКАЗАТЕЛИ НА КОМАНДЫ */
+		for (i = 0; i <= CMDP; cmdp[i++] = 0) ;
 
-	/* cmdb[CMDB+1];   /* БУФЕР КОМАНД */
-	/* *cmdp[CMDP+1];   /* УКАЗАТЕЛИ НА КОМАНДЫ */
-	for (i = 0; i <= CMDP; cmdp[i++] = 0) ;
+		cmdplast = 0;   /* ИНДЕКС ПОСЛЕДНЕЙ КОМАНДЫ */
+		cmdpi = 0;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ */
+		cmdbot = 0;     /* ИНДЕКС СВОБОДНОГО МЕСТА В БУФЕРЕ */
 
-	cmdplast = 0;   /* ИНДЕКС ПОСЛЕДНЕЙ КОМАНДЫ */
-	cmdpi = 0;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ */
-	cmdbot = 0;     /* ИНДЕКС СВОБОДНОГО МЕСТА В БУФЕРЕ */
-
-	p = cmdbuf;		/* clear for next line from file */
-	i = 0;
-	while (i < CMDP && (c = getc(fp)) != EOF) {
-		*p = c;
-		if (c == '\n') {
-			*p = '\0'; p = cmdbuf; i++; /* clear buffer for next line */
-			cmdput(p);
-		} else
-			p++;
+		p = cmdbuf;		/* clear for next line from file */
+		i = 0;
+		while (i < CMDP && (c = getc(fp)) != EOF) {
+			*p = c;
+			if (c == '\n') {
+				*p = '\0'; p = cmdbuf; i++; /* clear buffer for next line */
+				cmdput(p);
+			} else
+				p++;
+		}
+		fclose(fp);
 	}
-	fclose(fp);
 	return(1);
 }
 
@@ -311,7 +325,12 @@ kbcod cod;
 			itmshow();
 			w_page(clm._vf, 0);
 			/* синхронизировать историю при удалении каждой команды */
-			if (histsn) cmdphist(homedir);
+			if (histsn) {
+				cmdphist(homedir);
+			} /*else {
+				cp_set(-1, -14, ATT|INP);
+				w_str("will not saved");
+			}*/
 		}
 		else
 			bell();
@@ -405,7 +424,6 @@ char  *cmd;
 	savelm = clm;
 	cp_set(clm._y0 - 1, maxco - 1, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
 	/* сначала синхронизация истории из файла? */
-	/*TODO оптимизация перечитывания */
 	if (histsn) {
 		cmdghist(homedir);
 		w_str("=");
@@ -420,8 +438,9 @@ char  *cmd;
 	clm._ltmpl  = &tmplate;
 
 	clm._itm    = cmdpi;         /* ТЕКУЩАЯ КОМАНДА */
-	if (cmdpi < cmdplast);
-	else         clm._itm -= 1;
+	if (cmdpi >= cmdplast) {
+		clm._itm -= 1;
+	}
 	clm._yy_max = 10;
 	clm._itmofs = 0;
 	while((clm._itm - clm._itmofs) >= clm._yy_max)

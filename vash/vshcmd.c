@@ -150,8 +150,12 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			}
 			/* сохранить команду, если ее редактировали */
 			if (strncmp(cmd, cmd0, strlen(cmd0)) != 0) {
+				if (histsn) {
+					cmdghist(homedir);
+				}
+
 				cmdput(cmd0);
-				/* синхронизировать историю */
+
 				if (histsn) {
 					cmdphist(homedir);
 				}
