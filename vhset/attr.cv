@@ -58,11 +58,8 @@
 	mk      = ia - W_mk   cvt_va  - LPA_B
 	hl      = gca - -     cvt_hl  - "."
 
----#	sgrA    = v  - -      cvt_sg  - SGRA
-
 	sgrAT   = v  - -      -       - SGRAT 
 	sgrm    = ai - sgrms cvt_a   sgrtst SGR
----#	sgrm    = i - sgrms cvt_a   sgrtst SGR
 	mode    = g  - -      -       - "mode:"
 
 	fg      = ia - "f"   cvt_co  - LPA_B
@@ -71,7 +68,7 @@
 	pim     = g0 - "| "  cvt_pi  - LPA_B
 	pimsg0  = g  - "0"   cvt_pim - -
 	pimsg1  = g  - "1"   cvt_pim - -
-	pihead  = g  - -     -       - "Editing mode set:"
+
 ---#
 ---# WARNING! please, keep in mind that
 ---# column of elements in string 4 (contains .TXT. .HDR. ...) must be equal
@@ -81,26 +78,27 @@
 ---# 
 ---# place of .sgraAT line must be below .sgr line
 ---SCREEN
-.pimsg0.........   .CMD.  .TXT.  .HDR.  .VAR.  .ALT.  .MSE.  .ERR.  .ATT.
+.pimsg0.........    .CMD.  .TXT.  .HDR.  .VAR.  .ALT.  .MSE.  .ERR.  .ATT.
 
 .pimsg1.........
 
 =assign visual attributes
----#+		   .pim.. .t     .t     .t     .t     .t     .t     .t  
-+             pmt: .P..   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
-+     outstand/so: .so.   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
-+    underline/us: .us.   .t..   .t..   .t..   .t..   .t..   .t..   .t..
-+  bright/bold/md: .md.   .t..   .t..   .t..   .t..   .t..   .t..   .t..
-+      reverse/mr: .mr.   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
-+        blink/mb: .mb.   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
-+		   .pim.. .t     .t     .t     .t     .t     .t     .t  
-+	       fg: .fg.   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
-+	       bg: .bg.   .t..   .t..   .t..   .t..   .t..   .t..   .t..
-+    strip select: .sgr   .t..   .t..   .t..   .t..   .t..   .t..   .t..
-+       code edit: .hl... .hl... .hl... .hl... .hl... .hl... .hl... .hl...
-+		   .pim.. .t     .t     .t     .t     .t     .t     .t  
-+
-+ ."mode:"........ .sgrm.......... .sgrAT.....   
++		    .pim.. .t     .t     .t     .t     .t     .t     .t  
++    prompter/pmt:  .P..   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
++     outstand/so:  .so.   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
++    underline/us:  .us.   .t..   .t..   .t..   .t..   .t..   .t..   .t..
++  bright/bold/md:  .md.   .t..   .t..   .t..   .t..   .t..   .t..   .t..
++      reverse/mr:  .mr.   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
++        blink/mb:  .mb.   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
++		    .pim.. .t     .t     .t     .t     .t     .t     .t  
++              fg:  .fg.   .t..   .t..   .t..   .t..   .t..   .t..   .t.. 
++              bg:  .bg.   .t..   .t..   .t..   .t..   .t..   .t..   .t..
++   stripe select:  .sgr   .t..   .t..   .t..   .t..   .t..   .t..   .t..
++       code edit:  .hl... .hl... .hl... .hl... .hl... .hl... .hl... .hl...
++		    .pim.. .t     .t     .t     .t     .t     .t     .t  
+
+             mode:  .sgrm..........     .sgrAT.....          get help: .:HE....
+
 ---#	:  :       :...   :...   :...   :...   :...   :...   :...   :...  :........:
 ---#	:  :          :...  :...  :...  :...  :...  :...  :...  :...  :........:
 ---#+    .hl...............................................................

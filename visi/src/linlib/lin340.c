@@ -395,7 +395,13 @@ inp_test:
 	case KB_AD:
 	case KB_AL:
 	case KB_AR:
-	case KB_NL:      break;
+	case KB_NL:
+	case KB_KH:
+	case KB_KE:
+	case KB_PU:
+	case KB_PD:
+	case KB_TA:
+	      break;
 	default :       return(cod);
 	}
 

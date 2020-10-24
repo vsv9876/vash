@@ -22,7 +22,7 @@
 #else
 #define CMDP 120         /* КОЛИЧЕСТВО КОМАНД В БУФЕРЕ */
 #define CMDHL 8         /* КОЛИЧЕСТВО КОМАНД В МЕНЮ НА ЭКРАНЕ */
-#define CMDB CMDP * MAXLICO /* 8192       /* два полных экрана истории хватит... */
+#define CMDB (CMDP * MAXLICO) /* 8192       /* два полных экрана истории хватит... */
 #endif /* TINYSMALL */
 
 extern char *homedir;
@@ -297,13 +297,19 @@ register LINE *line;
 kbcod cod;
 {
 	char *cmd;
+	extern char Cfill[];
 
 	cmd = *(char **)(line->varl);
 
 	switch(cod) {
+	case ';':
 	case ' ':
 		/* ДОБАВИТЬ КОМАНДУ В РАБОЧИЙ БУФЕР */
 		strcat(cmdpp, cmd);
+		break;
+	case '=':
+		/* использовать как команду-заполнитель главного меню */
+		strncpy(Cfill, cmd, MAXLICO);
 		break;
 	case KB_NL:
 		/* СКОПИРОВАТЬ КОМАНДУ В РАБОЧИЙ БУФЕР */
@@ -339,7 +345,7 @@ kbcod cod;
 	return (TRUE);
 }
 
-h_menu()
+kbcod h_menu()
 /*
  * РАБОТА С МЕНЮ БУФЕРА ИСТОРИИ КОМАНД.
  */
@@ -367,13 +373,15 @@ h_menu()
 			break;
 		case KB_HE:      /* справка */
 			cp_set(-1, 0, TXT);
-			fprintf(vttout, "Command # %2d from %2d, %4d byte(s) (%2d%%)",
-			clm._itm, cmdplast, cmdbot, (100*cmdbot)/CMDB);
+			fprintf(vttout, "Cmd# %2d/%2d, use %d (%d%%)",
+			clm._itm, cmdplast, cmdbot, (int)((cmdbot * 100)/CMDB));
 			break;
+		case '=':
+		case ';':
 		case KB_EX:      /* выход */
 		case ' ':       /* добавить */
 		case KB_NL:      /* заменить */
-			return;
+			return(cod);
 
 		case KB_RE:      /* перерисовка */
 			er_pag();
@@ -400,6 +408,7 @@ h_menu()
 			break;
 		}
 	}
+	return(cod);
 }
 
 static  LINE tmplate =
@@ -411,15 +420,23 @@ static  LINE tmplate =
 		       t_hist,
 			       (char **)0 };
 
+/*
+ * submenu for working with history cache
+ * returns 0, in case no view was done
+ * returns 2, in case select of new content for Cfill
+ */
 cmdvew(cmd)
 char  *cmd;
 {
 	extern int  y0_top;     /* определено в vshcmd */
 	extern char *pmtsh;    /* --"-- */
 	LINEMENU savelm;
+	kbcod hv_cod;
+
+	int ret = 0;
 
 	if (cmdplast <= 1) {
-		bell(); return;
+		bell(); return (ret);
 	}
 	savelm = clm;
 	cp_set(clm._y0 - 1, maxco - 1, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
@@ -455,7 +472,15 @@ char  *cmd;
 	}
 	cmdpp = cmd;    /* ДЛЯ КОПИРОВАНИЯ НОВОЙ КОМАНДЫ */
 
-	h_menu();
+	hv_cod = h_menu();
+	switch(hv_cod) {
+	default:
+		ret = 1;
+		break;
+	case '=':
+		ret = 2;
+		break;
+	};
 
 	free((char *)clm._vf); clm._vf = (LINE *)0;
 	cp_set(y0_top, 0, TXT); er_eop(TXT);
@@ -463,4 +488,5 @@ char  *cmd;
 	cmdpi = clm._itm;    /* НОВОЕ ЗНАЧ. ИНДЕКСА ИСТОРИИ */
 	clm._vf = (LINE *)0;
 	clm = savelm;
+	return(ret);
 }

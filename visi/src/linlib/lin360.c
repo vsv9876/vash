@@ -32,7 +32,7 @@
 /*
  * ВНИМАНИЕ ! В ФУНКЦИЯХ fnd_ar(), fnd_al(), ...
  *      ИСПОЛЬЗУЕТСЯ НЕБОЛЬШОЙ ФОКУС, ОСНОВАННЫЙ НА
- *      РЕАЛИЗАЦИИ КОМПИЛЯТОРОВ СИ ДЛЯ пдп-11 (DECUS, UNIX,
+ *      РЕАЛИЗАЦИИ КОМПИЛЯТОРОВ СИ ДЛЯ PDP-11 (DECUS, UNIX,
  *      НЕ ПРОВЕРЕНО ДЛЯ Whitesmith) :
  *      АРГУМЕНТЫ МОЖНО ПЕРЕДАВАТЬ ЧЕРЕЗ РЕГИСТРОВЫЕ ОПИСАНИЯ
  *      В ОДИНАКОВОМ ПОРЯДКЕ (ИМЕНА НЕ ИГРАЮТ РОЛИ).
@@ -49,13 +49,45 @@
  *      НИКТО НЕ ПОЛЬЗОВАЛСЯ.
  */
 
+static LINE *
+fnd_home(lni, page)
+/* jump to first line of page */
+register LINE *lni;
+register LINE *page ;
+{
+	register LINE *lnj;
+
+	for(lnj=page; lnj->size!=0; lnj++) {
+		if(0 != (INP & (lnj->attr)) )
+			return(lnj);
+	}
+	return(lni);
+}
+
+static LINE *
+fnd_end(lni, page)
+/* jump to first line of page */
+register LINE *lni;
+register LINE *page ;
+{
+	register LINE *lnj;
+
+	/* поиск от конца формы */
+	for(lnj=lni; lnj->size != 0; lnj++ ) ;
+	for(   ; lnj>=page; lnj--) {
+		if(0 != (INP & (lnj->attr)) )
+			return(lnj);
+	}
+	return(lni);
+}
+
 /*-------------------------*/
 /* НАЙТИ ПО СТРЕЛКЕ ВПРАВО */
 /*-------------------------*/
-LINE *
-fnd_ar (lni, line)
+static LINE *
+fnd_ar (lni, page)
 	register LINE *lni;
-	register LINE *line ;
+	register LINE *page ;
 {
 	register LINE *lnj;
 
@@ -67,7 +99,7 @@ fnd_ar (lni, line)
 			return(lnj);
 	}
 	/* ЗАЦИКЛИТЬ В ЭТОЙ ЖЕ СТРОКЕ */
-	for(lnj=line; lnj->size != 0; lnj++) {
+	for(lnj=page; lnj->size != 0; lnj++) {
 		if( (INP & ~(lnj->attr)) )
 			continue;
 		if(((int)lnj->line == (int)lni->line))
@@ -78,26 +110,33 @@ fnd_ar (lni, line)
 /*------------------------*/
 /* НАЙТИ ПО СТРЕЛКЕ ВЛЕВО */
 /*------------------------*/
-LINE *
-fnd_al (lni, line)
+static LINE *
+fnd_al (lni, page)
 	register LINE *lni;
-	register LINE *line ;
+	register LINE *page ;
 {
 	register LINE *lnj;
 
-	for(lnj=lni; lnj>=line; lnj--) {
-		if( (INP & ~(lnj->attr)) )
+	/* поиск в той же строке */
+	for(lnj=lni; lnj>=page; lnj--) {
+		if(lnj == lni)
+			continue;
+		if(0 == (INP & (lnj->attr)) )
 			continue;
 		if((lnj->line == lni->line)
 		&& (lnj->colu < lni->colu))
 			return(lnj);
+		/*if((lnj->line < lni->line)
+		&& (lnj->colu != lnj->colu))
+				return(lnj);*/
 	}
-	/* ЗАЦИКЛИТЬ В ЭТОЙ ЖЕ СТРОКЕ : ИЩЕМ С КОНЦА */
-	for(lnj=lni; lnj->size != 0; lnj++ )       ;
-	for(   ; lnj>=line; lnj--) {
-		if( (INP & ~(lnj->attr)) )
+	/* поиск от конца формы */
+	for(lnj=lni; lnj->size != 0; lnj++ ) ;
+	for(   ; lnj>=page; lnj--) {
+		if(0 == (INP & (lnj->attr)) )
 			continue;
-		if((lnj->line == lni->line))
+/*		if((lnj->line == lni->line))*/
+		if(lnj->line < lni->line)
 			return(lnj);
 	}
 	return(lni);
@@ -106,51 +145,59 @@ fnd_al (lni, line)
 /* НАЙТИ ПО СТРЕЛКЕ ВВЕРХ */
 /*------------------------*/
 LINE *
-fnd_au (lni, line)
+fnd_au (lni, page)
 	register LINE *lni;
-	register LINE *line ;
+	register LINE *page ;
 {
 	register LINE *lnj;
 	int     nxt_line ;      /* НОМЕР БЛИЖАЙШЕЙ СТРОКИ */
+	int		on_top = 0;
 
-	if((nxt_line = lni->line) > 0) {
-		for(lnj=lni; lnj>=line; lnj--) {
-			if((lnj->line == lni->line))    /*СТР. СТАРАЯ*/
-				continue;
-			else if( (INP & ~(lnj->attr)) )
-				continue;               /*НЕ ДЛЯ ВВОДА*/
-			else if((lnj->line <  lni->line)
-			      &&(lnj->colu >  lni->colu))
-				continue;               /*СТР. ВЫШЕ, НО КОЛ*/
-			else if((lnj->line <  lni->line)
-			      &&(lnj->colu <= lni->colu))
-				return(lnj);    /*СТР. ВЫШЕ, КОЛ. НЕ ПРАВЕЕ*/
-		}
-	}
-	/* ПОПЫТКА НАЙТИ В ОБРАТНОМ НАПРАВЛЕНИИ */
-	for(lnj=lni; lnj->size != 0; lnj++) ; /*НАХОДИМ КОНЕЦ*/
-	for(   ; lnj>=line; lnj--) {          /*ИЩЕМ К НАЧАЛУ*/
-		if( (INP & ~(lnj->attr)) )    /*НЕ ДЛЯ ВВОДА*/
+	/*
+	 * поиск назад от текущего места
+	 */
+	for(lnj=lni; lnj>=page; lnj--) {
+		if(lnj == lni)
 			continue;
-		else if(lnj->colu <= lni->colu) /*НЕ ПРАВЕЕ*/
+		if(0 == (INP & (lnj->attr)) )
+			continue;
+		/*в той же колонке и выше*/
+		if((lnj->line <  lni->line)
+		 &&(lnj->colu == lni->colu))
+			return(lnj);
+		/* ниже и левее (на участке с вертикальной организацией '+' в начале строки в коде .lav) */
+		if((lnj->line >  lni->line)
+		 &&(lnj->colu <  lni->colu))
 			return(lnj);
 	}
-	return(lni);      /* ОСТАВЛЕНО НА ВСЯКИЙ СЛУЧАЙ */
+	/* если находимся в начале формы, искать от конца к текущему месту */
+	for(lnj=page; lnj->size != 0; lnj++) {
+		if (0 != (INP & (lnj->attr)) && lnj == lni && on_top == 0) {
+			on_top = 1;
+			break;
+		}
+	}
+	if (on_top) {
+		for(lnj=lni; lnj->size != 0; lnj++) ; /* поиск конца формы */
+		for(   ; lnj>=page; lnj--) {
+			/* первый с конца формы, но не в текущей строке */			
+			if((INP & (lnj->attr)) && (lnj->line >= lni->line))
+				return(lnj);
+		}
+	}
+	return(lni);
 }
 /*-----------------------*/
 /* НАЙТИ ПО СТРЕЛКЕ ВНИЗ */
 /*-----------------------*/
-LINE *
-fnd_ad (lni, line)
+static LINE *
+fnd_ad (lni, page)
 	register LINE *lni;
-	register LINE *line ;
+	register LINE *page ;
 {
 	register LINE *lnj;
 	int     nxt_line ;
 
-	/* ЗДЕСЬ НАДО БЫ ТЩАТЕЛЬНЕЕ(ЖВАНЕЦКИЙ М.М.) :
-	 *       24 СТРОКИ НЕ ДЛЯ ВСЕХ ТЕРМИНАЛОВ ПРАВДА...
-	 */
 	if((nxt_line = (int)lni->line ) < maxli ) { /*ВПЕРЕД, ЕСЛИ ЕСТЬ КУДА*/
 		for(lnj=lni; lnj->size!=0; lnj++) {     /* КОНЕЦ ? */
 			if((lnj->line <= lni->line))    /*СТР. НЕ НИЖЕ */
@@ -158,35 +205,36 @@ fnd_ad (lni, line)
 			else if( (INP & ~(lnj->attr)) ) /*НЕ ДЛЯ ВВОДА*/
 				continue;
 			else {                          /*СТР. НИЖЕ */
-			      if((lnj->colu + lnj->size) >= lni->colu)
-				  return(lnj);  /*ПОЛЕ ПОД КУРСОРОМ*/
-			      else
-				  continue;     /*ВСЕ ПОЛЕ СЛЕВА*/
+				if((lnj->colu + lnj->size) >= lni->colu)
+					return(lnj);  /*ПОЛЕ ПОД КУРСОРОМ*/
+				else
+					continue;     /*ВСЕ ПОЛЕ СЛЕВА*/
 			}
 		}
 	}
 	/* ПОПЫТКА НАЙТИ ОТ НАЧАЛА СТРАНИЦЫ */
-	for(lnj=line; lnj->size!=0; lnj++) {
+	for(lnj=page; lnj->size!=0; lnj++) {
 		if( (INP & ~(lnj->attr)) )
 			continue;
 		else if(lnj->colu >= lni->colu)
 			return(lnj);
 	}
-	return(lni);      /* ОСТАВЛЕНО НА ВСЯКИЙ СЛУЧАЙ */
+	return(lni);      /* last resort */
 }
-/*---------------------------------------------------*/
-/* САМЫЙ ПРОСТОЙ ПОИСК: К ОЧЕРЕДНОЙ ЛИНИИ ПО ПОРЯДКУ */
-/*---------------------------------------------------*/
-LINE *
-fnd_nxt(lni, line)
+
+/*------------------------------------------*/
+/* simplest search: next line in page order */
+/*------------------------------------------*/
+static LINE *
+fnd_nxt(lni, page)
 	register LINE *lni;
-	register LINE *line ;
+	register LINE *page ;
 {
 /*      register LINE *lnj;     */
 
 	lni++;
 	if(lni->size == 0)
-		lni = line;          /* ЗАЦИКЛИТЬ НА НАЧАЛО */
+		lni = page;          /* cycle to begin */
 	return(lni);
 }
 
@@ -236,9 +284,9 @@ on_base:
 }
 
 #endif W_PAGE_TAB
-/*---------------------*/
-/* НАРИСОВАТЬ СТРАНИЦУ */
-/*---------------------*/
+/*----------------*/
+/* write the page */
+/*----------------*/
 w_page ( line_e, cod )
 LINE    *line_e;
 register kbcod cod;
@@ -266,22 +314,22 @@ register kbcod cod;
 }
 
 kbcod
-r_page(line_e, page, posp)
-/*-----------------*/
-/* ЧИТАТЬ СТРАНИЦУ */
-/*-----------------*/
-LINE    *line_e;                /* СТРАНИЦА ДЛЯ РЕДАКТИРОВАНИЯ  */
-LINE   **page;                  /* ТЕКУЩАЯ ЛИНИЯ (СТАТУС)       */
-int    *posp;                   /* ПОЗИЦИЯ КУРСОРА ПРИ РЕДАКТИРОВАНИИ */
+r_page(line_e, curline, posp)
+/*---------------*/
+/* read the page */
+/*---------------*/
+LINE    *line_e;             /* page to be edited */
+LINE   **curline;             /* current line (status) */
+int    *posp;                /* cursor position during edit process */
 {
-	int     cod;            /* КОД, ВОЗВРАЩАЕМЫЙ r_line()   */
+	int     cod;             /* code returned from r_line() */
 
-	register LINE *lni;             /* УКАЗАТЕЛЬ НА ТЕКУЩУЮ ЛИНИЮ */
-	register LINE *line ;           /* УКАЗАТЕЛЬ НА ВСЮ СТРАНИЦУ */
+	register LINE *lni;      /* line index in pointer form */
+	register LINE *page;     /* pointer to page at all (array of lines) */
 
-	line = line_e;
-	if(*page != (LINE *)NULL)
-		lni = *page;
+	page = line_e;
+	if(*curline != (LINE *)NULL)
+		lni = *curline;
 	else
 		lni = line_e;
 
@@ -297,34 +345,41 @@ int    *posp;                   /* ПОЗИЦИЯ КУРСОРА ПРИ РЕДА
 
 	/* НАЙТИ УКАЗАТЕЛЬ ДЛЯ СЛЕДУЮЩЕГО ЧТЕНИЯ */
 	switch( cod ) {
+	case KB_KH :
+		lni = fnd_home(lni, page);
+		break;
+	case KB_KE :
+		lni = fnd_end(lni, page);
+		break;
 	case KB_AR :
 		if ( (lni->flag & SUSR) == FALSE )
-			lni = fnd_ar(lni, line) ;
+			lni = fnd_ar(lni, page) ;
 		break ;
 	case KB_AL :
 		if ( (lni->flag & SUSL) == FALSE )
-			lni = fnd_al(lni, line) ;
+			lni = fnd_al(lni, page) ;
 		break ;
 	case KB_AU :
 		if ( (lni->flag & SUSU) == FALSE )
-			lni = fnd_au(lni, line) ;
+			lni = fnd_au(lni, page) ;
 		break ;
 	case KB_AD :
 		if ( (lni->flag & SUSD) == FALSE )
-			lni = fnd_ad(lni, line) ;
+			lni = fnd_ad(lni, page) ;
 		break ;
+	case KB_TA :
 	case KB_NL :
 		if ( (lni->flag & SUSNL) == FALSE )
-			lni = fnd_nxt(lni, line) ;
+			lni = fnd_nxt(lni, page) ;
 		break ;
 	case KB_RE :     /* ОСВЕЖИТЬ ИЗОБРАЖЕНИЕ */
 		er_pag();
-		w_page(line, 0);
+		w_page(page, 0);
 		break ;
 	default :
 		break;
 	}
 
-	*page = lni;    /* СОХРАНИТЬ УКАЗАТЕЛЬ НА ТЕК. ЛИНИЮ!... */
+	*curline = lni;    /* save pointer to current line!!! */
 	return(cod);
 }

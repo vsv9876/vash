@@ -109,7 +109,15 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			bell();
 			continue;
 		case KB_HE:
-			cmdvew(cmd0);
+			/* similar as on KB_EX */
+			if (cmdvew(cmd0) >=2) {
+				w_msg(TXT, " ");
+				w_msg(TXT, "");
+				if (cmdrun) {
+					scrlst(); /*return(1);*/
+				}
+				return(1);
+			}
 			/* ДЛЯ ВОССТАНОВЛЕНИЯ ГЛАВНОГО МЕНЮ: */
 			cmdrun = 1;
 			break;
