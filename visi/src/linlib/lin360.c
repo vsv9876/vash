@@ -29,29 +29,32 @@
 #include "line0.h"
 
 /*----------------------------------------------------------------------*/
-/*
- * ВНИМАНИЕ ! В ФУНКЦИЯХ fnd_ar(), fnd_al(), ...
- *      ИСПОЛЬЗУЕТСЯ НЕБОЛЬШОЙ ФОКУС, ОСНОВАННЫЙ НА
- *      РЕАЛИЗАЦИИ КОМПИЛЯТОРОВ СИ ДЛЯ PDP-11 (DECUS, UNIX,
- *      НЕ ПРОВЕРЕНО ДЛЯ Whitesmith) :
- *      АРГУМЕНТЫ МОЖНО ПЕРЕДАВАТЬ ЧЕРЕЗ РЕГИСТРОВЫЕ ОПИСАНИЯ
- *      В ОДИНАКОВОМ ПОРЯДКЕ (ИМЕНА НЕ ИГРАЮТ РОЛИ).
- *      В ЭТОМ СЛУЧАЕ ВЫЗВАННАЯ ФУНКЦИЯ ПОЛУЧИТ ЗНАЧЕНИЯ ИЗ ВЫЗВАВШЕЙ,
- *      НО НЕ ЗАПОРТИТ ИХ ПРИ ВОЗВРАТЕ.
- *      ПРОБЛЕМЫ СВЯЗАННЫЕ С ПЕРЕНОСОМ, РЕШАЮТСЯ ПУТЕМ ВЫЯСНЕНИЯ
- *      ОТСУТСТВИЯ АНАЛОГИЧНЫХ ВОЗМОЖНОСТЕЙ НА ВАШЕМ КОМПИЛЯТОРЕ И
- *      ПЕРЕДЕЛКЕ ВЫЗОВОВ ЭТИХ ФУНКЦИЙ ПОД СТАНДАРТНЫЕ СОГЛАШЕНИЯ.
+/* retro comment in russian. Please, don't use any tricks such described.
+ *
+ * ВНИМАНИЕ ! в функциях fnd_ar(), fnd_al(), ...
+ *      используется небольшой фокус, основанный на
+ *      реализации компиляторов C для PDP-11 (DECUS, unix,
+ *      не проверено для Whitesmith) :
+ *      аргументы можно передавать через регистровые описания
+ *      в одинаковом порядке (имена не играют роли).
+ *      В этом случае вызванная функция получит значения из вызвавшей,
+ *      но не запортит их при возврате.
+ *      Проблемы связанные с переносом, решаются путем выяснения
+ *      отсутствия аналогичных возможностей на вашем компиляторе и
+ *      переделке вызовов этих функций под стандартные соглашения.
  *      =========================================================
- *      ЭТО, К СОЖАЛЕНИЮ, АТАВИЗМЫ linlib v2.0 -- ТАМ БЫЛИ ТАКИЕ
- *      КОМАНДЫ, КАК "НАЙТИ ПО СТРЕЛКЕ ДО УПОРА" (ИТЕРАЦИЯМИ), НО
- *      ЭКОНОМИЯ ОТ СКОРОСТИ ПЕРЕДАЧИ АРГУМЕНТОВ
- *      ОКАЗАЛАСЬ СОМНИТЕЛЬНОЙ -- ЭТИМИ КОМАНДАМИ ПОПРОСТУ
- *      НИКТО НЕ ПОЛЬЗОВАЛСЯ.
+ *      Это, к сожалению, атавизмы linlib v2.0 -- там были такие
+ *      команды, как "найти по стрелке до упора" (итерациями), но
+ *      экономия от скорости передачи аргументов
+ *      оказалась сомнительной -- этими командами попросту
+ *      никто не пользовался.
  */
 
 static LINE *
 fnd_home(lni, page)
-/* jump to first line of page */
+/* 
+ * jump to first line of page
+ */
 register LINE *lni;
 register LINE *page ;
 {
@@ -66,7 +69,9 @@ register LINE *page ;
 
 static LINE *
 fnd_end(lni, page)
-/* jump to first line of page */
+/*
+/* jump to last line of page
+ */
 register LINE *lni;
 register LINE *page ;
 {
@@ -81,9 +86,9 @@ register LINE *page ;
 	return(lni);
 }
 
-/*-------------------------*/
-/* НАЙТИ ПО СТРЕЛКЕ ВПРАВО */
-/*-------------------------*/
+/*
+ * find on arrow right
+ */
 static LINE *
 fnd_ar (lni, page)
 	register LINE *lni;
@@ -107,9 +112,9 @@ fnd_ar (lni, page)
 	}
 	return(lni);
 }
-/*------------------------*/
-/* НАЙТИ ПО СТРЕЛКЕ ВЛЕВО */
-/*------------------------*/
+/*
+ * find on arrow left
+ */
 static LINE *
 fnd_al (lni, page)
 	register LINE *lni;
@@ -117,7 +122,7 @@ fnd_al (lni, page)
 {
 	register LINE *lnj;
 
-	/* поиск в той же строке */
+	/* find on the same row */
 	for(lnj=lni; lnj>=page; lnj--) {
 		if(lnj == lni)
 			continue;
@@ -130,7 +135,7 @@ fnd_al (lni, page)
 		&& (lnj->colu != lnj->colu))
 				return(lnj);*/
 	}
-	/* поиск от конца формы */
+	/* find from end of page */
 	for(lnj=lni; lnj->size != 0; lnj++ ) ;
 	for(   ; lnj>=page; lnj--) {
 		if(0 == (INP & (lnj->attr)) )
@@ -141,36 +146,43 @@ fnd_al (lni, page)
 	}
 	return(lni);
 }
-/*------------------------*/
-/* НАЙТИ ПО СТРЕЛКЕ ВВЕРХ */
-/*------------------------*/
+/*
+ * find on arrow UP
+ */
 LINE *
 fnd_au (lni, page)
 	register LINE *lni;
 	register LINE *page ;
 {
 	register LINE *lnj;
-	int     nxt_line ;      /* НОМЕР БЛИЖАЙШЕЙ СТРОКИ */
+	int     nxt_line ;
 	int		on_top = 0;
 
 	/*
-	 * поиск назад от текущего места
+	 * find to back from current place
 	 */
 	for(lnj=lni; lnj>=page; lnj--) {
 		if(lnj == lni)
 			continue;
 		if(0 == (INP & (lnj->attr)) )
 			continue;
-		/*в той же колонке и выше*/
+		/* on the same column and upper */
 		if((lnj->line <  lni->line)
 		 &&(lnj->colu == lni->colu))
 			return(lnj);
-		/* ниже и левее (на участке с вертикальной организацией '+' в начале строки в коде .lav) */
+		/*
+		 * lower and left - on the vertically organized page part -
+		 * defined with '+' sign an the begin of strings
+		 * in .lav/.cv code
+		 */
 		if((lnj->line >  lni->line)
 		 &&(lnj->colu <  lni->colu))
 			return(lnj);
 	}
-	/* если находимся в начале формы, искать от конца к текущему месту */
+	/*
+	 * if the current place is on the beginning,
+	 * find to current place from page tail
+	 */
 	for(lnj=page; lnj->size != 0; lnj++) {
 		if (0 != (INP & (lnj->attr)) && lnj == lni && on_top == 0) {
 			on_top = 1;
@@ -178,18 +190,19 @@ fnd_au (lni, page)
 		}
 	}
 	if (on_top) {
-		for(lnj=lni; lnj->size != 0; lnj++) ; /* поиск конца формы */
+		for(lnj=lni; lnj->size != 0; lnj++) ; /* find the tail */
 		for(   ; lnj>=page; lnj--) {
-			/* первый с конца формы, но не в текущей строке */			
+			/* nearest from the tail but not in current row
+			 */			
 			if((INP & (lnj->attr)) && (lnj->line >= lni->line))
 				return(lnj);
 		}
 	}
 	return(lni);
 }
-/*-----------------------*/
-/* НАЙТИ ПО СТРЕЛКЕ ВНИЗ */
-/*-----------------------*/
+/*
+ * find on arrow down
+ */
 static LINE *
 fnd_ad (lni, page)
 	register LINE *lni;
@@ -198,21 +211,21 @@ fnd_ad (lni, page)
 	register LINE *lnj;
 	int     nxt_line ;
 
-	if((nxt_line = (int)lni->line ) < maxli ) { /*ВПЕРЕД, ЕСЛИ ЕСТЬ КУДА*/
-		for(lnj=lni; lnj->size!=0; lnj++) {     /* КОНЕЦ ? */
-			if((lnj->line <= lni->line))    /*СТР. НЕ НИЖЕ */
+	if((nxt_line = (int)lni->line ) < maxli ) { /* forward if possible */
+		for(lnj=lni; lnj->size!=0; lnj++) {     
+			if((lnj->line <= lni->line))
 				continue;
-			else if( (INP & ~(lnj->attr)) ) /*НЕ ДЛЯ ВВОДА*/
+			else if(0 == (INP & (lnj->attr)) )
 				continue;
-			else {                          /*СТР. НИЖЕ */
+			else {                       /* row is below */
 				if((lnj->colu + lnj->size) >= lni->colu)
-					return(lnj);  /*ПОЛЕ ПОД КУРСОРОМ*/
+					return(lnj); /* field under cursor */
 				else
-					continue;     /*ВСЕ ПОЛЕ СЛЕВА*/
+					continue; /* all field is on the left */
 			}
 		}
 	}
-	/* ПОПЫТКА НАЙТИ ОТ НАЧАЛА СТРАНИЦЫ */
+	/* try to find from page begin */
 	for(lnj=page; lnj->size!=0; lnj++) {
 		if( (INP & ~(lnj->attr)) )
 			continue;
@@ -240,9 +253,9 @@ fnd_nxt(lni, page)
 
 #ifndef W_PAGE_TAB
 aj_tbl(scnd, line_e)
-/*-----------------------------------*/
-/* НАСТРОИТЬ ЭЛЕМЕНТ ТАБЛИЦЫ ПО БАЗЕ */
-/*-----------------------------------*/
+/*
+ * setup table element referring to the base
+ */
 register LINE *scnd;
 LINE *line_e;
 {
@@ -272,7 +285,7 @@ LINE *line_e;
 			continue;
 		}
 	}
-	/* СЮДА ВЫХОДА НЕТ, ЕСЛИ СТРАНИЦА ПРАВИЛЬНО СОСТАВЛЕНА */
+	/* сюда выхода нет, если страница правильно составлена */
 	w_chr('\007');
 	return;
 
@@ -293,10 +306,10 @@ register kbcod cod;
 {
 	register LINE *line;
 
-	/* СНАЧАЛА ВСЕ, ЧТО НЕ ДЛЯ ВВОДА */
+	/* сначала все, что не для ввода */
 	for(line=line_e; line->size != 0; line++) {
 #ifndef W_PAGE_TAB
-		/* ВТОРИЧНЫЙ ЭЛЕМЕНТ ТАБЛИЦЫ НАДО СНАЧАЛА НАСТРОИТЬ... */
+		/* вторичный элемент таблицы надо сначала настроить... */
 		if(line->flag & SUST){
 			aj_tbl(line, line_e);
 		}
@@ -305,7 +318,7 @@ register kbcod cod;
 		    /*    w_line(line, cod);    */
 			w_line(line);
 	}
-	/* ЛИНИИ ДЛЯ ВВОДА В ПОСЛЕДНЮЮ ОЧЕРЕДЬ */
+	/* линии для ввода в последнюю очередь */
 	for(line=line_e; line->size != 0; line++) {
 		if( (INP & ~(line->attr)) == 0 )
 		    /*    w_line(line, cod);    */
@@ -343,7 +356,7 @@ int    *posp;                /* cursor position during edit process */
 
 	cod = r_line(lni, posp);
 
-	/* НАЙТИ УКАЗАТЕЛЬ ДЛЯ СЛЕДУЮЩЕГО ЧТЕНИЯ */
+	/* navigate to next read position on the page */
 	switch( cod ) {
 	case KB_KH :
 		lni = fnd_home(lni, page);
@@ -372,7 +385,7 @@ int    *posp;                /* cursor position during edit process */
 		if ( (lni->flag & SUSNL) == FALSE )
 			lni = fnd_nxt(lni, page) ;
 		break ;
-	case KB_RE :     /* ОСВЕЖИТЬ ИЗОБРАЖЕНИЕ */
+	case KB_RE :		/*TODO more sofisticated solution*/
 		er_pag();
 		w_page(page, 0);
 		break ;
