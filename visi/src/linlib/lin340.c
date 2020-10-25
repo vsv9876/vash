@@ -312,9 +312,12 @@ string_simple:
 
 	/*==== ЧИТАТЬ КОД ПЕРВОЙ КЛАВИШИ */
 	switch(cod = r_cod(0)) {
-	case KB_DE: *editptr = '\0';
-	case  ' ': if(posp != (int *)(-1) && posp) *posp=0;
-		   break;
+	case KB_DE:
+			*editptr = '\0';
+	case  ' ':
+			if(posp != (int *)(-1) && posp)
+				*posp=0;
+			break;
 	default:
 		/* ЕСТЬ ТОНКОСТЬ ДЛЯ ПОЛЕЙ С РЕДАКТИРОВАНИЕМ:
 		 * ФОРМАТ НА ВВОДЕ НУЖЕН ТОЛЬКО
@@ -327,9 +330,17 @@ string_simple:
 			} else
 	/*                if(cod1(cod) != 0)    *******/
 				goto inp_test;
-		} else
-			goto inp_format;
-		break;
+		} else {
+			if (cod == KB_NL) {
+				/* special case: line is menu item (and nаvigation suspend flag is raised) */
+				if (/* 0 != (line->flag & SUSNL) &&*/ (MSE & (line->attr & VIDEO))) {
+						if(posp != (int *)(-1) && posp)
+							*posp=0;
+				}
+				goto inp_format;
+			}
+			break;
+		}
 	}
 
 edit_retry:

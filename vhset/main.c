@@ -131,6 +131,7 @@ vmain()
 			pag_mk(); /* basic keys setup, now hidden from menu */
 		    case '?' :
 		    case ' ' :
+		    case KB_NL:
 			er_pag();
 			w_page(mainm);  /* refresh screen after submenu */
 			break;

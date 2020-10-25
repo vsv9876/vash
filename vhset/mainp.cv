@@ -10,11 +10,11 @@
 static
 ---PAGE mainm
 ---LINES
-m_m  = ipm      -   -   pag_mk  tst_m   " Basic commands "
-m_k  = ipm      -   -   pag_k   tst_m   " Other commands "
-m_a  = ipm      -   -   pag_a   tst_m   " Video attributes "
-m_qu = ipm      -   -   mkquit  tst_m   " QUIT (discard changes) "
-m_ex = ipm      -   -   mkexit  tst_m   " EXIT (save setup) "
+m_m  = ipm      n   -   pag_mk  tst_m   " Basic commands "
+m_k  = ipm      n   -   pag_k   tst_m   " Other commands "
+m_a  = ipm      n   -   pag_a   tst_m   " Video attributes "
+m_qu = ipm      n   -   mkquit  tst_m   " QUIT (discard changes) "
+m_ex = ipm      n   -   mkexit  tst_m   " EXIT (save setup) "
 lh   = v        -   -   -       -       namelh
 sp   = gv       -   -   -       -       "spacebar"
 

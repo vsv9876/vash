@@ -19,12 +19,17 @@
 #include "line.h"
 
 /*
- * "ТЕСТИРУЮЩАЯ" ФУНКЦИЯ ДЛЯ МЕНЮ.
- * ЕСЛИ line->cvtf, ТО ВЫЗЫВАЕТСЯ УКАЗАННАЯ ФУНКЦИЯ;
- * ЕСЛИ line->cvts, ТО ВЫЗЫВАЕТСЯ КОМ. ФАЙЛ UNIX
+ * this function used as simple menu callback connector
+ */
+
+
+/*
+ * "тестирующая" функция для меню.
+ * если line->cvtf, то вызывается указанная функция;
+ * если line->cvts, то вызывается команда unix (не реализовано)
  *
- * ФУНКЦИЯ ВОЗВРАЩАЕТ TRUE ИЛИ FALSE, В ЗАВИСИМОСТИ ОТ
- * ТОГО, ЧТО ВЕРНУЛИ ЕЙ.
+ * функция возвращает TRUE или FALSE, в зависимости от
+ * того, что вернули ей.
  *
  */
 
@@ -33,13 +38,10 @@ tst_m(line, cod)
 register LINE *line;
 	 kbcod cod;
 {
-	/*
-	 * ПОКА РЕАЛИЗОВАН ТОЛЬКО ВЫЗОВ ОБЫЧНЫХ ФУНКЦИЙ ЯЗЫКА СИ.
-	 */
-	if(cod == ' ') {
+	if(cod == ' ' || cod == KB_NL) {
 		if(line->cvtf) {
 			return( (*line->cvtf)() );
 		}
 	}
-	return(TRUE);   /* НА ВСЯКИЙ СЛУЧАЙ */
+	return(TRUE);   /* last resort */
 }

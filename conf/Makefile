@@ -77,7 +77,7 @@ CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX
 ASHLIB      = SVR4
 TERMLIB     = -ltermcap
 # try for old age distros:
-TERMLIB     = -lncurses
+#TERMLIB     = -lncurses
 
 #
 #CC          = gcc -traditional -Wtraditional -Wall

@@ -38,6 +38,7 @@ LINE *phline;           /* ИМЯ ФАЙЛА СТРАНИЦЫ HELP */
     while ( -1 ) {
 		cod = r_page( page, &cline, 0);
 		switch ( cod ) {
+		case KB_NL:
 		case ' ':
 			/* ПЕРЕРИСОВАТЬ ПОСЛЕ МЕНЮ */
 			if((cline->attr & LMSE) == LMSE) {
