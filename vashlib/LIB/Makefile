@@ -38,6 +38,7 @@ ASHSTD        = \
 		ASHINTRO \
 		HELP \
 		.ashstd \
+		.ashrpm \
 		.ashproc \
 		.ashhelp \
 		.ashmenu \
