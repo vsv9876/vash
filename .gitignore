@@ -2,7 +2,7 @@
 .metadata
 .project
 .settings
-.*
+.git
 buildd.h
 conf.cfg
 *.o

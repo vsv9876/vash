@@ -1,0 +1,111 @@
+#!/usr/bin/vash
+#
+# NOTE: experimental script, to be developed
+#-----------------------------------------
+#
+# rpm database management
+# Sat Oct 31 18:31:00 MSK 2020
+#
+#-----------------------------------------
+#
+# default menu: fill, from, to (not used), arg
+#
+-frpm -qa --qf '%{installtime} %-50{nevra} %-30{name} %20{distribution}\n'|sort -nr
+-i/var/lib/rpm/Name
+-o/dev/null
+-@2
+#------------------------------------------
+
+# keyboard legend
+-1#
+-2repqry
+-3info
+-4files 
+-5provds
+-6depnds
+-7whtreq
+-8erase
+-9SETUP
+-0quit
+#------------------------------------------
+:+
+	* ? _mark +
+:-
+	* ? _mark -
+:[*_]
+	* ? _f_ls
+
+#------------------------------------------
+
+:[1!]
+	* *     _sh
+:[./a-z]
+#       любая клавиша нижнего регистра - начало ввода команды sh.
+	* *     _sh #k
+:U2
+:2
+       * -   :repoquery `rpm -q --qf '%{name}' #@`
+       * +   :repoquery `rpm -q --qf '%{name}' ##`
+:R
+	* * :yum reinstall `rpm -q --qf '%{name}' #@`
+:S
+	* * :yum search --qf '%-50{nevra} %-20{distribution}\n' `rpm -q --qf '%{name}' #@`
+
+:L
+	* - :rpm -q --qf '%{installtime:date}\t%-50{nevra} %-20{vendor}\n' #@
+	* + :rpm -q --qf '%{installtime:date}\t%-50{nevra} %-20{vendor}\n' ##
+:U3
+:3
+       * -   :rpm -qi #@
+       * +   ;rpm -qi ## | #m
+
+:U4
+:4
+       * -   ;rpm -ql #@ | #m
+       * +   ;rpm -ql ## | #m
+
+:U5
+:5
+       * -   ;rpm -q --provides #@ | #m
+#       * +   kill -15 ##
+
+:U6
+:6
+       * -   ;rpm -qR #@ | #m
+#       * +   kill -15 ##
+
+:U7
+:7
+#       * -   ;repoquery -i #@
+	* -	:repoquery --whatrequires `rpm -q --qf '%{name}' #@`
+	* +	:repoquery --whatrequires `rpm -q --qf '%{name}' ##`
+
+:U8
+:8
+       * -   yum erase #@
+       * +   yum erase ##
+:U9
+:9
+       * *   _sup
+:EX
+:U0
+:0
+       * *     exit
+:^D
+	* *	:exit
+:[Z]
+       * *     _cmdset .ashrpm
+:[=]
+	* *	_rescan
+
+:^[ZB]
+# suspend process, back to parent shell
+       * *     _sus
+#------------------------------------------
+:[ -~]
+	* * _msg key is not assigned to any command
+:??*
+	* * _msg key unrecognized
+:*
+	* * _msg please, switch keyboard to ASCII input mode
+#------------------------------------------
