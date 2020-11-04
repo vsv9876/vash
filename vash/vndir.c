@@ -37,8 +37,10 @@
 #include "assist.h"
 #include "astat.h"
 
+#ifdef RETRO
 extern  char  Crepf[];
 extern  char  Cfill[];
+#endif
 
 #define ITMCNM 255      /* must be in "assist.h" */
 

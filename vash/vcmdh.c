@@ -297,7 +297,7 @@ register LINE *line;
 kbcod cod;
 {
 	char *cmd;
-	extern char Cfill[];
+	/*extern char Cfill[];*/
 
 	cmd = *(char **)(line->varl);
 

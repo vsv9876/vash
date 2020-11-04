@@ -8,8 +8,10 @@
 #include "line.h"
 #include "assist.h"
 
+#ifdef RETRO
 extern  char  Crepf[];
 extern  char  Cfill[];
+#endif
 
 static stopvfread = 0;
 static FILE *vfr_fp;

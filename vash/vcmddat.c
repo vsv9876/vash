@@ -7,7 +7,8 @@
 
 #define WSMAX 300
 
-char    Cfill[MAXLICO] = "";
+/*char    Cfill[MAXLICO] = "";*/
+char    *Cfill;
 char    Crepf[MAXLICO] = "";
 char    Coutf[MAXLICO] = "";
 char    Csubs[MAXLICO] = "";
@@ -136,7 +137,13 @@ register char *s;
 		break;
 	case 'f': case 'i': case 'o': case '@':
 		switch (*s++) {
-		case 'f': p = Cfill; break;
+		case 'f':
+			/* command line on start vash would be preferred */
+			if (*Cfill != '\0')
+				return(1);
+			else
+				p = Cfill;
+			break;
 		case 'i': p = Crepf; break;
 		case 'o': p = Coutf; break;
 		case '@': p = Csubs; break;

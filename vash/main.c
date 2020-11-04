@@ -44,6 +44,7 @@ char *pmtsh;
 usage()
 {
 	fprintf(stderr, "Usage: vash [-1] [-bN] [-c] [-h] [-S] [-s] [-w] [-x] [-m] [-p]\n");
+	fprintf(stderr, "Usage: vash [any flags] -- command\n");
 	exit(1);
 }
 
@@ -91,6 +92,16 @@ static  LINE tmplate =
 
 char    *itms1[ITMMAX+1];       /* УКАЗАТЕЛИ НА ПУНКТЫ ГЛАВНОГО МЕНЮ */
 
+cfill(argc, argv)
+int argc;
+char **argv;
+{
+	for (argc--, argv++; argc > 0; argc--, argv++) {
+		strcat(Cfill, argv[0]);
+		strcat(Cfill, " ");
+	}
+}
+
 main(argc, argv)
 int argc;
 char **argv;
@@ -119,7 +130,7 @@ char **argv;
 
        /* setup extra directory for all working files library, ashstd will be found in that place */
        if ((s = getenv(VEXDIR)) != (char *)0) vexdir = s;
-       if ((s = getenv(VPATH)) != (char *)0) vpath = s;
+       if ((s = getenv(VAPATH)) != (char *)0) vpath = s;
 
 #ifdef  VTTY
 	vtty();
@@ -186,6 +197,14 @@ char **argv;
 		}
 	}
 
+	Cfill = malloc(4096); /* TODO constant in assist.h */
+	if (Cfill != NULL) {
+		*Cfill = ':';
+		*Cfill = '\0';
+	} else {
+		printf(stderr, "Can't get extra memory");
+		exit (1);
+	}
 
    	for (argc--, argv++; argc > 0; argc--, argv++) {
 		if (*argv[0] == '-') {
@@ -227,12 +246,21 @@ char **argv;
 			case 'm':
 				cmailf = 0;
 				continue;
+
+			case '-':
+				cfill(argc, argv); /* tail of agruments is fill command replaced one from ashstd */
+				goto args_done;
+				break;
 			}
 		} else {
 			/* имя файла для интерпретации cmdset() */
 			ashstd = *argv;
 		}
 	}
+args_done:
+#ifdef DEBUG
+	printf("args_done; Cfill=\"%s\" ashstd=\"%s\"\n", Cfill, ashstd);
+#endif
 
    	if ((envshell=getenv("SHELL")) == (char *)0) {
    		envshell = "/bin/sh";
@@ -253,22 +281,29 @@ char **argv;
 #endif
 	io_set(IO_VIDEO);
 	signal(SIGINT, onintr);
-
+#ifdef DEBUG
+	printf("   Cfill=\"%s\" ashstd=\"%s\"\n", Cfill, ashstd);
+#endif
 /*NOXSTR*/
-	if ( cmdset(ashstd) && fil_vf(1) ) {
-		/* Настроить нач. состояние области свитка */
-		/* y0_top = maxli - clm._yy_max;/* - 1;*/
+	if ( cmdset(ashstd) ) {
+#ifdef DEBUG
+		printf("cmdset; Cfill=\"%s\" ashstd=\"%s\"\n", Cfill, ashstd);
+#endif
+		if ( fil_vf(1) ) {
+			/* Настроить нач. состояние области свитка */
+			/* y0_top = maxli - clm._yy_max;/* - 1;*/
 
-		/*y0_top = 0;*/
-		y0_top = clm._y0;/* - 1;*/
-		scrlnl();
-		/*y0_top = clm._y0;*/
+			/*y0_top = 0;*/
+			y0_top = clm._y0;/* - 1;*/
+			scrlnl();
+			/*y0_top = clm._y0;*/
 
-		signal( SIGINT, SIG_IGN );
-		signal( SIGQUIT, SIG_IGN );
+			signal( SIGINT, SIG_IGN );
+			signal( SIGQUIT, SIG_IGN );
 
-		u_menu(clm._vf, "mainh.lb");
-		onexit(0); exit(0);
+			u_menu(clm._vf, "mainh.lb");
+			onexit(0); exit(0);
+		}
 	} else {
 		/* ошибки (плохо установлен ash, не читается реперный файл */
 		/* scrlnl(); */

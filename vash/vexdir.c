@@ -10,4 +10,4 @@
 
 char   *vexdir = DESTLIB;
 char   *versn  = VERSN;
-char   *vpath  = VPATH;
+char   *vpath  = VAPATH;

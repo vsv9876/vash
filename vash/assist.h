@@ -4,7 +4,7 @@
 #ifndef assist_h_def
 #define assist_h_def
 #define VEXDIR "VASH_EXDIR"
-#define VPATH  "VASH_PATH"
+#define VAPATH "VASH_PATH"
 
 /* Основные константы внутренних таблиц меню */
 
@@ -101,5 +101,10 @@ extern int try_compl(), hlp_compl(), hlp_clr(), cmdput(), vsystem(), showtime();
 extern int sl_chkdup();
 
 extern int cvt_vf(), cvt_s();
+
+extern  char *Cfill;
+extern  char Crepf[];
+extern  char Coutf[];
+extern  char Csubs[];
 
 #endif /* assist_h_def */

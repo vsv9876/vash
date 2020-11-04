@@ -15,10 +15,12 @@ extern  int     y0_top;
 char   *onoff[] = { "( )", "(x)", 0 };
 /*char   *onoff[] = { " | ", " x ", 0 };*/
 
+#ifdef RETRO
 extern  char    Cfill[];
 extern  char    Crepf[];
 extern  char    Coutf[];
 extern  char    Csubs[];
+#endif
 
 /*ARGSUSED*/
 int
@@ -27,10 +29,13 @@ register LINE *line;
 kbcod cod;
 {
 	int *var;
+	char *s = calloc(sizeof(char), MAXLICO);
 
 	var = (int *)line->varl;
 	if (*var < 2 || *var > (maxli - 4)) {
-		w_emsg("Please, select between 2 and 20");
+		/*w_emsg("Please, select between 2 and 20");*/
+		sprintf(s, "Please, select between 2 and %-d ", (int)(maxli - 4));
+		w_emsg(s);
 		return(FALSE);
 	}
 	return(TRUE);
@@ -48,7 +53,7 @@ IN_PORTS inport[] = {
 	{ "versn",      &versn },
 	{ "vexdir",     &vexdir },
 	{ "vpath",      &vpath },
-	{ "f",          Cfill },
+	{ "f",          &Cfill },
 	{ "i",          Crepf },
 	{ "o",          Coutf },
 	{ "r",          Csubs },

@@ -4,10 +4,12 @@
 #include "line.h"
 #include "assist.h"
 
+#ifdef RETRO
 extern  char    Cmore[];
 extern  char    Cred[];
 extern  char    Cfill[];
 extern  char    Crepf[];
+#endif
 
 #ifdef RT11
  error Программа предназначена исключительно для unix
@@ -115,8 +117,8 @@ char *fill;
 	else
 		strncpy(newCfill, Cfill, maxlen);
 
-	sprintf(prompts, " ls/fill (-f):");
-	cod = pmtrstr(prompts, newCfill, maxco - strlen(prompts) - 20);
+	sprintf(prompts, "-- ");
+	cod = pmtrstr(prompts, newCfill, maxco - strlen(prompts) - 2);
 	switch(cod) {
 	case KB_EX:
 		w_emsg("");

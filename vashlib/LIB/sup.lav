@@ -9,7 +9,7 @@ buildd  = c    buildd
 
 hl      = gc    -       -       cvt_hl  -       "-"
 coprts  = c     coprts
-f       = ipv   -       -       cvt_s   -       f
+f       = ipv   -       -       cvt_sp  -       f
 i       = ipv   -       -       cvt_s   -       i
 o       = ipv   -       -       cvt_s   -       o
 r       = ipv   -       -       cvt_s   -       r
