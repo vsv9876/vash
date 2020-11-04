@@ -10,7 +10,8 @@
 #
 # default menu: fill, from, to (not used), arg
 #
--frpm -qa --qf '%{installtime} %-50{nevra} %-30{name} %20{distribution}\n'|sort -nr
+#-frpm -qa --qf '%11{installtime} %-30{name}\n'|sort -nr| colrm 1 12
+-frpm -qa --qf '%11{installtime} %-30{name} %-50{nevra} %20{distribution}\n'|sort -nr| colrm 1 12
 -i/var/lib/rpm/Name
 -o/dev/null
 -@2
@@ -20,9 +21,9 @@
 -1#
 -2repqry
 -3info
--4files 
--5provds
--6depnds
+-4files
+-5depnds
+-6provds
 -7whtreq
 -8erase
 -9SETUP
@@ -37,6 +38,7 @@
 
 #------------------------------------------
 
+:HE
 :[1!]
 	* *     _sh
 :[./a-z]
@@ -52,8 +54,8 @@
 	* * :yum search --qf '%-50{nevra} %-20{distribution}\n' `rpm -q --qf '%{name}' #@`
 
 :L
-	* - :rpm -q --qf '%{installtime:date}\t%-50{nevra} %-20{vendor}\n' #@
-	* + :rpm -q --qf '%{installtime:date}\t%-50{nevra} %-20{vendor}\n' ##
+	* - :rpm -q --qf '%-50{nevra} %{installtime:date}  %-20{vendor}\n' #@
+	* + :rpm -q --qf '%-50{nevra} %{installtime:date}  %-20{vendor}\n' ##
 :U3
 :3
        * -   :rpm -qi #@
@@ -66,19 +68,20 @@
 
 :U5
 :5
-       * -   ;rpm -q --provides #@ | #m
+       * -   ;rpm -qR #@ | #m
 #       * +   kill -15 ##
 
 :U6
 :6
-       * -   ;rpm -qR #@ | #m
+       * -   ;rpm -q --provides #@ | #m
 #       * +   kill -15 ##
 
 :U7
 :7
 #       * -   ;repoquery -i #@
-	* -	:repoquery --whatrequires `rpm -q --qf '%{name}' #@`
-	* +	:repoquery --whatrequires `rpm -q --qf '%{name}' ##`
+#	* -	:repoquery --whatrequires `rpm -q --qf '%{name}' #@`
+	* -	:rpm -q --whatrequires `rpm -q --qf '%{name}' #@`
+	* +	:rpm -q --whatrequires "`rpm -q --provides ##`"
 
 :U8
 :8
@@ -93,8 +96,9 @@
        * *     exit
 :^D
 	* *	:exit
-:[Z]
-       * *     _cmdset .ashrpm
+# TODO: arg of _cmdset must be parameterized
+#:[Z]
+#       * *     _cmdset .ashrpm
 :[=]
 	* *	_rescan
 
