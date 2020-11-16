@@ -241,7 +241,7 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 			case KB_KE: /* КОНЕЦ ЗНАЧАЩЕЙ ИНФ. */
 			   for(i=size-1; isspace(str_l[i]);	i--); i++; break;
 			case KB_KH: i = 0; break;
-			case KB_IN: edinsm=(edinsm ? 0 : 1);
+			case KB_KI: edinsm=(edinsm ? 0 : 1);
 				   edinfo(1);
 				   break;
 			case KB_KD:

@@ -14,6 +14,8 @@ extern LPA lpaout[];
 
 extern int cvt_co(); /* function there below */
 
+extern char namelh[];
+
 int     wamask[10] = {
 	A_SO,   A_US,   A_VS,   A_MD,	A_MR,   A_MB,   A_MK,	0,      0,      0,
 	};
@@ -23,12 +25,20 @@ LPA     *lpa_p[2] = {
 	lpaout,         lpainp
 	};
 
+static char *pimmsg[] = {
+		/*" \"w\"   |-->  ",*/
+		/*" \"r\"   . |-->",*/
+		" \"w\"   ",
+		"   \"r\" ",
+		"         "
+};
+
 /* Color support for attr.cv page */
 char   *sgrms[] = {
 		"#0-dumb       ",
 		"#1-monochrome ",
 		"#2-color      ",
-		"#3-color256   ",
+/*		"#3-color256   ",*/
 		0 };
 extern int		sgrmode; /*global LINLIB mode*/
 
@@ -38,7 +48,7 @@ LINE *linesgr = (LINE *)0;
 /*char *sgra = "";*/
 char *sgra = lpaout[0].lpa_sgr; /* SGR code, common (global) pointer, between cvt_sgr, cvt_co, cvt_csel */
 
-char sgrats[20] = ""; /* SGR attrib tempopary string */
+char sgrats[20] = ""; /* SGR attrib temporary string */
 extern int cvt_sg();
 
 LINE *getlsgr(line, varl)
@@ -141,7 +151,7 @@ char *str;
 
 	i = (int) line->varl;
 	if (*mod == 'w') {
-		strcpy(outstr, ". .");
+		strcpy(outstr, ". ."); /*'. .';*/
 		strcpy(str, outstr);
 	} else {
 		strcpy(outstr, ". .");
@@ -152,11 +162,11 @@ char *str;
 			/*выбрать, где будет настроен результат */
 			switch (lpa_pi) {
 			case 0:
-				outstr[0] = '%'; /*lpap = lpa_p[0];*/
+				outstr[0] = '#'; /*lpap = lpa_p[0];*/ /*'%';*/
 				sgr_v = &lpaout[i].lpa_sgr[0];
 				break;
 			case 1:
-				outstr[2] = '%'; /*lpap = lpa_p[1];*/
+				outstr[2] = '#'; /*lpap = lpa_p[1];*/
 				sgr_v = &lpainp[i].lpa_sgr[0];
 				break;
 			}
@@ -172,7 +182,7 @@ char *str;
 			w_line(line4); /* вызов перенесен в sgr_ed(), но теперь на месте, здесь */
 			ref_co(line, cod);
 			w_line(linesgr);
-			if (i == TXT)
+			/*if (i == TXT)*/
 				repage();
 		} else {
 			if (linesgr != NULL) {
@@ -374,10 +384,10 @@ char   *str;
 			}
 
 			/* hint in case of TXT attribute - affected all screen view */
-			if (lpax == 1)
-				sgrtst(line, KB_NL); /*cod);*/
-			else
-				w_line(line4);
+			/*if (lpax == 1)*/
+				sgrtst(line, KB_NL); /*cod);*//*may be better to refresh all the page*/
+			/*else
+				w_line(line4);*/
 		}
 	}
 	if(*mod == 'w') {
@@ -523,7 +533,7 @@ char   *str;
 			else           { (*ap) = (*ap) | ( va); }
 
 			w_line(line4);
-			if (i == TXT)/* && cod == ' ')*/
+			/*if (i == TXT)/* && cod == ' ')*/
 				repage();
 		}
 	}
@@ -646,11 +656,6 @@ char   *str;
 	return(TRUE);
 }
 
-static char *pimmsg[] = {
-		"on write  -->  ",
-		"  on read   -->",
-		"               "
-};
 cvt_pim(line, cod, mod, str)
 LINE   *line;
 kbcod   cod;
@@ -707,10 +712,11 @@ kbcod cod;
 		/*er_pag();*/
 		/* find 1st line with HDR type wide of screen */
 		for (l=linem; l->size != 0; l++) {
-			if (!(l->colu == 0 && l->attr & (VIDEO & HDR)))
-				continue;
-			cp_set(l->line, l->colu, TXT);
-			er_eop(TXT);
+			if (l->colu <= 16 && l->attr & (VIDEO & HDR)) {
+				cp_set(l->line, 0/*l->colu*/, TXT);
+				er_eop(TXT);
+				break;
+			}
 		}
 		w_page(linem);
 		break;
@@ -831,7 +837,7 @@ LINE *phline;           /* pointer to instant page with help screen */
 		case 'r':
 			lpa_pi = 1; show_pi();
 			break;
-		case KB_IN:
+		case KB_KI:
 			lpa_pi = lpa_pi ? 0 : 1; show_pi();
 			break;
 		case ' ':

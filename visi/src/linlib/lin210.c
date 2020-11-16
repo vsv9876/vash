@@ -156,7 +156,7 @@ KBL kbl[KBLSIZE] = {
 	/* extended for linlib 4 since 2017-05 */
 	/* delUnderCursor, insert, home, end, PageUp, PageDown */
 	{ KBCOD('k','D'),   KB_KD,   "del->  " },
-	{ KBCOD('k','I'), KB_IN,    "Insert" },
+	{ KBCOD('k','I'), KB_KI,    "Insert" },
 	{ KBCOD('k','h'), KB_KH,    "Home  " },
 	{ KBCOD('@','7'), KB_KE,    "End   " },
 	{ KBCOD('k','P'), KB_PU,    "PgUp  " },
@@ -202,22 +202,22 @@ LPA lpaout[LPASIZE] = {
 	{       ' ',    0,          "0"     },              /* CMD  */
 	{       ' ',    0,          "39;49" },              /* TXT  */
 	{       ' ',    A_MR,       "36;44" },              /* HDR  */
-	{       ' ',    A_MD,       "33"    },              /* VAR  */
-	{       ' ',    A_MD,       "35"    },              /* ALT  */
-	{       '*',    A_MD,       "32"    },              /* MSE  */
-	{       ' ',    A_MD|A_US,  "37;41" },              /* ERR  */
-	{       '!',    A_MR,       "37;40" },              /* ATT  */
+	{       ' ',    A_MD,       "39"    },              /* VAR  */
+	{       ' ',    0,          "31"    },              /* ALT  */
+	{       '*',    0,          "32"    },              /* MSE  */
+	{       ' ',    A_MD,       "37;41" },              /* ERR  */
+	{       ' ',    A_MR,       "39;49" },              /* ATT  */
 };
 
 LPA lpainp[LPASIZE] = {
 	{       ' ',    A_MD,       "31;49" },             /* CMD */
-	{       '|',    0,          "33"    },              /* TXT  */
-	{       ' ',    A_MR,       "37;44" },              /* HDR  */
-	{       '"',    A_MR,       "37;44" },              /* VAR  */
-	{      '\'',    A_MR,       "37;45" },              /* ALT  */
-	{       '>',    A_MR|A_MD,  "32;42" },              /* MSE  */
-	{       ' ',    A_MD|A_US,  "36;41" },              /* ERR  */
-	{       ' ',    A_MD|A_MB,  "39;49" },              /* ATT  */
+	{       ';',    0,          "33"    },              /* TXT  */
+	{       ' ',    A_MR|A_US,  "36;40" },              /* HDR  */
+	{       '"',    A_MR|A_MD,  "37;44" },              /* VAR  */
+	{      '\'',    A_MR,       "35;47" },              /* ALT  */
+	{       '>',    A_MR|A_MD,  "32"    },              /* MSE  */
+	{       ' ',    A_US|A_MD,  "37;41" },              /* ERR  */
+	{       '!', A_US|A_MR|A_MB,  "33;49" },              /* ATT  */
 };
 
 int		sgrmode = 1; /* initial monochrome, not a dumb :) */

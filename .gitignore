@@ -2,6 +2,7 @@
 .metadata
 .project
 .settings
+.kde*
 .git
 buildd.h
 conf.cfg

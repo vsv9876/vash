@@ -1,65 +1,77 @@
     -- BUGS/FIX
     - shebang в скриптах - должен быть (#!/usr/bin/vash)  
+
     - переименовать проект, в том числе, префиксы имен настроечных файлов
     - остались .ashstd, ASHLBL и другие, должны быть vash/VASH
+    - cleanup, readme, LICENSE
+
     -- DOC/MAN
-    - cleanup, readme, license
-  * - vash.1 en/ru
+  * - man page vash.1 en/ru
     - linlib en
     ------------------------------------------------------------------------------
 
-    -- LINLIB/VISI
+    -- LINLIB, VHSET, 
+
+    -- новая навигация r_page(), более каноническая - PgUp/PgDown, Home/End
+    -- статусная строка (трей приложения)
+
+    -- ограничение вывода на экран по maxli,maxco: cp_set,w_chr
+    -- поддержка панелей - спец.версии cp_set,at_set,w_panel
+    
  ?? -- Unicode/UTF-8 support for main list (filenames) and internals
- ** -- редактор строки должен уметь редактировать бесконечные строки в ограниченном окне линии -
-  - сделать флаг описания линии для "бесконечных" строк - line.h, vcc/lbp/vlbp
-  - сделать разбор флага и поведение r_line()
-  - модифицировать e_str - вызов w_str на границах линии, контроль выхода за границы буфера строки,
-  - размер буфера строки - большая константа, например 1K (наколотить внятные 1000 символов?! ;)
-    --   скролить их по горизонтали. Не забыть про гистерезис <> показываемой части строки!
-    -- LINLIB/VHSET:
- *+  -- ANSI Color SGR/
+
+ ** -- редактор строки должен уметь редактировать "бесконечные" строки в ограниченном окне линии -
+	    //- скролить по горизонтали, гистерезис <> видимой части строки!
+	    //- r_line(), line.h, vcc/vlbp
+	    //- e_str/w_str: контроль границ буфера строки (4K bytes),
+
+ *+  -- ANSI Color SGR/256
     -- навести порядок vhset с нулевой страницей настройки (основные клавиши) -
-    --   похоже что 4 кнопки стрелок переопределять _никогда_ не требуется, но
-    ---   должен быть выбор "языков" навигации/редактирования -
-    ---   наверное, команды для редактирования строки и переходов между контекстами
-    ---   должны быть более удобными, желательно выбор linlib/vi/emacs
-    + пересмотреть концепцию второго ряда логических атрибутов (с флагом INP)s
-    -- реально нужны только VAR,MSE и для красоты ALT, еще INP|TXT
-    // остальные LPA можно использовать для сообщений, и индикаторов,
-    // но сейчас они странно называются и это источник путаницы -
-    + добавлен "забытый" CMD (странно, что его не было изначально), упраздняется FGBG
+	    // похоже что 4 кнопки стрелок переопределять _никогда_ не требуется, но
+	    ////   должен быть выбор "языков" навигации/редактирования -
+	    ////  наверное, команды для редактирования строки и переходов между контекстами
+	    ////  должны быть более удобными, желательно выбор linlib/vi/emacs
 
-    + индикация режима редактирования через _msg в последней строке -
-    - от конца предпоследней строки будет правильно; скорректировать с часами и MAIL
+    -- синонимы клавишных команд (сейчас спрятаны)
 
-    ------------------------------------------------------------------------------
-    -
-    -- VHSET: настройка синонимов должна быть явной (сейчас она "спрятана")
-    ++ выделить описания страниц visi в include-файлы, добавить Makefile правила: .cv.i, drop .i
-    - linlib/vhset: наследование от stty cooked intr, erase.
+    -- новые страницы справки
+
+
+    + line.h: INP(LPA) -
+	пересмотреть концепцию второго ряда логических атрибутов
+	    // реально нужны только VAR,MSE и для красоты ALT
+	    // остальные LPA можно использовать для сообщений, и индикаторов,
+	    // но сейчас они странно называются и это источник путаницы -
+    + добавлен "забытый" CMD
+
+    - наследование от stty cooked: intr, erase.
     - ^Z для SYSV (ISC) lin132/lin140 must be redefined, also Del/BS, Ctl-W, Ctl-U
-
     ------------------------------------------------------------------------------
     -
     -- VASH:
- *  - list main menu with PgUp/PgDown/Home/End - now only arrow navigation implemented
- *  - TAB completion, must show next frame of candidates on sequental pressing TAB
-    - filter for main window and generic vf menu (on command '_')
-    - BASH_ENV, alias_expand into v.sh
+
+ *  - list main menu with PgUp/PgDown/Home/End
+ *  - TAB completion must show next frame of candidates
+    -- filter on command '_'
+    -- BASH_ENV, alias_expand into v.sh
 
  *  -+?- execve() for vash itself with reexport of VASH flags
 
  *  - оптимизация файлов настройки (директива include?)
+ *  - environ VAPATH/VEXDIR - search files like PATH (now sinle)
     -+ rescan dir: keep coursor near last known point, it is need more sofisticated comparizon (ex., rm -f ##)
-    - searching pattern across history (or select like in main lineset)
-    - separate command history cache and command history log
-    - special case for cd command history
 
-    -? add flag "on start jump to disrectory"
+    history:
+    - search on history
+    - special case for cd command history
+    - separate cache and log(conduit) files
+    - compatible with .bash_history (timestamp)
+
+    -? add flag to argv "jump to directory"
     - extended attributes for files (rwx unsufficient)
     - work with very big directories and inode numbers (уйти от статического выделения памяти под списки главного окна)
 
-    - убрать следы в .ashstd от F2:menu
+    - redesign of f2:menu feature
 
     - Часы - убрать секунды (или сделать опцию)
 ********************************************************************

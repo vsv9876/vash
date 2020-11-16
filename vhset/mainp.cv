@@ -23,8 +23,6 @@ sp   = gv       -   -   -       -       "spacebar"
 
 ---#  LINLIB V3.4
 
- file:  .lh................................................................
-
 ---#  Exit from setup:
         .m_qu......................
 ---#    .m_m.......................
@@ -35,9 +33,13 @@ sp   = gv       -   -   -       -       "spacebar"
 
  Please, press a key:
 
-		.:NL.... -- advance to next menu point
-		.sp..... -- select menu
-		.:HE.... -- get help
+---#		-- advance to next menu point
+---#	    select menu: .sp.....
+---#		      or .:NL....
+
+	    get help:    .:HE....
+
+    file:  .lh................................................................
 
 ---#    .:?  or .:HE.... -- Help
 ---END

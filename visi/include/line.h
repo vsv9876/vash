@@ -226,7 +226,7 @@ typedef struct  {
 #define KB_TA     KBCOD('T','A')
 /* linlib 4 since 2017-05 */
 /* insert, delete(forward), home, end, PageUp, PageDown */
-#define KB_IN     KBCOD('I','N')
+#define KB_KI     KBCOD('K','I')
 #define KB_KD     KBCOD('K','D')
 #define KB_KH     KBCOD('K','H')
 #define KB_KE     KBCOD('K','E')
