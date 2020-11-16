@@ -12,14 +12,14 @@
 
     -- LINLIB, VHSET, 
 
+    -- Unicode/UTF-8 complete
+ 
     -- новая навигация r_page(), более каноническая - PgUp/PgDown, Home/End
     -- статусная строка (трей приложения)
 
     -- ограничение вывода на экран по maxli,maxco: cp_set,w_chr
     -- поддержка панелей - спец.версии cp_set,at_set,w_panel
     
- ?? -- Unicode/UTF-8 support for main list (filenames) and internals
-
  ** -- редактор строки должен уметь редактировать "бесконечные" строки в ограниченном окне линии -
 	    //- скролить по горизонтали, гистерезис <> видимой части строки!
 	    //- r_line(), line.h, vcc/vlbp
@@ -47,31 +47,33 @@
     - наследование от stty cooked: intr, erase.
     - ^Z для SYSV (ISC) lin132/lin140 must be redefined, also Del/BS, Ctl-W, Ctl-U
     ------------------------------------------------------------------------------
-    -
+
     -- VASH:
 
- *  - list main menu with PgUp/PgDown/Home/End
- *  - TAB completion must show next frame of candidates
-    -- filter on command '_'
-    -- BASH_ENV, alias_expand into v.sh
-
- *  -+?- execve() for vash itself with reexport of VASH flags
-
  *  - оптимизация файлов настройки (директива include?)
- *  - environ VAPATH/VEXDIR - search files like PATH (now sinle)
-    -+ rescan dir: keep coursor near last known point, it is need more sofisticated comparizon (ex., rm -f ##)
+ *  - list main menu with PgUp/PgDown/Home/End
+ *  - cmd menu: TAB completion must show next frame of candidates
+    -- main menu: filter on command '_'
+
+ *  -+?- pass vash flags on execve() as environ
+
+ ** VAPATH,VEXDIR like PATH
+
+ -+ rescan dir: keep coursor near last known item,
+    //// it is need more sofisticated comparizon (ex., rm -f ##)
 
     history:
-    - search on history
-    - special case for cd command history
+    - search simple pattern via menu
+    -- special case for cd command history
     - separate cache and log(conduit) files
     - compatible with .bash_history (timestamp)
 
+    argv/argc call:
     -? add flag to argv "jump to directory"
-    - extended attributes for files (rwx unsufficient)
-    - work with very big directories and inode numbers (уйти от статического выделения памяти под списки главного окна)
+    - extended file attributes (rwx unsufficient) permissions check 
+    - work with very big directories and inode numbers (уйти от статического выделения памяти под списки главного окна) (malloc+realloc)
 
-    - redesign of f2:menu feature
+ *  - f2:menu - rework to support std-profiles
 
     - Часы - убрать секунды (или сделать опцию)
 ********************************************************************

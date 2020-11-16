@@ -1,10 +1,10 @@
 Name:           vash
-Version:        2.0.8
+Version:        2.0.9
 Release:        1%{dist}
 Summary:        Visual Assistant Shell (vash)
 
 
-License:        BSD
+License:        MIT
 #URL:            file:///home/vsv/proj-ws/
 #BuildRoot: %{_tmppath}/%{name}-root
 #%{name}-%{version}.tar.gz
@@ -47,7 +47,7 @@ rm -rf %{buildroot}
 
 
 %files
-#%license LICENSE
+%license LICENSE
 #%doc DOC
 /usr/bin/*
 /usr/lib/*

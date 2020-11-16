@@ -1,49 +1,9 @@
 0 000 010		31;49
 1 000|000	39;49	33
-2 022 022	36	36;40
-3 010"020	39	34;47
-4 010'030	39	35;47
-5*000>020	32	32;49
+2 020 022	36;40	36;40
+3 010"020	39	37;44
+4 000'030	31	35;47
+5*000>020	32	32
 6 010 012	37;41	37;41
-7!020 062	39;49	39;49
+7!020 062	39;49	33;49
 +2
-:^KKPCtrl-K 
-:kuAUUP     
-:kdADDOWN   
-:klALLEFT   
-:krARRIGHT  
-:^JNLEnter  
-:deDE<-del  
-:^CEXCtrl-C 
-:k1HEF1     
-:^VPRCtrl-V 
-:^LRECtrl-L 
-:^ITATAB    
-:^AKHHome  
-:^EKEEnd   
-:^BPUPgUp  
-:^FPDPgDown
-:kDKDdel->  
-:kIINInsert
-:khKHHome  
-:@7KEEnd   
-:kPPUPgUp  
-:kNPDPgDown
-:k4PRPF4    
-:f0U0
-:f1U1
-:f2U2
-:f3U3
-:f4U4
-:f5U5
-:f6U6
-:f7U7
-:f8U8
-:f9U9
-:f.U.
-:f-U-
-:f,U,
-:^MNL
-:^HDE
-:^XEX
-:^RRE
