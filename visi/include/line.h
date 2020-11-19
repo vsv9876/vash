@@ -63,6 +63,7 @@ typedef unsigned linptr_t;
 #define rindex strrchr
 #endif
 
+#define NOUSE_STRCP
 #ifndef NOUSE_STRCP
 extern char *strcp(char *, char *);
 extern char *strncp(char *, char *, size_t);
@@ -232,6 +233,7 @@ typedef struct  {
 #define KB_KE     KBCOD('K','E')
 #define KB_PU     KBCOD('P','U')
 #define KB_PD     KBCOD('P','D')
+#define KB_SP     KBCOD('S','P') /* never detected, used in help pages */
 
 /*----------------------*/
 /* флаги функции io_set */

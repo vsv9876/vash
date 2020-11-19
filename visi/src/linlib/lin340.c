@@ -263,7 +263,8 @@ out_string:
 	/*==== ФОРМАТ НА ВЫВОД */
 	if( !(fmtlock = ((attr & FLO) == FLO))) { /*=== ЕСЛИ НЕ БЛОКИРОВАН */
 		if(line->cvtf) {                /* ЧЕРЕЗ ФУНКЦИЮ */
-			(*(line->cvtf))(line, cod, "w", u8buf); u8size = u8wcs(wcsptr, u8buf);
+			(*(line->cvtf))(line, cod, "w", u8buf);
+			u8size = u8wcs(wcsptr, u8buf);
 		}
 		else if(line->cvts) {           /* В СТИЛЕ printf */
 			cvts_out(line, u8buf);
@@ -277,8 +278,9 @@ out_string:
 		}
 	} else {
 string_simple:
-		//strncpy(s, line->varl, size); s[size] = 0;
-		u8size = u8wcsn(wcsptr, line->varl, size); wcsptr[size] = 0;
+		/*strncpy(s, line->varl, size); s[size] = 0;*/
+		u8size = u8wcsn(wcsptr, line->varl, size);
+		wcsptr[size] = 0;
 	}
 
 	/* slen = strlen(s);*/
@@ -373,9 +375,9 @@ inp_format:
 	if(fmtlock) goto inp_test;  /* М.БЫТЬ БЛОКИРОВАН... */
 
 	if(line->cvtf) {
-		cvt_ret = (*line->cvtf)(line, cod, "r", /*editptr*/u8buf);
+		cvt_ret = (*line->cvtf)(line, cod, "r", /*editptr*/&u8buf[0]);
 	} else if(line->cvts) {
-		cvt_ret = cvts_in(line, u8buf);
+		cvt_ret = cvts_in(line, &u8buf[0]);
 	} else {
 		/*просто строка - вернуть содержимое после редактирования*/
 		strcpy(line->varl, u8buf);
@@ -389,7 +391,7 @@ inp_format:
 #endif
 	if(cvt_ret == 0)
 		    bell();
-	//TODO: else { COMMIT editing result back to line->varl }
+	/*TODO: else { COMMIT editing result back to line->varl }*/
 	/*==== ОШИБКА ФОРМАТА ? */
 	if(cvt_ret == 0 && onexit == 0 ) goto edit_retry;
 

@@ -15,14 +15,14 @@
 ---LINES
 m_exit  = ipm      -   -   mkexit  tst_m   " Конец работы "
 
-s_raw   = ipv      -   -      	-       -	u8s
-s_var   = ipv      -   -      	cvt_s   -	u8s
-s_tst   = ipv      -   -      	cvt_s   -	u8s
+s_raw   = ipv      -   -	-       -	u8s
+s_var   = ipv      -   -	cvt_s   -	u8s
+s_tst   = ipv      -   -	cvt_s   -	u8s
 s_vd	= ipv      -   "%.20lf" -	-	&vd
-s_vf	= ipv      -   "%.5f" 	-	-	&vf
-s_vl	= ipv      -   "%ld"  	-       -	&vl
-s_vh	= ipv      -   "%hd"   -       -	&vh
-s_vi	= ipv      -   "%d"   	-       -	&vi
+s_vf	= ipv      -   "%.5f"	-	-	&vf
+s_vl	= ipv      -   "%ld"	-       -	&vl
+s_vh	= ipv      -   "%hd"	-       -	&vh
+s_vi	= ipv      -   "%d"	-       -	&vi
 ---# unsupported
 
 

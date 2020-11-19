@@ -14,26 +14,31 @@
 #include "line.h"
 #include "line0.h"
 
-static char *keynam[] = {
+/* order must be the same as declared in lin210.c: KBL kbl[KBSIZE] */
+static char const *keynam[] = {
 
 "KB_KP  Keypad toggle (on/off)",
 "KB_AU  cursor up",
 "KB_AD  cursor down",
 "KB_AL  cursor left",
 "KB_AR  cursor right",
-"KB_NL  Enter, end of line",
-"KB_DE  Delete left from cursor",
+"KB_TA  Tab, advance next line",
+"KB_SP  space bar, menu/selector",
+
+"KB_NL  enter/return - complete input",
+"KB_DE  erase left from cursor",
+
 "KB_EX  Exit, end of frame, cancel",
-"KB_HE  Help call",
+"KB_HE  Help page call",
+"KB_RE  Refresh/redraw screen",
 "KB_PR  Prefix for complex keyboard command",
-"KB_RE  Refresh (redraw) screen",
-"KB_TA  Tab key (for editing)",
-"KB_KH  Home key",
-"KB_KE  End key",
-"KB_PU  PgUp",
-"KB_PD  PgDown",
-"KB_KD  del->  ",
+
 "KB_IN  Insert",
+"KB_KD  delete under cursor",
+"KB_KH  jump to 1st position",
+"KB_KE  jump to last position",
+"KB_PU  scroll page back",
+"KB_PD  scroll page forward",
 0 };
 
 extern  int cvt_sp();
@@ -63,7 +68,7 @@ char *str;
 	}
 	else if ( *mod == 'r' && cod == ' ' ) {
 		cp_set(line->line, line->colu, ATT|INP);
-		w_strn("??????", line->size);
+		w_strn("  <?> ", line->size);
 
 		w_msg(ATT, "Press new key...");
 		tmpcod = r_key();

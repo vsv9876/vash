@@ -85,6 +85,7 @@ do_kbl()
 	kbcod   t_key;     /* ФИЗ. КОД КЛАВИШИ */
 	kbcod   t_cod;     /* ЛОГ. КОД */
 	kbcod   t_cods;    /* ЛОГ. КОД КЛАВИШИ ДЛЯ ПОИСКА */
+	char    c1,c2;		/* 2 символа для получения кода через макрос */
 
 	register LPA *lpap;
 	LPA *lpapset[2]; /*0-lpaout, 1-lpainp*/
@@ -95,6 +96,7 @@ do_kbl()
 		int lpa_i;
 		 int ibeg;
 		 char *os;
+		 int  oscnt;
 
 #ifndef DEMOS2
 	/* ЕСЛИ НЕТ ИНФОРМАЦИИ, ГДЕ ИСКАТЬ НАСТРОЙКУ, КОНЕЦ */
@@ -166,10 +168,18 @@ cont1:
 		else if(*s == ':') {
 			s++;
 			/* ПОЛУЧИТЬ ОБА КОДА КЛАВИШИ */
+			/*
 			t_key  = tocod0(*s++);
 			t_key |= tocod1(*s++);
 			t_cod  = tocod0(*s++);
 			t_cod |= tocod1(*s++);
+			*/
+			c1 = *s++;
+			c2 = *s++;
+			t_key = KBCOD(c1, c2);
+			c1 = *s++;
+			c2 = *s++;
+			t_cod = KBCOD(c1, c2);
 
 #ifndef UASDEBUG
 			/* ПРОВЕРИТЬ, ВМЕСТО ЧЕГО ВСТАВЛЯТЬ */
@@ -178,12 +188,15 @@ cont1:
 					/* СКОПИРОВАТЬ ФИЗ. КОД */
 					kbl[i].t_key = t_key;
 					/* СКОПИРОВАТЬ НАЗВАНИЕ */
-					if(os = kbl[i].t_knm) {
-					    kbl[i].t_knm = malloc(KBLSIZE);
+					if(1/*os = kbl[i].t_knm*/) {
+					    /*kbl[i].t_knm = malloc(KBLSIZE);*/
 					    os = kbl[i].t_knm;
-					    while(*s && isprint(*s)) {
-						*os++ = *s++;
-						*os = 0;
+					    for(oscnt=8; *s && isprint(*s); oscnt--) {
+					    	if (oscnt>0) {
+								*os++ = *s;
+								*os = '\0';
+					    	}
+					    	s++;
 					    }
 					}
 					goto cont;

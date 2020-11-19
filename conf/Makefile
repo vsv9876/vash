@@ -119,7 +119,9 @@ DEBUG = -g -O0
 CC          = gcc $(DEBUG) -fno-builtin-function \
 			-Wno-int-to-pointer-cast -Wno-pointer-to-int-cast \
 			-Wno-implicit-int \
-			-Wno-implicit-function-declaration
+			-Wno-implicit-function-declaration \
+			-Wwrite-strings
+#
 #LINKER      = gcc -m32 $(DEBUG) -fno-builtin-function -static
 LINKER      = gcc $(DEBUG) -fno-builtin-function
 #

@@ -47,7 +47,7 @@ typedef struct {
 typedef struct {
 	kbcod   t_key;  /* ФИЗ. КОД ('ku') */
 	kbcod   t_cod;  /* ЛОГ. КОД ('AU') */
-	char   *t_knm;  /* НАЗВАНИЕ КЛАВИШИ ("ВВЕРХ") */
+	char    t_knm[8];  /* НАЗВАНИЕ КЛАВИШИ ("ВВЕРХ") */
 } KBL;  /* ЛОГИЧЕСКОЕ - СМЫСЛОВОЙ КОД И НАЗВАНИЕ */
 #define KBLSIZE 48
 

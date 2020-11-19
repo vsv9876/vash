@@ -79,10 +79,6 @@ KBF   kbf[] = {
 { KBCOD('k','d'), 0 },
 { KBCOD('k','l'), 0 },
 { KBCOD('k','r'), 0 },
-{ KBCOD('k','1'), 0 },
-{ KBCOD('k','2'), 0 },
-{ KBCOD('k','3'), 0 },
-{ KBCOD('k','4'), 0 },
 { KBCOD('I','C'), 0 },
 { KBCOD('D','C'), 0 },
 { KBCOD('I','L'), 0 },
@@ -99,6 +95,17 @@ KBF   kbf[] = {
 { KBCOD('@','7'), 0 },
 { KBCOD('k','P'), 0 },
 { KBCOD('k','N'), 0 },
+
+{ KBCOD('k','1'), 0 },
+{ KBCOD('k','2'), 0 },
+{ KBCOD('k','3'), 0 },
+{ KBCOD('k','4'), 0 },
+{ KBCOD('k','5'), 0 },
+{ KBCOD('k','6'), 0 },
+{ KBCOD('k','7'), 0 },
+{ KBCOD('k','8'), 0 },
+{ KBCOD('k','9'), 0 },
+{ KBCOD('k','@'), 0 },
 
 { KBCOD('f','.'), 0 },
 { KBCOD('f','-'), 0 },
@@ -135,35 +142,54 @@ char *tcapo[] = {
 	0 };
 
 /* СВЯЗЬ ФИЗИЧЕСКИХ И ЛОГИЧЕСКИХ КОДОВ, А ТАКЖЕ ИМЕН КЛАВИШ */
+/* vanilla setup, may be changed via 'vhset' utility */
+/* 1) main set mandatory, not to be changed */
+/* 2) 2nd set used as alias*/
 KBL kbl[KBLSIZE] = {
-	/*==== main set */
-	{ KBCTL(    'K'),   KB_KP,   "Ctrl-K " },    /* KEYPAD ON */
-	{ KBCOD('k','u'),   KB_AU,   "UP     " },		/* arrow keys */
-	{ KBCOD('k','d'),   KB_AD,   "DOWN   " },
-	{ KBCOD('k','l'),   KB_AL,   "LEFT   " },
-	{ KBCOD('k','r'),   KB_AR,   "RIGHT  " },
-	{ KBCTL(    'J'),   KB_NL,   "Enter  " },
-	{ KBCOD('d','e'),   KB_DE,   "<-del  " }, /* delete left from cursor */
-	{ KBCTL(    'C'),   KB_EX,   "Ctrl-C " },	/* exit */
-	{ KBCOD('k','1'),   KB_HE,   "F1     " }, /* help screen */
-	{ KBCTL(    'V'),   KB_PR,   "Ctrl-V " }, /* prefix for complex keyboard commands */
-	{ KBCTL(    'L'),   KB_RE,   "Ctrl-L " }, /* refresh/redraw page content on screen */
-	{ KBCTL(    'I'),   KB_TA,   "TAB    " },
-	{ KBCTL(    'A'), KB_KH,    "Home  " },
-	{ KBCTL(    'E'), KB_KE,    "End   " },
-	{ KBCTL(    'B'), KB_PU,    "PgUp  " },
-	{ KBCTL(    'F'), KB_PD,    "PgDown" },
-	/* extended for linlib 4 since 2017-05 */
-	/* delUnderCursor, insert, home, end, PageUp, PageDown */
-	{ KBCOD('k','D'),   KB_KD,   "del->  " },
-	{ KBCOD('k','I'), KB_KI,    "Insert" },
-	{ KBCOD('k','h'), KB_KH,    "Home  " },
-	{ KBCOD('@','7'), KB_KE,    "End   " },
-	{ KBCOD('k','P'), KB_PU,    "PgUp  " },
-	{ KBCOD('k','N'), KB_PD,    "PgDown" },
-	/**/
-	{ KBCOD('k','4'),   KB_PR,   "PF4    " },
-	/*==== extended set */
+
+	/* 0) KEYPAD ON, it is possible to redefine as usual */
+	{ KBCTL(    'K'),   KB_KP,  "Ctrl-K " }, /* kbl[0] */
+	{ KBCOD('k','u'),   KB_AU,  "UP     " }, /* 1 */
+	{ KBCOD('k','d'),   KB_AD,  "DOWN   " }, /* 2 */
+	{ KBCOD('k','l'),   KB_AL,  "LEFT   " }, /* 3 */
+	{ KBCOD('k','r'),   KB_AR,  "RIGHT  " }, /* 4 */
+
+	{ KBCTL(    'I'),   KB_TA,  "TAB    " }, /* 5 */
+	{ KBCTL(    'S'),   KB_SP,  "[space]" }, /* 6 */
+
+	/* 1) */
+	{ KBCTL(    'J'),   KB_NL,  "Enter  " },
+	{ KBCOD('d','e'),   KB_DE,  "<-del  " },
+
+	{ KBCTL(    'X'),   KB_EX,  "Ctrl-X " }, /* 9 */
+	{ KBCOD('k','1'),   KB_HE,  "F1     " },
+	{ KBCTL(    'R'),   KB_RE,  "Ctrl-R " },
+	{ KBCOD('k','4'),   KB_PR,  "PF4    " }, /* 12 */
+
+	{ KBCOD('k','I'), KB_KI,    "Insert " },
+	{ KBCOD('k','D'), KB_KD,    "del->  " },
+	{ KBCOD('k','h'), KB_KH,    "Home   " },
+	{ KBCOD('@','7'), KB_KE,    "End    " },
+	{ KBCOD('k','P'), KB_PU,    "PgUp   " },
+	{ KBCOD('k','N'), KB_PD,    "PgDown " }, /* 18 */
+
+	/* 2) */
+	{ KBCTL(    'M'),   KB_NL,  "Ctrl-M " },
+	{ KBCTL(    'H'),   KB_DE,  "Ctrl-H " },
+
+	{ KBCTL(    'C'),   KB_EX,  "Ctrl-C " },
+	{ KBCOD('k','2'),   KB_HE,  "PF2    " },
+	{ KBCTL(    'L'),   KB_RE,  "Ctrl-L " },
+	{ KBCTL(    'V'),   KB_PR,  "Ctrl-V " },
+
+	{ KBCTL(    'S'), KB_KI,    "Insert " }, /* 13 */
+	{ KBCTL(    'S'), KB_KD,    "del->  " },
+	{ KBCTL(    'A'), KB_KH,    "Home   " },
+	{ KBCTL(    'E'), KB_KE,    "End    " },
+	{ KBCTL(    'B'), KB_PU,    "PgUp   " },
+	{ KBCTL(    'F'), KB_PD,    "PgDown " }, /* 18 */
+
+	/* 3) extended set with limited support, not supported by vhset yet */
 	{ KBCOD('f','0'),   KBUSR('0'),   0         },
 	{ KBCOD('f','1'),   KBUSR('1'),   0         },
 	{ KBCOD('f','2'),   KBUSR('2'),   0         },
@@ -177,11 +203,7 @@ KBL kbl[KBLSIZE] = {
 	{ KBCOD('f','.'),   KBUSR('.'),   0         },
 	{ KBCOD('f','-'),   KBUSR('-'),   0         },
 	{ KBCOD('f',','),   KBUSR(','),   0         },
-	{ KBCTL(    'M'),   KB_NL,   0         },    /*==== aliases */
-	{ KBCTL(    'H'),   KB_DE,   0         },
-	{ KBCTL(    'X'),   KB_EX,   0         },
-/*	{ KBCOD('k','h'),   KB_EX,   0         }, */
-	{ KBCTL(    'R'),   KB_RE,   0         },
+
 	{ 0 },
 	};
 

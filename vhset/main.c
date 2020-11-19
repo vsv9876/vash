@@ -127,16 +127,16 @@ vmain()
 		if(ex_flg) return 0;
 
 		switch(cod) {
-		    case '0' :
+		case '0' :
 			pag_mk(); /* basic keys setup, now hidden from menu */
-		    case '?' :
-		    case ' ' :
-		    case KB_NL:
+		case '?' :
+		case ' ' :
+		case KB_NL:
 			er_pag();
 			w_page(mainm);  /* refresh screen after submenu */
 			break;
 		
-		    case KB_HE:
+		case KB_HE:
 			w_help(helpf);
 			er_pag();
 			w_page(mainm);
@@ -151,6 +151,15 @@ vmain()
 
 main()
 {
+#define VHSET_DEBUG
+#ifdef VHSET_DEBUG
+	int ch;
+	char *s;
+	if ((s = getenv("VHSET_DEBUG")) != NULL) {
+		fprintf(stdout, "--> ready to debug, Please, press <Enter> to continue ");
+		fscanf(stdin, "%c", &ch);
+	}
+#endif
     visini();
     hw_set();
     io_set(IO_VIDEO);

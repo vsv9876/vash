@@ -75,7 +75,7 @@
 	bg      = ia - "b"   cvt_co  - LPA_B
 	sgr     = ia - -     cvt_sgr - LPA_B
 ---# 	pi      = g0 - "# "  cvt_pi  - LPA_B
-	M       = g1 - "| "  cvt_pi  - LPA_B
+	M       = g1 - "* "  cvt_pi  - LPA_B
 	pimsg0  = g  - "0"   cvt_pim - -
 	pimsg1  = g  - "1"   cvt_pim - -
 ---#	lh      = v  - -     -       - namelh
@@ -91,11 +91,14 @@
 ---# place of .sgraAT line must be below .sgr line
 ---SCREEN
 +.pimsg0.........   .CMD.  .TXT.  .HDR.  .VAR.  .ALT.  .MSE.  .ERR.  .ATT.
-+                          .M     .t.    .t.    .t.    .t.    .t.    .t.
-+.pimsg1.........          .M     .t.    .t.    .t.    .t.    .t.    .t.
-+                          .M.    .t.    .t.    .t.    .t.    .t.    .t.
++
++.pimsg1.........
++
+---#+                          .M     .t.    .t.    .t.    .t.    .t.    .t.
+---#+.pimsg1.........          .M     .t.    .t.    .t.    .t.    .t.    .t.
+---#+                          .M.    .t.    .t.    .t.    .t.    .t.    .t.
 =Video attributes
-+                          .M.    .t.    .t.    .t.    .t.    .t.    .t.
++
 +   line prompter:  .P.    .t.    .t.    .t.    .t.    .t.    .t.    .t.
 +."monochrome"....         .M.    .t.    .t.    .t.    .t.    .t.    .t.
 +     outstand(so)  .so    .t.    .t.    .t.    .t.    .t.    .t.    .t.
@@ -107,7 +110,7 @@
 +   foreground(fg)  .fg    .t.    .t.    .t.    .t.    .t.    .t.    .t.
 +   background(bg)  .bg    .t.    .t.    .t.    .t.    .t.    .t.    .t.
 +    stripe(fg,bg)  .sgr   .t.    .t.    .t.    .t.    .t.    .t.    .t.
-+                          .M.    .t.    .t.    .t.    .t.    .t.    .t.
++
 .lh.............................................................................
            .mode..  .sgrm..........  SGR debug: .sgrAT.....
 	   

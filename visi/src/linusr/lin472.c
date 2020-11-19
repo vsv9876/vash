@@ -31,22 +31,21 @@ int     cvt_sp(line, cod, mod, str)
 LINE *line;
 kbcod cod;
 char *mod;
-char *str;
+char *str; /*utf8 buffer*/
 {
-	register char **spp;
-#ifndef OLD_CVT_SP
-	register int max_co;
-	int size;
-	register char *si;
-	register char *so;
-	register int i;
+	char **spp;
 
-	spp = (char **)line->varl;
+#ifndef OLD_CVT_SP
+	int size;
+
+	spp = (char **)(line->varl);
+
 	size = line->size;
 	if (line->attr & PMT) size -= 1;
-	max_co = maxco-2;
-	if (str) {
+
+	if (str != NULL /*&& *str != '\0'*/ && *spp != NULL ) {
 		if(*mod == 'r') {
+			/*u8mbsn(*spp, str, size);*/
 			strcpy(*spp, str);
 		}
 		else    {
@@ -78,7 +77,7 @@ char *str;
 {
 	char *sp;
 
-	//int max_co;//TODO cleanup
+	/*int max_co;//TODO cleanup*/
 	int size;
 	register char *si;
 	register char *so;
@@ -87,7 +86,7 @@ char *str;
 	sp = (char *)line->varl;
 	size = line->size;
 	if (line->attr & PMT) size -= 1;
-	//max_co = maxco-2;
+	/*max_co = maxco-2;*/
 	if (str) {
 		if(*mod == 'r') {
 			strcpy(sp, str);

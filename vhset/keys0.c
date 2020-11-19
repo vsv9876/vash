@@ -32,7 +32,7 @@ pag_mk()
 	w_page(pkeys0);
 
 	w_emsg("step 1: assign new value of every key");
-	for(i=0; i<8;    ) {
+	for(i=0; i<1/*8*/;    ) {
 		/* найти место для маркера */
 		for ( j= -1, line=pkeys0; line->size != 0; line++) {
 			if( line->attr & INP ) j++;

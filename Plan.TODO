@@ -50,10 +50,13 @@
 
     -- VASH:
 
+ ** don't inherite stty from child, killed abnormally
+
  *  - оптимизация файлов настройки (директива include?)
  *  - list main menu with PgUp/PgDown/Home/End
  *  - cmd menu: TAB completion must show next frame of candidates
     -- main menu: filter on command '_'
+    --- render compact //count width in every column
 
  *  -+?- pass vash flags on execve() as environ
 

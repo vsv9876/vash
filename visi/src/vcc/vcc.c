@@ -626,7 +626,7 @@ int     typ;            /* 'h', 'c', 'k', '?' */
 		*os++ = '"';
 		while(*s) {
 			if(*s == '"') *os++ = '\\';
-			//sprintf(os++, "%lc", *s++);
+			/*sprintf(os++, "%lc", *s++);*/
 			sprintf(mb_s, "%lc", *s++);
 			for(mb_ptr = mb_s; *mb_ptr != '\0'; mb_ptr++) {
 				*os++ = *mb_ptr;

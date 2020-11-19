@@ -475,7 +475,7 @@ kbcod cod;
 	kbcod ed_cod;
 	register LINE *line4;	/* указатель на базовую линию в 4-й строке */
 	int posp;
-//	if (cod == ' ' || cod == KB_DE) {
+/*	if (cod == ' ' || cod == KB_DE) {*/
 	if ((/*linesgr=*/getlsgr(line, &sgra)) != (LINE *)0) {
 		linesgr->attr |= INP;
 		posp = 0;
@@ -486,7 +486,7 @@ kbcod cod;
 		line4 = getl4(line); /* тут будет показан результат с учетом новых параметров SGR */
 		w_line(line4);
 	}
-//	}
+/*	}*/
 	return(TRUE);
 }
 

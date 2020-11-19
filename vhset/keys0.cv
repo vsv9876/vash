@@ -10,10 +10,10 @@ static
 	t   = sizeof(KBL)
 
 ---PORTS
-KO_P    = &kbl[0].t_knm;
+KO_P    = kbl[0].t_knm
 
 ---LINES
-KO      = ipv   -       -       cvt_sp  -       KO_P
+KO      = ipv   -       -       cvt_s   -       KO_P
 sp      = gh    -       -       -       -       "spacebar"
 
 ---SCREEN
@@ -28,11 +28,11 @@ sp      = gh    -       -       -       -       "spacebar"
     .t......   cursor left             press .sp..... to cancel    
     .t......   cursor right
 				    step 2: to edit names of keys:    
-    .t......   Enter                   press .sp.....    
-    .t......   Delete                  to switch edit mode    
+    .t......   Tab                     press .sp.....    
+    .t......   space                   to switch edit mode    
 
-    .t......   Exit/prefix          step 3: to complete a job:            
-                                       press Exit key    
+    .t......   Enter/Return            step 3: to complete a job:            
+                                       press Exit key .:EX....   
 
 
 ---END

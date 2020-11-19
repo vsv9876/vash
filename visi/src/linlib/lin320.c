@@ -70,7 +70,7 @@ char *gsr;
 	char *fmt;
 
 	if(sgrmode <= 1) {
-		//awstate = AW_INIT_STATE;
+		/*awstate = AW_INIT_STATE;*/
 		/* dumb, monochrome */
 		return;
 	}
@@ -128,15 +128,15 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 
 	/* ЗАПОМНИТЬ для оптимизации повторной выдачи */
 	awstate = aw; /*scrn.sc_at;*/
-	//acstate = ac;
+	/*acstate = ac;*/
 
 	/* ТЕПЕРЬ ВКЛЮЧИТЬ */
-	//if (ac != ac_old) {
+	/*if (ac != ac_old) {*/
 		/*w_sgr(0);*/
 	/*w_sgr(lpainp[0].lpa_sgr); /* FGBG, used as preamble of GCR */
 	    w_sgr(lpaout[TXT].lpa_sgr); /* TXT as default background */
 		w_sgr(ac);
-	//}
+	/*}*/
 	if(aw != 0) {
 		if(aw & A_SO) w_raw(t_so);
 		if(aw & A_US) w_raw(t_us);
@@ -235,11 +235,11 @@ cp_sav()
 	s_colu = scrn.sc_co;
 	s_line = scrn.sc_li;
 	s_attr = scrn.sc_at;
-//	s_colr = scrn.sc_ac;
+/*	s_colr = scrn.sc_ac;*/
 }
 cp_fet()
 {
-//	w_csi(s_colr);
+/*	w_csi(s_colr);*/
 	cp_set(s_line, s_colu, s_attr);
 }
 
