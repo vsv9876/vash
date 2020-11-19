@@ -242,6 +242,7 @@ typedef struct  {
 #define IO_TTYPE  0000002       /* обычный телетайпный режим */
 #define IO_WAIT   0000004       /* next_j() ожидает нажатие клавиши */
 #define IO_NOWAIT 0000010       /* next_j() в непрерывном цикле */
+#define IO_TTYSANE 000040		/* do not save old tty state which probably broken */
 
 /*--------------------*/
 /* функции библиотеки */

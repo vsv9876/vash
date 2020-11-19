@@ -191,6 +191,7 @@ int  execapnd;
 	register char *p;
 	char psep;  /* сепаратор аргументов при подстановке, м. быть ' ' или ',' */
 	char *nm_ptr;
+	int ttysane = 0; /* container for IO_TTYSANE flag */
 
 	p = cmd;
 	i = 0;
@@ -289,7 +290,9 @@ int  execapnd;
 
 	/*moved from vsystem*/
 	fprintf(stdout, " "); fflush(stdout);
-	io_set(IO_VIDEO);
+	if (syscod != 0)
+		ttysane = IO_TTYSANE;
+	io_set(IO_VIDEO | ttysane);
 
 	return(syscod);
 }

@@ -86,31 +86,34 @@ static int v_off()
 /*----------------------------*/
 /* УСТАНОВКА ЭКРАННОГО РЕЖИМА */
 /*----------------------------*/
-static int v_on()
+static int v_on(inherit)
+int inherit;
 {
 	static   void       (*fsig)();
 	cc_t i;
 
+	if (inherit) {
+		/* get prev tty modes */
 #if 0
 	ioctl(vtti,TCGETS,&old);        /* get prev tty modes */
 #endif
-	/* get prev tty modes */
-	tcgetattr(vtti, &old);
-	new = old;
-	new.c_oflag = (new.c_oflag&(~OPOST));
-	new.c_lflag = ISIG;
+		tcgetattr(vtti, &old);
+		new = old;
+		new.c_oflag = (new.c_oflag&(~OPOST));
+		new.c_lflag = ISIG;
 #ifndef CNUL
 #define CNUL '\0'
 #endif
 	/* special character processing */
 /*        new.c_cc[VINTR  ] = CNUL; */
 /*        new.c_cc[VQUIT  ] = CNUL; */
-	for ( i = 0; i <= NCCS; i++)
-	    new.c_cc[i] = CNUL;
-	new.c_cc[VSTART] = old.c_cc[VSTART];
-	new.c_cc[VSTOP] = old.c_cc[VSTOP];
-	new.c_cc[VMIN ] = 1;    /* check, may be VMIN=VTIME=0 is better ? */
-	new.c_cc[VTIME] = 5;
+		for ( i = 0; i <= NCCS; i++)
+			new.c_cc[i] = CNUL;
+		new.c_cc[VSTART] = old.c_cc[VSTART];
+		new.c_cc[VSTOP] = old.c_cc[VSTOP];
+		new.c_cc[VMIN ] = 1;    /* check, may be VMIN=VTIME=0 is better ? */
+		new.c_cc[VTIME] = 5;
+	}
 
 	fsig = signal(SIGINT,SIG_IGN);
 	if( fsig == SIG_DFL )   {
@@ -255,6 +258,7 @@ extern int k_pad();     /* см. lin215.c */
 io_set(flags)
 register int flags;
 {
+	int inherit = 1; /* by default save old tty state, or drop in case waiting killed child */
 	/* переключение keypad приходится делать из-за
 	 * повсеместного распространения termcap для vt100, xterm,
 	 * в котором клавиши со стрелками правильно работают
@@ -262,9 +266,11 @@ register int flags;
 	 */
 	if(flags & IO_VIDEO)    {
 		fflush(vttout);
-		if (v_on()) {
+		if (flags & IO_TTYSANE)
+				inherit = 0;
+		if (v_on(inherit)) {
 			perror("io_set(v_on)");
-			v_on();
+			v_on(inherit);
 		}
 		k_pad(1);
 	}
