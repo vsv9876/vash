@@ -106,12 +106,21 @@ main(argc, argv)
 int argc;
 char **argv;
 {
-       char *envsup;   /* строка флагов из окружения */
-       char *ashstd;   /* имя файла настройки команд */
-       int c;
-       char *s;
+	char *envsup;   /* строка флагов из окружения */
+	char *ashstd;   /* имя файла настройки команд */
+	int c;
+	char *s;
 
-		if (!setlocale(LC_CTYPE, "")) {
+#define VASH_DEBUG
+#ifdef VASH_DEBUG
+	int ch;
+	/*char *s;*/
+	if ((s = getenv("VASH_DEBUG")) != NULL) {
+		fprintf(stdout, "--> ready to debug, Please, press <Enter> to continue ");
+		fscanf(stdin, "%c", &ch);
+	}
+#endif
+	if (!setlocale(LC_CTYPE, "")) {
 			fprintf(stderr, "Can't set the specified locale! "
 				"Check LANG, LC_CTYPE, LC_ALL.\n");
 			return 1;
@@ -130,7 +139,7 @@ char **argv;
 
        /* setup extra directory for all working files library, ashstd will be found in that place */
        if ((s = getenv(VEXDIR)) != (char *)0) vexdir = s;
-       if ((s = getenv(VAPATH)) != (char *)0) vpath = s;
+       if ((s = getenv(VAPATH)) != (char *)0) vapath = s;
 
 #ifdef  VTTY
 	vtty();
@@ -275,10 +284,7 @@ args_done:
 	}
     tmpfd = mkstemp(tmpflnm);      /* получить имя временного файла */
 /*  tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
-#ifdef DEBUG_VASH
-    int r;
-    read(0, r, 1);
-#endif
+
 	io_set(IO_VIDEO);
 	signal(SIGINT, onintr);
 #ifdef DEBUG

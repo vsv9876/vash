@@ -38,7 +38,7 @@ EXECMODE      =  755
 DESTDIR       =
 #DEST          = /usr/local
 DESTLIB       = $(DESTDIR)$(DEST)/lib/$(PROGRAM)
-VPATH         = $(DESTDIR)$(DEST)/lib/$(PROGRAM)
+VASH_PATH     = $(DESTDIR)$(DEST)/lib/$(PROGRAM)
 DESTBIN       = $(DESTDIR)$(DEST)/bin
 
 #CFLAGS_ASH    = -DJCLsuspend -DSYSV -DSVR4 -DMGROUPS
@@ -48,7 +48,7 @@ CFLAGS        = $(CFLAGS_ASH) \
 		-I$(VISI)/include\
 		-D'DESTLIB="$(DESTLIB)"' \
 		-D'VERSN="$(VERSN)"' \
-		-D'VPATH="$(VPATH)"'
+		-D'VASH_PATH="$(VASH_PATH)"'
 
 #CC            = cc -O
 #LINKER        = cc

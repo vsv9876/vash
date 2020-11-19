@@ -170,7 +170,7 @@ register char *cmd;     /* встроенная функция */
  * выполнить подстановки #k,#@,#i,#o,#a,..., кроме ##.
  */
 extern char* vexdir;
-extern char* vpath;
+extern char* vapath;
 
 int cmdsub(ptmp_sh, p, i, sh_esc)
 /*возвращает то же, что и nmsubs - необходимость обработки экранированных символов /bin/sh*/

@@ -180,7 +180,7 @@ char *file;
 
     /* настройка команд не берется из текущего каталога */
     /* а почему? - должна бы браться */
-    if ((fp=afopen(file, 1)) == NULL) {
+    if ((fp=afopen(file, vexdir)) == NULL) {
     	sprintf(ws, "can't read '%s/%s'", vexdir, file);
 		w_emsg(ws);
 		return(0);

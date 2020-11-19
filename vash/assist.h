@@ -86,7 +86,7 @@ extern  int     scrolf, oneitm, panelf, whodirf, xtermf, histf, histsn, clockf, 
 extern  char   *envshell;
 extern  char   *homedir;
 extern  char   *vexdir; /* vash extra files directory */
-extern  char   *vpath; /* vash library search path */
+extern  char   *vapath; /* vash library search path */
 extern  char   *cwd;
 extern  int     t_file();
 

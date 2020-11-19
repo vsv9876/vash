@@ -43,7 +43,7 @@ char *mfile;
 	extern FILE *afopen();
 
 	/* файлы меню выбираются из текущего каталога тоже */
-	if ((fpmenu = afopen(mfile, 1)) == NULL)
+	if ((fpmenu = afopen(mfile, vapath)) == NULL)
 		return(0);
 	/*
 	 * Читать строку из файла, запомнить ее начало,
