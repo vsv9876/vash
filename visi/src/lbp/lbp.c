@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
 #include "line.h"
@@ -26,7 +27,7 @@ main(argc, argv)
 int		argc;
 char    *argv[];
 {
-	char *malloc(), *calloc();
+	/*char *malloc(), *calloc();*/
 	register linptr_t i;
 	register char *s;
 	register int   c;
