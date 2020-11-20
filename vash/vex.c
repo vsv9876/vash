@@ -78,82 +78,6 @@ IN_PORTS inport[] = {
 };
 
 /*
- * Открыть для чтения служебный файл ash.
- * Просматривается каталоги .:$HOME:/usr/new/lib/ash
- *
- * просматриваются файлы из env(VASH_VEXDIR)
- *
- * TODO: вложенные файлы, открывать аналогично
- */
-FILE *
-afopen(filen, dirpath)
-char *filen;
-char *dirpath;
-{
-	FILE *fp;
-	char fname[200];
-	register char *pathp;
-	register int i;
-/*	extern char *getenv();*/
-#define FPMAX 8
-	int fcnt;
-	int srccnt;
-	char *fdir[FPMAX];
-	char *src;
-	char *dst;
-	char *fpath[400];
-
-	/* convert VASH_VEXDIR to array of strings fdir[] */
-	fcnt = 0;
-	fdir[fcnt] = dst = &fpath[0];
-	for (src=dirpath, srccnt=0; srccnt<400; src++,dst++,srccnt++) {
-		if (*src != '\0') {
-			if (*src == ':') {
-				*dst++ = '\0';
-				/* advance to next array element */
-				fcnt++;
-				if (fcnt < FPMAX) {
-					fdir[fcnt] = dst;
-				} else {
-					break;
-				}
-				src++; continue;
-			}
-			*dst = *src;
-		} else {
-			*dst = *src; break;
-		}
-	}
-
-	fp = NULL;
-	for (i = 0; fp == NULL && i <= fcnt; i++) {
-		/*VARARGS*/
-		sprintf(fname, "%s/%s", fdir[i], filen);
-		fp = fopen(fname, "r");
-	}
-#ifdef RETRO
-	if (cwdlook)
-		fp = fopen(filen, "r");
-	if (fp == NULL && (pathp=getenv("HOME")) != (char *)0) {
-		/*VARARGS*/
-		sprintf(fname, "%s/%s", pathp, filen);
-		fp = fopen(fname, "r");
-	}
-	if (fp == NULL) {
-		/*VARARGS*/
-		sprintf(fname, "%s/%s", vexdir, filen);
-		fp = fopen(fname, "r");
-	}
-#endif
-#ifdef DEVELOPE
-	if (fp == NULL) {
-		w_emsg(" "); w_str("Not found "); w_str(filen);
-	}
-#endif
-	return(fp);
-}
-
-/*
  * Получить внешнюю страницу.
  */
 LINE *
@@ -166,7 +90,7 @@ register char *pgname;   /* имя файла страницы */
 	/*NOSTRICT*/
 	if((linep=b_page(vexdir, pgname, inport)) == NULL) {
 		w_emsg("Not found ");
-		w_str(pgname);
+		w_str(pgname); w_str(" in "); w_str(vexdir);
 	}
 	return(linep);
 }

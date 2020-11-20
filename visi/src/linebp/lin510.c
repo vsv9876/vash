@@ -92,9 +92,9 @@ IN_PORTS *ports;        /* ТАБЛИЦА ИМЕН УКАЗАТЕЛЕЙ */
 	linptr_t count;
 	FILE   *fp;
 	IN_PORTS *in_pp;
+#ifdef RETRO
 	char    b_pgnm[200];
 		/* ИМЯ ЗАГРУЗОЧНОГО ФАЙЛА ОПИСАНИЯ СТРАНИЦЫ */
-
 	/* НАЙТИ ФОРМУ В БИБЛИОТЕКЕ */
 	if( libnam == NULL )
 		strcpy(b_pgnm, "");
@@ -107,6 +107,11 @@ IN_PORTS *ports;        /* ТАБЛИЦА ИМЕН УКАЗАТЕЛЕЙ */
 
 	/* ОТКРЫТЬ ФАЙЛ ОПИСАНИЯ НА ЧТЕНИЕ */
 	if((fp=fopen(b_pgnm, "rb")) == NULL) {
+		return(NULL);
+	}
+#endif
+	/* ОТКРЫТЬ ФАЙЛ ОПИСАНИЯ НА ЧТЕНИЕ */
+	if((fp=dafopen(fnam, libnam, "rb")) == NULL) {
 		return(NULL);
 	}
 
@@ -129,7 +134,7 @@ IN_PORTS *ports;        /* ТАБЛИЦА ИМЕН УКАЗАТЕЛЕЙ */
 	}
 
 	/* СНОВА ОТКРЫТЬ ФАЙЛ ОПИСАНИЯ НА ЧТЕНИЕ */
-	if((fp=fopen(b_pgnm, "rb")) == NULL) {
+	if((fp=dafopen(/*b_pgnm*/fnam, libnam, "rb")) == NULL) {
 		free(lineb);
 		return(NULL);
 	}

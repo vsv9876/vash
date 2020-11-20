@@ -45,9 +45,11 @@ INCLUDE       = /usr/include
 HDRS	      =
 
 # lin440.c - duplicates ../linebp/lin510.c, last one is newer
+# now reused filename lin440.c
 OBJS	      = lin420.o \
 		lin425.o \
 		lin426.o \
+		lin440.o \
 		lin450.o \
 		lin460.o \
 		lin465.o \
@@ -61,6 +63,7 @@ OBJS	      = lin420.o \
 SRCS	      = lin420.c \
 		lin425.c \
 		lin426.c \
+		lin440.c \
 		lin450.c \
 		lin460.c \
 		lin465.c \
