@@ -8,9 +8,12 @@
 # Содержимое этого файла и указанного ниже (.../ash/HELP) должно
 # быть согласовано.
 #
--fcat #A/HELP
+#-fcat $(VASH_EXDIR)/HELP
+#-fcat /home/vsv/proj-ws/vash-2./vashlib/LIB/HELP
+-f_ HELP
+#-fcat HELP || echo ..
 -i
--o.
+#-o.
 -@1
 
 -1shell
@@ -23,7 +26,12 @@
 -8remove
 -9setup
 -0return
-
+#-------------------------debug
+:PU
+        ??? ?   _sup
+:PD
+	??? ?	_rescan
+#-------------------------
 :EX
 :U0
 :0
@@ -64,10 +72,10 @@
 :NL
 	* * +nl
 +nl
-	* * Return*     _cmdset .ashstd
-	* * Intro*      :#m #A/ASHINTRO
-	* * Help*       _help mainh.lb
-	* * ASH*        _help ash.lb
-	* * Shell*      _help 1shell.lb
-	* * Alias*      _help alias.lb
-	* * Other*      _help other.lb
+	* * Return     _cmdset .ashstd
+	* * Intro      :#m #A/ASHINTRO
+	* * Help       _help mainh.lb
+	* * ASH        _help ash.lb
+	* * Shell      _help 1shell.lb
+	* * Alias      _help alias.lb
+	* * Other      _help other.lb

@@ -1,7 +1,6 @@
 ---PAGE sup
 ---LINES
----# versn   = c    "v1.18.x/remix"
-versn	= g    -       -       cvt_sp  -       versn
+versn	= gv   -       -       cvt_sp  -       versn
 ---#versn	= v    -       -       cvt_sp  -       versn
 vexdir  = v    -       -       cvt_sp  -       vexdir
 vpath   = v    -       -       cvt_sp  -       vpath
@@ -47,35 +46,28 @@ co      = g     -       "%d"   -       -       maxco
 ---#	   to get help press     .'?    or .:HE....
 ---#
 
----#	history    scroll        whoamI+pwd
----#	| sync     |      keybar | on.xterm
----#	|   |      |         |   |   |    mail clock ".
----#	.hF .hS    .sF       .pF .wF .xF    .mF .cF     .ym.
----#	|          |         |   |   |      |   |      lines max ".
----# ."env h          s         p   w   x      m   c      l         ".
-
 ---SCREEN
 ---#     1         2         3         4         5         6         7         8
 ---#56789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890
 ---#
-."setup parameters".............................. help: .:HE.... exit: .:EX.... 
+=vash setup parameters
 
-+   vexdir: .vexdir..............................................
-+   vpath:  .vpath...............................................
-+
 +   .ym. lines max     .hF h,history     .sF s,scroll        .F1 sh -c allways
 +       maxco: .co     .hS S,sync        .pF p,panel/keybar  .u8nopa only ASCII
 +       maxli: .li     .mF m,mail_biff   .wF w,title               
 +       y0top: .yt     .cF c,clock       .xF x,xterm title         
                                                                   
-=debug main menu control: consult manual, use with caution, please
- 
- -i .i.........................................................
- -f .f.........................................................
- -@ .r.........................................................
+."Please, use manual for parameters below:".       help: .:HE.... exit: .:EX.... 
++-- .f.........................................................
++-@ .r.........................................................
++-i .i.........................................................
 ---#+ -o: .o.........................................................
 
-
-  version: .versn...............   .coprts.....................................
-    build: .buildd......           ."vash, Visual Assistant Shell            ".
+vexdir: .vexdir..............................................
+vapath: .vpath...............................................
+						  
+=Visual Assistant Shell
+ free software - no beer, no warranty. MIT License
+ .coprts......................................................................
+ version: .versn............ build date: .buildd......           
 ---END                             

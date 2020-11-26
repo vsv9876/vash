@@ -1,5 +1,5 @@
 ---LINES
-var     = ipv   -       -       -       -         "John Smth"
+var     = ipv   -       -       -       -         "0.98beta"
 alt1    = ipa   -       -       -       -         "YES"
 alt2    = ipa   -       -       -       -         "[x]"
 mse     = ipm   -       -       -       -         " End of work "
@@ -13,20 +13,20 @@ sp      = iv    -       -       -       -     "[space]"
  * Move to next line...... .:NL....           +----------+    
  * Refresh screen......... .:RE....           |   
  * Select menu line:                          +--sample lines-----------------+
-              - press....  .sp.....           |   comment/text ."header"....  |
+              - press....  .:SP....           |   comment/text ."header"....  |
  * Selector cycle/toggle:                     |                               |
-              - forward... .sp.....           | ."Active fields"............. |
+              - forward... .:SP....           | ."Active fields"............. |
               - backward.. .:DE....           | .mse............  //menu item |
  * Switch context to edit:                    | .alt2.             //selector |
-     - keep content....... .sp.....           | .var.......    //input string |
+     - keep content....... .:SP....           | .var.......    //input string |
      - clear before edit.. .:DE....           +-------------------------------+
                                               
 =Editing commands (line editor)
  * Complete input.......... .:NL....   * Fast cursor moving: .:KH.... .:KE....
  * Erase character:                       - string begin.... .:PR.... .:AL....
      - left from cursor...  .:DE....      - end of text..... .:PR.... .:AR....
-     - below cursor.......  .:KD....   * Toggle INS/OVR:     .:IN....
-     - up to end   .:PR.... .sp.....                      or .:PR.... .:PR....
+     - below cursor.......  .:KD....   * Toggle INS/OVR:     .:KI....
+     - up to end   .:PR.... .:SP....                      or .:PR.... .:PR....
 
                                           ."LINLIB (C)1986-1990 Sergey Vovk"...
 ---END

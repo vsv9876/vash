@@ -3,32 +3,35 @@
 # Template for user-oriented menu.
 # Mon Mar 11 14:57:01 MSK 1991
 #
+# revised GNU/Linux version:
+# 2020-11-21
+#
 
-#+ List file attributes
-	set -x; ls -asl $@ | m
+#+ List extended file attributes
+case $# in
+	0)	lsattr -a $@;;
+	*)	lsattr -adlvp;;
+esac
 
 #+ Show processes status
-	set -x; ps -ef
+    set -x; ps -ef
 
 #+ Show disk free info
-	sync; . /etc/dfspace
-
-#+ Show disk usage
-	set -x; du
+    sync; df -h 
 
 #+ Show list of users logged in
-	who -u -H
-
-#+ Show swaping status
-	/etc/swap -l
-
-#+ Show this file
-	m /usr/local/lib/ash/.ashmenu
+    who -u -H
 
 #+ Compare two text files
-	case x$# in
-	x2)   diff -b $@ ;;
-	x*)   echo 'Please, tag (mark) two files first...\c'; exit 1;;
-	esac
+    case x$# in
+    x2)   diff -b $@ ;;
+    x*)   echo 'Please, tag (mark) two files first...\c'; exit 1;;
+    esac
 
+#+ tar+gzip selected directory
+    case $# in
+    1)   n="$@"; tar czf "$n.tar.gz" ./$n ;;
+    x*)  echo 'Please, tag one directory first...\c'; exit 1;;
+    esac
+	
 ### EOF .ashmenu
