@@ -348,6 +348,90 @@ vls()
     return(0);  /* OK */
 }
 
+vfill()
+/*
+ * встроенная команда (аналог cat), понимает vapath
+ * сделана копипастой из vls()
+ */
+{
+	FILE *fp;
+	int ch;
+
+    register char *itmbp;
+    size_t len;
+
+    unsigned char    *fname; /* item name, from main menu */
+    char	*file; /* name of file to be read */
+    char    *s;
+    char   itmname[256]; /**/
+    char  *ip;
+
+    /*if (index(Cfill, 'a')) aflag = 1;*/
+
+    len = clm._itmlen = clm._itmmax = 0;
+    clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
+    *itmbp++ = ' '; /* 1st placeholder */
+
+
+    file = &Cfill[1];
+    while(*file != '\0' && *file == ' ') {/*найти имя файла в Cfill после ключа '_'*/
+    	file++;
+    }
+    s = file;
+    while(*s != '\0' && *s > ' ') {/*trip string tailing garbage */
+    	s++;
+    }
+    *s = '\0';
+	if ((fp = dafopen(file, vapath, "r")) == NULL) {
+    	return(1); /* ERROR filling main menu */
+	} else {
+		ip = &itmname[0];
+		while ((ch = fgetc(fp)) != EOF)	{
+			if (ch != '\n') {
+				  *ip++ = ch;
+			} else {
+				*ip++ = '\0';
+				ip = &itmname[0]; /*для накопления следующей строки*/
+				/*строка накоплена в d_name*/
+				len = strlen(itmname);
+
+				if (&clm._itmbuf[clm._itmbsz] <= &itmbp[len]) {
+					w_emsg("FATAL: vfill(): clm.itmbuf overflow");
+					fclose(fp);
+					return(1);
+				}
+
+				*itmbp++ = ' '; /* 2nd placeholder */
+				/* store current item into the table (after 2 placeholders) */
+				strcpy(itmbp, itmname);
+				itmbp += len;
+				*itmbp++ = '\0';
+				if ( len > clm._itmlen ) clm._itmlen = len;
+				if (clm._itmmax >= ITMMAX)
+					break;
+				clm._itmmax++;
+				clm._itms[clm._itmmax] = itmbp;
+				*itmbp++ = ' ';
+			}
+		} /*while*/
+		fclose(fp);
+	}
+    *itmbp++ = '\0';
+/*
+    *itmbp++ = '\0';
+    if (clm._itmmax == 0) {
+	    strcpy(clm._itmbuf, " /..");
+	    len = 4;
+	    clm._itmmax++;
+    }
+    if ( len > clm._itmlen ) clm._itmlen = len;
+    clm._itmlen++;
+
+    qsort(clm._itms, clm._itmmax, sizeof(char *), scomp);
+*/
+    return(0);
+}
+
 char vlstype(fname)
 char *fname;
 /*
@@ -433,13 +517,15 @@ vlstag() {
 	char *fname;
 	char *s;
 
-	if (Crepf[0] == '\0') return; /* no markup with tags */
-	for(i=0; i<clm._itmmax; i++) {
-		fname = &clm._itms[i][2]; /* file name there */
+	/*hint: do it Crepf[] points to directory, so items are files */
+	if (Crepf[0] != '\0') {
+		for(i=0; i<clm._itmmax; i++) {
+			fname = &clm._itms[i][2]; /* file name there */
 
-		s = clm._itms[i];
-		/*type of file symbol placed there*/
-		s[1] = (char)vlstype(fname);
+			s = clm._itms[i];
+			/*type of file symbol placed there*/
+			s[1] = (char)vlstype(fname);
+		}
 	}
 }
 
@@ -608,7 +694,7 @@ int newflag;    /* если 0, то только обновить каталог
 	int samedir;    /* ФЛАГ: ТОТ ЖЕ КАТАЛОГ */
 	char tmpbuf[120]; /* for substitution in Cfill */
 
-	if (Crepf[0] == '\0' && Cfill[0] != ':') {
+	if (Crepf[0] == '\0' && Cfill[0] != ':' && Cfill[0] != '_') {
 		samedir = 0;
 		/*
 		 * надо отключить оптимизацию
@@ -657,28 +743,34 @@ int newflag;    /* если 0, то только обновить каталог
 		w_msg(TXT, Cfill); fflush(vttout);
 	}
 
-	if (Cfill[0] != ':') { /* ВСТРОЕННАЯ КОМАНДА */
-	/*TODO substitution */
+	if (Cfill[0] == ':') { /* ВСТРОЕННАЯ КОМАНДА */
+	    if ( vls() ) {        /* ВСТРОЕННАЯ КОМАНДА */
+			w_emsg("vls() failed - cannot read '.'");
+			return(0);
+	    }
+	}
+	else if(Cfill[0] == '_') { /*целый набор встроенных команд */
+		if ( vfill() ) { /* возвращает 0, если все хорошо */
+			w_emsg("vfill() failed");
+			return(0);
+		}
+	}
+	else {
+		/*TODO substitution */
 		cmdsub(tmpbuf, Cfill, 0, 0);
-	/*NOSTRICT*/
+		/*NOSTRICT*/
 		if (Cfill[0] == '\0'
 		||  (fpls = popen(tmpbuf, "r")) == NULL) {
 			cp_set(-1, 0, ERR);
 			io_set(IO_TTYPE);
 			fprintf(vttout, "\n");
 			fprintf(stdout, /* stderr */
-"\nFill command failed with error ('%s')\n", tmpbuf);/*Cfill);*/
+	"\nFill command failed with error ('%s')\n", tmpbuf);/*Cfill);*/
 			perror(Cfill);
 			fatal();
 		}
 		vfread(fpls);   /* ВНЕШНЯЯ КОМАНДА */
 		pclose(fpls);
-	}
-	else {
-	    if ( vls() ) {        /* ВСТРОЕННАЯ КОМАНДА */
-		w_emsg("Can't read '.' - use cd manually");
-		return(0);
-	    }
 	}
 	w_emsg("");
 

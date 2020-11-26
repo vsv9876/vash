@@ -186,7 +186,7 @@ FILE   *i_fp;
 		    break;
 		case 'K' :                  /* НАЗВАНИЕ КЛАВИШИ */
 		case 'k' :
-		    line->attr |= (VAR|MID|PAD);
+		    line->attr |= (MSE|MID|PAD);
 		    break;
 		default :
 		    printf("%s: %3d: unknown attribute '%c'\n",

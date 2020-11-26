@@ -45,6 +45,7 @@ char     *str;
 	extern   KBL    kbl[];  /* ТАБЛИЦА СВЯЗИ КОДОВ И НАЗВАНИЙ КЛАВИШ */
 	register KBL   *kblp;
 		kbcod   codh;   /* КОД, ДЛЯ КОТОРОГО НАЙТИ НАЗВАНИЕ */
+		int i;
 
 	if( *mod == 'w' ) {
 		s = line->varl;
@@ -57,18 +58,21 @@ char     *str;
 
 		for(kblp=kbl; kblp->t_key!=0; kblp++) {
 			if(kblp->t_cod == codh) {
+				/*strncpy(str, kblp->t_knm, sizeof(kbl[0].t_cod));*/
 				strcpy(str, kblp->t_knm);
 				goto ret;
 			}
 		}
 		strcpy(str, &line->varl[1]);
 ret:
-/***** ЯВНАЯ ЧЕШУЯ...
-		for(s=str+strlen(str), s--; s > str && *s; s--) {
-			if(isspace(*s)) *s = '\0';
+	;	/* trim trailing spaces, otherwise PAD|MID does not working */
+
+		s = str;
+		for(i = 0; i < line->size && *s != ' ' && *s !='\0'; i++) {
+			s++;
 		}
- *****/
-		;
+		*s = '\0';
+
 	}
-	return( TRUE ) ;        /* ОШИБОК БЫТЬ НЕ МОЖЕТ... */
+	return( TRUE );
 }

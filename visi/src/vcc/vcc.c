@@ -65,15 +65,20 @@ char    Rsxerr[] = "%s: %d:Синтакс. ош.: %s\n";
 char    pag_id[] = "---PAGE";   /* НАЧАЛО ОПРЕДЕЛЕНИЯ СТРАНИЦЫ */
 #endif
 
+#ifdef FUTURE
+char    vis_id[] = ";";
+char    com_id[] = ";";
+#else
 char    vis_id[] = "---";
 char    com_id[] = "#";
+#endif
 char    por_id[] = "PORTS";
 char    tab_id[] = "TABLES";
 char    lin_id[] = "LINES";
 char    scr_id[] = "SCREEN";
 char    hel_id[] = "HELP";
 char    end_id[] = "END";
-char    markl    = '.';
+wchar_t    markl = L'.';
 
 #define isnamec(c) (isalnum(c) || c == '_')
 
@@ -574,7 +579,7 @@ int     siz;
 int     li;
 int     co;
 register wchar_t *s;    /* СОДЕРЖИМОЕ ПОЛЯ */
-int     typ;            /* 'h', 'c', 'k', '?' */
+int     typ;            /* 'h', 'c', 'k', 'K', '?' */
 {
 	/* РЕЗУЛЬТАТ ПОПАДАЕТ В СТРОКУ lbpo;
 	 * ФУНКЦИИ mk_lbp И mk_vcc ОЧЕНЬ ПОХОЖИ,
@@ -588,6 +593,7 @@ int     typ;            /* 'h', 'c', 'k', '?' */
 	register NM_DEF *hpp;           /* ОПРЕДЕЛЕНИЕ ИМЕНИ */
 	register char *os;
 	register char *o2s;
+	char *typp;
 
 	if(typ == '?') {        /* ПОЛЕ С ИМЕНЕМ, НАДО СДЕЛАТЬ ПОДСТАНОВКУ */
 		/*strcpy(nm_fnd, s);*/
@@ -618,9 +624,14 @@ int     typ;            /* 'h', 'c', 'k', '?' */
 			siz, li, co, s);
 		}
 	} else
-	if(typ == 'h' || typ == 'c') {
+	if(typ == 'h' || typ == 'c' || typ == 'k') {
+		switch (typ) {
+		case 'h': typp = "LHDR"; break;
+		case 'c': typp = "LTXT"; break;
+		case 'k': typp = "MSE|MID|PAD"; break;
+		}
 		sprintf(lbpo, "{ %2d,%2d,%2d, 0, %s, 0,0,0, ",
-		siz, li, co, typ=='h' ? ("LHDR"):("LTXT") );
+		siz, li, co, typp );
 
 		for(os=lbpo; *os; os++) ;       /* НАЙТИ КОНЕЦ */
 		*os++ = '"';
@@ -634,9 +645,9 @@ int     typ;            /* 'h', 'c', 'k', '?' */
 		}
 		strcpy(os, "\" },");
 	} else
-	if(typ == 'k') {
+	if(typ == 'K') {
 		sprintf(lbpo,
-   "{ %2d,%2d,%2d, 0, VAR|MID|PAD, 0, cvt_lh, 0, \"%ls\" },",
+   "{ %2d,%2d,%2d, 0, MSE|MID|PAD, 0, cvt_lh, 0, \"%ls\" },",
 		siz, li, co, s);
 	}
 	subst(siz);        /* СДЕЛАТЬ ПОДСТАНОВКИ */
@@ -705,6 +716,10 @@ int     typ;
 		*os++ = '"'; *os = '\0';
 	} else
 	if(typ == 'k') {
+		sprintf(lbpo, "%c\t%2d %2d %2d\t- - - - \"%ls\"",
+			typ, siz, li, co, s);
+	} else
+	if(typ == 'K') {
 		sprintf(lbpo, "%c\t%2d %2d %2d\t- - cvt_lh - \"%ls\"",
 			typ, siz, li, co, s);
 	}
@@ -735,30 +750,40 @@ int co;
 
 	spcnt = fldsiz = 0;
 	os = &stro[0];
-	fbeg = s = &scrp[MAX_BUF_CO/*80*/ * li + co];
+	fbeg = s = &scrp[(MAX_BUF_CO/*80*/ * li) + co]; /*индекс в координатах экрана*/
 	li_lbp = li; co_lbp = co;       /* СОХРАНИТЬ КООРДИНАТЫ */
+
 	if(*fbeg == markl) {  /*--------------* ПОЛЕ С ИМЕНЕМ */
 		s++; fldsiz = 1; typ = '?';
-		while(co++, isnamec(*s)) {      /* НАКОПИТЬ ИМЯ ПОЛЯ */
-			fldsiz++; *os++ = *s++; }
-		if(fldsiz == 1) {       /* МОЖЕТ, ЭТО БЫЛО НЕ ИМЯ ПОЛЯ ?: */
-			if(fbeg[1] == '"') {         /* ЗАГОЛОВОК ? */
-				fldsiz = 2; s= &fbeg[2]; typ = 'h';
+		while (co++, isnamec(*s)) {      /* НАКОПИТЬ ИМЯ ПОЛЯ */
+			fldsiz++; *os++ = *s++;
+		}
+		if (fldsiz == 1) {       /* МОЖЕТ, ЭТО БЫЛО НЕ ИМЯ ПОЛЯ ?: */
+			if(fbeg[1] == L'"') {         /* ЗАГОЛОВОК ? */
+				fldsiz = 2; s = &fbeg[2]; typ = 'h';
 				while(co++<MAX_BUF_CO/*80*/) {
 					fldsiz++;
-					if (*s=='"' && s[1]==markl)
-						{ s++; break; }
-					else {        *os++ = *s++;   }
+					if (*s == '"' && s[1] == markl) {
+						s++; break;
+					}
+					else {
+						*os++ = *s++;
+					}
 				}
 			} else
-			if(fbeg[1] == '\'') {       /* ИМЯ ПРОСТ. КЛАВИШИ ? */
-				typ = 'h'; spcnt = 1; s++;
-				while(spcnt--) {        /* ОШ. НЕ ЛОВЯТСЯ */
-					co++; *os++ = *s++; }
-				fldsiz = 3;
+			if(fbeg[1] == L'\'') {  /*имя кнопки*/
+				if (fbeg[1] == L'\'') {
+					typ = 'k'; /* без расшифровки*/
+				}
+				s++;
+				*os = fbeg[1]; /* в качестве индикатора ошибки - на экране будет только символ кавычки */
+				fldsiz = 2; /*меньше скипнуть нельзя*/
+				while(co < MAX_BUF_CO/*80*/ && *s != L' ') {
+					co++; *os++ = *s++; fldsiz++;
+				}
 			} else
-			if(fbeg[1] == ':') {       /* ИМЯ ФУНК. КЛАВИШИ ? */
-				typ = 'k'; spcnt = 3;
+			if(fbeg[1] == ':') {  /* имя кнопки с расшифровкой через kbl */
+				typ = 'K'; spcnt = 3;
 				while(spcnt--) {        /* ОШ. НЕ ЛОВЯТСЯ */
 					co++; *os++ = *s++; }
 				fldsiz = 4;     /* ЛУЧШЕ БЫ 7..8 */
@@ -767,9 +792,11 @@ int co;
 ediag("Screen scan err:line %d, col %d\n", "Ош. сканирования: стр %d, поз. %d\n"),
 				li, co); cnterr++;
 			}
+
 		}
 		while(*s++ == markl && (co++)<MAX_BUF_CO/*80*/) {
-			fldsiz++; }       /* НАКОПИТЬ ЕГО РАЗМЕР */
+			fldsiz++;       /* НАКОПИТЬ ЕГО РАЗМЕР */
+		}
 		*os = L'\0';
 		goto fill_end;
 	} else
@@ -809,14 +836,13 @@ fill_end:
 
 #ifdef MAKE_VLBP
 	/* ЗАПИСАТЬ СТРОКУ В ФОРМАТЕ lbp */
-	mk_lbp(fldsiz, li_lbp, co_lbp, stro, typ);
+	mk_lbp
 #endif
 #ifdef MAKE_VCC
 	/* ЗАПИСАТЬ СТРОКУ ИНИЦИАЛИЗАЦИИ СТРУКТУРЫ LINE */
-	mk_vcc(fldsiz, li_lbp, co_lbp, stro, typ);
-
+	mk_vcc
 #endif
-
+	(fldsiz, li_lbp, co_lbp, stro, typ);
 	/* УБРАТЬ ИЗ БУФЕРА ОБРАЗА ЭКРАНА ВСЕ СЛЕДЫ */
 	for(s=fbeg; fldsiz > 0; fldsiz--) *s++ = ' ';
 }

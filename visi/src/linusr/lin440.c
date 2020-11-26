@@ -54,7 +54,8 @@ char *fmode;
 	for (i = 0; fp == NULL && i <= fcnt; i++) {
 		/*VARARGS*/
 		sprintf(fname, "%s/%s", fdir[i], filen);
-		fp = fopen(fname, /*"r"*/ fmode);
+		if ((fp = fopen(fname, /*"r"*/ fmode)) != NULL)
+				return(fp);
 	}
-	return(fp);
+	return(NULL);
 }

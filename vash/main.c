@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdlib.h>
+/*#include <stdlib.h>*/
 #include <locale.h>
 #include <wchar.h>
 #include <signal.h>
@@ -9,6 +9,7 @@
 #include "line.h"
 #include "assist.h"
 
+#define DEBUG
 /*NOXSTR*/
 char     tmpflss[] = "/tmp/ashXXXXXX";
 char    *tmpflnm = &tmpflss[0];
@@ -92,13 +93,19 @@ static  LINE tmplate =
 
 char    *itms1[ITMMAX+1];       /* УКАЗАТЕЛИ НА ПУНКТЫ ГЛАВНОГО МЕНЮ */
 
+/**/
 cfill(argc, argv)
 int argc;
 char **argv;
 {
-	for (argc--, argv++; argc > 0; argc--, argv++) {
-		strcat(Cfill, argv[0]);
-		strcat(Cfill, " ");
+	int i = 0;
+	for (argc--, argv++; argc > 0; argc--, argv++, i++) {
+		if (i == 0) {
+			strcpy(Cfill, argv[0]);
+		} else {
+			strcat(Cfill, " ");
+			strcat(Cfill, argv[0]);
+		}
 	}
 }
 
@@ -116,7 +123,7 @@ char **argv;
 	int ch;
 	/*char *s;*/
 	if ((s = getenv("VASH_DEBUG")) != NULL) {
-		fprintf(stdout, "--> ready to debug, Please, press <Enter> to continue ");
+		fprintf(stdout, "--> [%d] ready to debug, Please, press <Enter> to continue ", getpid());
 		fscanf(stdin, "%c", &ch);
 	}
 #endif
@@ -257,7 +264,7 @@ char **argv;
 				continue;
 
 			case '-':
-				cfill(argc, argv); /* tail of agruments is fill command replaced one from ashstd */
+/*				cfill(argc, argv);  tail of agruments is fill command replaced one from ashstd */
 				goto args_done;
 				break;
 			}
@@ -292,6 +299,9 @@ args_done:
 #endif
 /*NOXSTR*/
 	if ( cmdset(ashstd) ) {
+
+		cfill(argc, argv); /* tail of agruments is fill command replaced one from ashstd */
+
 #ifdef DEBUG
 		printf("cmdset; Cfill=\"%s\" ashstd=\"%s\"\n", Cfill, ashstd);
 #endif

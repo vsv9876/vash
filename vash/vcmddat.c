@@ -139,9 +139,9 @@ register char *s;
 		switch (*s++) {
 		case 'f':
 			/* command line on start vash would be preferred */
-			if (*Cfill != '\0')
+			/*if (*Cfill != '\0')
 				return(1);
-			else
+			else*/
 				p = Cfill;
 			break;
 		case 'i': p = Crepf; break;
@@ -178,7 +178,7 @@ char *file;
     register char *p;
     extern FILE *afopen();
 
-    if ((fp=dafopen(file, vexdir, "r")) == NULL) {
+    if ((fp=dafopen(file, vapath, "r")) == NULL) {
     	sprintf(ws, "can't read '%s' in vexdir='%s'", file, vexdir);
 		w_emsg(ws);
 		return(0);
