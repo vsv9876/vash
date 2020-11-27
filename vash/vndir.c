@@ -86,6 +86,7 @@ struct stat *statp;
 	}
 	/* assistant shell, будучи запущенным от root,
 	 * смотрит на права владельца объекта (TODO дополнить acl)
+	 * но не игнорирует их, и поступает как владелец
 	 */
 	rwxs[0] = ((umode & S_IREAD) ? 'r' : '-');
 	rwxs[1] = ((umode & S_IWRITE)? 'w' : '-');

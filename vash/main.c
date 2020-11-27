@@ -275,7 +275,7 @@ char **argv;
 	}
 args_done:
 #ifdef DEBUG
-	printf("args_done; Cfill=\"%s\" ashstd=\"%s\"\n", Cfill, ashstd);
+	printf("args_done; Cfill=\"%s\" ashstd=\"%s\"\r\n", Cfill, ashstd);
 #endif
 
    	if ((envshell=getenv("SHELL")) == (char *)0) {
@@ -295,7 +295,7 @@ args_done:
 	io_set(IO_VIDEO);
 	signal(SIGINT, onintr);
 #ifdef DEBUG
-	printf("   Cfill=\"%s\" ashstd=\"%s\"\n", Cfill, ashstd);
+	printf("   Cfill=\"%s\" ashstd=\"%s\"\r\n", Cfill, ashstd);
 #endif
 /*NOXSTR*/
 	if ( cmdset(ashstd) ) {
@@ -303,7 +303,7 @@ args_done:
 		cfill(argc, argv); /* tail of agruments is fill command replaced one from ashstd */
 
 #ifdef DEBUG
-		printf("cmdset; Cfill=\"%s\" ashstd=\"%s\"\n", Cfill, ashstd);
+		printf("cmdset; Cfill=\"%s\" ashstd=\"%s\"\r\n", Cfill, ashstd);
 #endif
 		if ( fil_vf(1) ) {
 			/* Настроить нач. состояние области свитка */

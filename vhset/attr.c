@@ -566,7 +566,7 @@ char   *str;
 			strcpy(*spp, str);
 		}
 		else    {
-			/*str[0] = '\0';*/  /* TODO: make line hidden */
+			/*str[0] = '\0';*/  /* TODO: make hidden line */
 			strncpy(str, *spp, size);
 			if (strlen(*spp) >= size) str[size] = '\0';
 		}
