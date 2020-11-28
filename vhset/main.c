@@ -74,7 +74,7 @@ mkexit()
 			lpainp[i].lpa_sgr);
 		}
 
-		/*---- доп. клавиатура. TODO: color mode index: 0==BW, 1==1st_color_set -- not yet implemented */
+		/*---- доп. клавиатура.
 		fprintf(ofp, "%c", (kpadon ? '+' : '-'));
 		fprintf(ofp, "%1d\n", sgrmode);
 

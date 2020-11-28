@@ -133,7 +133,7 @@ typedef char  bool;     /* короткий формат для целых чи�
 #define ISCTL( c )      (((c)&KBPRE) != 0 ? 1 : 0)
 #endif /*KBCOD_INT32*/
 
-#define STRLEN MAXLICO+2 /*82       /* длина строки для ввода с клавиатуры TODO 4k buf */
+#define STRLEN MAXLICO+2 /*82 /* размер строки ввода TODO 4096 */
 #ifndef FALSE           /* определение м.быть в др. месте */
 #define TRUE    1
 #define FALSE   0

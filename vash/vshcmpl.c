@@ -417,7 +417,7 @@ int maxpos; /* максимальное значение позиции в бу�
     	/* determine current context */
     	/* skip leading spaces and separators between args */
     	if (cmd[x_in] == ' ') /* || cmd[x_in] == '\0') */ {
-    		contxt = 's'; /* todo '\ ' which is not separator */
+    		contxt = 's'; /* TODO '\ ' which is not separator */
     	} else if (cmd[x_in] == ';'
     			|| cmd[x_in] == '|'
 				|| cmd[x_in] == '&'
@@ -485,7 +485,9 @@ int maxpos; /* максимальное значение позиции в бу�
     if (x_in < *curpos) *curpos = x_in; /* вернуть курсор к концу набираемой строки */
 
     ok = -2;
-    /* найти и выполнить подстановку, если однозначно; иначе сигнал (или показать список TODO)*/
+    /* найти и выполнить подстановку, если однозначно;
+     * иначе сигнал TODO (или показать список)
+     * */
     s_ins = "";
     if (contxt == 'a' || (contxt == 's' && argc == 0)) {
     	if ((ok = do_compl(/*s_mode,*/ /*s_ins,*/ s_dir, s_base)) < 0) {

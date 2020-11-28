@@ -2,8 +2,52 @@
 1 000|000	39;49	31
 2 020 010	36;49	37;44
 3 010"020	39	34;47
-4 010'030	39	35;47
+4 010'030	31	35;47
 5*000>020	32	32;40
 6 010 010	37;41	36;41
 7!020 050	39;49	33;40
 +2
+:^KKPCtrl-K 
+:kuAUUP     
+:kdADDOWN   
+:klALLEFT   
+:krARRIGHT  
+:^ITATAB    
+:^SSP[space]
+:^JNLEnter  
+:deDE<-del  
+:^XEXCtrl-X 
+:k1HEF1     
+:^RRECtrl-R 
+:k4PRPF4    
+:kIKIInsert 
+:kDKDdel->  
+:khKHHome   
+:@7KEEnd    
+:kPPUPgUp   
+:kNPDPgDown 
+:^MNLCtrl-M 
+:^HDECtrl-H 
+:^CEXCtrl-C 
+:k2HEPF2    
+:^LRECtrl-L 
+:^VPRCtrl-V 
+:^SKIInsert 
+:^SKDdel->  
+:^AKHHome   
+:^EKEEnd    
+:^BPUPgUp   
+:^FPDPgDown 
+:f0U0
+:f1U1
+:f2U2
+:f3U3
+:f4U4
+:f5U5
+:f6U6
+:f7U7
+:f8U8
+:f9U9
+:f.U.
+:f-U-
+:f,U,

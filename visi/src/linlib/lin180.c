@@ -62,13 +62,10 @@ size_t n;
 {
 	wchar_t *tmp = alloca((n+1)*sizeof(wchar_t));;
 	const wchar_t *from = tmp;
-	mbstate_t ps = { 0 };
 	size_t len;
 
 	u8wcsn(tmp, s, n);
 	tmp[n] = L'\0';
-	mbsinit(&ps); /*TODO: cleanup, no need &ps*/
-	/*len = wcsnrtombs(dst, &from, 4*MAXLICO, n, &ps);*/
 	len = wcstombs(dst, from, 4*MAXLICO);
 	if (len < 0) *dst = '\0'; /* all string to be dropped */
 	return(len);
