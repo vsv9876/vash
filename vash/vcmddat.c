@@ -169,87 +169,120 @@ register int kt1x;
 	}
 }
 
+#define MAXFP 8
 int
 cmdset(file)
 char *file;
 {
-    FILE *fp;
+    FILE *fp[MAXFP];	/* opened included files */
+    int fpix;			/* current opened FILE pointer index*/
+    char incfile[256];
+    char *fname;
+
     char ws[WSMAX];     /* рабочая строка для чтения из файла */
     register char *p;
-    extern FILE *afopen();
+    /*extern FILE *afopen();*/
+    int wslen;
 
-    if ((fp=dafopen(file, vapath, "r")) == NULL) {
-    	sprintf(ws, "can't read '%s' in vexdir='%s'", file, vexdir);
-		w_emsg(ws);
-		return(0);
-    }
-    /* инициализация переменных сканирования */
-    pc_ix = 0;
-    kt2_ix = kt1_ix = -1;
-    bufsp = bufss;
-    xchr = '\0';
+    for (fpix=0; fpix<MAXFP; fpix++)
+    	fp[fpix] = NULL;
 
-    while (fgets(ws, WSMAX, fp) != NULL) {
-	p = ws;
+    fpix = 0;
+    fname = file;
 
-	switch (*p) {
-	/* первый символ определяет поведение сканера */
-	case '-':
-		/* строка умолчаний */
-		p++;
-		setdef(p);
-	case '#':
-	case '\n':
-		/* строки коментария и пустые отбрасываются */
-		continue;
-	case ' ':
-	case '\t':
-		/* строки таблиц (с отступом) */
-		while (isspace(*p)) p++;
-		pc[ pc_ix].pc_pat = bufsp;
-		switch (xchr) {
-		case ':':       /* kt1 */
-			p = apndstr(p, 2);
-			kt1[ kt1_ix].kt_ie  = pc_ix;
-			break;
-		case '+':       /* kt2 */
-			p = apndstr(p, 3);
-			kt2[ kt2_ix].kt_ie  = pc_ix;
-			break;
-		default:
-			/* отбросить такую строку */
-			continue;
+	/* инициализация переменных сканирования */
+	pc_ix = 0;
+	kt2_ix = kt1_ix = -1;
+	bufsp = bufss;
+	xchr = '\0';
+
+    while(fpix >= 0) {
+open_include:
+		if (fp[fpix] == NULL) {
+			if((fp[fpix]=dafopen(fname, vapath, "r")) == NULL) {
+				sprintf(ws, "can't read '%s' in vexdir='%s'", fname, vapath);
+				w_emsg(ws); w_chr('\r'); w_chr('\n');
+				return(0);
+			}
 		}
-		while (isspace(*p)) p++;
-		pc[ pc_ix].pc_cmd = bufsp;
-		p = apndstr(p, 999);
-		pc_ix++;
-		continue;
-	case '+':       /* начало таблицы действия */
-		xchr = *p++; kt2_ix++;
-		kt2[ kt2_ix].kt_tab = pc;
-		kt2[ kt2_ix].kt_ib  = pc_ix;
-		kt2[ kt2_ix].kt_ie  = pc_ix;
-		kt2[ kt2_ix].kt_key = bufsp;
-		p = apndstr(p, 999);    /* всю строку до конца */
-		continue;
-	case ':':       /* начало таблицы клавиши */
-		xchr = *p++; kt1_ix++;
-		kt1[ kt1_ix].kt_tab = pc;
-		kt1[ kt1_ix].kt_ib  = pc_ix;
-		kt1[ kt1_ix].kt_ie  = pc_ix;
-		kt1[ kt1_ix].kt_key = bufsp;
-		p = apndstr(p, 999);    /* всю строку до конца */
-		continue;
-	}
-	/* здесь м.б. анализ ошибок... */
+		while (fgets(ws, WSMAX, fp[fpix]) != NULL) {
+			p = ws;
+
+			switch (*p) {
+			/* первый символ определяет поведение сканера */
+			case '<':
+				/* TODO trim spaces for file name */
+				wslen = strlen(p);
+				while (wslen > 0) {
+					wslen--;
+					if (ws[wslen] == '\n' || isspace(ws[wslen])) {
+						ws[wslen] = '\0';
+					}
+				}
+				strcpy(incfile, &ws[1]);
+				fname = &incfile[0]; /* new file included */
+				fpix++;
+				goto open_include;
+				continue;
+			case '-':
+				/* строка умолчаний */
+				p++;
+				setdef(p);
+			case '#':
+			case '\n':
+				/* строки коментария и пустые отбрасываются */
+				continue;
+			case ' ':
+			case '\t':
+				/* строки таблиц (с отступом) */
+				while (isspace(*p)) p++;
+				pc[ pc_ix].pc_pat = bufsp;
+				switch (xchr) {
+				case ':':       /* kt1 */
+					p = apndstr(p, 2);
+					kt1[ kt1_ix].kt_ie  = pc_ix;
+					break;
+				case '+':       /* kt2 */
+					p = apndstr(p, 3);
+					kt2[ kt2_ix].kt_ie  = pc_ix;
+					break;
+				default:
+					/* отбросить такую строку */
+					continue;
+				}
+				while (isspace(*p)) p++;
+				pc[ pc_ix].pc_cmd = bufsp;
+				p = apndstr(p, 999);
+				pc_ix++;
+				continue;
+			case '+':       /* начало таблицы действия */
+				xchr = *p++; kt2_ix++;
+				kt2[ kt2_ix].kt_tab = pc;
+				kt2[ kt2_ix].kt_ib  = pc_ix;
+				kt2[ kt2_ix].kt_ie  = pc_ix;
+				kt2[ kt2_ix].kt_key = bufsp;
+				p = apndstr(p, 999);    /* всю строку до конца */
+				continue;
+			case ':':       /* начало таблицы клавиши */
+				xchr = *p++; kt1_ix++;
+				kt1[ kt1_ix].kt_tab = pc;
+				kt1[ kt1_ix].kt_ib  = pc_ix;
+				kt1[ kt1_ix].kt_ie  = pc_ix;
+				kt1[ kt1_ix].kt_key = bufsp;
+				p = apndstr(p, 999);    /* всю строку до конца */
+				continue;
+			}
+			/* здесь м.б. анализ ошибок... */
+		}
+		fclose(fp[fpix]); fp[fpix] = NULL;
+		fpix--;
     }
-    kt2_ix++; kt1_ix++; /* ЗАКРЫТЬ ТАБЛИЦЫ: */
-    kt2[ kt2_ix].kt_key = (char *)0;
-    kt1[ kt1_ix].kt_key = (char *)0;
-    /* Настроить индексы для таблицы клавиш, после чего
-     * правильно отрабатываются синонимы */
-    kt1tune(kt1_ix);
-    fclose(fp);
+	kt2_ix++; kt1_ix++; /* ЗАКРЫТЬ ТАБЛИЦЫ: */
+	kt2[ kt2_ix].kt_key = (char *)0;
+	kt1[ kt1_ix].kt_key = (char *)0;
+	/* Настроить индексы для таблицы клавиш, после чего
+	 * правильно отрабатываются синонимы */
+	kt1tune(kt1_ix);
+
     return(1);
 }

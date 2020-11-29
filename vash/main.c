@@ -117,7 +117,7 @@ char **argv;
 	int c;
 	char *s;
 
-/*#define VASH_DEBUG*/
+#define VASH_DEBUG
 #ifdef VASH_DEBUG
 	int ch;
 	/*char *s;*/

@@ -1,73 +1,48 @@
 
 SHELL         = /bin/sh
 
-##
-##      +----------+    библиотека ввода-вывода
-##     (C) LINLIB  !    для алфавитно-цифровых
-##      +----------+    видеотерминалов
-##
-##      $Header$
-##      $Log$
-##
-
-#	(v)ash remix, additional scripts
-
-DEST = /usr/local
-
-include		../conf/Makefile
-
-VISI          = ../visi
-VBIN          = $(VISI)/bin
-VLIB          = $(VISI)/lib
-
-SCRIPTS       = v
-#EXECMODE      =  711
-EXECMODE      =  755
+#
+# vash profiles to be installed
+#
 
 DESTDIR       =
-#DEST          = /usr/local
-DESTBIN       = $(DESTDIR)$(DEST)/bin
 
-LIBS          =
+DEST          = /usr
+DESTLIB       = $(DESTDIR)$(DEST)/lib
+
+VISI          = ../visi
+
+VBIN          = $(VISI)/bin
+
+LIBRARY       = vash
 
 MAKEFILE      = Makefile
 
-EXTHDRS	      =
+PROFILES        = \
+		std \
+		rpm \
+		proc \
+		menu \
+		misc \
+		compr
 
-HDRS	      =
+ASHCMD        =
 
-SRCS          = 
+all:            $(OBJS)
 
-OBJS	      =
+form:           $(OBJS)
 
-all:  $(SCRIPTS)
+clean:;         rm -f $(OBJS)
 
-scripts:        $(SCRIPTS)
+depend:;        mkmf -f $(MAKEFILE) DEST=$(DEST)
 
-clean:
-	rm -f $(SCRIPTS) *~ *.b *.bak
-
-otherclean:
-
-otherinst:
-#                cd ./ashrc; make DEST=$(DEST) install
-
-#install:        $(SCRIPTS) $(DESTBIN) otherinst
-install:        $(SCRIPTS) $(DESTBIN)
-		cp -p $(SCRIPTS) $(DESTBIN)
-
-.sh:	
-	cp -p $< $@
-	chmod 755 $@
-
-$(DEST)/bin:
-	mkdir -p $(DEST)/bin
+install:        $(PROFILES) $(DESTLIB)/$(LIBRARY)
+		cp $(PROFILES) $(DESTLIB)/$(LIBRARY)
 
 $(DEST):
-	mkdir -p $(DEST)
-
-$(DESTDIR):
-	mkdir -p $(DESTDIR)
-
+		mkdir -p $(DEST)
+$(DESTLIB):
+		mkdir -p $(DESTLIB)
+$(DESTLIB)/$(LIBRARY):
+		mkdir -p $(DESTLIB)/$(LIBRARY)
 ###
-

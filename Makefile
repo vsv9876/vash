@@ -107,9 +107,10 @@ install:   $(DESTDIR) $(DEST) $(VISILIB)
 	cd $(VASH);  $(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd vashlib/LIB;			$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
 	cd vashlib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd vashbin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd vashrc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cp -rp termcap/. $(VISILIB)
 #	cd visilib;			$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd vashrc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 
 #bld:	pkgbuild
 #
@@ -133,7 +134,7 @@ clean:
 	touch $(BLDCFG)
 
 distclean:	clean
-	find . -name BLD -exec rm -rf '{}' ';'
+	#find . -name BLD -exec rm -rf '{}' ';'
 	find . -type f -a '(' \
 			-name core -o \
 			-name '*.b' -o \

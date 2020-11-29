@@ -37,13 +37,7 @@ MAKEFILE      = Makefile
 ASHSTD        = \
 		ASHINTRO \
 		HELP \
-		.ashstd \
-		.ashrpm \
-		.ashproc \
 		.ashhelp \
-		.ashmenu \
-		.ashmisc \
-		.ashcompr
 
 ASHCMD        =
 
