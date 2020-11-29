@@ -87,6 +87,7 @@ extern  char   *envshell;
 extern  char   *homedir;
 extern  char   *vexdir; /* vash extra files directory */
 extern  char   *vapath; /* vash library search path */
+extern  char   *vashrc; /* vash runtime cmdset (rc, profile) */
 extern  char   *cwd;
 extern  int     t_file();
 

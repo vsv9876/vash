@@ -114,11 +114,10 @@ int argc;
 char **argv;
 {
 	char *envsup;   /* строка флагов из окружения */
-	char *ashstd;   /* имя файла настройки команд */
 	int c;
 	char *s;
 
-#define VASH_DEBUG
+/*#define VASH_DEBUG*/
 #ifdef VASH_DEBUG
 	int ch;
 	/*char *s;*/
@@ -142,9 +141,9 @@ char **argv;
        clm._itmbsz = ITMBUF;
        clm._yy_max = 10;
 
-       ashstd = ".ashstd";
+       vashrc = ".ashstd";
 
-       /* setup extra directory for all working files library, ashstd will be found in that place */
+       /* setup extra directory for all working files library, vashrc will be found in that place */
        if ((s = getenv(VEXDIR)) != (char *)0) vexdir = s;
        if ((s = getenv(VAPATH)) != (char *)0) vapath = s;
 
@@ -264,18 +263,18 @@ char **argv;
 				continue;
 
 			case '-':
-/*				cfill(argc, argv);  tail of agruments is fill command replaced one from ashstd */
+/*				cfill(argc, argv);  tail of agruments is fill command replaced one from vashrc */
 				goto args_done;
 				break;
 			}
 		} else {
 			/* имя файла для интерпретации cmdset() */
-			ashstd = *argv;
+			vashrc = *argv;
 		}
 	}
 args_done:
 #ifdef DEBUG
-	printf("args_done; Cfill=\"%s\" ashstd=\"%s\"\r\n", Cfill, ashstd);
+	printf("args_done; Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
 #endif
 
    	if ((envshell=getenv("SHELL")) == (char *)0) {
@@ -295,15 +294,15 @@ args_done:
 	io_set(IO_VIDEO);
 	signal(SIGINT, onintr);
 #ifdef DEBUG
-	printf("   Cfill=\"%s\" ashstd=\"%s\"\r\n", Cfill, ashstd);
+	printf("   Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
 #endif
 /*NOXSTR*/
-	if ( cmdset(ashstd) ) {
+	if ( cmdset(vashrc) ) {
 
-		cfill(argc, argv); /* tail of agruments is fill command replaced one from ashstd */
+		cfill(argc, argv); /* tail of agruments is fill command replaced one from vashrc */
 
 #ifdef DEBUG
-		printf("cmdset; Cfill=\"%s\" ashstd=\"%s\"\r\n", Cfill, ashstd);
+		printf("cmdset; Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
 #endif
 		if ( fil_vf(1) ) {
 			/* Настроить нач. состояние области свитка */

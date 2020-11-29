@@ -54,6 +54,7 @@ IN_PORTS inport[] = {
 	{ "versn",      &versn },
 	{ "vexdir",     &vexdir },
 	{ "vpath",      &vapath },
+	{ "vashrc",     &vashrc },
 	{ "f",          &Cfill },
 	{ "i",          Crepf },
 	{ "o",          Coutf },

@@ -52,6 +52,8 @@ char *str; /*utf8 buffer*/
 			/*strncpy*/u8mbsn(str, *spp, size);
 			/*if (strlen(*spp) >= size) str[size] = '\0';/*это обрезание лучше выполнять в [wr]_line*/
 		}
+	} else {
+		*str = '\0';
 	}
 #else
 
