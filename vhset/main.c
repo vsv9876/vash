@@ -74,8 +74,9 @@ mkexit()
 			lpainp[i].lpa_sgr);
 		}
 
-		/*---- доп. клавиатура.
+		/*---- доп. клавиатура. */
 		fprintf(ofp, "%c", (kpadon ? '+' : '-'));
+		/*---- color mode */
 		fprintf(ofp, "%1d\n", sgrmode);
 
 		/*---- клавиши */
