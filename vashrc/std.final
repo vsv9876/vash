@@ -1,0 +1,50 @@
+#
+# std.final
+#
+# last resort section,
+# may be used in any *.rc as a last included file
+#
+
+:[=]
+	* *     _rescan
+#        * *     :cd .
+:^Z
+# Приостановить ash, вернуться в csh
+#        * *     :/bin/csh -cf "suspend; exit 0;"
+	* *     _sus
+#-------------------------------------------------------
+#       Простое напоминание (так как работа идет в латинском регистре),
+#       но в принципе здесь возможна и другая точка зрения.
+# Диапазон зависит от кодовой таблицы, здесь КОИ-8
+
+#:[Ю-Чю-ъ]
+#	* *   _msg please, switch keyboard to en/latin
+
+
+#-------------------------------------------------------
+#:[#]
+#        * *     _kshow
+
+# Посмотреть подстановки ash (для отладки:
+#       #e - редактор (из переменной окружения EDITOR, или re)
+#       #@ - имя возле курсора (строка главного меню, обычно имя файла).
+#       #* - имя без суффикса
+#       #s - суффикс имени с точкой
+#       #S - суффикс имени без точки
+:@
+	* *     _sh echo # s='#s' S='#S' *='#*' e='#e'
+:Z
+	* *	:exec vash
+	
+# 	* * _msg #k
+# 	* * _sh #k
+
+# last resort keys
+:[ -~]
+	* * _msg key is not assigned to any command
+:??*
+# 	* * _msg undefined key (.ashstd || termcap)
+ 	* * _msg key unrecognized
+:*
+	* * _msg Please, switch keyboard to ASCII/Latin mode
+

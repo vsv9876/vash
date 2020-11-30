@@ -210,7 +210,7 @@ open_include:
 
 			switch (*p) {
 			/* первый символ определяет поведение сканера */
-			case '<':
+			case '@':
 				/* trim spaces for file name */
 				wslen = strlen(p);
 				while (wslen > 0) {

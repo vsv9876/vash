@@ -67,7 +67,7 @@
 :0
        * *     exit
 :[&=]
-       * *     _cmdset .ashproc
+       * *     _cmdset ps.rc
 :^[ZB]
 # Приостановить ash, вернуться в csh
        * *     _sus

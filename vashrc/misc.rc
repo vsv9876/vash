@@ -23,7 +23,7 @@
 -9
 -0return
 
-<std.mark
+@std.mark
 
 :[?]
 :HE
@@ -32,7 +32,7 @@
 :EX
 :U0
 :0
-    * *     _cmdset .ashstd
+    * *     _cmdset std.rc
 # Редактирование последней команды sh:
 :[1!]
     r?x ?   _sh
@@ -100,6 +100,6 @@
 	rwx ?   mkdir .
 	* *     +Cant
 :^F
-	* * _cmdset .ashmisc
-:*
-	* * _msg key is not defined or assigned yet (.ashmisc || termcap/terminfo)
+	* * _cmdset misc.rc
+
+@std.final
