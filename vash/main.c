@@ -141,7 +141,7 @@ char **argv;
        clm._itmbsz = ITMBUF;
        clm._yy_max = 10;
 
-       vashrc = ".ashstd";
+       vashrc = "std.rc";
 
        /* setup extra directory for all working files library, vashrc will be found in that place */
        if ((s = getenv(VEXDIR)) != (char *)0) vexdir = s;

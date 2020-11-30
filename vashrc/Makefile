@@ -18,6 +18,7 @@ LIBRARY       = vash
 
 MAKEFILE      = Makefile
 
+# base names without any suffixes, used in 'install' target only
 PROFILES        = \
 		std \
 		rpm \
@@ -36,8 +37,10 @@ clean:;         rm -f $(OBJS)
 
 depend:;        mkmf -f $(MAKEFILE) DEST=$(DEST)
 
-install:        $(PROFILES) $(DESTLIB)/$(LIBRARY)
-		cp $(PROFILES) $(DESTLIB)/$(LIBRARY)
+#install:        $(PROFILES) $(DESTLIB)/$(LIBRARY)
+install:        $(DESTLIB)/$(LIBRARY)
+		#chmod +x ./Make.inst.sh
+		sh Make.inst.sh $(DESTLIB)/$(LIBRARY) $(PROFILES)
 
 $(DEST):
 		mkdir -p $(DEST)
