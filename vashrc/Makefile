@@ -23,6 +23,7 @@ PROFILES        = \
 		std \
 		rpm \
 		ps \
+		ll \
 		menu \
 		misc \
 		compr

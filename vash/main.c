@@ -9,7 +9,7 @@
 #include "line.h"
 #include "assist.h"
 
-#define DEBUG
+/*#define DEBUG*/
 /*NOXSTR*/
 char     tmpflss[] = "/tmp/ashXXXXXX";
 char    *tmpflnm = &tmpflss[0];
