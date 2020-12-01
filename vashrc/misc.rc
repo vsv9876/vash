@@ -1,10 +1,11 @@
 #! /usr/bin/vash
 #
-# Файл .ashmisc
-#-----------------------------------------
-# СОЗДАНИЕ ФАЙЛОВ/КАТАЛОГОВ/ПРОЧ.
+# misc.rc
+# 
+# create file/directorie/etc..
+#
 # Wed Sep 12 15:46:39 MSD 1990
-#-----------------------------------------
+#
 #
 -f:FLa
 -i.
@@ -12,7 +13,7 @@
 -@
 
 # НАЗВАНИЯ КЛАВИШ
--1misc>
+-1-misc-
 -2compr
 -3
 -4touch
@@ -23,7 +24,9 @@
 -9
 -0return
 
+
 @std.mark
+
 
 :[?]
 :HE
@@ -39,7 +42,7 @@
 
 :2
 :U2
-	rwx +   _menu2 .ashcompr
+	rwx +   _menu2 compr.menu
 	rwx -   _err please, mark files using spacebar
 	r-x *   +Cant
 
@@ -99,7 +102,7 @@
 :7
 	rwx ?   mkdir .
 	* *     +Cant
-:^F
+:KI
 	* * _cmdset misc.rc
 
 @std.final

@@ -22,7 +22,7 @@ MAKEFILE      = Makefile
 PROFILES        = \
 		std \
 		rpm \
-		proc \
+		ps \
 		menu \
 		misc \
 		compr
@@ -39,7 +39,7 @@ depend:;        mkmf -f $(MAKEFILE) DEST=$(DEST)
 
 #install:        $(PROFILES) $(DESTLIB)/$(LIBRARY)
 install:        $(DESTLIB)/$(LIBRARY)
-		#chmod +x ./Make.inst.sh
+		chmod +x ./Make.inst.sh
 		sh Make.inst.sh $(DESTLIB)/$(LIBRARY) $(PROFILES)
 
 $(DEST):

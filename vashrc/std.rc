@@ -23,8 +23,8 @@
 #
 #-------------------------------------------------------
 #       Названия клавиш:
--1#$
--2
+-1!sh
+-2menu
 -3view
 -4edit
 -5cp
@@ -44,7 +44,15 @@
 -o.
 -@
 
+# 
 @std.mark
+
+#-------------------------------------------------------
+#
+# Реакция на клавишу. Проверяется 2 условия:
+# rwx     :полномочия доступа к реперному файлу (здесь к текущему каталогу)
+# - или + :наличие помеченных файлов
+#-------------------------------------------------------
 
 # Редактирование последней команды sh:
 :HE
@@ -227,7 +235,9 @@
 # Еще одно субменю со сменой программы клавиш ash:
 # Создание файла/каталога/файлов.системы/формат.диска;
 
-	* *     _cmdset misc
+	* *     _cmdset misc.rc
+
+
 # Уничтожение файлов/каталогов
 :8
 :U8
@@ -236,17 +246,21 @@
 	rwx ?           rm -f ##
 +Rmfile
 # Не руби сук, на котором сидишь...
-	r?x d ..        _msg do not cut the leaf you are sitting on
-	r?x d .         _msg do not cut the leaf you are sitting on
+	r?x d ..        _msg Please, do not cut the leaf you are sitting on
+	r?x d .         _msg Please, do not cut the leaf you are sitting on
 	rwx d *         rm -r -f ./#@
 	* * -*          rm -f ./#@
 	rw? [AODETM] *    rm -f ./#@
 #        rw? T *         rm -f #@
 	r-? ? *         rm -f ./#@  # caution! file is write-protected !
+
+
 # Настройка интерпретатора (флаги, команды)
 :9
 :U9
 	??? ?   _sup
+
+
 # Конец работы, ВЫХОД
 :^D
 	* *     :exit
@@ -255,15 +269,17 @@
 	* *     exit
 :EX
 	* *	_msg please, use ^D (Ctrl-d) for quit
+
+
 #       Освежить стандартную настройку ash (при отладке этого файла)
-:IN
+:KI
     * * _cmdset std.rc
 
 # Вызов подсказки
-# obsolete, will be removed - use man vash instead
+# obsolete, will be removed - use man vash instead, please
 :[?]
 #:HE
-	* * _cmdset help.rc
+	* * _cmdset std.help.rc
 
 # Полезное действие (выполнить, распаковать, войти в объект, и т.п.),
 # см. выше +nl, +View
@@ -274,7 +290,7 @@
 :&
 #       Программа (настройка) ash для работы с процессами
 	* *     :ASH=l20ps; export ASH; exec vash ps.rc
-#        * *     _cmdset .ashproc
+#        * *     _cmdset ps.rc
 
 #:[2-90]
 #        * *     _msg нажимайте функциональные клавиши F1 - F10...

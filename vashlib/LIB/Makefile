@@ -34,10 +34,9 @@ LIBRARY       = vash
 
 MAKEFILE      = Makefile
 
-ASHSTD        = \
-		ASHINTRO \
-		HELP \
-		.ashhelp \
+PROFILES      = \
+		std.help \
+
 
 ASHCMD        =
 
@@ -98,14 +97,17 @@ depend:;        mkmf -f $(MAKEFILE) DEST=$(DEST)
 
 install:        $(OBJS) $(DESTLIB)/$(LIBRARY)
 #                -rm -f .*.b *.b
-		cp $(ASHSTD) $(OBJS) $(DESTLIB)/$(LIBRARY)
+		cp $(OBJS) $(DESTLIB)/$(LIBRARY)
 #                cp $(ASHCMD) $(DESTBIN)
+		chmod +x ./Make.inst.sh
+		sh Make.inst.sh $(DESTLIB)/$(LIBRARY) $(PROFILES)
 
 deinstall:
 		-rm -r -f $(DEST)/lib/$(LIBRARY)
 
-slink:          $(OBJS)
-		ln -s `pwd` $(DEST)/lib/$(LIBRARY)
+#slink:          $(OBJS)
+#		ln -s `pwd` $(DEST)/lib/$(LIBRARY)
+
 $(DEST):
 		mkdir -p $(DEST)
 $(DESTLIB):

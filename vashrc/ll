@@ -1,0 +1,8 @@
+#
+# long listing as main menu
+#
+
+@std.rc
+-1!ls-l
+-fls -la
+-@9

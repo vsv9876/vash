@@ -201,7 +201,7 @@ open_include:
 		if (fp[fpix] == NULL) {
 			if((fp[fpix]=dafopen(fname, vapath, "r")) == NULL) {
 				sprintf(ws, "can't read '%s' in vexdir='%s'", fname, vapath);
-				w_emsg(ws); w_chr('\r'); w_chr('\n');
+				w_emsg(ws); er_eol(ERR); at_set(CMD);
 				return(0);
 			}
 		}

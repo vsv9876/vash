@@ -2,9 +2,10 @@
 SHELL = /bin/sh
 
 #
-# Visual Assistant Shell, ASCII remix
-# 1990-2019 (C) Sergey Vovk
-# License: GPL or MIT or BSD, on your taste
+# Visual Assistant Shell
+# 1990-2020 (C) Sergey Vovk
+#
+# MIT License
 # 
 
 # this is permanent, other value not tested yet.
@@ -99,28 +100,20 @@ compile:   $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
 	cd $(VASH);   $(MAKE) all "DEST=$(DEST)" "CFLAGS_ASH=$(CFLAGS_ASH)" \
 		"VERSN=$(VERSN)"
 	cd vashlib/LIB;           $(MAKE) "DEST=$(DEST)" all
-	cd vashlib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
+#	cd vashlib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
 
 #install:   $(DESTDIR) $(DEST) termcap $(VISILIB)
 install:   $(DESTDIR) $(DEST) $(VISILIB)
 	cd $(VHSET); $(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd $(VASH);  $(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd vashlib/LIB;			$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
-	cd vashlib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd vashbin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd vashrc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd vashbin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd vashlib/LIB;			$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
+#	cd vashlib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cp -rp termcap/. $(VISILIB)
 #	cd visilib;			$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 
-#bld:	pkgbuild
-#
-#pkgbuild: all $(BLD)
-#	cd $(VHSET); $(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(BLD)"
-#	cd $(VASH);  $(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(BLD)"
-#	cd vashlib/LIB;			$(MAKE) install "DEST=$(BLD)"
-##	cd vashlib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(BLD)"
-##	cd visilib;			$(MAKE) install "DEST=$(BLD)"
-
+# vashrc contains nothing to be clean
 clean:
 	cd $(VISI)/bin; rm -f *
 	cd $(VISI)/lib; rm -f *
@@ -128,13 +121,12 @@ clean:
 	cd $(VHSET); $(MAKE) clean
 	cd $(VASH); $(MAKE) clean
 	cd vashlib/LIB; $(MAKE) clean
-	cd vashlib/LIB-$(ASHLIB); $(MAKE) clean
 	cd vtest; $(MAKE) clean
 	rm -f $(BLDCFG) 
 	touch $(BLDCFG)
+#	cd vashlib/LIB-$(ASHLIB); $(MAKE) clean
 
 distclean:	clean
-	#find . -name BLD -exec rm -rf '{}' ';'
 	find . -type f -a '(' \
 			-name core -o \
 			-name '*.b' -o \
@@ -145,18 +137,11 @@ distclean:	clean
 		')' -exec rm -f '{}' ';'
 	rm -rf $(BLD)
 
-#$(BLD):
-#	mkdir -p $(BLD)
-##	test -d $(BLD)
-
 $(DEST):
 	mkdir -p $(DEST)
-#	test -d $(DEST)
 
 $(DESTDIR):
 	mkdir -p $(DESTDIR)
-#	test -d $(DESTDIR)
 
 $(VISILIB):
 	mkdir -p $(VISILIB)
-#	test -d $(VISILIB)

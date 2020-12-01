@@ -1,17 +1,11 @@
 #! /usr/bin/vash
 #
-# Файл .ashhelp
-#-----------------------------------------
-# Работа с подсказкой (HELP)
-# Wed Sep 12 15:46:39 MSD 1990
-#-----------------------------------------
-# Содержимое этого файла и указанного ниже (.../ash/HELP) должно
-# быть согласовано.
+# std.help.rc
 #
-#-fcat $(VASH_EXDIR)/HELP
-#-fcat /home/vsv/proj-ws/vash-2./vashlib/LIB/HELP
--f_ HELP
-#-fcat HELP || echo ..
+# Wed Sep 12 15:46:39 MSD 1990
+#
+#
+-f_std.help.menu
 -i
 #-o.
 -@1
@@ -27,9 +21,9 @@
 -9setup
 -0return
 #-------------------------debug
-:PU
+:KI
         ??? ?   _sup
-:PD
+:=
 	??? ?	_rescan
 #-------------------------
 :EX
@@ -72,8 +66,8 @@
 :NL
 	* * +nl
 +nl
-	* * Return     _cmdset .ashstd
-	* * Intro      :#m #A/ASHINTRO
+	* * Return     _cmdset std.rc
+	* * Intro      :#m #A/std.help.manual
 	* * Help       _help mainh.lb
 	* * ASH        _help ash.lb
 	* * Shell      _help 1shell.lb
