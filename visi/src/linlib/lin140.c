@@ -99,6 +99,7 @@ int inherit;
 #endif
 		tcgetattr(vtti, &old);
 		new = old;
+		new.c_iflag = (new.c_iflag&(~(ICRNL|IGNCR)));
 		new.c_oflag = (new.c_oflag&(~OPOST));
 		new.c_lflag = ISIG;
 #ifndef CNUL

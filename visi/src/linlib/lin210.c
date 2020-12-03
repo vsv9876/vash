@@ -158,7 +158,7 @@ KBL kbl[KBLSIZE] = {
 	{ KBCTL(    'S'),   KB_SP,  "[space]" }, /* 6 */
 
 	/* 1) */
-	{ KBCTL(    'J'),   KB_NL,  "Enter  " },
+	{ KBCTL(    'M'),   KB_NL,  "Enter  " },
 	{ KBCOD('d','e'),   KB_DE,  "<-del  " },
 
 	{ KBCTL(    'X'),   KB_EX,  "Ctrl-X " }, /* 9 */
@@ -174,7 +174,7 @@ KBL kbl[KBLSIZE] = {
 	{ KBCOD('k','N'), KB_PD,    "PgDown " }, /* 18 */
 
 	/* 2) */
-	{ KBCTL(    'M'),   KB_NL,  "Ctrl-M " },
+	{ KBCTL(    'J'),   KB_NL,  "Ctrl-J " },
 	{ KBCTL(    'H'),   KB_DE,  "Ctrl-H " },
 
 	{ KBCTL(    'C'),   KB_EX,  "Ctrl-C " },
@@ -211,11 +211,10 @@ KBL kbl[KBLSIZE] = {
  * TODO: line0.h
  *
  * ANSI color logical tables for SGR
- * note: there is no defined constant to index FGBG - it is simpy 0 (zero)
  *
  * Note: active code is in w_sgr() from lin320.c and vhset/attr.c
  *
- * now a member of LPA strcture:
+ * now a member of LPA structure:
  * char *acout [LPASIZE];
  * char *acinp [LPASIZE];
  *
@@ -232,14 +231,14 @@ LPA lpaout[LPASIZE] = {
 };
 
 LPA lpainp[LPASIZE] = {
-	{       ' ',    A_MD,       "31;49" },             /* CMD */
-	{       ';',    0,          "33"    },              /* TXT  */
+	{       ' ',    A_MD,       "31;49" },              /* CMD  */
+	{       '|',    A_MR,       "33;40" },              /* TXT  */
 	{       ' ',    A_MR|A_US,  "36;40" },              /* HDR  */
 	{       '"',    A_MR|A_MD,  "37;44" },              /* VAR  */
 	{      '\'',    A_MR,       "35;47" },              /* ALT  */
 	{       '>',    A_MR|A_MD,  "32"    },              /* MSE  */
 	{       ' ',    A_US|A_MD,  "37;41" },              /* ERR  */
-	{       '!', A_US|A_MR|A_MB,  "33;49" },              /* ATT  */
+	{       '!', A_US|A_MR|A_MB,  "33;49" },            /* ATT  */
 };
 
 int		sgrmode = 1; /* initial monochrome, not a dumb :) */
