@@ -1,4 +1,6 @@
-#!/usr/bin/vash
+#!/usr/bin/bash
+# this is vash rc profile
+# shebang used for auto syntax colorize only
 #
 # Visual Assistant Shell (vash)
 # 1990,1993,2013,2016,2019 (C) Sergey Vovk
@@ -8,24 +10,12 @@
 # standard default profile std.rc (former .ashstd)
 # since Tue Jun  1 22:41:47 MVT 1993
 #
-# content of this file and included files can be changed by user,
-# which is responsible for any changes
-#
-# $HOME/.vash/std.rc     - customized by user version
-#
-# Содержимое этого файла содержит информацию, которая может быть изменена
-# пользователем. Ответственность за любые измененения ложится на их автора.
-#
-# Формат файлов настройки будет развиваться, подробности в конце файла.
-#
-# #A/.ashstd - this file
-# #A substituted with env=VASH_EXDIR, by default is /usr/lib/vash
-#
-#-------------------------------------------------------
-#       Названия клавиш:
+
+# description and comment moved to ./std.SYNTAX
+
 -1!sh
 -2menu
--3view
+-3?????
 -4edit
 -5cp
 -6mv
@@ -33,150 +23,47 @@
 -8rm
 -9setup
 -0exit
-#-------------------------------------------------------
-# Умолчания: как заполнить(fill), откуда(in), куда копировать(out).
-#  : - встроенная команда ls (понимает флаги -F, -L -a)
-#-f:FL
-#-@ номер поля или вырезка для подстановки по '##', см. .ashproc
 
 -f:Fa
 -i.
 -o.
 -@
 
-# 
 @std.mark
 
-#-------------------------------------------------------
-#
-# Реакция на клавишу. Проверяется 2 условия:
-# rwx     :полномочия доступа к реперному файлу (здесь к текущему каталогу)
-# - или + :наличие помеченных файлов
-#-------------------------------------------------------
+#       Освежить стандартную настройку ash (при отладке этого файла)
+:KI
+    * * _cmdset std.rc
+
+# Конец работы, ВЫХОД
+:0
+	* *     exit
+#:EX
+#	* *     ;exit # no ask comfirmation
+:EX
+#	* *	_msg please, use ^D (Ctrl-d) for quit
+	* *	_err please, type exit or press 0 and Return to quit
 
 # Редактирование последней команды sh:
+#:EX
 :HE
 :[1!]
 	r?x ?   _sh
+
+# clear command buffer
+:CA
+    * * _sh #
+	
 # Меню пользователя
 :2
 :U2
 	r?x ?   _menu2 std.menu
 #	* ?     _f_ls
-# Просмотр файла
-:3
-:U3
-	r?x ?   +View
-#-------------------------------------------------------
-# Действие над файлом(объектом). Проверяются 3 условия:
-# полномочия доступа к объекту (файлу),
-# тип объекта (см.пояснения в конце этого файла),
-# шаблон имени объекта.
-# Шаблоны имен задаются так же, как шаблоны имен файлов /bin/sh.
-#
-# Таблица может быть расположена в любом месте файла настройки,
-# см. ниже +View, +ed, ...
-#-------------------------------------------------------
-+View
-	r?? ? *.C       ccat #@
-#                            здесь и далее нужен gzip, слинкованный с zcat
-	r?? D *.tar.[zpC]    :gzip -d < #@ | tar -tvf -
-	r?? D *.tar.bz2      :bzip2 -cd < #@ | tar -tvf -
-	r?? D *.tar.gz       :gzip -d < #@ | tar -tvf -
-	r?? D *.tar.xz       :xz -d < #@ | tar -tvf -
-	r?? D *.taz          :gzip -d < #@ | tar -tvf -
-	r?? D *.tgz          :gzip -d < #@ | tar -tvf -
-	r?? D *.tar.[Z]      :zcat < #@ | tar -tvf -
-	r?? D *.zip          zipinfo -m #@
-	r?? D *.arj          unarj l #@
-	r?? D *.zoo          zoo l #@
-	r?? [DT] *.cpio      cpio -itv -I#@
-	r?? [DT] *.cpio.[Z]  zcat < #@ | cpio -itv
-	r?? [DT] *.cpio.gz   gzip -d < #@ | cpio -itv
-	r?? [DT] *.cpio.[zpC] gzip -d < #@ | cpio -itv
-	r?? [DT] *.[zCp]        gzip -d < #@
-	r?? [DT] *.[Z]          zcat < #@
-	r?? [DT] *.bz2          bzip2 -cd < #@
-	r?? [DT] *.gz           gzip -d < #@
-	r?? [DT] *.src.rpm   ;rpm -qivp ./#@ | #m
-	r?? [DT] *.rpm       ;rpm -qivp ./#@ | #m
-	r?? [DT] *.deb       ;dpkg --info ./#@ | #m
-	r?? A *.a            ar t #@
-	r?? O *.o            :nm -np #@
-	r?? O *.si           :nm -np #@
-	r?? O *              nm -np #@
-	r?? D *.tar          :tar -tvf #@
-	r?? D *.[wj]ar       ;unzip -l #@ | #m
-	r?? D *              :od -a #@ | #m
-# dodo script companion, not in use
-# 	r?? T .a             :tail -f #@
-# 	r?? T a              :tail -f #@
-	r?? T *              :#m #@
-# 	r?? E *              _msg file empty, zero length
-# interface files in /dev, /sys, ... - stat(2) show them as zero length regular files
-	r?? E *              :cat #@
-	r?x d *              :ls -aCF #@/.
-#	r?? M *              frm -n #@
-	r?? M *              mutt -Rf #@
-#	??? ? *              _file #@
-	??? ? *              :ls -ld #@ ; file #@
-+nl
-#	r?x d .         _msg Купите на Привозе селедку и крутите ей мозги - мы стоим на Дерибасовской!  :)
-#	r?x d .         _msg let You buy a fish on Privoz and screw a brain for him - we stay here on Deribasovskaja :)
-	r?x d .         _rescan
-	r?x d *         :cd #@
-	r?? D *.tar.[Z]      zcat < #@ | tar -xvf -
-	r?? D *.tar.[zZCp]   gzip -d < #@ | tar -xvf -
-	r?? D *.tar.bz2      bzip2 -d < #@ | tar -xvf -
-	r?? D *.tar.gz       gzip -d < #@ | tar -xvf -
-	r?? D *.tar.xz       xz -d < #@ | tar -xvf -
-	r?? D *.taz          gzip -d < #@ | tar -xvf -
-	r?? D *.tgz          gzip -d < #@ | tar -xvf -
-	r?? D *.zip          unzip #@
-	r?? D *.arj          unarj x #@
-	r?? D *.zoo          zoo x #@
-	r?? [DT] *.cpio         cpio -idm -I#@
-	r?? [DT] *.cpio.[Z]     zcat < #@ | cpio -idm
-	r?? [DT] *.cpio.[zp]    gzip -d < #@ | cpio -idm
-	r?? [DT] *.cpio.gz      gzip -d < #@ | cpio -idm
-#    r?? [DT] *.deb          sudo dpkg -i #@
-	r?? [DT] *.deb          dpkg-deb -x #@ /tmp/#@.d
-	r?? [DT] *.src.rpm      _msg did You mean 'rpmbuild bb #@ ?'
-	r?? [DT] *.rpm          sudo rpm -qp #@ --
-	r?? D *.[zCp]           gzip -d #@
-	r?? D *.[Z]             uncompress #@
-	r?? D *.bz2             bzip2 -d #@
-	r?? D *.gz              gzip -d #@
-	r?? [ET] .*.b       rm -f .*.b .,resv.*
-	r?? [ET] *.b        rm -f *.b .,resv.*
-	r?? A *             ar xv #@
-	r?? T [Mm]ake*.sh   ./#@
-	r?? T [Mm]ake*      make -f #@
-	r?? [DT] *.tar      tar -xvf #@
-	r?? [DT] *.[wj]ar   unzip -x #@
-	r?? * *.man         ;nroff -man #@ | #m
-# retro not in use
-# 	r?? T *.lav         make #*.lb
-# 	r?? T *.la          make #*.lb
-# 	r?? T *.cv          make #*.c
-	r?? T *.xpm         :sxpm #@ &
-	r?? T *.c           make #*.o
-	r?? T *.pl          make #*.pl
-	r?? T .ashhist      _msg #@ Is not ash's program script
-	r?? T .ash*         _cmdset #@
-#        ??x [TO] *          ./#@
-# a.out ОС XENIX в SYSV выглядит как неопознанные данные...
-	??x [TOD] *     ./#@
-	--x [-] *       ./#@
-#       r?x d *		:cd #@
-#	r?? M *         mailx -f #@
-	r?? M *         mutt -f #@
-#        r?? D *.bat     vpix z:#@
-#        r?? D *.com     vpix z:#@
-#        r?? D *.exe     vpix z:#@
-	r?? D *.bat     dos #@
-	r?? D *.com     dos #@
-	r?? D *.exe     dos #@
+
+@std.view
+   
+#+Open
+@std.open
 
 # Редактирование файла
 :4
@@ -260,32 +147,18 @@
 :U9
 	??? ?   _sup
 
-
-# Конец работы, ВЫХОД
-:^D
-	* *     :exit
-:0
-##:EX
-	* *     exit
-:EX
-	* *	_msg please, use ^D (Ctrl-d) for quit
-
-
-#       Освежить стандартную настройку ash (при отладке этого файла)
-:KI
-    * * _cmdset std.rc
-
 # Вызов подсказки
 # obsolete, will be removed - use man vash instead, please
 :[?]
 #:HE
-	* * _cmdset std.help.rc
+#	* * _cmdset std.help.rc
+	* * ;vash std.help.rc
 
 # Полезное действие (выполнить, распаковать, войти в объект, и т.п.),
-# см. выше +nl, +View
+# см. выше +Open, +View
 :NL
 #:[;]
-	??? ?   +nl
+	??? ?   +Open
 
 :&
 #       Программа (настройка) ash для работы с процессами
@@ -317,8 +190,8 @@
 
 # Сравнение файлов
 :D
-	r?x +   +diff
-	rwx -   _msg exact two files must be selected to diff
+	* +   +diff
+	* -   _msg exact two files must be selected to diff
 +diff
 	* * * :diff -b ##
 
@@ -382,48 +255,18 @@
 #                       chmod +w лучше, но в SYSV umask не влияет на chmod
 	?-? ? *         chmod ug+w #@
 
-# have to be moved into std.menu
-:U
-	* -     :du -sh
-	* *	:du -s ##
-
 :O
 # Закрыть файл или помеченную группу файлов для категории 'прочие'
 	* -     chmod o-rwx #@
 	* *     chmod o-rwx ##
+
+# have to be moved into std.menu
+:U
+	* -     :du -sh
+	* *	:du -s ##
 
 :[#]
 	* *     _file #@
 
 @std.final
 
-#-----------------------------------------
-# Структура файла настройки (Формат будет меняться).
-#
-#  1990-1993,2020 (C) Sergey Vovk
-#  MIT license
-#
-#
-# Строка начинается с одного из символов:
-#       # строка комментария и пустая строка игнорируются;
-#       : код нажатой клавиши, начало программы этой клавиши;
-#       + действие (имя действия), начало таблицы действия над пунктом меню;
-#       пробел, табуляция
-#         продолжение таблицы программы клавиши или действия.
-#       @ имя файла, включаемого в этот профиль
-# Символ типа файла (в таблицах действий):
-#       d       каталог (directory)
-#       b       блочный специальный (например /dev/rk0)
-#       c       символьный специальный (например /dev/tty1)
-#       E       пустой (Empty)
-#       O       объектный формата a.out (Object)
-#       A       архивный (формат программы ar)
-#       T       текстовый  (Text)
-#       D       неопознанные данные (Data)
-#       M       почтовый ящик, текстовый файл со строкой 'From '
-#               в первых 5 байтах, реализовано в ASH V1.9
-#       !       вовсе не файл, например строка из выдачи /bin/ps,
-#               пока не реализовано.
-#-----------------------------------------
-# Конец файла настройки .ashstd
-#-----------------------------------------

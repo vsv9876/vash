@@ -45,11 +45,17 @@ typedef struct {
 } KBF;  /* ФИЗИЧЕСКОЕ - КАК ОПИСАНА В termcap */
 
 typedef struct {
-	kbcod   t_key;  /* ФИЗ. КОД ('ku') */
-	kbcod   t_cod;  /* ЛОГ. КОД ('AU') */
-	char    t_knm[8];  /* НАЗВАНИЕ КЛАВИШИ ("ВВЕРХ") */
-} KBL;  /* ЛОГИЧЕСКОЕ - СМЫСЛОВОЙ КОД И НАЗВАНИЕ */
+	kbcod   t_cod;  /* logical  'AU' */
+	char    t_knm[8];  /* key description, "up arrow", only for key1 */
+	kbcod   t_key1;  /* primary 'ku' */
+	kbcod   t_key2;  /* secondary */
+} KBL;  /* translation to logical keyboard input */
 #define KBLSIZE 48
+
+typedef struct {
+	kbcod	t_cod;	/* logical 'AU' */
+	char *  t_descr;/* description 'jump cursor up'*/
+} KBDESCR;
 
 /* ПОДСКАЗКИ И ВИДЕОАТРИБУТЫ */
 typedef struct {

@@ -82,7 +82,8 @@ do_kbl()
 	char    str[100];  /* СТРОКА ДЛЯ ХРАНЕНИЯ ОДНОЙ ЗАПИСИ НАСТРОЙКИ */
 	FILE    *lhfp;     /* ФАЙЛ С НАСТРОЙКОЙ */
 
-	kbcod   t_key;     /* ФИЗ. КОД КЛАВИШИ */
+	kbcod   t_key1;     /* ФИЗ. КОД КЛАВИШИ */
+	kbcod   t_key2;
 	kbcod   t_cod;     /* ЛОГ. КОД */
 	kbcod   t_cods;    /* ЛОГ. КОД КЛАВИШИ ДЛЯ ПОИСКА */
 	char    c1,c2;		/* 2 символа для получения кода через макрос */
@@ -155,8 +156,9 @@ cont1:
 
 	ibeg = 0;
 	/* ЧИТАЕМ НАСТРОЙКУ... */
-	while( fgets(s=str, 98, lhfp), feof(lhfp)==0) {
-		if(isspace(*s))       continue;
+	while( fgets(s=str, 98, lhfp), feof(lhfp) == 0) {
+		if(isspace(*s))
+			continue;
 
 		/* keypad mode (+/-), SGR mode (0,1,2,3) */
 		if (*s == '+' || *s == '-') {
@@ -164,45 +166,59 @@ cont1:
 			if (*s == '-')      { w_raw(t_ke); kpadon = 0;      }
 			if (isdigit(str[1]))	{		sgrmode = s[1] - '0'; }
 		}
-		/* КОД И НАЗВАНИЕ КНОПКИ ? */
+		/* logical code */
 		else if(*s == ':') {
 			s++;
-			/* ПОЛУЧИТЬ ОБА КОДА КЛАВИШИ */
-			/*
-			t_key  = tocod0(*s++);
-			t_key |= tocod1(*s++);
-			t_cod  = tocod0(*s++);
-			t_cod |= tocod1(*s++);
-			*/
-			c1 = *s++;
-			c2 = *s++;
-			t_key = KBCOD(c1, c2);
+			/* new format, 1st field is to key for insert into runtime table
+			 * example: ':HE:F2    :k2:^G' */
+			/* fields number 1st, 2nd and 3rd cannot be empty,
+			 * 4th may be omitted (filled with spaces), but colon ':' */
 			c1 = *s++;
 			c2 = *s++;
 			t_cod = KBCOD(c1, c2);
+			if (*s == ':') {
+				s++; /* skip colon */
+			} else {
+				continue;	/* skip this record in old format */
+			}
 
 #ifndef UASDEBUG
-			/* ПРОВЕРИТЬ, ВМЕСТО ЧЕГО ВСТАВЛЯТЬ */
+			/* verify place of insertion */
 			for(i=ibeg, ibeg++; t_cods = kbl[i].t_cod; i++ ) {
 				if(t_cods == t_cod) {
-					/* СКОПИРОВАТЬ ФИЗ. КОД */
-					kbl[i].t_key = t_key;
-					/* СКОПИРОВАТЬ НАЗВАНИЕ */
-					if(1/*os = kbl[i].t_knm*/) {
-					    /*kbl[i].t_knm = malloc(KBLSIZE);*/
-					    os = kbl[i].t_knm;
-					    for(oscnt=8; *s && isprint(*s); oscnt--) {
-					    	if (oscnt>0) {
-								*os++ = *s;
-								*os = '\0';
-					    	}
-					    	s++;
-					    }
+					/* label scan */
+					/*kbl[i].t_knm = malloc(KBLSIZE);*/
+					os = kbl[i].t_knm;
+					for(oscnt=8; oscnt > 0; s++, oscnt--) {
+						if (*s != '\0') { /*if (isprint(*s)) {*/
+							*os++ = *s;
+						} else {
+							*os++ = '\0';
+						}
+						*os = '\0';
 					}
+					/*
+					 * setup phisical keys:
+					 * get primary key (and secondary key if exist)
+					 */
+					s++; /* skip colon */
+					if ( isspace(*s) ) {
+						t_key1 = KBCOD(' ', ' ');
+					} else {
+						c1 = *s++;
+						c2 = *s++;
+						kbl[i].t_key1 = KBCOD(c1, c2);
+						s++; /* skip colon */
+						c1 = *s++;
+						c2 = *s++;
+						kbl[i].t_key2 = KBCOD(c1, c2);
+					}
+
 					goto cont;
 				}
 			}
 #else
+			/* вариант при старом формате файлов vhset */
 			/* НИКАКИХ ПРОВЕРОК */
 			i=ibeg; ibeg++;
 

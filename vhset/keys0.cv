@@ -14,25 +14,25 @@ KO_P    = kbl[0].t_knm
 
 ---LINES
 KO      = ipv   -       -       cvt_s   -       KO_P
-sp      = gh    -       -       -       -       "spacebar"
+---#sp      = gh    -       -       -       -       "spacebar"
 
 ---SCREEN
 =Basic keys setup
 
-    ."Key"..   ."Name".........     ."shirt rules description:".........    
+    ."Key"..   ."Description"...    ."shirt rules description:".........    
                                     Setup will be done in two steps.    
     .KO.....   keypad (on/off)
-                                    step 1: to assign new value of keys:    
-    .t......   cursor up               press in order    
-    .t......   cursor down             (from up to down)    
-    .t......   cursor left             press .sp..... to cancel    
+                                    step 1: assign new key:    
+    .t......   cursor up               press a key desired;
+    .t......   cursor down             press .:SP.... to cancel
+    .t......   cursor left             
     .t......   cursor right
-				    step 2: to edit names of keys:    
-    .t......   Tab                     press .sp.....    
-    .t......   space                   to switch edit mode    
+				    step 2: edit key label:
+    .t......   Tab                     press .:SP.... to edit label;
+    .t......   space                   press .:NL.... when complete
 
-    .t......   Enter/Return            step 3: to complete a job:            
+    .t......   Enter/Return 
+                                    step 3: when done,
                                        press Exit key .:EX....   
-
 
 ---END

@@ -75,7 +75,7 @@
 	bg      = ia - "b"   cvt_co  - LPA_B
 	sgr     = ia - -     cvt_sgr - LPA_B
 ---# 	pi      = g0 - "# "  cvt_pi  - LPA_B
-	M       = g1 - "* "  cvt_pi  - LPA_B
+	M       = g1 - "# "  cvt_pi  - LPA_B
 	pimsg0  = g  - "0"   cvt_pim - -
 	pimsg1  = g  - "1"   cvt_pim - -
 ---#	lh      = v  - -     -       - namelh
@@ -114,7 +114,7 @@
 .lh.............................................................................
            .mode..  .sgrm..........  SGR debug: .sgrAT.....
 	   
- help: .:HE.... w/r toggle: .:KI....
+ help: .:HE.... toggle mode w/r: .:KI....
 
 ---# dbeug garbage below...
 ---#+		    .pi    .t     .t     .t     .t     .t     .t     .t  

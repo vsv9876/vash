@@ -112,7 +112,7 @@ kbcod cod;
 
 	/*сопоставить с базой назначения логических кодов (не путать с termcap/terminfo) */
 	for(kblp=kbl; kblp->t_cod; kblp++) {
-		if(kblp->t_key == cod) {
+		if(kblp->t_key1 == cod || kblp->t_key2 == cod) {
 			cod = (kblp->t_cod);
 			break;
 		}

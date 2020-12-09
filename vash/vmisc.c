@@ -337,6 +337,10 @@ int   size;     /* размер строки для ввода */
 		case KB_NL:
 		case KB_EX:
 			return(cod);
+			break;
+		case KB_CA:
+			return(0);
+			break;
 		}
 	}
 }

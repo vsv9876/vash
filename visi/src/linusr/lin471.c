@@ -46,6 +46,7 @@ LINE *phline;           /* ИМЯ ФАЙЛА СТРАНИЦЫ HELP */
 				w_page(page);
 			}
 			break;
+	/*	case KB_CA: no return from page if r_line cancelled */
 		case KB_EX :
 			/*NOBREAK*/
 			return;

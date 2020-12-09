@@ -102,21 +102,22 @@ vmain()
 			sout();
 		default :
 			w_emsg("");
-			cp_set(-1, 0, TXT);
-			if (cod == L'\0') {
-				fprintf(vttout, "cod=0");
-			} else if (cod < 0x80) {
-				fprintf(vttout, "ASCII(7bit) 0x%2.2x '%c'", cod, cod);
-			} else if (cod >= 0x80 && cod < 0x10ffff) {
-				fprintf(vttout, "UTF-8 0x%x '%lc'", cod, cod);
-			} else if (cod0(cod) == '^') {
-				fprintf(vttout, "KBCTL('%c')", cod1(cod));
-			} else {
-				fprintf(vttout, "KB_%c%c", cod0(cod), cod1(cod));
-			}
-			er_eol(TXT);
-			fflush(vttout);
 			break;
 		}
+		cp_set(1, 0, TXT);
+		if (cod == L'\0') {
+			fprintf(vttout, "cod=0");
+		} else if (cod < 0x80) {
+			fprintf(vttout, "ASCII(7bit) 0x%2.2x '%c'", cod, cod);
+		} else if (cod >= 0x80 && cod < 0x10ffff) {
+			fprintf(vttout, "UTF-8 0x%x '%lc'", cod, cod);
+		} else if (cod0(cod) == '^') {
+			fprintf(vttout, "KBCTL('%c')", cod1(cod));
+		} else {
+			fprintf(vttout, "KB_%c%c", cod0(cod), cod1(cod));
+		}
+		er_eol(TXT);
+		fflush(vttout);
+
 	}
 }

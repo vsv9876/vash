@@ -56,7 +56,7 @@ char     *str;
 		*/
 		codh = KBCOD(s[1], s[2]);
 
-		for(kblp=kbl; kblp->t_key!=0; kblp++) {
+		for(kblp=kbl; kblp->t_key1!=0; kblp++) {
 			if(kblp->t_cod == codh) {
 				/*strncpy(str, kblp->t_knm, sizeof(kbl[0].t_cod));*/
 				strcpy(str, kblp->t_knm);

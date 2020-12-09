@@ -70,8 +70,9 @@ install-:        $(OBJS) $(DEST) $(DEST)/lib $(DEST)/lib/$(LIBRARY)
 deinstall:
 		-rm -r -f $(DEST)/lib/$(LIBRARY)
 
-slink:          $(OBJS)
-		ln -s `pwd` $(DEST)/lib/$(LIBRARY)
+#slink:          $(OBJS)
+#		ln -s `pwd` $(DEST)/lib/$(LIBRARY)
+
 $(DEST):
 		mkdir $(DEST)
 $(DEST)/lib:

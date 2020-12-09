@@ -378,6 +378,7 @@ kbcod h_menu()
 			break;
 		case '=':
 		case ';':
+		case KB_CA:
 		case KB_EX:      /* выход */
 		case ' ':       /* добавить */
 		case KB_NL:      /* заменить */

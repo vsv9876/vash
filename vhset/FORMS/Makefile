@@ -70,8 +70,9 @@ install:        $(OBJS) $(DESTLIB)/$(LIBRARY)
 		cp $(OBJS) $(DESTLIB)/$(LIBRARY)
 
 
-slink:          $(OBJS) $(DEST)
-		ln -s `pwd` $(DEST)/$(LIBRARY)
+#slink:          $(OBJS) $(DEST)
+#		ln -s `pwd` $(DEST)/$(LIBRARY)
+
 .DEFAULT:
 		mkdir $<
 $(DEST):

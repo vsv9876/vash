@@ -40,12 +40,7 @@ VASHLIB	= ./vashlib
 
 #PATH	= $(TOPDIR)/visi/bin:$(PATH)
 
-all:
-	$(MAKE) setup
-	$(MAKE) visi_lib
-	$(MAKE) compile
-
-#all:	compile bld
+all:	setup compile
 
 #help:	info
 
@@ -69,9 +64,21 @@ help:
 	$(MAKE)	showconfig
 	#$(MAKE)	SHOWCONFIG=yes yes
 
-
 setup:
-	@set -x; if [ -s "$(BLDCFG)" ]; then true; else ./configure; fi   
+	#@set -x;
+	@if [ -s "$(BLDCFG)" ]; then \
+		true; \
+	else \
+		echo '***************************' ; \
+		echo '' ; \
+		echo Plase, do $(MAKE) config 1st; \
+		echo '' ; \
+		echo '***************************' ; \
+	false; \
+	fi   
+
+prep cfg config:;
+	./configure
 
 #cfg:
 #	./configure
@@ -91,11 +98,12 @@ showconfig:
 	@echo CFLAGS_ASH=$(CFLAGS_ASH)
 	@echo CFLAGS_VISI=$(CFLAGS_VISI)
 
-visi_lib:; # $(BLDCFG) $(VISI)/include/line.h $(VISILIB_LIST)
+# $(BLDCFG) $(VISI)/include/line.h $(VISILIB_LIST)
+visi_lib: setup
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
 
-compile:   $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
+compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
 	cd $(VHSET); $(MAKE) all "DEST=$(DEST)"
 	cd $(VASH);   $(MAKE) all "DEST=$(DEST)" "CFLAGS_ASH=$(CFLAGS_ASH)" \
 		"VERSN=$(VERSN)"
@@ -103,7 +111,7 @@ compile:   $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
 #	cd vashlib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
 
 #install:   $(DESTDIR) $(DEST) termcap $(VISILIB)
-install:   $(DESTDIR) $(DEST) $(VISILIB)
+install: setup compile $(DESTDIR) $(DEST) $(VISILIB)
 	cd $(VHSET); $(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd $(VASH);  $(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd vashrc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"

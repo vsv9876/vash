@@ -4,7 +4,7 @@
 .settings
 .kde*
 .git
-.log
+.log*
 buildd.h
 conf.cfg
 *.o

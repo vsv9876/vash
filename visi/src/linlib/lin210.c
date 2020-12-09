@@ -96,6 +96,7 @@ KBF   kbf[] = {
 { KBCOD('k','P'), 0 },
 { KBCOD('k','N'), 0 },
 
+{ KBCOD('k','0'), 0 },
 { KBCOD('k','1'), 0 },
 { KBCOD('k','2'), 0 },
 { KBCOD('k','3'), 0 },
@@ -143,69 +144,55 @@ char *tcapo[] = {
 
 /* СВЯЗЬ ФИЗИЧЕСКИХ И ЛОГИЧЕСКИХ КОДОВ, А ТАКЖЕ ИМЕН КЛАВИШ */
 /* vanilla setup, may be changed via 'vhset' utility */
-/* 1) main set mandatory, not to be changed */
-/* 2) 2nd set used as alias*/
 KBL kbl[KBLSIZE] = {
 
-	/* 0) KEYPAD ON, it is possible to redefine as usual */
-	{ KBCTL(    'K'),   KB_KP,  "Ctrl-K " }, /* kbl[0] */
-	{ KBCOD('k','u'),   KB_AU,  "UP     " }, /* 1 */
-	{ KBCOD('k','d'),   KB_AD,  "DOWN   " }, /* 2 */
-	{ KBCOD('k','l'),   KB_AL,  "LEFT   " }, /* 3 */
-	{ KBCOD('k','r'),   KB_AR,  "RIGHT  " }, /* 4 */
+/* KEYPAD ON, it is possible to redefine as usual */
+{ KB_KP, "Ctrl-K ", KBCTL(    'K'), KB_EMPTY }, /* kbl[0] */
 
-	{ KBCTL(    'I'),   KB_TA,  "TAB    " }, /* 5 */
-	{ KBCTL(    'S'),   KB_SP,  "[space]" }, /* 6 */
+/* default values, cannot be redefined vith vhset */
+{ KB_AU, "<up>   ", KBCOD('k','u'), KB_EMPTY       },
+{ KB_AD, "<down> ", KBCOD('k','d'), KB_EMPTY       },
+{ KB_AL, "<left> ", KBCOD('k','l'), KB_EMPTY       },
+{ KB_AR, "<right>", KBCOD('k','r'), KB_EMPTY       },
 
-	/* 1) */
-	{ KBCTL(    'M'),   KB_NL,  "Enter  " },
-	{ KBCOD('d','e'),   KB_DE,  "<-del  " },
+/* limited customizing possible */
+{ KB_SP, "[space]", KBCTL(    'S'), KB_EMPTY       },
+{ KB_TA, "TAB    ", KBCTL(    'I'), KB_EMPTY       },
 
-	{ KBCTL(    'X'),   KB_EX,  "Ctrl-X " }, /* 9 */
-	{ KBCOD('k','1'),   KB_HE,  "F1     " },
-	{ KBCTL(    'R'),   KB_RE,  "Ctrl-R " },
-	{ KBCOD('k','4'),   KB_PR,  "PF4    " }, /* 12 */
+/* full customizing supported with vhset */
+{ KB_NL, "Enter  ", KBCTL(    'M'), KBCTL(    'J') },
+{ KB_DE, "<-del  ", KBCOD('d','e'), KBCTL(    'H') },
+                                                   
+{ KB_HE, "F1     ", KBCOD('k','1'), KBCTL(    'G') },
+{ KB_EX, "F2     ", KBCOD('k','2'), KBCTL(    'D') },
+{ KB_CA, "Ctrl-C ", KBCTL(    'C'), KB_EMPTY       },
+{ KB_RE, "Ctrl-L ", KBCTL(    'L'), KB_EMPTY       },
+{ KB_PR, "Ctrl-\\ ", KBCTL(    '\\'), KB_EMPTY     },
+                                                   
+{ KB_KI, "Insert ", KBCOD('k','I'), KBCTL(    'O') },
+{ KB_KD, "del->  ", KBCOD('k','D'), KB_EMPTY       },
+{ KB_KH, "Home   ", KBCOD('k','h'), KBCTL(    'A') },
+{ KB_KE, "End    ", KBCOD('@','7'), KBCTL(    'E') },
+{ KB_PU, "PgUp   ", KBCOD('k','P'), KBCTL(    'B') },
+{ KB_PD, "PgDown ", KBCOD('k','N'), KBCTL(    'F') },
 
-	{ KBCOD('k','I'), KB_KI,    "Insert " },
-	{ KBCOD('k','D'), KB_KD,    "del->  " },
-	{ KBCOD('k','h'), KB_KH,    "Home   " },
-	{ KBCOD('@','7'), KB_KE,    "End    " },
-	{ KBCOD('k','P'), KB_PU,    "PgUp   " },
-	{ KBCOD('k','N'), KB_PD,    "PgDown " }, /* 18 */
+/* extended set with limited support, not supported by vhset yet */
+{ KBUSR('0'), "       ", KBCOD('f','0'), KBUSR('0'), KB_EMPTY },
+{ KBUSR('1'), "       ", KBCOD('f','1'), KBUSR('1'), KB_EMPTY },
+{ KBUSR('2'), "       ", KBCOD('f','2'), KBUSR('2'), KB_EMPTY },
+{ KBUSR('3'), "       ", KBCOD('f','3'), KBUSR('3'), KB_EMPTY },
+{ KBUSR('4'), "       ", KBCOD('f','4'), KBUSR('4'), KB_EMPTY },
+{ KBUSR('5'), "       ", KBCOD('f','5'), KBUSR('5'), KB_EMPTY },
+{ KBUSR('6'), "       ", KBCOD('f','6'), KBUSR('6'), KB_EMPTY },
+{ KBUSR('7'), "       ", KBCOD('f','7'), KBUSR('7'), KB_EMPTY },
+{ KBUSR('8'), "       ", KBCOD('f','8'), KBUSR('8'), KB_EMPTY },
+{ KBUSR('9'), "       ", KBCOD('f','9'), KBUSR('9'), KB_EMPTY },
+{ KBUSR('.'), "       ", KBCOD('f','.'), KBUSR('.'), KB_EMPTY },
+{ KBUSR('-'), "       ", KBCOD('f','-'), KBUSR('-'), KB_EMPTY },
+{ KBUSR(','), "       ", KBCOD('f',','), KBUSR(','), KB_EMPTY },
 
-	/* 2) */
-	{ KBCTL(    'J'),   KB_NL,  "Ctrl-J " },
-	{ KBCTL(    'H'),   KB_DE,  "Ctrl-H " },
-
-	{ KBCTL(    'C'),   KB_EX,  "Ctrl-C " },
-	{ KBCOD('k','2'),   KB_HE,  "PF2    " },
-	{ KBCTL(    'L'),   KB_RE,  "Ctrl-L " },
-	{ KBCTL(    'V'),   KB_PR,  "Ctrl-V " },
-
-	{ KBCTL(    'S'), KB_KI,    "Insert " }, /* 13 */
-	{ KBCTL(    'S'), KB_KD,    "del->  " },
-	{ KBCTL(    'A'), KB_KH,    "Home   " },
-	{ KBCTL(    'E'), KB_KE,    "End    " },
-	{ KBCTL(    'B'), KB_PU,    "PgUp   " },
-	{ KBCTL(    'F'), KB_PD,    "PgDown " }, /* 18 */
-
-	/* 3) extended set with limited support, not supported by vhset yet */
-	{ KBCOD('f','0'),   KBUSR('0'),   0         },
-	{ KBCOD('f','1'),   KBUSR('1'),   0         },
-	{ KBCOD('f','2'),   KBUSR('2'),   0         },
-	{ KBCOD('f','3'),   KBUSR('3'),   0         },
-	{ KBCOD('f','4'),   KBUSR('4'),   0         },
-	{ KBCOD('f','5'),   KBUSR('5'),   0         },
-	{ KBCOD('f','6'),   KBUSR('6'),   0         },
-	{ KBCOD('f','7'),   KBUSR('7'),   0         },
-	{ KBCOD('f','8'),   KBUSR('8'),   0         },
-	{ KBCOD('f','9'),   KBUSR('9'),   0         },
-	{ KBCOD('f','.'),   KBUSR('.'),   0         },
-	{ KBCOD('f','-'),   KBUSR('-'),   0         },
-	{ KBCOD('f',','),   KBUSR(','),   0         },
-
-	{ 0 },
-	};
+{ 0 },
+};
 
 /*
  * TODO: line0.h
@@ -222,7 +209,7 @@ KBL kbl[KBLSIZE] = {
 LPA lpaout[LPASIZE] = {
 	{       ' ',    0,          "0"     },              /* CMD  */
 	{       ' ',    0,          "39;49" },              /* TXT  */
-	{       ' ',    A_MR,       "36;44" },              /* HDR  */
+	{       ' ',    A_MR,       "36;40" },              /* HDR  */
 	{       ' ',    A_MD,       "39"    },              /* VAR  */
 	{       ' ',    0,          "31"    },              /* ALT  */
 	{       '*',    0,          "32"    },              /* MSE  */
@@ -232,13 +219,13 @@ LPA lpaout[LPASIZE] = {
 
 LPA lpainp[LPASIZE] = {
 	{       ' ',    A_MD,       "31;49" },              /* CMD  */
-	{       '|',    A_MR,       "33;40" },              /* TXT  */
+	{       '|',    0,          "30;42" },              /* TXT  */
 	{       ' ',    A_MR|A_US,  "36;40" },              /* HDR  */
-	{       '"',    A_MR|A_MD,  "37;44" },              /* VAR  */
+	{       '"',    A_MR,       "37;44" },              /* VAR  */
 	{      '\'',    A_MR,       "35;47" },              /* ALT  */
-	{       '>',    A_MR|A_MD,  "32"    },              /* MSE  */
-	{       ' ',    A_US|A_MD,  "37;41" },              /* ERR  */
-	{       '!', A_US|A_MR|A_MB,  "33;49" },            /* ATT  */
+	{       '>',    020,        "32"    },              /* MSE  */
+	{       ' ',    012,        "37;41" },              /* ERR  */
+	{       '!',    072,        "30;43" },              /* ATT  */
 };
 
 int		sgrmode = 1; /* initial monochrome, not a dumb :) */

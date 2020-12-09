@@ -1,0 +1,123 @@
+#!/bin/sh shebang for auto syntax colorize only -- this is vash rc profile
+#
+
+# Visual Assistant Shell (vash)
+# 1990,1993,2013,2016,2019 (C) Sergey Vovk
+#
+# MIT license
+#
+# standard default profile std.rc (former .ashstd)
+# since Tue Jun  1 22:41:47 MVT 1993
+#
+# content of this file and included files can be changed by user,
+# which is responsible for any changes
+#
+# $HOME/.vash/std.rc     - customized by user version
+#
+# Содержимое этого файла содержит информацию, которая может быть изменена
+# пользователем. Ответственность за любые измененения ложится на их автора.
+#
+# Формат файлов настройки будет развиваться, подробности в конце файла.
+#
+# #A/.ashstd - this file
+# #A substituted with env=VASH_EXDIR, by default is /usr/lib/vash
+
+
+#-------------------------------------------------------
+#       Названия клавиш:
+
+    -1!sh
+    -9setup
+
+# - (minus sign) is a keychar of key label, from 1 to 9 and 0 (like on keyboard)
+# key '9' on up main keyboard (is not F9 key),
+# 'setup' - label viewable
+
+#-------------------------------------------------------
+# Умолчания: как заполнить(fill), откуда(in), куда копировать(out).
+#  : - встроенная команда ls (понимает флаги -F, -L -a)
+#-f:FL
+#-@ номер поля или вырезка для подстановки по '##', см. .ashproc
+
+#-------------------------------------------------------
+# @ - keychar of file included, followed by a file name,
+# searched on VASH_PATH
+
+    @std.mark
+
+#-------------------------------------------------------
+#
+# Реакция на клавишу. Проверяется 2 условия:
+# rwx     :полномочия доступа к реперному файлу (здесь к текущему каталогу)
+# - или + :наличие помеченных файлов
+
+#-------------------------------------------------------
+# Список действий над файлом(объектом).  Проверяются 3 условия:
+# полномочия доступа к объекту (файлу),
+# тип объекта (см.пояснения в конце этого файла),
+# шаблон имени объекта.
+# Шаблоны имен задаются так же, как шаблоны имен файлов /bin/sh.
+#
+# Таблица может быть расположена в любом месте файла настройки,
+# см. ниже +View, +ed, ...
+#-------------------------------------------------------
+# +View
+
+#-------------------------------------------------------
+# internal commands:
+
+    * *	cd		# chdir to HOME directory
+    * D	cd #@		# chdir to directory pointed by cursor
+    * *     exit	# exit from current vash process
+    r?x ?   _menu2 std.menu	# menu
+    r?x ?   _sh		# change context to command edit, preserving content
+    r?x ?   _sh #k	# begin new command
+    * * _file		# debug internal file and permission detector
+    * * _mark +		# menu item (file) selection dialog
+    * + _mark -		# menu item clear selection
+    * * _f_ls		# fill command of main menu editing dialog
+
+    * * _err message	# error message (with attribute ERR)
+    * * _msg message	# info message (with attribute TXT)
+
+    * * _cmdset profile	# substitute current profile with specified one
+    * * _sup		# setup runtime parameters of vash interpreter
+    * * _rescan		# repeat fill main menu content, drop any mark
+    * * _kshow		# debug info about some substitution values
+    * * _sus		# suspend process, switch to parent shell
+
+# mode execution prefixes of command (both internal and external sh -c)
+#             ask before Enter, execute, wait dialog on exit
+  no prefix   +                 +        + 
+  :           -                 +        +
+  ;           -                 +        -
+  _  means internal command or function
+
+#-----------------------------------------
+# Структура файла настройки (Формат будет меняться).
+#
+#  1990-1993,2020 (C) Sergey Vovk
+#  MIT license
+#
+#
+# Строка начинается с одного из символов:
+#       # строка комментария и пустая строка игнорируются;
+#       : код нажатой клавиши, начало программы этой клавиши;
+#       + действие (имя действия), начало таблицы действия над пунктом меню;
+#       пробел, табуляция
+#         продолжение таблицы программы клавиши или действия.
+#       @ имя файла, включаемого в этот профиль
+# Символ типа файла (в таблицах действий):
+#       d       каталог (directory)
+#       b       блочный специальный (например /dev/rk0)
+#       c       символьный специальный (например /dev/tty1)
+#       E       пустой (Empty)
+#       O       объектный формата a.out (Object)
+#       A       архивный (формат программы ar)
+#       T       текстовый  (Text)
+#       D       неопознанные данные (Data)
+#       M       почтовый ящик, текстовый файл со строкой 'From '
+#               в первых 5 байтах, реализовано в ASH V1.9
+#       !       вовсе не файл, например строка из выдачи /bin/ps,
+#               пока не реализовано.
+#-----------------------------------------

@@ -1,5 +1,6 @@
+#!/usr/bin/vash
 #
-# standard profile alias
+# alias to standard profile
 #
 
 @std.rc

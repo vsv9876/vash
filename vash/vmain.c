@@ -120,6 +120,7 @@ char *fill;
 	sprintf(prompts, "-- ");
 	cod = pmtrstr(prompts, newCfill, maxco - strlen(prompts) - 2);
 	switch(cod) {
+	case KB_CA:
 	case KB_EX:
 		w_emsg("");
 		return 0;
@@ -154,6 +155,7 @@ kbcod cod;
 	/* ввести шаблон пометки */
 	sprintf(prompts, " mark #%c", cod);
 	switch(pmtrstr(prompts, pattfs, 40)) {
+	case KB_CA:
 	case KB_EX:
 		w_emsg("");
 		return 0;

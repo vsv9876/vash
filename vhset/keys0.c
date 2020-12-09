@@ -43,10 +43,10 @@ pag_mk()
 		w_str("->");    /* показать маркер */
 
 		cp_set(li, 0, TXT);
-		kbl[i].t_key = cod = r_key();
+		kbl[i].t_key1 = cod = r_key();
 
 		if(i == 1) {
-			if(kbl[0].t_key == cod) {
+			if(kbl[0].t_key1 == cod) {
 				r_cod(cod);
 				w_emsg(
 				"Keypdad are toggled");

@@ -298,6 +298,7 @@ string_simple:
 	if(attr & PAD) {
 		for(i=slen; i<size;)    wcsptr[i++] = filch; wcsptr[size] = 0;
 	}
+#ifdef RETRO_R_LINE
 	/*==== КУРСОР, ВИДЕО (НЕ ЗАБЫТЬ ПОДСКАЗКУ) */
 	cp_set(line->line, line->colu, attr);
 
@@ -306,11 +307,27 @@ string_simple:
 		w_wchr(*wcsbuf);    /* только для r_line */
 	else
 		w_wcstr(wcsbuf);
-
 	if(onexit || posp == (int *)(-1)) return(cod);    /* КОНЕЦ ДЛЯ ВЫЗОВА ЧЕРЕЗ w_line */
 
 	/*==== КУРСОР ПЕРЕД ВВОДОМ ПЕРВОЙ КЛАВИШИ */
 	cp_set(line->line, line->colu, attr);
+#else
+	/*==== КУРСОР, ВИДЕО (НЕ ЗАБЫТЬ ПОДСКАЗКУ) */
+
+	/*==== ПОКАЗАТЬ либо читать быстро читаемые или нередактируемые */
+	if ( (posp != (int *)(-1)) && (attr & (LFASTR|NED)) == (LFASTR|NED) ) {
+		;/* w_wchr(*wcsbuf);    /* только для r_line */
+	}
+	else {
+		/* универсальные, показать */
+		cp_set(line->line, line->colu, attr);
+		w_wcstr(wcsbuf);
+	}
+	if(onexit || posp == (int *)(-1)) return(cod);    /* КОНЕЦ ДЛЯ ВЫЗОВА ЧЕРЕЗ w_line */
+
+	/*==== КУРСОР ПЕРЕД ВВОДОМ ПЕРВОЙ КЛАВИШИ */
+	cp_set(line->line, line->colu, attr);
+#endif
 
 	/*==== ЧИТАТЬ КОД ПЕРВОЙ КЛАВИШИ */
 	switch(cod = r_cod(0)) {
@@ -408,12 +425,12 @@ inp_test:
 	case KB_AD:
 	case KB_AL:
 	case KB_AR:
+	case KB_TA:
 	case KB_NL:
 	case KB_KH:
 	case KB_KE:
 	case KB_PU:
 	case KB_PD:
-	case KB_TA:
 	      break;
 	default :       return(cod);
 	}

@@ -217,6 +217,7 @@ typedef struct  {
 #define KB_AR     KBCOD('A','R')
 /* exit, help, keypad on/off, print, newline/Enter */
 #define KB_EX     KBCOD('E','X')
+#define KB_CA     KBCOD('C','A')
 #define KB_HE     KBCOD('H','E')
 #define KB_KP     KBCOD('K','P')
 #define KB_PR     KBCOD('P','R')
@@ -234,6 +235,7 @@ typedef struct  {
 #define KB_PU     KBCOD('P','U')
 #define KB_PD     KBCOD('P','D')
 #define KB_SP     KBCOD('S','P') /* never detected, used in help pages */
+#define KB_EMPTY  KBCOD(' ',' ')
 
 /*----------------------*/
 /* флаги функции io_set */

@@ -10,7 +10,7 @@
 #-o.
 -@1
 
--1shell
+-1sh
 -2menu
 -3view
 -4edit
@@ -29,7 +29,8 @@
 :EX
 :U0
 :0
-	* * _cmdset .ashstd
+#	* * _cmdset .ashstd
+	* * :exit
 :U1
 :1
 	* * _help 1shell.lb
@@ -66,7 +67,8 @@
 :NL
 	* * +nl
 +nl
-	* * Return     _cmdset std.rc
+#	* * Return     _cmdset std.rc
+	* * Return     :exit
 	* * Intro      :#m #A/std.help.manual
 	* * Help       _help mainh.lb
 	* * ASH        _help ash.lb

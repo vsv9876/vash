@@ -1,0 +1,59 @@
+#< std.open
++Open
+#
+#	r?x d .         _msg Купите на Привозе селедку и крутите ей мозги - мы стоим на Дерибасовской!  :)
+#	r?x d .         _msg let You buy a fish on Privoz and screw a brain for him - we stay here on Deribasovskaja :)
+	r?x d .         _rescan
+	r?x d *         :cd #@
+	r?? D *.tar.[Z]      zcat < #@ | tar -xvf -
+	r?? D *.tar.[zZCp]   gzip -d < #@ | tar -xvf -
+	r?? D *.tar.bz2      bzip2 -d < #@ | tar -xvf -
+	r?? D *.tar.gz       gzip -d < #@ | tar -xvf -
+	r?? D *.tar.xz       xz -d < #@ | tar -xvf -
+	r?? D *.taz          gzip -d < #@ | tar -xvf -
+	r?? D *.tgz          gzip -d < #@ | tar -xvf -
+	r?? D *.zip          unzip #@
+	r?? D *.arj          unarj x #@
+	r?? D *.zoo          zoo x #@
+	r?? [DT] *.cpio         cpio -idm -I#@
+	r?? [DT] *.cpio.[Z]     zcat < #@ | cpio -idm
+	r?? [DT] *.cpio.[zp]    gzip -d < #@ | cpio -idm
+	r?? [DT] *.cpio.gz      gzip -d < #@ | cpio -idm
+#    r?? [DT] *.deb          sudo dpkg -i #@
+	r?? [DT] *.deb          dpkg-deb -x #@ /tmp/#@.d
+	r?? [DT] *.src.rpm      _msg did You mean 'rpmbuild bb #@ ?'
+	r?? [DT] *.rpm          sudo rpm -qp #@ --
+	r?? D *.[zCp]           gzip -d #@
+	r?? D *.[Z]             uncompress #@
+	r?? D *.bz2             bzip2 -d #@
+	r?? D *.gz              gzip -d #@
+	r?? [ET] .*.b       rm -f .*.b .,resv.*
+	r?? [ET] *.b        rm -f *.b .,resv.*
+	r?? A *             ar xv #@
+	r?? T [Mm]ake*.sh   ./#@
+	r?? T [Mm]ake*      make -f #@
+	r?? [DT] *.tar      tar -xvf #@
+	r?? [DT] *.[wj]ar   unzip -x #@
+	r?? * *.man         ;nroff -man #@ | #m
+# retro not in use
+# 	r?? T *.lav         make #*.lb
+# 	r?? T *.la          make #*.lb
+# 	r?? T *.cv          make #*.c
+	r?? T *.xpm         :sxpm #@ &
+	r?? T *.c           make #*.o
+	r?? T *.pl          make #*.pl
+	r?? T .ashhist      _msg #@ Is not ash's program script
+	r?? T .ash*         _cmdset #@
+#        ??x [TO] *          ./#@
+# a.out ОС XENIX в SYSV выглядит как неопознанные данные...
+	??x [TOD] *     ./#@
+	--x [-] *       ./#@
+#       r?x d *		:cd #@
+#	r?? M *         mailx -f #@
+	r?? M *         mutt -f #@
+#        r?? D *.bat     vpix z:#@
+#        r?? D *.com     vpix z:#@
+#        r?? D *.exe     vpix z:#@
+	r?? D *.bat     dos #@
+	r?? D *.com     dos #@
+	r?? D *.exe     dos #@

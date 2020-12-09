@@ -261,8 +261,11 @@ std_shell:
 				/*cp_sav(); cp_set(-2, 1, ATT); w_str("ta"); cp_fet();*/
 					continue;
 			/* возврат в меню имен файлов */
-			case ' ':       return(1);
-			case KB_EX:      return(0);
+			case ' ':
+			case KB_CA:
+						return(1);
+			case KB_EX:
+						return(0);
 			default:
 				if (cod1(cod) == 0) {
 					/* ввод новой команды */
@@ -275,6 +278,7 @@ std_shell:
 				/*break;*/
 			}       /* финал проверки завершения команды sh */
 
+		case KB_CA:
 		case KB_EX:
 			w_msg(TXT, " ");
 			w_msg(TXT, "");

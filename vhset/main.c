@@ -61,6 +61,7 @@ mkexit()
 	FILE *ofp;
 	register int i;
 	register KBL *kblp;
+	char *s;
 
 	if( namelh[0] && (ofp=fopen(namelh, "w")) != NULL ) {
 		/*------сохраняем настройку: */
@@ -82,11 +83,25 @@ mkexit()
 		/*---- клавиши */
 		for(kblp=kbl; kblp->t_cod; kblp++) {
 			putc(':', ofp);
-			putc(cod0(kblp->t_key), ofp);
-			putc(cod1(kblp->t_key), ofp);
 			putc(cod0(kblp->t_cod), ofp);
 			putc(cod1(kblp->t_cod), ofp);
-			if(kblp->t_knm) fprintf(ofp, "%s", kblp->t_knm);
+			putc(':', ofp);
+/*			if(kblp->t_knm) fprintf(ofp, "%s", kblp->t_knm);*/
+			for (s=kblp->t_knm, i=0; i<8; i++) {
+				if(s[i] != '\0')
+					putc(s[i], ofp);
+				else
+					break;
+			}
+			for (; i<8; i++)
+				putc(' ', ofp);
+			putc(':', ofp);
+			putc(cod0(kblp->t_key1), ofp);
+			putc(cod1(kblp->t_key1), ofp);
+			putc(':', ofp);
+			putc(cod0(kblp->t_key2), ofp);
+			putc(cod1(kblp->t_key2), ofp);
+			putc(':', ofp);
 			putc('\n', ofp);
 		}
 		cp_set(-1, 0, CMD);
