@@ -96,19 +96,21 @@ KBF   kbf[] = {
 { KBCOD('k','P'), 0 },
 { KBCOD('k','N'), 0 },
 
-{ KBCOD('k','0'), 0 },
-{ KBCOD('k','1'), 0 },
-{ KBCOD('k','2'), 0 },
+{ KBCOD('k','0'), 0 }, /* probably no such key in termcap/terminfo */
+{ KBCOD('k','1'), 0 }, /* PC F1 / DEC VT100 PF1 */
+{ KBCOD('k','2'), 0 }, 
 { KBCOD('k','3'), 0 },
-{ KBCOD('k','4'), 0 },
-{ KBCOD('k','5'), 0 },
+{ KBCOD('k','4'), 0 }, /* PC F4 / DEC VT100 PF4 */
+{ KBCOD('k','5'), 0 }, /* PC F5 */
 { KBCOD('k','6'), 0 },
 { KBCOD('k','7'), 0 },
 { KBCOD('k','8'), 0 },
 { KBCOD('k','9'), 0 },
-{ KBCOD('k','@'), 0 },
+{ KBCOD('k',';'), 0 }, /* PC F10*/
+{ KBCOD('F','1'), 0 }, /* PC F11*/
+{ KBCOD('F','2'), 0 }, /* PC F12*/
 
-{ KBCOD('f','.'), 0 },
+{ KBCOD('f','.'), 0 }, /* probably, keypad DEC VT100 in function mode */
 { KBCOD('f','-'), 0 },
 { KBCOD('f',','), 0 },
 { KBCOD('f','0'), 0 },
