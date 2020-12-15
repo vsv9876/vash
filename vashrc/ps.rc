@@ -23,10 +23,10 @@
 #------------------------------------------
 
 # НАЗВАНИЯ КЛАВИШ
--1proc>
+#-1proc>
 -2INT
--3QUIT
--4
+-3test
+-4QUIT
 -5TERM
 -6
 -7ALRM
@@ -34,17 +34,20 @@
 -9SETUP
 -0exit
 
-:[1!]
-	* *     _sh
-:[./a-z]
-#       любая клавиша нижнего регистра - начало ввода команды sh.
-	* *     _sh #k
+@std.mark
+
+@std.cmd
+
 :U2
 :2
        * -   kill -1 #@
        * +   kill -1 ##
 :U3
 :3
+       * -   kill -0 #@
+       * +   kill -0 ##
+:U4
+:4
        * -   kill -3 #@
        * +   kill -3 ##
 :U5
@@ -65,16 +68,11 @@
 :EX
 :U0
 :0
-       * *     exit
-:[&=]
+       * *     :exit
+:&
        * *     _cmdset ps.rc
-:^[ZB]
-# Приостановить ash, вернуться в csh
-       * *     _sus
-:[./a-z]
-       * *     _sh #k
-#               Включите лат. регистр
-:[ю-ъЮ-Ч]
-       * *     _msg please, switch bak keyboard into latin layout
-:*
-	* * _msg key is not assigned yet (.ashproc || termcap/terminfo)
+
+:=
+    * * _rescan
+
+@std.final

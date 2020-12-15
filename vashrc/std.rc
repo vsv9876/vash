@@ -11,9 +11,9 @@
 # since Tue Jun  1 22:41:47 MVT 1993
 #
 
-# description and comment moved to ./std.SYNTAX
+# syntax description and comments moved to ./std.SYNTAX
 
--1!sh
+#-1!sh
 -2menu
 -3?????
 -4edit
@@ -30,42 +30,42 @@
 -@
 
 @std.mark
+@std.cmd
 
-#       Освежить стандартную настройку ash (при отладке этого файла)
+# Redo read profile std.rc (this one), for example on debug
 :KI
     * * _cmdset std.rc
-
-# Конец работы, ВЫХОД
+# the end, exit/quit
+:EX
 :0
 	* *     exit
+
+# clear command buffer before editing
+#:CA
+#    * * _sh #
+
 #:EX
 #	* *     ;exit # no ask comfirmation
-:EX
-#	* *	_msg please, use ^D (Ctrl-d) for quit
-	* *	_err please, type exit or press 0 and Return to quit
-
-# Редактирование последней команды sh:
 #:EX
-:HE
-:[1!]
-	r?x ?   _sh
+#:CA
+#	* *	_msg please, use ^D (Ctrl-d) for quit
+#	* *	_err please, type exit or press 0 and Return to quit
 
-# clear command buffer
-:CA
-    * * _sh #
-	
-# Меню пользователя
+# User menu
 :2
 :U2
 	r?x ?   _menu2 std.menu
 #	* ?     _f_ls
 
+# included co-profile for VIEW an object
+#
 @std.view
-   
+
+#   
 #+Open
 @std.open
 
-# Редактирование файла
+# Edit an object
 :4
 :U4
 	r?x ?   +ed
@@ -122,8 +122,7 @@
 # Еще одно субменю со сменой программы клавиш ash:
 # Создание файла/каталога/файлов.системы/формат.диска;
 
-	* *     _cmdset misc.rc
-
+	* * _cmdset misc.rc
 
 # Уничтожение файлов/каталогов
 :8
@@ -167,9 +166,6 @@
 
 #:[2-90]
 #        * *     _msg нажимайте функциональные клавиши F1 - F10...
-:[./a-z]
-#       любая клавиша нижнего регистра - начало ввода команды sh.
-	* *     _sh #k
 
 
 

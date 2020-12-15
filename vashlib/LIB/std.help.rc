@@ -26,6 +26,7 @@
 :=
 	??? ?	_rescan
 #-------------------------
+:CA
 :EX
 :U0
 :0
@@ -75,3 +76,6 @@
 	* * Shell      _help 1shell.lb
 	* * Alias      _help alias.lb
 	* * Other      _help other.lb
+
+@std.final
+

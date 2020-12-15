@@ -26,12 +26,12 @@
 
 
 @std.mark
-
+@std.cmd
 
 :[?]
 :HE
     * *     _help 7misc.lb
-:NL
+#:NL
 :EX
 :U0
 :0

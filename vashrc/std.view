@@ -1,3 +1,7 @@
+#
+#@ std.view
+#
+
 -3VIEW
 # Просмотр файла
 :3
@@ -5,10 +9,14 @@
 	r?x ?   +View
 
 #
-#< std.VIEW
 #
 +View
 #
+
+#
+#
+#
+
 	r?? ? *.C       ccat #@
 #                            здесь и далее нужен gzip, слинкованный с zcat
 	r?? D *.tar.[zpC]    :gzip -d < #@ | tar -tvf -
