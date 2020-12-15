@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+:
 # this is vash rc profile
 
 # std.cmd

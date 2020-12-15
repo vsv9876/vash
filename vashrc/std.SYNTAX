@@ -1,12 +1,13 @@
-#!/bin/sh shebang for auto syntax colorize only -- this is vash rc profile
+:
+# shebang for auto syntax colorize only -- this is vash rc profile
 #
 
 # Visual Assistant Shell (vash)
-# 1990,1993,2013,2016,2019 (C) Sergey Vovk
-#
+# 1990-1993,2020 (C) Sergey Vovk
 # MIT license
 #
-# standard default profile std.rc (former .ashstd)
+# std.rc
+# standard default profile (former .ashstd)
 # since Tue Jun  1 22:41:47 MVT 1993
 #
 # content of this file and included files can be changed by user,

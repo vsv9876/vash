@@ -37,21 +37,23 @@ make
 #rm -rf $RPM_BUILD_ROOT
 %make_install
 mkdir -p %{buildroot}/etc/vhset
+mkdir -p %{buildroot}/usr/share/doc/%{name}
 # install -m 664 ./etc/vhset/xterm %{buildroot}/etc/vhset/xterm
 # install -m 664 ./etc/vhset/linux %{buildroot}/etc/vhset/linux
 # install -m 664 ./etc/vhset/screen %{buildroot}/etc/vhset/screen
 install -m 664 ./etc/vhset/* %{buildroot}/etc/vhset/
+install -m 664 ./LICENSE %{buildroot}/usr/share/doc/%{name}/
 
 %clean
 rm -rf %{buildroot}
 
 
 %files
-%license LICENSE
+#%license LICENSE
 #%doc DOC
 /usr/bin/*
 /usr/lib/*
-#/usr/share/doc/*
+/usr/share/doc/*
 %dir /etc/vhset
 #%%config(noreplace) /etc/vhset/xterm
 #%%config(noreplace) /etc/vhset/linux
