@@ -1,4 +1,4 @@
-:
+#!/usr/bin/vash
 # this is vash rc profile
 
 # std.cmd
@@ -23,3 +23,6 @@
 # Приостановить ash, вернуться в csh
 #        * *     :/bin/csh -cf "suspend; exit 0;"
 	* *     _sus
+
+#
+#

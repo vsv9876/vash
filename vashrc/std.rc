@@ -1,4 +1,4 @@
-:
+#!/usr/bin/vash
 # this is vash rc profile
 # shebang used for auto syntax colorize only
 #
@@ -29,16 +29,17 @@
 -o.
 -@
 
-@std.mark
+#@std.mark
 @std.cmd
 
 # Redo read profile std.rc (this one), for example on debug
 :KI
     * * _cmdset std.rc
+
 # the end, exit/quit
 :EX
 :0
-	* *     exit
+    * *     exit
 
 # clear command buffer before editing
 #:CA
