@@ -29,7 +29,7 @@
 -o.
 -@
 
-#@std.mark
+@std.mark
 @std.cmd
 
 # Redo read profile std.rc (this one), for example on debug
