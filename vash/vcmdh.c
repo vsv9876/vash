@@ -201,7 +201,7 @@ static time_t hflast = (time_t)0; /* zero for fisrt time comparizon */
  * get history from file into cmdb[] buffer
  *
  * if histsn==0 (syncronize history is disabled),
- * do it once first time when program started
+ * do it once when program started
  *
  * returns 1, if get commands from history file
  * returns 0, if no read done
@@ -242,14 +242,15 @@ char *hdp;
 
 		p = cmdbuftmp;		/* clear for next line from file */
 		i = 0;
-		while (/*i < CMDP && saving from history last commands, squeezeing if needed */
-				(c = getc(fp)) != EOF) {
-			*p = c;
+		while (/*i < CMDP && // old history file may be longer */
+				(c = fgetc(fp)) != EOF) {
 			if (c == '\n') {
 				*p = '\0'; p = cmdbuftmp; i++; /* clear buffer for next line */
 				cmdput(p);
-			} else
+			} else {
+				*p = (char)c;
 				p++;
+			}
 		}
 		fclose(fp);
 	}
