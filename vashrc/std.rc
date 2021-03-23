@@ -36,6 +36,9 @@
 :KI
     * * _cmdset std.rc
 
+# no ask comfirmation
+:^D
+	* *     ;exit
 # the end, exit/quit
 :EX
 :0
@@ -45,8 +48,6 @@
 #:CA
 #    * * _sh #
 
-#:EX
-#	* *     ;exit # no ask comfirmation
 #:EX
 #:CA
 #	* *	_msg please, use ^D (Ctrl-d) for quit

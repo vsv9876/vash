@@ -66,8 +66,8 @@
 
 	sgrAT   = v  - -      -       - SGRAT 
 	sgrm    = ai - sgrms cvt_a   sgrtst SGR
----#	mode    = g  - -      -       - "mode:"
-	mode    = gc - -      -       - "mode:"
+---#	mode    = g  - -      -       - "color mode:"
+	mode    = gc - -      -       - "color mode:"
 	   g    = gn - -      -       - ". .    "
 	   c    = gc - -      -       - ". .    "
 
@@ -75,7 +75,7 @@
 	bg      = ia - "b"   cvt_co  - LPA_B
 	sgr     = ia - -     cvt_sgr - LPA_B
 ---# 	pi      = g0 - "# "  cvt_pi  - LPA_B
-	M       = g1 - "# "  cvt_pi  - LPA_B
+	M       = g1 - "|."  cvt_pi  - LPA_B
 	pimsg0  = g  - "0"   cvt_pim - -
 	pimsg1  = g  - "1"   cvt_pim - -
 ---#	lh      = v  - -     -       - namelh
@@ -91,12 +91,12 @@
 ---# place of .sgraAT line must be below .sgr line
 ---SCREEN
 +.pimsg0.........   .CMD.  .TXT.  .HDR.  .VAR.  .ALT.  .MSE.  .ERR.  .ATT.
-+
-+.pimsg1.........
-+
----#+                          .M     .t.    .t.    .t.    .t.    .t.    .t.
++."line mode   ".   .M.
++.pimsg1......... 
+---#+
 ---#+.pimsg1.........          .M     .t.    .t.    .t.    .t.    .t.    .t.
 ---#+                          .M.    .t.    .t.    .t.    .t.    .t.    .t.
+
 =Video attributes
 +
 +   line prompter:  .P.    .t.    .t.    .t.    .t.    .t.    .t.    .t.
@@ -112,11 +112,11 @@
 +    stripe(fg,bg)  .sgr   .t.    .t.    .t.    .t.    .t.    .t.    .t.
 +
 .lh.............................................................................
-           .mode..  .sgrm..........  SGR debug: .sgrAT.....
+      .mode.......  .sgrm..........  SGR debug: .sgrAT.....
 	   
  help: .:HE.... toggle mode w/r: .:KI....
 
----# dbeug garbage below...
+---# debug garbage below...
 ---#+		    .pi    .t     .t     .t     .t     .t     .t     .t  
 ---#+       code edit:  .hl... .hl... .hl... .hl... .hl... .hl... .hl... .hl...
 ---#	 ."mode:".  .sgrm..........     .sgrAT.....          get help: .:HE....

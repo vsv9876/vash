@@ -26,11 +26,13 @@ LPA     *lpa_p[2] = {
 	};
 
 static char *pimmsg[] = {
-		/*" \"w\"   |-->  ",*/
-		/*" \"r\"   . |-->",*/
-		" \"w\"   ",
-		"   \"r\" ",
-		"         "
+	"\"w\" write out  ",
+	"\"r\" read/active",
+	/*" \"w\"   |-->  ",*/
+	/*" \"r\"   . |-->",*/
+	/*" \"w\"   ",*/
+	/*"   \"r\" ",*/
+	"                 " /* string for wipe on screen */
 };
 
 /* Color support for attr.cv page */
