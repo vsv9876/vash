@@ -234,7 +234,7 @@ char *hdp;
 
 		/* cmdbuf[CMDB+1];   /* БУФЕР КОМАНД */
 		/* *cmdptr[CMDP+1];   /* УКАЗАТЕЛИ НА КОМАНДЫ */
-		for (i = 0; i <= CMDP; cmdptr[i++] = 0) ;
+		for (i = 0; i < CMDP; cmdptr[i++] = 0) ;
 
 		cmdplast = 0;   /* ИНДЕКС ПОСЛЕДНЕЙ КОМАНДЫ */
 		cmdpi = 0;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ */
@@ -242,7 +242,8 @@ char *hdp;
 
 		p = cmdbuftmp;		/* clear for next line from file */
 		i = 0;
-		while (i < CMDP && (c = getc(fp)) != EOF) {
+		while (/*i < CMDP && saving from history last commands, squeezeing if needed */
+				(c = getc(fp)) != EOF) {
 			*p = c;
 			if (c == '\n') {
 				*p = '\0'; p = cmdbuftmp; i++; /* clear buffer for next line */
@@ -276,9 +277,10 @@ char *hdp;
 	if ((fp = fopen(filename, "w")) == NULL)
 		return(0);
 
-	for (pp = cmdptr; *pp != (char *)0; pp++)
+	for (pp = cmdptr; *pp != (char *)0; pp++) {
 		/*VARARGS*/
 		fprintf(fp, "%s\n", *pp);
+	}
 	ok = (fflush(fp)==EOF ? 0 : 1);
 	fclose(fp);
 
