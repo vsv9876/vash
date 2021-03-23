@@ -166,7 +166,7 @@ KBL kbl[KBLSIZE] = {
 { KB_DE, "<-del  ", KBCOD('d','e'), KBCTL(    'H') },
                                                    
 { KB_HE, "F1     ", KBCOD('k','1'), KBCTL(    'G') },
-{ KB_EX, "F2     ", KBCOD('k','2'), KBCTL(    'D') },
+{ KB_EX, "F2     ", KBCOD('k','2'), KBCTL(    'X') },
 { KB_CA, "Ctrl-C ", KBCTL(    'C'), KB_EMPTY       },
 { KB_RE, "Ctrl-L ", KBCTL(    'L'), KB_EMPTY       },
 { KB_PR, "Ctrl-\\ ", KBCTL(    '\\'), KB_EMPTY     },
