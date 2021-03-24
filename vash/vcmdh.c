@@ -32,7 +32,21 @@ static  char    cmdbuf[CMDB+1];   /* БУФЕР КОМАНД */
 static  char   *cmdptr[CMDP+1];   /* УКАЗАТЕЛИ НА КОМАНДЫ */
 static  int     cmdplast = 0;   /* ИНДЕКС ПОСЛЕДНЕЙ КОМАНДЫ */
 static  int     cmdpi = 0;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ */
-static  int     cmdbot = 0;     /* ИНДЕКС СВОБОДНОГО МЕСТА В БУФЕРЕ */
+static  int     cmdbufree = 0;     /* ИНДЕКС СВОБОДНОГО МЕСТА В БУФЕРЕ */
+
+int mystrcpy(to, from)
+char *to;
+char *from;
+{
+	for(;;) {
+		*to++ = *from;
+		if (*from == '\0')
+			break;
+		*from++;
+	}
+}
+
+#define strcpy mystrcpy
 
 int cmddel(cmd)
 /*
@@ -42,7 +56,7 @@ int cmddel(cmd)
 char *cmd;
 {
 	register int i;
-	int saven;      /* индекс указателя следующей команды */
+	int savenext;      /* индекс указателя следующей команды */
 	int delsize;    /* размер удаляемой команды */
 
 /***
@@ -53,15 +67,15 @@ char *cmd;
 		if (strcmp(cmd, cmdptr[i]) == 0) {
 			delsize = strlen(cmd) + 1;
 			/* СКОПИРУЕМ СОДЕРЖИМОЕ БУФЕРА В НОВОЕ МЕСТО */
-			for (saven = i + 1; saven < cmdplast; i++,saven++) {
-				cmdptr[i] = cmdptr[saven] - delsize;
-				strcpy(cmdptr[i], cmdptr[saven]);
+			for (savenext = i + 1; savenext < cmdplast; i++,savenext++) {
+				cmdptr[i] = cmdptr[savenext] - delsize;
+				strcpy(cmdptr[i], cmdptr[savenext]);
 			}
-			cmdbot -= delsize;
-			saven = i; cmdplast--;
+			cmdbufree -= delsize;
+			savenext = i; cmdplast--;
 			while (i <= CMDP)
 				cmdptr[i++] = 0;
-			return(saven);
+			return(savenext);
 		}
 	return(-1);
 }
@@ -77,28 +91,28 @@ int     reqsz;  /* РАЗМЕР, КОТОРЫЙ ТРЕБУЕТСЯ ОСТАВИ�
 	int     saven;  /* прежний индекс самой старой сохраняемой команды */
 
 	/* если место есть, ничего не делать */
-	if ((reqsz < (CMDB - cmdbot)) && cmdplast < CMDP)
+	if ((reqsz < (CMDB - cmdbufree)) && cmdplast < CMDP)
 		return;
 
 	/* посчитаем занятое командами место */
 	i = realsz = 0;
 	do {
 		realsz += strlen(cmdptr[i++]) + 1;
-	} while (*cmdptr[i] && ((CMDB - cmdbot) + realsz) < reqsz);
+	} while (*cmdptr[i] && ((CMDB - cmdbufree) + realsz) < reqsz);
 	saven = i;
 
 	/* можно не проверять, если размер буфера не меньше двух строк: */
 	/* проверить, реально ли освободилось... */
-	if (((CMDB - cmdbot) + realsz) < reqsz)
+	if (((CMDB - cmdbufree) + realsz) < reqsz)
 		/* уничтожим все содержимое буфера */
-		i = cmdbot = cmdpi = 0;
+		i = cmdbufree = cmdpi = 0;
 	else {
 		/* скопируем содержимое буфера в новое место */
 		for (i = 0; saven < cmdplast; i++,saven++) {
 			cmdptr[i] = cmdptr[saven] - realsz;
 			strcpy(cmdptr[i], cmdptr[saven]);
 		}
-		cmdbot -= realsz;
+		cmdbufree -= realsz;
 	}
 	cmdplast = i;
 	if (cmdpi > cmdplast)   /* не промазать с текущей историей!!! */
@@ -124,13 +138,13 @@ char *cmd;
 
 	/* ПОЛОЖИТЬ НОВУЮ КОМАНДУ */
 	p = cmdbuf;
-	p += cmdbot;
+	p += cmdbufree;
 	cmdptr[cmdplast] = p;
 	strcpy(cmdptr[cmdplast], cmd);
 
 	cmdplast++;
 	cmdpi = cmdplast;       /* МОДИФИЦИРОВАТЬ ИНДЕКСЫ */
-	cmdbot += newsize;
+	cmdbufree += newsize;
 
 #ifdef DURA
 	/* сначала синхронизация истории в файл? */
@@ -221,7 +235,8 @@ char *hdp;
 	strcpy(filename, hdp);
 	strcat(filename, hfile);
 
-	if (stat(filename, &hfstat) < 0) return(0);
+	if (stat(filename, &hfstat) < 0)
+		return(0);
 	hftime = hfstat.st_mtime;
 
 	if (histsn == 0) {
@@ -229,8 +244,8 @@ char *hdp;
 	}
 /*	if (hflast != 0 && hflast == hftime) return(1);*/
 	if (hflast < hftime) {
-		hflast = hftime;
 		if ((fp = fopen(filename, "r")) == NULL) return(0);
+		/*hflast = hftime;*/
 
 		/* cmdbuf[CMDB+1];   /* БУФЕР КОМАНД */
 		/* *cmdptr[CMDP+1];   /* УКАЗАТЕЛИ НА КОМАНДЫ */
@@ -238,7 +253,7 @@ char *hdp;
 
 		cmdplast = 0;   /* ИНДЕКС ПОСЛЕДНЕЙ КОМАНДЫ */
 		cmdpi = 0;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ */
-		cmdbot = 0;     /* ИНДЕКС СВОБОДНОГО МЕСТА В БУФЕРЕ */
+		cmdbufree = 0;     /* ИНДЕКС СВОБОДНОГО МЕСТА В БУФЕРЕ */
 
 		p = cmdbuftmp;		/* clear for next line from file */
 		i = 0;
@@ -285,7 +300,7 @@ char *hdp;
 	ok = (fflush(fp)==EOF ? 0 : 1);
 	fclose(fp);
 
-	if (ok && stat(filename, &hfstat) == 0)
+	if (/*ok &&*/ stat(filename, &hfstat) == 0)
 		hflast = hfstat.st_mtime;
 	return(ok);
 }
@@ -377,7 +392,7 @@ kbcod h_menu()
 		case KB_HE:      /* справка */
 			cp_set(-1, 0, TXT);
 			fprintf(vttout, "Cmd# %2d/%2d, use %d (%d%%)",
-			clm._itm, cmdplast, cmdbot, (int)((cmdbot * 100)/CMDB));
+			clm._itm, cmdplast, cmdbufree, (int)((cmdbufree * 100)/CMDB));
 			break;
 		case '=':
 		case ';':
