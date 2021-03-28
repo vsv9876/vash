@@ -103,7 +103,7 @@ char   *str;
 		attr = line->attr & VIDEO;
 		strcpy(str, line->varl);
 
-		cp_set(line->line + 2, line->colu + 2, attr|INP); /* couple of lines shown with ofset between them */
+		cp_set(line->line + 1, line->colu + 1, attr|INP); /* couple of lines shown with ofset between them */
 		/* emulate prompt behavior for input mode - find prompt symbol, show it at 1st position */
 		w_chr((char)(lpainp[attr].lpa_p));
 
@@ -215,13 +215,13 @@ int ci;    /* stripe color mode index 0 - for oreground, 2 - for background*/
 		} else {
 			for (s = fgbg; *s != '\0'; s++) {
 				w_str("\033[0m");
-				if (*s != cp) { w_str(""); } else { w_str("*"); }
+				if (*s != cp) { w_str(" "); } else { w_str(">"); }
 				w_raw("\033["); w_chr(iFG[ci]);
 				w_chr(gp[i]); w_chr(';'); w_chr(iFG[ci + 1]);
 				w_chr(*s); w_chr('m');
-				if (*s != cp) { w_str(""); } else { w_str("*"); }
+				/*if (*s != cp) { w_str(""); } else { w_str(">"); }*/
 				w_chr(*s);
-				if (*s != cp) { w_str(" "); } else { w_str("*"); }
+				if (*s != cp) { w_str(" "); } else { w_str("<"); }
 			}
 		}
 		er_eol(TXT);
