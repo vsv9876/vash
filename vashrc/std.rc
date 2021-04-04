@@ -191,7 +191,7 @@
 	* +   +diff
 	* -   _msg exact two files must be selected to diff
 +diff
-	* * * :diff -b ##
+	* * * :diff -br ##
 
 #:A
 ##       Показать программу клавиш ash (Этот файл).

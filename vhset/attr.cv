@@ -105,7 +105,6 @@
 +  bright/bold(md)  .md    .t.    .t.    .t.    .t.    .t.    .t.    .t.
 +      reverse(mr)  .mr    .t.    .t.    .t.    .t.    .t.    .t.    .t.
 +        blink(mb)  .mb    .t.    .t.    .t.    .t.    .t.    .t.    .t.
-+
 +."color".........         .M.    .t.    .t.    .t.    .t.    .t.    .t.
 +   foreground(fg)  .fg    .t.    .t.    .t.    .t.    .t.    .t.    .t.
 +   background(bg)  .bg    .t.    .t.    .t.    .t.    .t.    .t.    .t.

@@ -13,7 +13,7 @@ extern  char   *vexdir;
 /*extern  char   *vlibpath;*/
 extern  int     y0_top;
 
-char   *onoff[] = { "( )", "(x)", 0 };
+char   *onoff[] = { "[ ]", "[X]", 0 };
 /*char   *onoff[] = { " | ", " x ", 0 };*/
 
 #ifdef RETRO

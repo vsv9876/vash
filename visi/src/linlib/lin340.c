@@ -326,7 +326,12 @@ string_simple:
 	if(onexit || posp == (int *)(-1)) return(cod);    /* КОНЕЦ ДЛЯ ВЫЗОВА ЧЕРЕЗ w_line */
 
 	/*==== КУРСОР ПЕРЕД ВВОДОМ ПЕРВОЙ КЛАВИШИ */
-	cp_set(line->line, line->colu, attr);
+	/* хинт для полей-переключаетелей */
+	if ((attr & LTYPE) == ALT) {
+		cp_set(line->line, 1 + line->colu, attr);
+	} else {
+		cp_set(line->line, line->colu, attr);
+	}
 #endif
 
 	/*==== ЧИТАТЬ КОД ПЕРВОЙ КЛАВИШИ */

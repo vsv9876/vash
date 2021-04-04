@@ -24,10 +24,11 @@ cF      = ia    -       onoff   cvt_a   -       cF
 mF      = ia    -       onoff   cvt_a   -       mF
 xF      = ia    -       onoff   cvt_a   -       xF
 
-u8nopa  = ia    -       onoff   cvt_a   -       u8nopa
+---#u8nopa  = ia    -       onoff   cvt_a   -       u8nopa
+u8      = ia    -       onoff   cvt_a   -       u8nopa
 
 ---# TODO to be continued...
-F1	= c "."
+F1	= c "..."
 F2	= c "."
 
 ---# suspend on new line key before debug section below
@@ -54,7 +55,7 @@ co      = g     -       "%d"   -       -       maxco
 =vash setup parameters
 
 +   .ym. lines max     .hF h,history     .sF s,scroll        .F1 sh -c allways
-+       maxco: .co     .hS S,sync        .pF p,panel/keybar  .u8nopa only ASCII
++       maxco: .co     .hS S,sync        .pF p,panel/keybar  .u8 only ASCII
 +       maxli: .li     .mF m,mail_biff   .wF w,title               
 +       y0top: .yt     .cF c,clock       .xF x,xterm title         
                                                                   
