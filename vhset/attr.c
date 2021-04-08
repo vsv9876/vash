@@ -103,7 +103,7 @@ char   *str;
 		attr = line->attr & VIDEO;
 		strcpy(str, line->varl);
 
-		cp_set(line->line + 1, line->colu + 1, attr|INP); /* couple of lines shown with ofset between them */
+		cp_set(line->line + 1, line->colu + 2, attr|INP); /* couple of lines shown with ofset between them */
 		/* emulate prompt behavior for input mode - find prompt symbol, show it at 1st position */
 		w_chr((char)(lpainp[attr].lpa_p));
 
