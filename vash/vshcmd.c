@@ -238,6 +238,9 @@ std_shell:
 					  sprintf(tmpstr, " press SPACE bar or type command ");
 					  w_str(tmpstr);
 					}
+					if (cod == KB_AU) {
+						unr_c(cod);
+					}
 					/*at_set(TXT); er_eol();*/
 					er_eop(0);
 					/*VARARGS*/

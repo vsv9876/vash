@@ -32,7 +32,6 @@ VLIB          = $(VISI)/lib
 VISI_NEW      = ../visi-new
 
 PROGRAM       = vash
-#EXECMODE      =  711
 EXECMODE      =  755
 
 DESTDIR       =

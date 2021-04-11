@@ -103,7 +103,9 @@ char   *str;
 		attr = line->attr & VIDEO;
 		strcpy(str, line->varl);
 
-		cp_set(line->line + 1, line->colu + 2, attr|INP); /* couple of lines shown with ofset between them */
+		/* couple of lines shown with ofset between them */
+		cp_set(line->line + 1, line->colu/* + 2*/, attr|INP);
+
 		/* emulate prompt behavior for input mode - find prompt symbol, show it at 1st position */
 		w_chr((char)(lpainp[attr].lpa_p));
 
@@ -202,7 +204,7 @@ int showcs(fgbg, cp, ci)
 /* show color strip */
 char *fgbg; /* clear show area if NULL */
 char cp;	/* color pointer */
-int ci;    /* stripe color mode index 0 - for oreground, 2 - for background*/
+int ci;    /* stripe color mode index 0 - for foreground, 2 - for background*/
 {
 	int i;	char *s;
 	char gp[2] = { '0', '7' }; /* black and white background for color sample strip */

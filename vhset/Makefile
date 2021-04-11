@@ -21,7 +21,7 @@ VBIN          = $(VISI)/bin
 VLIB          = $(VISI)/lib
 
 PROGRAM       = vhset
-EXECMODE      =  711
+EXECMODE      =  755
 #DEST          = /usr/local
 DESTDIR       =
 DEST          = /usr
@@ -151,7 +151,9 @@ calls:  $(SRCS)
 
 install:        $(DESTBIN) $(PROGRAM)
 		@echo "Install $(PROGRAM) to $(DESTBIN) ..."
-		cp $(PROGRAM) $(DESTBIN)
+		cp $(PROGRAM) $(DESTBIN)/$(PROGRAM).new
+		chmod $(EXECMODE) $(DESTBIN)/$(PROGRAM).new
+		mv $(DESTBIN)/$(PROGRAM).new $(DESTBIN)/$(PROGRAM)
 		cd FORMS; make install
 		@echo done
 

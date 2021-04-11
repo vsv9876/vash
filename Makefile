@@ -112,11 +112,11 @@ compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
 
 #install:   $(DESTDIR) $(DEST) termcap $(VISILIB)
 install: setup compile $(DESTDIR) $(DEST) $(VISILIB)
-	cd $(VHSET); $(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd $(VASH);  $(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd $(VHSET);	$(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd $(VASH);	$(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd vashrc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd vashbin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd vashlib/LIB;			$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
+	cd vashlib/LIB;	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
 #	cd vashlib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cp -rp termcap/. $(VISILIB)
 #	cd visilib;			$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"

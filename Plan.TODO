@@ -85,4 +85,7 @@
 ********************************************************************
     -- MEMO
     -   a=F find . ! -path \*/.git/\* -type d | sed s,^./,, 
+    
+    - $ man rpm|egrep "^[ \t]+-([^ ])+" | sed 's/ /\n/g' | grep -e ^- |sort -u | less                                            :Ins
+    
 

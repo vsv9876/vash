@@ -74,6 +74,8 @@ typedef struct {
 /*	char   *sc_ac;     w_sgr() arg - ANSI color */
 } SCRN;
 
+extern int		sgrmode; /* runtime attributes setup mode */
+
 /* ВОЗМОЖНОСТИ ВЫВОДА НА ТЕРМИНАЛ ИЗ /etc/termcap;
  * ИМЯ КЛАВИАТУРЫ ДЛЯ НАСТРОЙКИ КЛАВИШ ТОЖЕ ЗДЕСЬ (lh= ... )
  */

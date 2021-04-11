@@ -250,7 +250,7 @@ out_string:
 	else            filch = ' ';
 #else
 	filch = ' ';
-	if ((line->attr & VIDEO) == HDR) {
+	if ((line->attr & VIDEO) == HDR && sgrmode == 0) {
 		filch = lpaout[HDR].lpa_p;
 	}
 #endif

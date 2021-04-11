@@ -55,54 +55,106 @@ extern  KBL kbl[];
 extern  int     kpadon;
 extern int		sgrmode;
 
+/*static */struct {
+	KBL kbl[KBLSIZE];
+	LPA lpaout[LPASIZE];
+	LPA lpainp[LPASIZE];
+	/* int sgrmode ; *//* never saved */
+} kblstd;
+
+static int kbl_std()
+{
+	register int k;
+	char *from;
+	char *to;
+	int psize;
+
+	/* kblstd.kbl = kbl */
+	psize = sizeof(KBL) * KBLSIZE;
+	from = &(kbl[0].t_cod);
+	to = &(kblstd.kbl[0].t_cod);
+	for (k = 0; k < psize; k++)
+		to[k] = from[k];
+
+	/* kblstd.lpaout = lpaout;*/
+	psize = sizeof(LPA) * LPASIZE ;
+	from = &(lpaout[0].lpa_p);
+	to   = &(kblstd.lpaout[0].lpa_p);
+	for (k = 0; k < psize; k++)
+		to[k] = from[k];
+
+	/* kblstd.lpainp = lpainp;*/
+	from = &(lpainp[0].lpa_p);
+	to   = &(kblstd.lpainp[0].lpa_p);
+	for (k = 0; k < psize; k++)
+		to[k] = from[k];
+
+}
 
 mkexit()
 {
 	FILE *ofp;
 	register int i;
 	register KBL *kblp;
+	register KBL *kbls;
+	register int k;
 	char *s;
 
 	if( namelh[0] && (ofp=fopen(namelh, "w")) != NULL ) {
 		/*------сохраняем настройку: */
-
-		/*---- атрибуты */
-		for(i=0; i<8; i++) {
-			fprintf(ofp, "%1d%c%03o%c%03o\t%s\t%s\n", i,
-			lpaout[i].lpa_p, lpaout[i].lpa_a,
-			lpainp[i].lpa_p, lpainp[i].lpa_a,
-			lpaout[i].lpa_sgr,
-			lpainp[i].lpa_sgr);
-		}
 
 		/*---- доп. клавиатура. */
 		fprintf(ofp, "%c", (kpadon ? '+' : '-'));
 		/*---- color mode */
 		fprintf(ofp, "%1d\n", sgrmode);
 
-		/*---- клавиши */
-		for(kblp=kbl; kblp->t_cod; kblp++) {
-			putc(':', ofp);
-			putc(cod0(kblp->t_cod), ofp);
-			putc(cod1(kblp->t_cod), ofp);
-			putc(':', ofp);
-/*			if(kblp->t_knm) fprintf(ofp, "%s", kblp->t_knm);*/
-			for (s=kblp->t_knm, i=0; i<8; i++) {
-				if(s[i] != '\0')
-					putc(s[i], ofp);
-				else
-					break;
+		/*---- атрибуты */
+		for(i=0; i<8; i++) {
+			if (	(lpaout[i].lpa_p != kblstd.lpaout[i].lpa_p) ||
+					(lpainp[i].lpa_p != kblstd.lpainp[i].lpa_p) ||
+					(lpaout[i].lpa_a != kblstd.lpaout[i].lpa_a) ||
+					(lpainp[i].lpa_a != kblstd.lpainp[i].lpa_a) ||
+					(0 != strcmp(lpaout[i].lpa_sgr, kblstd.lpaout[i].lpa_sgr)) ||
+					(0 != strcmp(lpainp[i].lpa_sgr, kblstd.lpainp[i].lpa_sgr))
+				) {
+				fprintf(ofp, "%1d%c%03o%c%03o\t%s\t%s\n", i,
+				lpaout[i].lpa_p, lpaout[i].lpa_a,
+				lpainp[i].lpa_p, lpainp[i].lpa_a,
+				lpaout[i].lpa_sgr,
+				lpainp[i].lpa_sgr);
 			}
-			for (; i<8; i++)
-				putc(' ', ofp);
-			putc(':', ofp);
-			putc(cod0(kblp->t_key1), ofp);
-			putc(cod1(kblp->t_key1), ofp);
-			putc(':', ofp);
-			putc(cod0(kblp->t_key2), ofp);
-			putc(cod1(kblp->t_key2), ofp);
-			putc(':', ofp);
-			putc('\n', ofp);
+		}
+
+		/*---- клавиши */
+		for(kblp=kbl, kbls=kblstd.kbl; kblp->t_cod; kblp++, kbls++) {
+			if (
+					(kblp->t_cod != kbls->t_cod) ||
+					(0 != strncmp(kblp->t_knm, kbls->t_knm, 8-1)) ||
+					(kblp->t_key1 != kbls->t_key1) ||
+					(kblp->t_key2 != kbls->t_key2)
+			) {
+				putc(':', ofp);
+				putc(cod0(kblp->t_cod), ofp);
+				putc(cod1(kblp->t_cod), ofp);
+				putc(':', ofp);
+	/*			if(kblp->t_knm) fprintf(ofp, "%s", kblp->t_knm);*/
+				for (s=kblp->t_knm, i=0; i<8; i++) {
+					if(s[i] != '\0')
+						putc(s[i], ofp);
+					else
+						break;
+				}
+				for (; i<8; i++)
+					putc(' ', ofp);
+				putc(':', ofp);
+				putc(cod0(kblp->t_key1), ofp);
+				putc(cod1(kblp->t_key1), ofp);
+				putc(':', ofp);
+				putc(cod0(kblp->t_key2), ofp);
+				putc(cod1(kblp->t_key2), ofp);
+				putc(':', ofp);
+				putc('\n', ofp);
+			}
 		}
 		cp_set(-1, 0, CMD);
 	} else {
@@ -177,7 +229,12 @@ main()
 	}
 #endif
     visini();
+
+    /* specific for this utility - save statically compiled constants before do_kbl() */
+    kbl_std();
+
     hw_set();
+
     io_set(IO_VIDEO);
 
     vmain();
