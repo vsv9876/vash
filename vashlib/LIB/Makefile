@@ -55,7 +55,8 @@ OBJS	      = 1shell.lb\
 		other.lb\
 		phelp0.lb\
 		sup.lb\
-		suphlp.lb
+		suphlp.lb \
+		std.help.lb
 
 SRCS	      = 1shell.lav\
 		2menu.lav\
@@ -71,7 +72,8 @@ SRCS	      = 1shell.lav\
 		other.lav\
 		phelp0.lav\
 		sup.lav\
-		suphlp.lav
+		suphlp.lav \
+		std.help.lav
 
 SUFFIX        = .lav:s .la:s .lb:o
 

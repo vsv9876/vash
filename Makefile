@@ -64,8 +64,8 @@ help:
 	$(MAKE)	showconfig
 	#$(MAKE)	SHOWCONFIG=yes yes
 
+#@set -x;
 setup:
-	#@set -x;
 	@if [ -s "$(BLDCFG)" ]; then \
 		true; \
 	else \

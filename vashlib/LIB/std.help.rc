@@ -71,6 +71,7 @@
 #	* * Return     _cmdset std.rc
 	* * Return     :exit
 	* * Intro      :#m #A/std.help.manual
+	* * STD        _help std.help.lb
 	* * Help       _help mainh.lb
 	* * ASH        _help ash.lb
 	* * Shell      _help 1shell.lb
