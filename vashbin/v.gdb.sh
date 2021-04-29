@@ -43,7 +43,7 @@ VASH=
 #---------------------------------------------
 # label for identification machine name, /dev/tty???,
 # and other likely info.
-# ASHLBL
+# VASH_LABEL
 #
 case l"$LOGNAME" in
 l)      case u"$USER" in
@@ -61,12 +61,12 @@ ttyfull=`tty`
 #tty=`basename $ttyfull`
 tty=`echo $ttyfull|sed -e 's-/dev/--'`
 uname=`uname -n || hostname | sed -e 's/\..$*//' 2>/dev/null`
-#ASHLBL=' '"$user@$uname $tty"' '
+#VASH_LABEL=' '"$user@$uname $tty"' '
 #
 # 
-# hint: if last sybol in ASHLBL is ':' (colon), vash append current working directory
+# hint: if last sybol in VASH_LABEL is ':' (colon), vash append current working directory
 # since vash-1.26.4
-ASHLBL="$tty $user@$uname:"
+VASH_LABEL="$tty $user@$uname:"
 #"$user"' '
 
 #case $PATH in
@@ -80,7 +80,7 @@ ASHLBL="$tty $user@$uname:"
 #PAGER=/usr/local/bin/m
 PAGER=less
 
-export ASHLBL PATH
+export VASH_LABEL PATH
 #export EDITOR PAGER
 export PAGER
 
@@ -102,7 +102,7 @@ fi
 if [ 1 -eq $onxterm ]; then
 	# reset PS1 
 	# now compiled into vash binary:
-	#echo ']0;'"$ASHLBL"''
+	#echo ']0;'"$VASH_LABEL"''
 	#eval `/usr/bin/X11/resize -u`
 	#eval `/usr/bin/resize -u`
 	#export TERMCAP

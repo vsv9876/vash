@@ -36,13 +36,13 @@
 
 #-------
 # setup generic usage look:
-# ASHLBL:
+# VASH_LABEL:
 #   label for identification - tty, whoami, hostname
 # hint, since vash-1.26.4:
-# if last symbol in ASHLBL is ':' (colon),
+# if last symbol in VASH_LABEL is ':' (colon),
 # vash will append current working directory
 
-if [ x"${ASHLBL}" = x ]; then
+if [ x"${VASH_LABEL}" = x ]; then
     case l"$LOGNAME" in
     l)  case u"$USER" in
     	u)      user='' ;;
@@ -55,8 +55,8 @@ if [ x"${ASHLBL}" = x ]; then
     ttyfull=`tty`
     tty=`echo $ttyfull|sed -e 's-/dev/--'`
     uname=`uname -n || hostname | sed -e 's/\..$*//' 2>/dev/null`
-    ASHLBL="$tty $user@$uname:"
-    export ASHLBL
+    VASH_LABEL="$tty $user@$uname:"
+    export VASH_LABEL
 fi
 
 # variables, supported via program files, like .ashstd:

@@ -4,8 +4,8 @@
 :KP:^K      :^K:  :
 :SP:|space| :^S:  :
 :TA:Tab-->| :^I:  :
-:HE:F1,^G   :k1:^G:
-:EX:F2,^X   :k2:^X:
+:HE:F1|^G   :k1:^G:
+:EX:F2|^X   :k2:^X:
 :CA:^C      :^C:  :
 :RE:^L      :^L:  :
 :PR:^\      :^\:  :

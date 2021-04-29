@@ -548,8 +548,8 @@ cwdshow()
 	extern char *getenv();
 	extern int mailf2;  /* см. chckmail */
 	int lblen; /* length of string about user */
-	char *ashlbl; /* env(ASHLBL) or  */
-	char *usrlbl; /* username/logname if ASHLBL is empty/notset*/
+	char *ashlbl; /* env(VASH_LABEL) or  */
+	char *usrlbl; /* username/logname if VASH_LABEL is empty/notset*/
 
 	char mode_tmpstr[40]; /* mode and permissions fraction */
 
@@ -574,7 +574,7 @@ cwdshow()
 	    showli = maxli-1;   deltco = 1;
 	}
 
-	if ((ashlbl=getenv("ASHLBL")) == (char *)0) {
+	if ((ashlbl=getenv("VASH_LABEL")) == (char *)0) {
 		ashlbl = "";
 #ifdef SYSV
 		usrlbl = getenv("LOGNAME");

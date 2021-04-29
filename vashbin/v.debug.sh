@@ -21,8 +21,8 @@ if [ -x $vashdir/$bintest ]; then
     export VASH_PATH
     VHSET=$vashdir/etc/vhset
     export VHSET
-    ASHLBL='debug:'
-    export ASHLBL
+    VASH_LABEL='debug:'
+    export VASH_LABEL
     echo ' ***'
     echo " *** Warning: this is DEBUG environment for $vashdir ***"
     echo ' ***'
