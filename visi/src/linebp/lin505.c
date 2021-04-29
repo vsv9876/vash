@@ -32,6 +32,7 @@ char    *page;
     char *pages[3];
     LINE *phelp = (LINE *)NULL;
     register int i;
+    char tmps[48];
 
     pages[1] = page;
     pages[2] = phelp0;
@@ -39,10 +40,12 @@ char    *page;
     for (i = 1; i> 0; ) {
 		if (i > 2)  i = 1;
 		er_pag();
-		w_msg(INP|MSE, " Help screen");
+		/*w_msg(INP|MSE, "Help");*/
 		/*fprintf(vttout, " #%d ", i); /* there was stdout, why? */
-		fprintf(vttout, " #%d '%s'", i, pages[i]);
-
+		/*fprintf(vttout, "help page #%d '%s'", i, pages[i]);*/
+		w_msg(INP|HDR, " help");
+		sprintf(tmps, " page #%d: '%s'", i, pages[i]);
+		w_str(tmps);
 		if(pages[i]) {
 			if(phelp=b_page(vexdir, pages[i], in_help)) {
 				w_page(phelp);
@@ -58,6 +61,7 @@ char    *page;
 					i = 0;
 				}
 			} else {
+				at_set(ERR);
 				fprintf(vttout, " not found on %s", vexdir);
 				fflush(vttout);
 				if ( ++i > 2 )   return(FALSE);

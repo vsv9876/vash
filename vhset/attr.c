@@ -212,18 +212,21 @@ int ci;    /* stripe color mode index 0 - for foreground, 2 - for background*/
 
 	for (i=0; i<2; i++) {
 		cp_set(i+1+linesgr->line, linesgr->colu - 4 , ERR);
-		if (fgbg == NULL) {
-			er_eol(TXT);
-		} else {
+		if (fgbg != NULL) {
+			w_raw("\033[0m");
 			for (s = fgbg; *s != '\0'; s++) {
-				w_str("\033[0m");
-				if (*s != cp) { w_str(" "); } else { w_str(">"); }
-				w_raw("\033["); w_chr(iFG[ci]);
-				w_chr(gp[i]); w_chr(';'); w_chr(iFG[ci + 1]);
-				w_chr(*s); w_chr('m');
-				/*if (*s != cp) { w_str(""); } else { w_str(">"); }*/
+				w_raw("\033[");
+				w_chr(iFG[ci]);
+				w_chr(gp[i]);
+				w_chr(';');
+				w_chr(iFG[ci + 1]);
 				w_chr(*s);
-				if (*s != cp) { w_str(" "); } else { w_str("<"); }
+				w_chr('m');
+				if (*s != cp)	{ w_chr(' '); }
+				else			{ w_chr('>'); }
+								  w_chr(*s);
+				if (*s != cp)	{ w_chr(' '); }
+				else 			{ w_chr('<'); }
 			}
 		}
 		er_eol(TXT);

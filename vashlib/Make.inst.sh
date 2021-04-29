@@ -1,7 +1,8 @@
 :
 
 #
-# install into 1st directory all remain profile modules
+# install into directory which specified with 1st arg
+# all remain modules
 #
 # base name may be directory or rc-file,
 # so check it first

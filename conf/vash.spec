@@ -1,13 +1,10 @@
 Name:           vash
-Version:        2.0.14
-Release:        3%{dist}
+Version:        2.0.15
+Release:        1%{dist}
 Summary:        Visual Assistant Shell (vash)
 
 License:        MIT and BSD
 #URL:            file:///home/vsv/proj-ws/
-#BuildRoot: %{_tmppath}/%{name}-root
-#%{name}-%{version}.tar.gz
-#Source0:        %url/%{name}-%{version}.tar.gz
 Source0:        %{name}-%{version}.tar.gz
 
 
@@ -37,11 +34,13 @@ make
 %make_install
 mkdir -p %{buildroot}/etc/vhset
 mkdir -p %{buildroot}/usr/share/doc/%{name}
+mkdir -p %{buildroot}/%{_mandir}/man1/
 # install -m 664 ./etc/vhset/xterm %{buildroot}/etc/vhset/xterm
 # install -m 664 ./etc/vhset/linux %{buildroot}/etc/vhset/linux
 # install -m 664 ./etc/vhset/screen %{buildroot}/etc/vhset/screen
 install -m 664 ./etc/vhset/* %{buildroot}/etc/vhset/
 install -m 664 ./LICENSE %{buildroot}/usr/share/doc/%{name}/
+install -m 664 %{name}.1 %{buildroot}/%{_mandir}/man1/
 
 %clean
 rm -rf %{buildroot}
@@ -53,6 +52,7 @@ rm -rf %{buildroot}
 /usr/bin/*
 /usr/lib/*
 /usr/share/doc/*
+%_mandir/*/*
 %dir /etc/vhset
 #%%config(noreplace) /etc/vhset/xterm
 #%%config(noreplace) /etc/vhset/linux

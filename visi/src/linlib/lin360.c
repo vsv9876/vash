@@ -381,6 +381,8 @@ int    *posp;                /* cursor position during edit process */
 			lni = fnd_ad(lni, page) ;
 		break ;
 	case KB_TA :
+		lni = fnd_nxt(lni, page) ;
+		break ;
 	case KB_NL :
 		if ( (lni->flag & SUSNL) == FALSE )
 			lni = fnd_nxt(lni, page) ;

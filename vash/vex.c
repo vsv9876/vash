@@ -102,7 +102,7 @@ sup()
 
 	if ((supm = getvex("sup.lb")) == NULL)
 		return(FALSE);
-	u_page(supm, "suphlp.lb");
+	u_page(supm, "sup_help.lb");
 	d_page(supm);
 
 	pre_vf();

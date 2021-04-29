@@ -103,11 +103,12 @@ visi_lib: setup
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
 
-compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h vashlib/LIB-$(ASHLIB)
+compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h vashlib #/LIB-$(ASHLIB)
 	cd $(VHSET); $(MAKE) all "DEST=$(DEST)"
 	cd $(VASH);   $(MAKE) all "DEST=$(DEST)" "CFLAGS_ASH=$(CFLAGS_ASH)" \
 		"VERSN=$(VERSN)"
-	cd vashlib/LIB;           $(MAKE) "DEST=$(DEST)" all
+	cd vashlib;               $(MAKE) "DEST=$(DEST)" all
+#	cd vashlib/LIB;           $(MAKE) "DEST=$(DEST)" all
 #	cd vashlib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
 
 #install:   $(DESTDIR) $(DEST) termcap $(VISILIB)
@@ -116,7 +117,8 @@ install: setup compile $(DESTDIR) $(DEST) $(VISILIB)
 	cd $(VASH);	$(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd vashrc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd vashbin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd vashlib/LIB;	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
+	cd vashlib;    	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
+#	cd vashlib/LIB;	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
 #	cd vashlib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cp -rp termcap/. $(VISILIB)
 #	cd visilib;			$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
@@ -128,10 +130,11 @@ clean:
 	cd $(VISI)/src; $(MAKE) clean
 	cd $(VHSET); $(MAKE) clean
 	cd $(VASH); $(MAKE) clean
-	cd vashlib/LIB; $(MAKE) clean
+	cd vashlib; $(MAKE) clean
 	cd vtest; $(MAKE) clean
 	rm -f $(BLDCFG) 
 	touch $(BLDCFG)
+#	cd vashlib/LIB; $(MAKE) clean
 #	cd vashlib/LIB-$(ASHLIB); $(MAKE) clean
 
 distclean:	clean

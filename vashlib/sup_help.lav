@@ -21,14 +21,14 @@ ymax    = ipv   -       "%4d"   -       t_ymax  yy_max
   please, press .:HE.... again to get generic help about keyboard and screen
 
  ."flags:  ".  ."description                                                 ". 
- history/sync  keep history in file; sync every command or save on exit only 
- scroll        keep comand listing on screen or clear screen after
- panel/keybar  show description of keys 0-9
- title(who)    title of session (user,host,current dir if configured)
- title on xterm window if supported by X window manager
+ lines max     number of screen lines allowed for main menu
+ history/sync  save on exit or sync on every command
+ scroll        keep comand listing on screen
+ panel/keybar  show macro labels of keys 0...9
+ title(who)    title of session (show user,host,current dir if configured)
+ title on xterm if supported by X window manager
  mail_biff     indicate new mail incoming
  clock         show current time on the screen
- lines max     maximum lines allowed for main menu on screen
 
                ."readonly runtime parameters                                 ".
  maxli/maxco   maximum lines/columns (size of the screen)
@@ -36,8 +36,8 @@ ymax    = ipv   -       "%4d"   -       t_ymax  yy_max
 
                ."setup parameter for debug only                              ".
                NOTE: it's better to don't touch if not sure, read manual
- -i:           input file, modification caused new scan of main menu
- -f:           command for fill of main menu
- -@:           substitution rule
- -o:           parameter not used
+ --:           command for fill of main menu
+ -i:           input file - whatching it for new scan of main menu
+ -@:           substitution rule for items from main menu
+ -o:           parameter not used, reserved
 ---END

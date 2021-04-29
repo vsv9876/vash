@@ -1,0 +1,616 @@
+.\" t
+.\" Title: \fBvash\fR
+.\" Author: Sergey Vovk
+.\" Language: English
+.\"
+.TH "\FBVASH" "1" "2021\-04\-20" "visual assistant shell" "Vash User's Manual"
+.\"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~selected ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.SH "NAME"
+vash \- visual assistant shell
+
+.SH "SYNOPSIS"
+.HP \w'\fBvash\fR\ 'u
+.B vash
+[\-\fI\<flags\>\fR] [\fIconfig_file\fR] [\-\- \fIfill main menu command\fR]
+.HP \w\fBv\b\fR'\ 'u
+.B v
+[\fIargs\fR ...]
+.PP
+Please, see \fIargs\fB description in section
+.B OPTIONS ANS SETUP
+below.
+
+
+.\"  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SH "DESCRIPTION"
+.PP
+.B Vash
+is an interactive screen-oriented program
+with several features intended to simplify and to accelerate
+an interaction with unix shells via command string,
+see section
+.B FEATURES
+\.
+
+.PP
+.B Vash
+is an interpreter which programmed with \fIconfig files\fR
+also named as
+.I vash profiles\.
+Please, see section
+.B PROFILES
+for details\.
+.PP
+Some features of \fBvash\fR are tuneable with \fIenvironment\fR variables,
+see sections
+.B ENVIRONMENT
+and
+.B SETUP\.
+.PP
+Preferrable way to start \fBvash\fR is calling script named
+\'\fBv\fR\' which simply prepares environment before running \fBvash\fR.
+
+.PP
+.B Vash
+does not work on dumb or printing (hardcopy) terminals and
+in batch environments because requires
+.I screen terminal
+with
+.I direct cursor
+positioning capability.
+Full functionality can be provided only on videoterminals
+like
+.I DEC VT100
+or modern terminal emulators like
+.I xterm, konsole, gnome-terminal
+\.
+
+.\"  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.SH "RELEASE NOTES"
+.PP
+This manual page is incomplete, still in progress. Please,
+refer to online pages and keep quiet.
+
+.\"  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SH "OVERVIEW"
+
+.SS "main view - objects and actions"
+Just after start,
+.B vash
+is showing a \fImain view\fR\ of objects to be manipulated.
+Arrow keys on keyboard are used to move cursor which pointing an object from list\.
+Then operator have to press a key to do an action on object\.
+.PP
+Most popular actions has labels shown in bottom of the screen.
+Action may be done on single object pointed by cursor or on a group of objects
+marked from selection.
+.SS profiles
+Actions are programmed in \fIprofiles\fR\. Default profile is about files in
+current directory. They can be be viewed, edited, copied, removed and so on\.
+.SS "one-key shirtcuts"
+In \fImain view\fR context, pressing a key switches to \fIcommand editing\fR
+context or run particular command immediately\.
+After editing, command may be run by pressing \fIEnter\fR\.
+Command execution listing remains on screen belong with
+.B vash
+dialogue.
+.SS "editing and running a command"
+If operator types english lowercase letter in \fImain view\fR context,
+.B vash
+switches context to \fIcommand editor\fR recognising
+beginning of unix command.
+.br
+Other keys
+used as shortcuts running assigned command, or start command editing from
+template. For example, run 'ls -l' by pressing letter 'L'\.
+This shortens needs of keyboard input.
+More complicated tools such a
+.I parameterized
+command
+.I templates and history,
+explained in section
+.B VIEWS AND CONTEXT SWITCHING.
+
+.\" .SS history, parameters substitution, online help, profiles
+.\" and other features are described below in details.
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SH "RUNNING VASH"
+.PP
+.B Vash
+covers command string interface but not hides it from user.
+.PP
+.SS Command string interface
+is the main target of assistance provided by
+.B vash\. 
+Most popular unix commands can be executed with a single-key
+commands of 
+.B vash\.
+In more complicated cases,
+.B vash
+helps to compose command string with
+.I command editor
+and other
+.I tools.
+.SS ""
+In any case, actual command string will be shown before execution by vash.
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SS Screen and Keyboard Modes
+.PP
+.B Vash
+provides own dialogue
+only on a part of a terminal screen.
+The rest of the screen leaves for 
+command output listing.
+\fBVash\fR switches keyboad between one of two modes:
+.IP * 2
+\fItty mode\fR
+during command execution;
+.IP *
+\fIscreen mode\fR for \fBvash\fR dialogs;
+.PP
+In tty mode input from keyboard collected in string buffer
+and passed to program on '\fBEnter\fR' key pressed.
+.PP
+Screen mode assumes that echo printing of keyboard input supressed.
+Every key is passed to vash immediately, without any buffering.
+Command string editor of
+.B vash
+working in screen mode also, not in tty mode.
+.SS terminal hardware setup
+In multitask unix environment,
+some other programs can drop a garbage on terminal.
+.B Vash
+capable to refresh screen content by pressing dedicated key,
+usually assigned to \fICtrl-L\fR.
+Also, there are other single-key actions which are common
+for all dialogues, like \fInavigation keys\fR, \fIhelp key\fR,
+\fICancel\fR, etc.
+.PP
+Assignments of terminal-dependent keys for such common actions
+and visual attributes like \fIreverse video\fR
+can be configured by \fBvhset\fR(1)\.
+
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.SH VIEWS AND CONTEXT SWITCHING
+
+.PP
+Every
+.I context
+in vash dialogs has an own
+.I view\.
+All contexts has common keys for navigation, object manipulation and
+context switching.
+
+.PP
+Context-dependent help can be get by pressing
+.I help key
+from
+.I main view
+and other contexts.
+
+.PP
+Previous context usually can be returned by pressing
+\fIexit key\fR.
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SS Main View
+\fIMain view\fR appeared just after \fBvash\fR is started.
+It is a menu which contains a list of objects used as arguments
+for composing unix command.
+If
+.B vash
+was started with default profile
+.B std.rc,
+then list of files from current directory will be shown on a main view.
+Other profiles intended to work with process numbers, etc.
+
+.PP
+Object for single-key operation is pointed by cursor moving
+with arrow keys and other navigation keys.
+
+.PP
+Most popular operations on objects
+are assigned to
+.I keys with digits
+on main keyboard (\fB0...9\fR). Actions assigned to these keys are labeled
+below of \fIlist of objects\fR.
+
+.PP
+.I Labels, 
+.I key assignments 
+and 
+.I menu fill
+commands are programmed in
+.I profiles
+\- see section \fBPROFILES\fR.
+
+.PP
+Banner string is placed above list of objects.
+It contains a context header,
+used for terminal window decoration in X11 environment.
+Usual content of this banner is
+.I user name,
+.I host name
+and
+.I full path of current directory\.
+.br
+It is default setup which can be changed via environment and config file.
+
+.TP
+NOTE
+banner above main menu and labels below may be hided by \fIsetup\fR of
+.BR vash .
+
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.SS Help View
+\fBVash\fR provides
+online help pages by pressing \fIhelp key\fR\,
+which is depended from context.
+.I Next
+press of
+.I help key
+gets description and terminal-dependend assignments
+of keys which common for all contexts.
+
+.PP
+Return to previouse context from \fIhelp page\fR
+can be done by pressing any other key then \fIhelp key\fR.
+
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SS Command String Editor
+Pressing lowercase letter key from Main View switches context
+to command string editor, starting typing new command from scratch.
+In rare or special cases an unix command may begin with
+.B '.'
+or 
+.B '/'
+as 1st symbol.
+.PP
+Other printable keys, both with digit or uppercase letter,
+can be assigned to command or command template in profile file.
+.PP
+Template of command contains places for substitution by an object or
+group of objects. Substitution will be done just before execution.
+.PP
+Key \fICancel\fR switches  context between command editor and Main View.
+By default \fBCtrl-C\fR assigned for this action.
+Content for both view remain untouched.
+
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SS Object Selection and Command Parameters
+.PP
+Single object for substitution can be pointed by cursor in Main View.
+Group of objects can be selected from Main View before switching
+context to command editor.
+.PP
+Toggle selection status of an object in Main View can be done by pressing
+\fIspace bar\fR after pointing it with \fInavigation key\fR.
+.PP
+Parameters for substitution allowed both in command editing mode and in profiles:
+.RS 4
+.TP
+.B ##
+all objects separated with spaces; at least one object must be selected
+.TP
+.B #,
+objects, separated by comma; minimum two objects must be selected;
+.RE
+
+.PP
+Parameters for substitution only allowed in
+.I vash profiles:
+.RS 4
+.TP
+.B #@
+an object pointed by cursor;
+.TP
+.B #*
+part of object name before suffix
+.RE
+
+.PP
+There are other form for parameters of substitution.
+Please, see \fISYNTAX.rc\fR file for full explanation.
+.PP
+How to use substitution tool:
+.br
+Please, select on main view some file names, for example
+.I .bash_profile
+and
+.I Download
+; then type in command editor:
+.EX
+
+    $ ls -ld ##
+
+.EE
+then press \fBEnter\fR - the command started will be
+.EX
+
+    $ ls -ld .bash_profile Download
+
+.EE
+
+.SS stdin/stdout redirection
+Selection may be done pressing '>' or '<' near files in main \fBview\fR.
+Selection will be cleared after command execution and must be repeated
+if requered.
+
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.RE
+.SS History
+.B Vash
+maintains history of commands which was edited before execution
+and contains command in form when substitution not done yet.
+This feature is named
+.I parameterized history.
+Only unique templates which was edited manually are stored,
+last used will be placed at the tail of list, cleaning from duplicates.
+Command templates executed on hot-keys without editing are not stored.
+.PP
+Switching to \fBhistory view\fR context can be done pressing \fIhelp key\fR from
+.I command string
+editing context.
+A history menu will appear on the screen. This menu is like the object menu
+on main view - it can be navigated, history entry can be pointed by cursor.
+.PP
+Command from history may be taken to \fIcommand string editor\fR by one of two ways:
+.RS 4
+.IP * 4
+pressing key \fIEnter\fR replaces content of command editor;
+.IP *
+Pressing \fIspace bar\fR or '\fI;\fR' appends
+to command already typed in command editor;
+.RE
+
+.PP
+Command from history can replace \fIfill main view\fR command.
+Default setup for this action is key '\fB=\fR'.
+Context will switched to main view immediately,
+bypassing command editor.
+.br
+NOTE: \fIrescan\fR of main view will done on next press of key '='.
+
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SS Exit Code Indicator
+When running command done, operator have to
+commit an \fIexit code\fR shown.
+This is a prompter, operator have to do a choice of next context between
+repeat 
+.I command editing
+or return to
+.I main view.
+.PP
+Command editing may be continued from different points.
+Pressing \fIleft arrow\fR key puts cursor on position in command string
+before key \fIEnter\fR was pressed. Other arrow keys puts cursor at the end.
+
+.PP
+Preventing mistakes during mixing tty and screen modes,
+pressing key \fIEnter\fR does nothing at this point.
+Only warning message displayed.
+Operator have to press a key \fIspace bar\fR in case returning to \fImain view\fR.
+
+.SS Menu
+TODO
+
+
+
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SH "PROFILES"
+.PP
+Profile is a list of directives with very simple syntax,
+read by \fBvash\fR on start on on special command.
+\fB1st\fR symbol of string is a \fIkeyword\fR,
+and rest of the string is parameters of a statement.
+.B Parser
+of profiles builds internal tables used as program \fBvash\fR running with.
+.RS 4
+.TP
+.B #
+is a comment string. Comments and dummy strings omitted by parser.
+NOTE: sign simbol '\fB#\fR' has a special meaning if found
+not in 1st position.
+.TP
+.B -
+setup parameter, defines variouse constants and parameters
+.TP
+.B @
+include nested section from file specified as argument
+.TP
+.B :
+entry with key_code to \fIkey action program\fR, multiple heads allowed following each other.
+.br
+Key_code specified in one of form:
+.RS 12
+.B :L
+any printable ASCII code, for example 'L';
+.br
+.B :[a-z./]
+matching pattern for one printable code;
+.br
+.B :^C
+non-printable ASCII code, not assigned for common keys, see \fBvash\fR(1);
+.br
+.B :HE
+common key of predefined keyboard actions, without prefix 'KB_',
+for example \fBhelp key\fR 'KB_HE'
+.RE
+.TP
+.B +
+parameter of this statement is a \fIlabel\fR which
+is a head of another program with referenced as action from
+.I key action program\.
+.TP
+.B ' '
+statement with white space symbol in 1st position defines
+an action with condition check, like \fBif-then\fR.
+.RE
+.SS conditions checked
+On a \fIkey action program\fR, matching is about permissions of current
+directory if applicable, and object selection availability.
+.SS ""
+On a labeled program condition is file permission if applicable, and
+object name pattern.
+.SS actions programmed
+An action may be command with optional parameters (template) or label of
+another program, or internal function.
+.SS internal functions
+designated with names with has underline symbol in 1st position. Some of them may have parameters.
+
+.PP
+some commands is internal and never passed to execution by external shell.
+.SS "cd КАТАЛОГ"
+Перейти в каталог (после cd допустим всего один пробел)
+.SS exit
+Закончить работу, выйти и сохранить историю команд
+.SS profile sections
+Profile consists of a configuration statements and split to several
+files. Separate sections can be included with
+special statement into other section.
+.PP
+Search every section for inclusion via \fBVASH_PATH\fR will done separately each other. Every section may be replaced with user content;
+.SS profile search path
+user can replace sections with own content and place them in front of
+default library sections. In this case environment variable \fBVASH_PATH\fR
+must be modified. See section \fBENVIRONMENT\fR for details.
+
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SH "OPTIONS AND SETUP"
+.SS startup only options
+.TP
+.B -1
+main view in one column 
+.TP
+.B -b\fIN\fR
+static buffer size
+.TP
+\fIconfig_file\fR
+profile, if not specified, then \fBstd.rc\fR used
+
+.SS startup & online options
+these options can be changed online with setup page - see more help
+pressing \fIhelp key\fR when online.
+.TP
+.B -?
+get shirt explanation of startup flags, then \fBvash\fR exited
+.TP
+.B -h
+keep \fBh\fRistory in file
+.TP
+.B -S
+if flag \fB-h\fR active, then \fBs\fRync every command;
+.br
+if not used, history will save on file on exit only
+.TP
+.B -m
+indicate new \fBm\fRail incoming
+.TP
+.B -c
+show \fBc\fRurrent time on the screen
+.TP
+.B -s
+\fBs\fRcrooll comand listing keeping on screen;
+.br
+othervie clear screen after every command on return to main view
+.TP
+.B -p
+show \fBp\fRanel of description labels of keys 0-9
+.TP
+.B -w
+title of session, \fBw\fRhoami (user,host,current dir if configured)
+.TP
+.B -x
+title on \fBx\fRterm window if supported by X window manager
+
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SH "ENVIRONMENT"
+.PP
+.IP
+.SS VASH
+contains flags similar to startup options.
+If this variable is not set, then default values are used.
+.br
+Using this variable reset defaults, so using letter means corresponding
+feature is set. Flags on command string has an advantage.
+.PP
+Additionally, flag '\fBl\fR' followed by number
+means how many lines will be occupied
+by \fBvash\fR for menu on main view. Note: 4 lines from total size
+reserved for banner strings.
+
+.br
+Example:
+.EX
+
+    VASH=shl4; export VASH
+
+.EE
+use scroll, save a history, occupy 4 lines only on a screen (for work via
+modem 2400 bps).
+.IP
+
+.SS VASHLBL
+TODO
+
+.SS VASH_PATH
+Contains column-separated list of directories where profile files resides, including sections. Actual value may be checked on \fIsetup page\fR.
+
+.SH SEE ALSO
+\fBvhset\fR(1), \fBvisi\fR(3), \fBlinlib\fR(3), \fBterminfo\fR(5), \fBtermcap\fR(5), \fBxterm\fR(1)
+
+.nh
+
+.SH AUTHOR
+.PP
+Sergey Vovk,
+.br
+previously known as <vsv@st.simbirsk.su>, <vsv@relcom.eu.net>, <vsv@macomnet.ru>
+.SH HISTORICAL NOTE
+Screen mode interface of \fBvash\fR implemented with a \fItermcap\fR-based \fIlinlib\fB library. This library thoughts inspired by some project from CERN,
+and used for real-time applications in 1980x.
+Later, library was extended with some tools and named \fIvisi\fR.
+.PP
+Initially \fBvash\fR was wrote on 16-bit environment on DEC PDP-11/23
+and VT100 hardware, using classic K&R dialect of C language.
+Only ASCII-based 8-bit encodings were supported.
+.PP
+1st stricted release was about 1990 year under name \fIash\fR, assistant shell. 
+Further delevelopment was episodical.
+In 1991-1993 years ash was ported to i386 platforms ISC UNIX and FreeBSD,
+then UnixWare. Some enhancements was added with port to SPARK Solaris in 1995 and DEC OSF-1 Unix in 1996. Porting to SGI IRIX was done in 1997.
+.PP
+1st port to linux-based systems was done in 2004 since Fedora Core 2.
+.PP
+In modern time project development was reactivated not observing comparable
+tools, and prepared to wide publication under free license.
+Finally, name \fIvash\fR was assigned to this program avoiding confusion
+with /bin/ash, \fIagain shell\fR.
+.PP
+Most previouse versions was for 32-bit architectures and
+supported only 8-bit encoding charsets.
+Native 64-bit support added since 2019.
+Probably, 16-bit version may be still compiled, not sure.
+.PP
+\fITermcap\fR-based code was modified to use \fIterminfo\fR.
+Starting in 2020, UTF-8 support still in progress, but it doesn't
+interfere with most of sysadmin's work.

@@ -1,6 +1,6 @@
 #!/usr/bin/vash
-# this is vash rc profile
-# shebang used for auto syntax colorize only
+#
+# NOTE:shebang used only for auto syntax colorize by text editors
 #
 # Visual Assistant Shell (vash)
 # 1990-2020 (C) Sergey Vovk
@@ -148,15 +148,14 @@
 :U9
 	??? ?   _sup
 
-# Вызов подсказки
-# obsolete, will be removed - use man vash instead, please
 :[?]
-#:HE
+:HE
+# show help
 #	* * _cmdset std.help.rc
-	* * ;vash std.help.rc
+# obsolete, will be removed - use man vash instead, please
+#	* * ;vash std.help.rc
+	* * _help std_help.lb
 
-# Полезное действие (выполнить, распаковать, войти в объект, и т.п.),
-# см. выше +Open, +View
 :NL
 #:[;]
 	??? ?   +Open
@@ -165,10 +164,6 @@
 #       Программа (настройка) ash для работы с процессами
 	* *     :ASH=l20ps; export ASH; exec vash ps.rc
 #        * *     _cmdset ps.rc
-
-#:[2-90]
-#        * *     _msg нажимайте функциональные клавиши F1 - F10...
-
 
 
 #-------------------------------------------------------

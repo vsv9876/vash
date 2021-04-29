@@ -2,8 +2,6 @@
 
 #echo Warning! there no automatic configuration prepared,
 #echo please, use 'make cfg' instead
-#BLDCONF=./BLD.conf
-#BLDCONF=./configure.conf
 BLDCONF=./conf.cfg
 
 mypwd=`pwd`
@@ -19,7 +17,14 @@ VERSN="$mydir"
 # >> $BLDCONF	echo ''
  >> $BLDCONF	echo 'VERSN     = "'$VERSN'"'
 # >> $BLDCONF	echo ''
- >> $BLDCONF	echo 'PATH      = '`pwd`'/visi/bin:'$PATH
+ workdir="$mypwd/visi/bin"
+ grep -e "$workdir:" <<EOF >/dev/null
+$PATH
+EOF
+ if [ $? -ne 0 ]; then
+ PATH="$mypwd/visi/bin:$PATH"
+ fi
+ >> $BLDCONF	echo 'PATH      = '$PATH
  >> $BLDCONF	echo ''
 #make cfg
 

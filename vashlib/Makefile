@@ -21,7 +21,8 @@ DESTDIR       =
 DEST          = /usr
 DESTLIB       = $(DESTDIR)$(DEST)/lib
 
-VISI          = ../../visi
+#VISI          = ../../visi
+VISI          = ../visi
 
 VBIN          = $(VISI)/bin
 
@@ -41,39 +42,15 @@ PROFILES      = \
 ASHCMD        =
 
 
-OBJS	      = 1shell.lb\
-		2menu.lb\
-		3view.lb\
-		4edit.lb\
-		5copy.lb\
-		6movren.lb\
-		7misc.lb\
-		8remove.lb\
-		alias.lb\
-		ash.lb\
-		mainh.lb\
-		other.lb\
-		phelp0.lb\
+OBJS	      = phelp0.lb\
 		sup.lb\
-		suphlp.lb \
-		std.help.lb
+		sup_help.lb\
+		std_help.lb
 
-SRCS	      = 1shell.lav\
-		2menu.lav\
-		3view.lav\
-		4edit.lav\
-		5copy.lav\
-		6movren.lav\
-		7misc.lav\
-		8remove.lav\
-		alias.lav\
-		ash.lav\
-		mainh.lav\
-		other.lav\
-		phelp0.lav\
+SRCS	      = phelp0.lav\
 		sup.lav\
-		suphlp.lav \
-		std.help.lav
+		sup_help.lav\
+		std_help.lav
 
 SUFFIX        = .lav:s .la:s .lb:o
 

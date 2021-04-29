@@ -11,7 +11,7 @@
 # switch context to command editing, old content will be preserved
 #:EX
 :CA
-:HE
+#####:HE
 :[1!]
 	* * _sh
 
