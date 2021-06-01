@@ -1,6 +1,6 @@
 Name:           vash
-Version:        2.0.15
-Release:        2%{dist}
+Version:        2.0.16
+Release:        1%{dist}
 Summary:        Visual Assistant Shell (vash)
 
 License:        MIT and BSD
