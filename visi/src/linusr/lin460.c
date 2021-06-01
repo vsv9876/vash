@@ -48,11 +48,22 @@ register char    *str ;         /* текст сообщения об ошибк
 	if (*str) {    /* если аргумент вызова непустая строка */
 		msgflg = 1;
 		cp_set(-1, 0, vamode);
-		if ((vamode & VIDEO) == ERR) {
+		switch (vamode & VIDEO) {
+		case ERR:
 			/*bell();*/
-			w_str("Err: ");
+			w_str("Error:");
+			break;
+		case ATT:
+			w_str("Attention!");
+			break;
+		case TXT:
+			break;
+		default:
+			w_str(">>");
+			break;
 		}
-		w_str(str); w_str(" ");
+		at_set(TXT); w_chr(' ');
+		w_str(str);
 		at_set(TXT); er_eol(TXT);
 	}
 }

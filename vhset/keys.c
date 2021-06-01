@@ -138,13 +138,13 @@ char *str;
 		cp_set(line->line, line->colu, ATT|INP);
 		w_strn("<?>", line->size);
 
-		w_msg(ATT, "Press new key...");
+		w_msg(ATT, "Please, press new key...");
 		tmpcod = r_key();
 		if (tmpcod == 0)
 			w_msg(ERR, "Unknown key");
 		else if (cod1(tmpcod) == 0)
 			w_msg(ERR,
-"Printable char invalid, please use function or control keys");
+"Printable char is disallowed. Please, use function or control keys");
 		else if ((skey == '2' && kblp->t_key2 == tmpcod)
 			  || (skey == '1' && kblp->t_key1 == tmpcod))
 		{
@@ -163,7 +163,7 @@ char *str;
 		} else {
 			kblp->t_key1 = KB_EMPTY;
 		}
-		w_msg(TXT, "Key code was erased");
+		w_msg(TXT, "Key code was erased.");
 	}
 	return(TRUE);
 }
