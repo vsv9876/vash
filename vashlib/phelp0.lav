@@ -1,5 +1,5 @@
 ---LINES
-var     = ipv   -       -       -       -         "0.98beta"
+var     = ipv   -       -       -       -         "3.141593"
 alt1    = ipa   -       -       -       -         "YES"
 alt2    = ipa   -       -       -       -         "[x]"
 mse     = ipm   -       -       -       -         " Quit/Exit "
@@ -9,27 +9,27 @@ sp      = iv    -       -       -       -     "[space]"
 
 ---SCREEN                                     
 =generic keyboard help
-+LINLIB/VISI                                             
-+(c) 1986-1990 vsv        line control:                                            
-+                          ."line type/sample".....  ."key".  ."action"......           
-+common keys:              menu item:                                                  
-+ .:HE... get help                 .mse............  .:SP...  select                   
-+ .:EX... exit page                                  .:NL...  select optional                  
-+ .:RE... refresh page     selector/toggler:                                                   
-+ .:CA... cancel                   .alt2.            .:SP...  toggle forward           
-+ .:AU...                                            .:DE...  toggle backward          
-+ .:AD...                  variable:                                        
-+ .:AL...                          .var.....         .:SP...  keep content  
-+ .:AR...                                            .:DE...  erase         
-+                         line editing:                                    
-+optional:                 ."action"...............  ."key". ."alternative".
-+ .:TA...                  commit changes            .:NL...                
-+ .:KD...                  Ins/Ovr mode              .:KI... .:PR... .:PR...
-+ .:KH...                  erase left from cursor    .:DE...                
-+ .:KE...                  erase below cursor        .:KD...                
-+ .:PU...                  erase up to end                   .:PR... .:SP...
-+ .:PD...                  jump to 1st symbol        .:KH... .:PR... .:AL...
-+                          jump to end of text       .:KE... .:PR... .:AR...
+
++common keys:              ."line control".........  ."key".  ."action"......           
++ .:HE... get help         menu item:                                                  
++ .:EX... exit page                .mse............  .:SP...  select                   
++ .:RE... refresh page                               .:NL...  select optional                  
++ .:CA... cancel           selector/toggler:                                                   
++ .:AU...                          .alt2.            .:SP...  toggle forward           
++ .:AD...                                            .:DE...  toggle backward          
++ .:AL...                  variable:                                        
++ .:AR...                          .var.....         .:SP...  keep content  
++ .:TA... next line                                  .:DE...  erase         
++                                   
++optional:                 ."line editing".........  ."key". ."alternative".
++ .:KH...                  Ins/Ovr mode              .:KI... .:PR... .:PR...
++ .:KE...                  commit changes            .:NL...                
++ .:PU...                  erase left from cursor    .:DE...                
++ .:PD...                  erase below cursor        .:KD...                
++                          erase up to end                   .:PR... .:SP...
++                          jump to 1st symbol        .:KH... .:PR... .:AL...
++LINLIB/VISI               jump to end of text       .:KE... .:PR... .:AR...
++(c) 1986-1990 vsv                                       
 
 ---END
                         
