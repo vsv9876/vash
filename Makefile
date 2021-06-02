@@ -20,13 +20,12 @@ TOPDIR = .
 MAKECONF   = ./conf/Makefile
 BLDCFG	= conf.cfg
 
-include $(BLDCFG)
-
 BLD	= $(TOPDIR)/BLD
 #BLD	= .
 DESTDIR	= $(TOPDIR)/BLD
 VERSN	= "1."
 
+include $(BLDCFG)
 include $(MAKECONF)
 
 ###include ./Make.conf
