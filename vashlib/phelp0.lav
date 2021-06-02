@@ -2,36 +2,39 @@
 var     = ipv   -       -       -       -         "0.98beta"
 alt1    = ipa   -       -       -       -         "YES"
 alt2    = ipa   -       -       -       -         "[x]"
-mse     = ipm   -       -       -       -         " End of work "
+mse     = ipm   -       -       -       -         " Quit/Exit "
 ---#sp      = h     "space "
 sp      = iv    -       -       -       -     "[space]"
 
 
 ---SCREEN                                     
-=LINLIB/VISI - screen library/toolkit
- LINLIB/VISI          |
- 1986-1990 (c)        |line control on navigation context:
-                      | ."line type". ."visual"......  ."key".  ."action".....  
-                      |                                                         
-common keys:          | menu item:   .mse............  .:SP...  select          
-                      |                                .:NL...  select optional         
- .:HE... get help     |                                                         
- .:EX... exit page    | selector:         .alt2.       .:SP...  toggle forward  
- .:RE... refresh page |                                .:DE...  toggle backward 
-                      |                                                         
-line-depended keys:   | variable:       .var.....      .:SP...  keep content    
-                      |                                .:DE...  erase           
- .:SP... select,next  |line editing context:                                         
- .:DE... delete,prev  |  ."key". ."action".............. ."alternative"...      
- .:CA... cancel       |  .:NL... commit changes                                 
-                      |  .:KI... Ins/Ovr mode            .:PR... .:PR...        
-optional keys:        |  .:DE... erase left from cursor                         
- .:TA...    .:KH...   |  .:KD... erase below cursor                             
- .:KD...    .:KE...   |                  erase up to end .:PR... .:SP...        
- .:KI...    .:PU...   |  .:KH... jump to 1st symbol      .:PR... .:AL...        
-            .:PD...   |  .:KE... jump to end of text     .:PR... .:AR...        
-                      |
+=generic keyboard help
++LINLIB/VISI                                             
++(c) 1986-1990 vsv        line control:                                            
++                          ."line type/sample".....  ."key".  ."action"......           
++common keys:              menu item:                                                  
++ .:HE... get help                 .mse............  .:SP...  select                   
++ .:EX... exit page                                  .:NL...  select optional                  
++ .:RE... refresh page     selector/toggler:                                                   
++ .:CA... cancel                   .alt2.            .:SP...  toggle forward           
++ .:AU...                                            .:DE...  toggle backward          
++ .:AD...                  variable:                                        
++ .:AL...                          .var.....         .:SP...  keep content  
++ .:AR...                                            .:DE...  erase         
++                         line editing:                                    
++optional:                 ."action"...............  ."key". ."alternative".
++ .:TA...                  commit changes            .:NL...                
++ .:KD...                  Ins/Ovr mode              .:KI... .:PR... .:PR...
++ .:KH...                  erase left from cursor    .:DE...                
++ .:KE...                  erase below cursor        .:KD...                
++ .:PU...                  erase up to end                   .:PR... .:SP...
++ .:PD...                  jump to 1st symbol        .:KH... .:PR... .:AL...
++                          jump to end of text       .:KE... .:PR... .:AR...
+
 ---END
+                        
+ LINLIB/VISI          
+ 1986-1990 (c)                               
 
 
 ."control keys:"..................     

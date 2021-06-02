@@ -158,25 +158,25 @@ KBL kbl[KBLSIZE] = {
 { KB_AR, "<right>", KBCOD('k','r'), KB_EMPTY       },
 
 /* limited customizing possible */
-{ KB_SP, "[space]", KBCTL(    'S'), KB_EMPTY       },
-{ KB_TA, "TAB    ", KBCTL(    'I'), KB_EMPTY       },
+{ KB_SP, "<space>", KBCTL(    'S'), KB_EMPTY       },
+{ KB_TA, "Tab-->|", KBCTL(    'I'), KB_EMPTY       },
 
 /* full customizing supported with vhset */
 { KB_NL, "Enter  ", KBCTL(    'M'), KBCTL(    'J') },
 { KB_DE, "<-del  ", KBCOD('d','e'), KBCTL(    'H') },
                                                    
-{ KB_HE, "F1     ", KBCOD('k','1'), KBCTL(    'G') },
-{ KB_EX, "F2     ", KBCOD('k','2'), KBCTL(    'X') },
-{ KB_CA, "Ctrl-C ", KBCTL(    'C'), KB_EMPTY       },
-{ KB_RE, "Ctrl-L ", KBCTL(    'L'), KB_EMPTY       },
-{ KB_PR, "Ctrl-\\ ", KBCTL(    '\\'), KB_EMPTY     },
+{ KB_HE, "F1|^G  ", KBCOD('k','1'), KBCTL(    'G') },
+{ KB_EX, "F2|^X  ", KBCOD('k','2'), KBCTL(    'X') },
+{ KB_CA, "^C     ", KBCTL(    'C'), KB_EMPTY       },
+{ KB_RE, "^L     ", KBCTL(    'L'), KB_EMPTY       },
+{ KB_PR, "^\\     ", KBCTL(    '\\'), KB_EMPTY     },
                                                    
-{ KB_KI, "Insert ", KBCOD('k','I'), KBCTL(    'O') },
+{ KB_KI, "Ins|^O ", KBCOD('k','I'), KBCTL(    'O') },
 { KB_KD, "del->  ", KBCOD('k','D'), KB_EMPTY       },
-{ KB_KH, "Home   ", KBCOD('k','h'), KBCTL(    'A') },
-{ KB_KE, "End    ", KBCOD('@','7'), KBCTL(    'E') },
-{ KB_PU, "PgUp   ", KBCOD('k','P'), KBCTL(    'B') },
-{ KB_PD, "PgDown ", KBCOD('k','N'), KBCTL(    'F') },
+{ KB_KH, "Home|^A", KBCOD('k','h'), KBCTL(    'A') },
+{ KB_KE, "End|^E ", KBCOD('@','7'), KBCTL(    'E') },
+{ KB_PU, "PgUp|^B", KBCOD('k','P'), KBCTL(    'B') },
+{ KB_PD, "PgDn|^F", KBCOD('k','N'), KBCTL(    'F') },
 
 /* extended set with limited support, not supported by vhset yet */
 { KBUSR('0'), "       ", KBCOD('f','0'), KBUSR('0'), KB_EMPTY },
