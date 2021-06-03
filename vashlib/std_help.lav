@@ -8,27 +8,27 @@ sp      = iv    -       -       -       -     "|space|"
 
 
 ---SCREEN                                     
-=vash context views and switching keys
+=vash context views and context switching keys
 
 from main view:
- * lowercase letter key -                    ,---> ."main view".............   
-    - type unix command from scratch (1)     |             ^|    |         |   
- * digit key or uppercase letter key:        |             || .'[a-z./]    |   
-    - put a command template to editor (2)   | ."history". ||    |         |   
+ * lowercase letter key -                    ,---> ."main view"............    
+    - type unix command from scratch (1)     |             ^|    |        |    
+ * digit key or uppercase letter key:        |             || .'[a-z./]   |    
+    - put a command template to editor (2)   | ."history". ||    |        |    
     - run programmed command (3)             |     |       ||    |   .'[0-9A-Z]
- .:CA... - switch between main view and      |     ^     .:CA... |        | |  
-   command editor, keeping editing content   |   .:HE...   ||   (1)       | |  
-                                             |     |       ||    |        | |  
-from command editor:                         |,> ."command editor".... <-(2)|  
+ .:CA... - switch between main view and      |     ^     .:CA... |     |    |  
+   command editor, keeping editing content   |  .:HE...    ||   (1)   (2)  (3) 
+                                             |     |       ||    |     |    |  
+from command editor:                         |,> ."command editor". <--'    |  
  * .:HE... - get history view                ||    |                        |  
- * .:NL... - run a command                   || .:NL... ->| run cmd  |<---(3)  
-                                             ||              |                 
-from exit code indicator:                    ||    ."exit code indicator "..   
- * .:NL... - do nothing, preventing mistakes ||         |    |   |     |
- * .:SP... - return to main view             |`-< .'any_key  |   `-< .:NL...   
-                                             `-----------< .:SP...               
-
- for more details use man vash, please
+ * .:NL... - run a command                   || .:NL...                     |  
+                                             ||    --> ."run a command". <--' 
+from exit code indicator:                    ||              |                 
+ * .:NL... - do nothing, preventing mistakes ||    ."exit code indicator ".. 
+ * .:SP... - return to main view             ||         |    |   |     |   
+                                             |`<- .'any_key  |   `<-- .:NL...     
+                                             `---------<-- .:SP...           
+ Please, use man vash for details
 
 ---#=vash (C) 1990-2021 Sergey Vovk
 ---END                               
