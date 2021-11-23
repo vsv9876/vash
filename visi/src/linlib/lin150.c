@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include "line.h"
+#include "line0.h"
 
 /*
 **      ВЫВОД НА ЭКРАН СТРОК В КОДАХ ТЕРМИНАЛА
@@ -154,6 +155,7 @@ register int n;
 w_chr(c)
 int c;
 {
+	extern SCRN scrn;
 	extern int osgflg;
 	register int oc;        /* символ для вывода */
 
@@ -188,8 +190,13 @@ int c;
 #ifdef  ASCII7
 	oc &= 0177;
 #endif
-	putc(oc, vttout);
-	/* putc(oc, stdout); */
+	/* save new position of cursor to be expected, then check if inside screen borders */
+	scrn.sc_co += 1;
+	if (scrn.sc_li <= (lframe->baseli + lframe->maxli)
+			&& scrn.sc_co <= (lframe->baseco + lframe->maxco)) {
+		putc(oc, vttout);
+		/* putc(oc, stdout); */
+	}
 }
 /*---------------------------------------------*/
 /* Перекодировть символ ESC-последовательности */

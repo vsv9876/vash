@@ -15,7 +15,7 @@ extern char    *pmtsh;/* = ".$"; /*"sh>" ;*/
 /*YESXSTR*/
 int pmtshsz;            /* размер подсказки */
 
-static  char cmd0[MAXLICO + 2] = "";    /* ТЕКУЩАЯ КОМАНДА ОБОЛОЧКИ */
+static  char cmd0[4*MAXLICO + 2] = "";    /* ТЕКУЩАЯ КОМАНДА ОБОЛОЧКИ, размер для utf-8 */
 static  int  cmdsize = 0;       /* МАКС. РАЗМЕР СТРОКИ */
 static  int  pos = 0;           /* позиция в строке */
 static  int old_pos = 0;		/* позиция курсора до попытки окончить ввод (completion),
@@ -29,14 +29,16 @@ w_cmd(cmd)
 register char *cmd;
 {
 	register int i;
+	int cmd_li = -1 /*y0_top - 1*/; /* on bootom line or on top of scroll occupied by vash */
 
-	cp_set(-1 /*y0-1*/, 0, CMD); er_eol(CMD);
+	cp_set(cmd_li, 0, CMD); er_eol(CMD);
 	at_set(CMD|INP);
 	/*if (getuid() == 0) pmtsh = ".#";*/
 	w_str(pmtsh);
-	cp_set(-1 /*y0-1*/, pmtshsz, CMD);
+	cp_set(cmd_li, pmtshsz, CMD);
 	for(i = 0; cmd[i] && i < cmdsize; i++)
 		w_chr(cmd[i]);
+	cp_set(cmd_li, pmtshsz, CMD); /* base for field for string to be edited */
 }
 
 scrlst()        /* курсор к началу свитка */
@@ -65,7 +67,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
-	cmdsize = maxco - 1 - pmtshsz;
+	cmdsize = lframe->maxco - 1 - pmtshsz;
 	justrun = 0;
 	okwait = 1;  /* флаг: после wait() не ожидать подтверждения пробелом, если OK */
 	cod = 0;
@@ -88,7 +90,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			strncpy(cmd0, cmd, (size_t)cmdsize); /*TODO: WTF*/
 			cmd0[cmdsize] = 0;
 		}
-		pos = strlen(cmd0);
+		pos = /*strlen*/u8len(cmd0);
 	}
 
 	for (;;) {
@@ -98,7 +100,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		case KB_HE:
 		case KB_AU:
 		case KB_AD:
-			pos = strlen(cmd0);     /* курсор в конец */
+			pos = /*strlen*/u8len(cmd0);     /* курсор в конец */
 		default:
 			w_cmd(cmd0);
 		}
@@ -140,7 +142,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			/* completion */
 			if ((sgglist = sl_init()) != NULL) {
 				old_pos = pos;
-				if ((slsize = try_compl(&cmd0[0], &pos, maxco - 2)) < 0) bell();
+				if ((slsize = try_compl(&cmd0[0], &pos, lframe->maxco - 2)) < 0) bell();
 				if (pos == old_pos && sgglist->sl_size > 0) {
 					hlp_compl();
 					cmdrun = 1; /*для восстановления главного меню*/
@@ -157,7 +159,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 				cmd = "";
 			}
 			/* сохранить команду, если ее редактировали */
-			if (strncmp(cmd, cmd0, strlen(cmd0)) != 0) {
+			if (strncmp(cmd, cmd0, /*strlen*/u8len(cmd0)) != 0) {
 				if (histsn) {
 					cmdghist(homedir);
 				}
@@ -213,10 +215,11 @@ std_shell:
 
 			syscod = vsystem(cmd0, cmdlbl);
 			justrun = 0;
+			scrldo();
 			if(syscod) {
 				at_set(ERR);
-				sprintf(tmpstr, "[ Exit (%d/%d) ]\r",
-				cod1(syscod), cod0(syscod));
+				sprintf(tmpstr, "[ exit=%d, sig=%d ]\r",
+				cod1(syscod), cod0(syscod)); /*TODO cleanup trick, replace with stdlib.h stuff */
 				w_str(tmpstr);
 			}
 			else {
@@ -232,10 +235,10 @@ std_shell:
 					fflush(vttout);
 					fflush(stdout);
 					cod = r_cod(0);
-					at_set(ATT|INP);
+					at_set(ATT|VEXT);
 					/*VARARGS*/
 					if (cod == KB_NL) {
-					  sprintf(tmpstr, " press SPACE bar or type command ");
+					  sprintf(tmpstr, " Please, press SPACE bar or type a command ");
 					  w_str(tmpstr);
 					}
 					/*if (cod == KB_AU) {

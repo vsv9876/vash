@@ -92,7 +92,7 @@ extern  int   vtti;
 #endif
 
 typedef unsigned int kbcod;  /* код клавиши, например '^M', 'P1', 'k1' */
-typedef char  bool;     /* короткий формат для целых чисел, флагов */
+typedef short  bool;     /* короткий формат для целых чисел, флагов */
 
 #define KBCOD_INT32
 
@@ -162,13 +162,13 @@ typedef struct  {
 /*---- основные логические типы видеоатрибутов */
 #define LTYPE 0xf	/* маска логического типа, пример (line->attr == (LTYPE & ATT)) */
 #define CMD 0x0     /* команды терминала, режим за пределами visi */
-#define TXT 1       /* текст комментария (TEXT) */
-#define HDR 2       /* заголовок (HEADER)  */
-#define VAR 3       /* поле для ввода (VARIABLE) */
-#define ALT 4       /* переключатель (ALTERNATE) */
-#define MSE 5       /* селектор меню (MENU SELECTOR) */
-#define ERR 6       /* сообщение об ошибке (ERROR) */
-#define ATT 7       /* "внимание !"   (ATTENTION !) */
+#define TXT 01       /* текст комментария (TEXT) */
+#define HDR 02       /* заголовок (HEADER)  */
+#define VAR 03       /* поле для ввода (VARIABLE) */
+#define ALT 04       /* переключатель (ALTERNATE) */
+#define MSE 05       /* селектор меню (MENU SELECTOR) */
+#define ERR 06       /* сообщение об ошибке (ERROR) */
+#define ATT 07       /* "внимание !"   (ATTENTION !) */
 
 /*---- общие битовые маски атрибутов */
 #define PMT  0100000    /* впереди подсказка (PROMPTER) */
@@ -178,12 +178,12 @@ typedef struct  {
 #define NED    04000    /* не редактировать строку линии */
 #define EDT    02000    /* тест-функция подкл. для редактирования */
 #define FLO    06000    /* вызов форм. преобр. и редактор блокировать */
-#define VCOLOR 01000    /* ?!!... использовать цветную таблицу атрибутов */
+#define VEXT   01000    /* видео атрибут для вида "как на вводе", но при выводе  */
 #define LFASTR  0400    /* r_line перерисовывает только первый символ поля */
 
 /* маска индекса таблицы видеоатрибутов и подсказок: */
-#define VIDEO  00177
-#define VIDEOM (VIDEO|INP|VCOLOR)       /* маска видеоатрибутов */
+#define VIDEO  0177
+#define VIDEOM (VIDEO|INP|VEXT)       /* маска видеоатрибутов */
 
 /*---- атрибуты часто используемых типов линий: */
 #define LTXT TXT
@@ -191,8 +191,7 @@ typedef struct  {
 #define LVAR (VAR|PAD)
 #define LALT (ALT|MID|PAD|NED)
 #define LMSE (MSE|FLO)
-/* атрибут для заполнения фона при диалогах LINLIB */
-/*#define FGBG (INP)*/
+#define LKEY (VEXT|LHDR)
 
 /*----------------------*/
 /* биты флагов задержек */
@@ -247,12 +246,35 @@ typedef struct  {
 #define IO_NOWAIT 0000010       /* next_j() в непрерывном цикле */
 #define IO_TTYSANE 000040		/* do not save old tty state which probably broken */
 
+/*
+ * hardware and logical data for cursor addressing
+ */
+#ifdef MAXLI_OBSOLETED
+extern  int    maxli;   /* размер экрана по горизонтали */
+extern  int    maxco;   /* размер по вертикали */
+#endif
+/*
+ * cursor position frame, in logical coordinates of screen:
+ * for whole screen = { 0, maxli, 0, maxco };
+ * ofsli,ofsco values may be negative - means distance from end borders
+ */
+typedef struct {
+	int baseli; /* offset to 1st line */
+	int maxli; /* last line */
+	int baseco; /* offset to 1st column */
+	int maxco; /* last column */
+} LFRAME;
+
+extern LFRAME hwframe; /* hardware frame, initialized in hw_ini() */
+extern LFRAME *lframe; /* logical current frame, by default is &hwframe */
+
 /*--------------------*/
 /* функции библиотеки */
 /*--------------------*/
 
 /* lin(1) - интерфейс терминала с операционной системой */
 extern  int     io_set(), ttyinp(), w_chr(), w_raw(), w_str(), w_strn();
+extern  int     w_putc(); /*TODO: extend list by functions in fact used */
 
 /* lin(2) - управление терминалом: физический уровень */
 extern  int     at_set();
@@ -261,11 +283,8 @@ extern  int     hw_set(), do_kbl();
 
 /* lin(3) - управление терминалом: логический уровень */
 
-extern  int    maxli;   /* размер экрана по горизонтали */
-extern  int    maxco;   /* размер по вертикали */
-
 extern  kbcod   k_pars();
-extern  int     bell(), cp_fet(), cp_sav(), cp_set();
+extern  int     bell(), cp_fet(), cp_sav(), cp_set(), cp_abset();
 extern  int     er_eol(), er_eop(), er_pag(), er_scr();
 extern  kbcod   e_str(), r_line(), r_page();
 extern  int     allcod, edinff;
@@ -290,8 +309,8 @@ extern char *u8pxx();
 /*
  * limit screen by linlib+termcap limits
  */
-#define MAXLICO 128
-/* internal function */
+#define MAXLICO 256
+/* internal function, called from hw_set only */
 extern int	gtty_sz();
 extern int tty_li, tty_co;
 

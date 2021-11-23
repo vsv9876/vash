@@ -9,20 +9,20 @@ buildd  = c    buildd
 
 hl      = gc    -       -       cvt_hl  -       "-"
 coprts  = c     coprts
-f       = ipv   -       -       cvt_sp  -       f
-i       = ipv   -       -       cvt_s   -       i
-o       = ipv   -       -       cvt_s   -       o
-r       = ipv   -       -       cvt_s   -       r
+fs      = ipv   -       -       cvt_sp  -       f
+is      = ipv   -       -       cvt_s   -       i
+os      = ipv   -       -       cvt_s   -       o
+rs      = ipv   -       -       cvt_s   -       r
 
 ---#    = ipa
-pF      = ia    -       onoff   cvt_a   -       pF
-wF      = ia    -       onoff   cvt_a   -       wF
-sF      = ia    -       onoff   cvt_a   -       sF
-hF      = ia    -       onoff   cvt_a   -       hF
-hS      = ia    -       onoff   cvt_a   -       hS
-cF      = ia    -       onoff   cvt_a   -       cF
-mF      = ia    -       onoff   cvt_a   -       mF
-xF      = ia    -       onoff   cvt_a   -       xF
+p       = ia    -       onoff   cvt_a   -       pF
+w       = ia    -       onoff   cvt_a   -       wF
+s       = ia    -       onoff   cvt_a   -       sF
+h       = ia    -       onoff   cvt_a   -       hF
+S       = ia    -       onoff   cvt_a   -       hS
+c       = ia    -       onoff   cvt_a   -       cF
+m       = ia    -       onoff   cvt_a   -       mF
+x       = ia    -       onoff   cvt_a   -       xF
 
 ---#u8nopa  = ia    -       onoff   cvt_a   -       u8nopa
 u8      = ia    -       onoff   cvt_a   -       u8nopa
@@ -35,10 +35,44 @@ F2	= c "."
 ---#ym      = iv    n       "%3d"   -       t_ymax  yy_max
 ym      = iv    -       "%3d"   -       t_ymax  yy_max
 
-y0      = v     -       "%d"   -       -       y0
-yt      = g     -       "%d"   -       -       y0_top
-li      = g     -       "%d"   -       -       maxli
-co      = g     -       "%d"   -       -       maxco
+y0      = g     -       "%3d"   -       -       y0
+yt      = g     -       "%3d"   -       -       y0_top
+li      = v     -       "%3d"   -       -       maxli
+co      = v     -       "%3d"   -       -       maxco
+bli	 = vi    -      "%d"   -       -       baseli
+lli      = vi    -      "%d"   -       -       lmaxli
+
+
+
+
+
+
+---SCREEN
+."vash setup parameters"......................... help: .:HE....  exit: .:EX....
+
++max .ym lines       .h.-h,history   .s.-s,scroll        .F1  sh -c allways
++    .li maxli       .S.-S,sync      .p.-p,panel/keybar  .u8  only ASCII
++    .co maxco       .m.-m,mail_biff .w.-w,title               
++                    .c.-c,clock     .x.-x,xterm title
+                                                                
+ ."debug only parameters"....................................       
++--  .fs......................................................      baseli .bli
++-@  .rs......................................................      lmaxli .lli            
++-i  .is......................................................      y0_top .yt
++                                                                       y0 .y0
+---#+ -o: .os........................................................   y0 .y0
+vashrc: .vashrc.................................................................
+vapath: .vpath..................................................................
+vexdir: .vexdir.................................................................
+						  
+=Visual Assistant Shell
+ .coprts......................................................................
+ License: MIT or BSD      version: .versn............ build date: .buildd......           
+---END                             
+
+---#     1         2         3         4         5         6         7         8
+---#56789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890
+---#
 
 ---# use for debug in SCREEN section
 ---#    y0:     .y0.
@@ -47,30 +81,7 @@ co      = g     -       "%d"   -       -       maxco
 ---#  Please, to return try Ctrl-E or .:EX....
 ---#	   to get help press     .'?    or .:HE....
 ---#
-
----SCREEN
----#     1         2         3         4         5         6         7         8
----#56789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890
----#
-=vash setup parameters
-
-+   .ym. lines max     .hF h,history     .sF s,scroll        .F1 sh -c allways
-+       maxco: .co     .hS S,sync        .pF p,panel/keybar  .u8 only ASCII
-+       maxli: .li     .mF m,mail_biff   .wF w,title               
-+       y0top: .yt     .cF c,clock       .xF x,xterm title         
-                                                                  
-."Please, use manual for parameters below:".       help: .:HE.... exit: .:EX.... 
-+-- .f.........................................................
-+-@ .r.........................................................
-+-i .i.........................................................
----#+ -o: .o.........................................................
-
-vashrc: .vashrc.................................................................
-vapath: .vpath..................................................................
-vexdir: .vexdir.................................................................
-						  
-=Visual Assistant Shell
- .coprts......................................................................
- MIT License
- version: .versn............ build date: .buildd......           
----END                             
++    .ym lines max   
++co  .co......       
++li  .li .bli....bli 
++y0t .yt .lli..-lmax 

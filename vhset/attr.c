@@ -26,13 +26,9 @@ LPA     *lpa_p[2] = {
 	};
 
 static char *pimmsg[] = {
-	"\"w\" write out  ",
-	"\"r\" read/active",
-	/*" \"w\"   |-->  ",*/
-	/*" \"r\"   . |-->",*/
-	/*" \"w\"   ",*/
-	/*"   \"r\" ",*/
-	"                 " /* string for wipe on screen */
+	"/set \"w\"/ ->  ",
+	"/set \"r\"/ --->",
+	"               " /* string for wipe on screen */
 };
 
 /* Color support for attr.cv page */
@@ -104,7 +100,7 @@ char   *str;
 		strcpy(str, line->varl);
 
 		/* couple of lines shown with ofset between them */
-		cp_set(line->line + 1, line->colu/* + 2*/, attr|INP);
+		cp_set(line->line + 1, line->colu + 2, attr|INP);
 
 		/* emulate prompt behavior for input mode - find prompt symbol, show it at 1st position */
 		w_chr((char)(lpainp[attr].lpa_p));
@@ -155,11 +151,21 @@ char *str;
 
 	i = (int) line->varl;
 	if (*mod == 'w') {
-		strcpy(outstr, ". ."); /*'. .';*/
-		strcpy(str, outstr);
+		if (sgrmode >= 2) {
+			/*strcpy(outstr, ". .");*/
+			if (lpa_pi) {
+				strcpy(outstr, "  .");
+			} else {
+				strcpy(outstr, ".  ");
+			}
+			strcpy(str, outstr);
+		} else {
+			strcpy(str, "   ");
+		}
 	} else {
-		strcpy(outstr, ". .");
+		strcpy(outstr, ".?.");
 		strcpy(str, outstr);
+		if (sgrmode < 2) return(TRUE);
 
 		if (cod == ' ' || cod == KB_DE) {
 			line4 = getl4(line); /* тут будет показан результат */
@@ -211,17 +217,17 @@ int ci;    /* stripe color mode index 0 - for foreground, 2 - for background*/
 	char iFG[4] = { '3', '4', '4', '3' };
 
 	for (i=0; i<2; i++) {
-		cp_set(i+1+linesgr->line, linesgr->colu - 4 , ERR);
+		cp_set(linesgr->line + i /* +1 */, linesgr->colu/* - 4 */, ERR);
 		if (fgbg != NULL) {
 			w_raw("\033[0m");
 			for (s = fgbg; *s != '\0'; s++) {
 				w_raw("\033[");
-				w_chr(iFG[ci]);
-				w_chr(gp[i]);
-				w_chr(';');
-				w_chr(iFG[ci + 1]);
-				w_chr(*s);
-				w_chr('m');
+				w_putc(iFG[ci]);
+				w_putc(gp[i]);
+				w_putc(';');
+				w_putc(iFG[ci + 1]);
+				w_putc(*s);
+				w_putc('m');
 				if (*s != cp)	{ w_chr(' '); }
 				else			{ w_chr('>'); }
 								  w_chr(*s);
@@ -324,7 +330,7 @@ char   *str;
 	Rsgr = &lpainp[lpax].lpa_sgr[0];
 	sgr_decode(Rsgr, &Rfg, &Rbg);
 
-	if(*mod == 'r') {
+	if(*mod == 'r' && sgrmode >= 2) {
 		if(cod == ' ' || cod == KB_DE) {
 			line4 = getl4(line);
 
@@ -398,15 +404,19 @@ char   *str;
 		}
 	}
 	if(*mod == 'w') {
-		strcpy(outstr, "- -");
+		if (sgrmode >= 2) {
+			strcpy(outstr, "- -");
 
-		if (fbx == 'f') {
-			if (Wfg) outstr[0] = Wfg;
-			if (Rfg) outstr[2] = Rfg;
-		}
-		if (fbx == 'b') {
-			if (Wbg) outstr[0] = Wbg;
-			if (Rbg) outstr[2] = Rbg;
+			if (fbx == 'f') {
+				if (Wfg) outstr[0] = Wfg;
+				if (Rfg) outstr[2] = Rfg;
+			}
+			if (fbx == 'b') {
+				if (Wbg) outstr[0] = Wbg;
+				if (Rbg) outstr[2] = Rbg;
+			}
+		} else {
+			strcpy(outstr, "   ");
 		}
 	}
 	strcpy(str, outstr);
@@ -440,6 +450,7 @@ char *out;
 	/* show foreground samples colors */
 	showcs(fgbg, fg, 2);
 	c = ed_cod = r_cod(0);
+	if (ed_cod == KB_CA) return(TRUE);
 	if (strchr(fgbg_cod, c) == NULL) {
 		w_msg(ATT|INP, "please, use key from list:"); at_set(ATT); w_str(fgbg_cod);
 		return(FALSE);
@@ -452,6 +463,7 @@ char *out;
 	/* show background sample colors */
 	showcs(fgbg, bg, 0);
 	c = ed_cod = r_cod(0);
+	if (ed_cod == KB_CA) return(TRUE);
 	if (strchr(fgbg_cod, c) == NULL)
 		return(FALSE);
 	if (c == '-') bg = '\0';
@@ -512,16 +524,28 @@ char   *str;
 	register int *ap;       /* указатель на атрибут */
 	register LINE *line4;   /* указатель на базовую линию в 5-й строке */
 	register LPA *lpap;
+	
+	char *smask;
 
 	va = *(int *)line->cvts;
 	i = (int)line->varl;
 
 	if(*mod == 'w') {
-		strcpy(outstr, ". ."); /* on PMT spec: ". ." + outstr indexes 0,2 */
-		if(lpainp[i].lpa_a & va) outstr[2] = 'x';
-		if(lpaout[i].lpa_a & va) outstr[0] = 'x';
-		strcpy(str, outstr);
+		if (sgrmode >= 1) {
+			/*strcpy(outstr, ". ."); /* on PMT spec: ". ." + outstr indexes 0,2 */
+			if (lpa_pi) {
+				strcpy(outstr, "  .");
+			} else {
+				strcpy(outstr, ".  ");
+			}
+			if(lpainp[i].lpa_a & va) outstr[2] = 'x';
+			if(lpaout[i].lpa_a & va) outstr[0] = 'x';
+			strcpy(str, outstr);
+		} else {
+		    strcpy(str, "   "); /*blank is default*/
+		}
 	} else {
+	    if (sgrmode >= 1) {
 		if(cod == ' ' || cod == KB_DE) {
 			line4 = getl4(line);
 
@@ -543,6 +567,7 @@ char   *str;
 			/*if (i == TXT)/* && cod == ' ')*/
 				repage();
 		}
+	    }
 	}
 	return(TRUE);
 }
@@ -693,7 +718,8 @@ show_pi()
 	LINE *l;
 
 	for(l=linem; l->size > 0; l++) {
-		if (l->cvtf == cvt_pi || l->cvtf == cvt_pim) {
+		if (l->cvtf == cvt_pi || l->cvtf == cvt_pim ||
+			l->cvtf == cvt_va || l->cvtf == cvt_sgr) {
 			w_line(l);			/*break;  multiply lines there */
 		}
 	}
@@ -709,6 +735,8 @@ LINE *line;
 kbcod cod;
 {
 	LINE *l;
+	
+	if (sgrmode == 0) w_raw("\033[m"); /*hint for attributes on dumb mode*/
 	switch(cod) {
 
 	case(' '):

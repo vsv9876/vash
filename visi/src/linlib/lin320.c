@@ -51,8 +51,8 @@ static    int awstate = AW_INIT_STATE;  /* ДЛЯ НАЧАЛА ВСЕ ВКЛЮЧ
 static  char *acstate = (char *)0;
 extern  int sgrmode;
 
-#define HACK_COLOR
-#ifdef HACK_COLOR
+#define COLOR_ANSI
+#ifdef COLOR_ANSI
 
 /* ANSI COLOR out/input, SGR sequence, indexed by LPA (0, TXT, HDR, ... )*/
 /* storage for SGR - this is a text for sprintf "\033[%sm", */
@@ -102,14 +102,14 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	/* dumb mode, without attributes at all - in some cases its wrong - vt52 has so/se attribute */
 	if (sgrmode == 0) return;
 
-	/* VCOLOR (в составе VIDEOM) вероятно, не нужен, и вообще не нужен */
+	/* VCOLOR (в составе VIDEOM) вероятно, не нужен, и вообще не нужен -- заменен на VEXT*/
 	aw_new &= VIDEOM; /* cleanup arg called, which may contain unsupported constants*/
 	aw_old = awstate;
 	ac_old = acstate;
 
 	scrn.sc_at = aw_new;
 	aix_new    = aw_new & VIDEO;
-	if(aw_new & INP) {
+	if(aw_new & INP  || aw_new & VEXT) {
 		aw = lpainp[aix_new].lpa_a;
 		ac = lpainp[aix_new].lpa_sgr;
 	} else {
@@ -133,8 +133,8 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	/* ТЕПЕРЬ ВКЛЮЧИТЬ */
 	/*if (ac != ac_old) {*/
 		/*w_sgr(0);*/
-	/*w_sgr(lpainp[0].lpa_sgr); /* FGBG, used as preamble of GCR */
-	    w_sgr(lpaout[TXT].lpa_sgr); /* TXT as default background */
+	/*w_sgr(lpainp[0].lpa_sgr); /* CMD, used as preamble of GCR */
+	    w_sgr(lpaout[TXT].lpa_sgr); /* TXT as default base for others */
 		w_sgr(ac);
 	/*}*/
 	if(aw != 0) {
@@ -148,7 +148,7 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 }
 #else
 char *acout [LPASIZE] = {
-	"",				/* FGBG */
+	"",				/* CMD */
 	"",				/* TXT  */
 	"",				/* HDR  */
 	"",				/* VAR  */
@@ -158,7 +158,7 @@ char *acout [LPASIZE] = {
 	"",				/* ATT  */
 };
 char *acinp [LPASIZE] = {
-	"",				/* FGBG */
+	"",				/* CMD */
 	"",				/* TXT  */
 	"",				/* HDR  */
 	"",				/* VAR  */
@@ -209,22 +209,58 @@ register int awi;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 /* УСТАНОВКА ПОЗИЦИИ КУРСОРА */
 /* И АТРИБУТОВ ТЕКСТА        */
 /*---------------------------*/
-cp_set(li, co, at)
+cp_abset(li, co, at) /* absolute in hw screen coordinates */
 int li, co, at;
 {
 	char *p;
 	int aa;
 	extern char *tgoto();
 
-	if(li < 0) li = (maxli+li);
-	if(co < 0) co = (maxco+co);
+	if(li < 0) li = (hwframe.maxli + li);
+	if(co < 0) co = (hwframe.maxco + co);
 
-	scrn.sc_li = li; scrn.sc_co = co;       /* ПОМНИТЬ КООРДИНАТЫ */
-	p = tgoto(t_cm, co, li);
-	w_raw( p);
+	/* remember abs pos for w_chr(), w_wchr() */
+	scrn.sc_li = li; scrn.sc_co = co;
 
-	aa = (at & VIDEOM);
-	at_set(aa);
+	if (scrn.sc_li <= hwframe.maxli && scrn.sc_co <= hwframe.maxco) {
+		p = tgoto(t_cm, co, li);
+		w_raw( p);
+
+		aa = (at & VIDEOM);
+		at_set(aa);
+	}
+}
+
+cp_set(li, co, at) /* relative */
+int li, co, at;
+{
+	char *p;
+	int aa;
+	extern char *tgoto();
+
+	/* convert relative coordinates of logical frame to positive ones */
+	if(li < 0) li = (lframe->maxli + li);
+	if(co < 0) co = (lframe->maxco + co);
+	if (li < 0 || co < 0) return;
+	/* prevent new positioning outside of logical borders */
+	if (li > lframe->maxli || co > lframe->maxco) return;
+
+	/* get absolute coordinates on scren */
+	li = lframe->baseli + li;
+	co = lframe->baseco + co;
+	if(li < 0) li = (hwframe.maxli + li);
+	if(co < 0) co = (hwframe.maxco + co);
+
+	/* remember abs pos for w_chr(), w_wchr() */
+	scrn.sc_li = li; scrn.sc_co = co;
+	/* prevent output outside real screen borders */
+	if (scrn.sc_li <= hwframe.maxli && scrn.sc_co <= hwframe.maxco) {
+		p = tgoto(t_cm, co, li);
+		w_raw( p);
+
+		aa = (at & VIDEOM);
+		at_set(aa);
+	}
 }
 /*-----------------------------------------------------*/
 /* СОХРАНИТЬ/ВОССТАНОВИТЬ ПОЛОЖЕНИЕ И АТРИБУТЫ КУРСОРА */
@@ -240,7 +276,7 @@ cp_sav()
 cp_fet()
 {
 /*	w_csi(s_colr);*/
-	cp_set(s_line, s_colu, s_attr);
+	cp_abset(s_line, s_colu, s_attr);
 }
 
 er_pag()
@@ -254,7 +290,12 @@ er_pag()
 	 * меньше ошибок, если комбинировать атрибуты фона и гашение по отдельности, но
 	 * старый код содержит массу применений этой функции - проще сблокировать
 	 */
-	w_raw(t_cl);
+	if (hwframe.baseli == lframe->baseli) {
+		w_raw(t_cl);
+	} else {
+		cp_set(0, 0, TXT); /* logical position, TODO check if out of borders */
+		er_eop(TXT);
+	}
 
 }
 
@@ -287,7 +328,7 @@ int to;
 int aw;
 {
 	while ( from <= to ) {
-		cp_set(from++, 0, aw);
+		cp_abset(from++, 0, aw);
 		er_eol(aw);
 	}
 }

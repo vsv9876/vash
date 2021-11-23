@@ -628,7 +628,7 @@ int     typ;            /* 'h', 'c', 'k', 'K', '?' */
 		switch (typ) {
 		case 'h': typp = "LHDR"; break;
 		case 'c': typp = "LTXT"; break;
-		case 'k': typp = "MSE|MID|PAD"; break;
+		case 'k': typp = "LKEY"; break;
 		}
 		sprintf(lbpo, "{ %2d,%2d,%2d, 0, %s, 0,0,0, ",
 		siz, li, co, typp );
@@ -647,7 +647,7 @@ int     typ;            /* 'h', 'c', 'k', 'K', '?' */
 	} else
 	if(typ == 'K') {
 		sprintf(lbpo,
-   "{ %2d,%2d,%2d, 0, MSE|MID|PAD, 0, cvt_lh, 0, \"%ls\" },",
+   "{ %2d,%2d,%2d, 0, LKEY, 0, cvt_lh, 0, \"%ls\" },",
 		siz, li, co, s);
 	}
 	subst(siz);        /* СДЕЛАТЬ ПОДСТАНОВКИ */

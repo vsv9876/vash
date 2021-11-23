@@ -21,6 +21,8 @@ main()
 /*  MAIN  */
 /*--------*/
 {
+    visini();
+
     hw_set();
 
     io_set(IO_VIDEO);

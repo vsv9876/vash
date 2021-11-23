@@ -33,9 +33,9 @@ kbcod cod;
 	char *s = calloc(sizeof(char), MAXLICO);
 
 	var = (int *)line->varl;
-	if (*var < 2 || *var > (maxli - 4)) {
+	if (*var < 2 || *var > (lframe->maxli - 4)) {
 		/*w_emsg("Please, select between 2 and 20");*/
-		sprintf(s, "Please, select between 2 and %-d ", (int)(maxli - 4));
+		sprintf(s, "Please, select between 2 and %-d ", (int)(lframe->maxli - 4));
 		w_emsg(s);
 		return(FALSE);
 	}
@@ -72,8 +72,10 @@ IN_PORTS inport[] = {
 	{ "yy_max",     &clm._yy_max },
 	{ "y0",         &clm._y0     },
 	{ "y0_top",     &y0_top },
-	{ "maxli",     	&maxli },
-	{ "maxco",     	&maxco },
+	{ "maxli",     	&hwframe.maxli },
+	{ "maxco",     	&hwframe.maxco },
+	{ "lmaxli",     &lfmain.maxli },
+	{ "baseli",     &lfmain.baseli },
 	{ "u8nopa",     &u8nopass },
 	{ 0,            0       },
 };
@@ -102,6 +104,7 @@ sup()
 
 	if ((supm = getvex("sup.lb")) == NULL)
 		return(FALSE);
+	scrlarea();
 	u_page(supm, "sup_help.lb");
 	d_page(supm);
 

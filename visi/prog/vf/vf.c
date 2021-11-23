@@ -25,10 +25,8 @@ Initial revision
  error Программа предназначена исключительно для unix
 #endif
 
-/*
 extern  char *malloc();
 extern  char *calloc();
-*/
 
 char *itms[ITMMAX+1] = {0};
 char *itmbuf = (char *)0;
@@ -54,7 +52,7 @@ int     ofsy = 10;      /* ВВЕРХ/ВНИЗ */
 fatal()
 {
 	fprintf(stderr, "FATAL ERROR - exit\n");
-	cp_set(-1, 0, CMD);
+	cp_set(-1, 0, TXT);
 	io_set(IO_TTYPE);
 	exit(1);
 }
@@ -251,7 +249,7 @@ clritm()
 
     for (i = 0; i < yy; i++) {
 	cp_set(i+y0, 0, TXT);
-	er_eol(TXT);
+	er_eol();
     }
 }
 
@@ -287,7 +285,7 @@ LINE *helpl;
 
 	/* первоначальный показ на экране */
 	cp_set(y0, 0, TXT);
-	er_eop(TXT);
+	er_eop();
 	itmshow();
 	w_page(mainl);
 
@@ -423,7 +421,6 @@ void onintr(signo)
 }
 
 main(argc, argv)
-int argc;
 char **argv;
 {
 	int c;
@@ -457,6 +454,7 @@ char **argv;
 	pre_vf(0);
 	scrlnl();
 
+	visini();
 	hw_set();
 	io_set(IO_VIDEO);
 	signal(SIGINT, onintr);
@@ -508,7 +506,7 @@ LINE helpm[] = {
 { 38, 3, 8, 0, LTXT, 0,0,0, "для пометки или отмены пометки нажмите" },
 {  8, 3,47, 0,	0|LHDR,	0,	0,	0,	"пробел" },
 { 44, 4, 8, 0, LTXT, 0,0,0, "для подстановки и выполнения команды нажмите" },
-{  8, 4,53, 0, ATT|MID|PAD, 0, cvt_lh, 0, ":NL" },
+{  8, 4,53, 0, MSE|MID|PAD, 0, cvt_lh, 0, ":NL" },
 { 80, 7, 0, 0, LHDR, 0,0,0, "Инструкция для программиста" },
 { 73, 9, 1, 0, LTXT, 0,0,0, "Эта команда предназначена для использования в командных файлах для выбора" },
 { 62,10, 1, 0, LTXT, 0,0,0, "имен файлов и в других подобных случаях. Примеы использования:" },

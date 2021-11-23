@@ -111,7 +111,7 @@ char *str;
 		rsize = lsize;
 	}
 
-	/* max_co = maxco-2; */
+	/* max_co = lframe->maxco - 2; */
 	if (str) {
 		if(*mod == 'r') { /* never used on input, this part of code may be removed because not used */
 			; /*strcpy(*v, str);*/

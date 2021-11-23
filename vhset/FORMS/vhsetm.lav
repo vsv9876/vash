@@ -1,21 +1,22 @@
 ---SCREEN
-=Инструкция по настройке клавиш и атрибутов для VISI (LINLIB)
+=LINLIB/visi preferences setup
 
- Эта программа предназначена для настройки внешней формы (вида) диалога
-программ, созданных с использованием LINLIB.
- Настройка сохраняется в одном из файлов:
-Unix:   /usr/lib/visi/.vhset/$TERM     ( TERM и VHSET - переменные
-	$VHSET/.vhset/$TERM                                    оболочки )
+  Full explanation of this program accessible, see man vhset;
+  Please, use arrow keys or .:TA... then .:NL... or .:SP... to make menu choice 
 
-=Настройка основных клавиш
+  On quit, profile will be untouched and settings are dropped.
+  On exit, settings will be saved to profile, depending on write permission.
 
-После нажатия одной из клавиш с цифрой вы увидите список основных
-клавишных команд. Строго в указанной последовательности (сверху вниз)
-поочередно нажимайте выбранные Вами клавиши. Если Вы используете
-дополнительную клавиатуру, самую первую клавишу нажмите два раза
-(первый раз для назначения самой клавиши, второй раз для включения
-дополнительной клавиатуры).
-После того, как ввод клавиш будет закончен, появится страница
-основного редактирования названий клавиш. С этого момента действуют
-только что сделанные назначения.
+."profiles in order".                	
+					1st found will patch compiled defaults;
+    personal:    $VHSET/$TERM		no profile means no savings anyway
+    system-wide: /etc/vhset/$TERM	
+
+."How to create personal profile from bash:".
+
+  export VHSET=~/.vhset; mkdir -p $VHSET; touch $VHSET/$TERM
+
+=
+There is one hidden page called with .'0 key. It allows to change
+keypad activation key and labels for arrow keys which usually are never changed.
 ---END

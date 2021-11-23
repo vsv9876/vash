@@ -27,12 +27,14 @@ CC            = cc
 
 LINKER        = cc
 LDFLAGS       =
-# STDLIBS       = -ltermcap
+STDLIBS       = -ltermcap
 # STDLIBS       = -ltermnew
 LIBS          = \
 		$(VLIB)/liblinusr.a \
-		$(VLIB)/libline.a \
-		$(VLIB)/libtermnew.a
+		$(VLIB)/libline.a
+
+		#\
+		#$(VLIB)/libtermnew.a
 
 VCC           = $(VBIN)/vcc
 VLBP          = $(VBIN)/vlbp

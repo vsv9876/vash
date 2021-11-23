@@ -571,7 +571,7 @@ cwdshow()
 		/*showli = y0_top-1 clm._y0 -1;*/ deltco = 0;
 #endif
 	} else {
-	    showli = maxli-1;   deltco = 1;
+	    showli = lframe->maxli - 1;   deltco = 1;
 	}
 
 	if ((ashlbl=getenv("VASH_LABEL")) == (char *)0) {
@@ -643,30 +643,30 @@ cwdshow()
 		/*cp_set(showli, lblen, ATT);*/
 		x = strlen(cwd_tmpstr);
 		x += deltco;
-		if (x > (maxco-lblen)) {
+		if (x > (lframe->maxco - lblen)) {
 			/*cp_set(showli, lblen + 1, HDR);*/
 			w_str("<");
-			w_str(&cwd_tmpstr[x - maxco + lblen + 2 + deltco]);
+			w_str(&cwd_tmpstr[x - lframe->maxco + lblen + 2 + deltco]);
 		}
 		else {
-			/*cp_set(showli, maxco - x - deltco, HDR);*/
+			/*cp_set(showli, lframe->maxco - x - deltco, HDR);*/
 			w_str(cwd_tmpstr);
 		}
 		x += lblen;
 		/*x += strlen(mode_tmpstr);*/
-		for (; x < maxco; x++) w_chr(' ');
+		for (; x < lframe->maxco; x++) w_chr(' ');
 		w_str(mode_tmpstr);
 #else
 		sprintf(cwd_tmpstr, "[ %s ]", cwdpath);
 		cp_set(showli, lblen+1, HDR); er_eol();
 		x = strlen(cwd_tmpstr);
 		x += deltco;
-		if (x > (maxco-lblen)) {
+		if (x > (lframe->maxco - lblen)) {
 			cp_set(showli, lblen + 1, HDR);
-			w_str(&cwd_tmpstr[x - maxco + lblen + 1 + deltco]);
+			w_str(&cwd_tmpstr[x - lframe->maxco + lblen + 1 + deltco]);
 		}
 		else {
-			cp_set(showli, maxco - x - deltco, HDR);
+			cp_set(showli, lframe->maxco - x - deltco, HDR);
 			w_str(cwd_tmpstr);
 		}
 #endif

@@ -109,6 +109,8 @@ char **argv;
 	}
 }
 
+LFRAME lfmain = { 0 };
+
 main(argc, argv)
 int argc;
 char **argv;
@@ -153,6 +155,14 @@ char **argv;
 	visini();
 	hw_set();
 
+	/* TODO make better - this is restriction for classic 24 lines */
+	lfmain.maxli  =  24;
+	/* lfmain.baseli = -24; */
+	lfmain.baseli = hwframe.maxli - lfmain.maxli;
+	//lfmain.baseco = 0;
+	lfmain.maxco  = hwframe.maxco;
+	lframe = &lfmain;
+
 	if (getuid() == 0) {
 		pmtsh = "# ";
 	} else {
@@ -181,8 +191,8 @@ char **argv;
 				clm._yy_max = atoi(linenoa);
 				if (clm._yy_max < 2)
 					clm._yy_max = 2;
-				if (clm._yy_max > (maxli - 4))
-					clm._yy_max = maxli - 4;
+				if (clm._yy_max > (lframe->maxli - 4))
+					clm._yy_max = lframe->maxli - 4;
 				break;
 			case 'p':
 				panelf++;
@@ -305,8 +315,8 @@ args_done:
 		printf("cmdset; Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
 #endif
 		if ( fil_vf(1) ) {
-			/* Настроить нач. состояние области свитка */
-			/* y0_top = maxli - clm._yy_max;/* - 1;*/
+			/* initial setup of scroll area occupied by vash */
+			/* y0_top = lframe->maxli - clm._yy_max;/* - 1;*/
 
 			/*y0_top = 0;*/
 			y0_top = clm._y0;/* - 1;*/

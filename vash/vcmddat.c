@@ -45,9 +45,9 @@ int yes;
 	int i, base, ofs;
     if (yes) {
 		/*ofs = 8;*/
-		ofs = maxco/10;
+		ofs = lframe->maxco/10;
 		if (ofs > 8) ofs = 8;  /* no expanded look, last key label followed with clear_to_end_of_line */
-		if ((ofs * 10) > maxco) ofs -= 1;
+		if ((ofs * 10) > lframe->maxco) ofs -= 1;
 		base = 0;
 
 		for (i = 0, k = keyonp;
@@ -65,7 +65,7 @@ int yes;
 			w_str(tmpstr);
 		}
 		/*er_eol(HDR);*//* does not work for monochrome attributes*/
-		for (i=base; i < maxco; i++) {
+		for (i=base; i < lframe->maxco; i++) {
 			w_chr(' ');
 		}
     }

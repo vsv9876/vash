@@ -1,16 +1,24 @@
 ---LINES
----#sp      = gh    -       -       -       -       "ПРОБЕЛ"
 ---SCREEN
-=Инструкция по настройке клавиш
+=keyboard settings
 
-	Для ввода нового кода клавиши подведите курсор к первой колонке,
-	затем нажмите .:SP.... и выбранную Вами клавишу.
-	Если не было сообщений об ошибке, нажмите .:NL.... и
-	приступайте к редактированию названия клавиши.
+how to ."assign". a key to action:
+    1) move cursor to column after key label
+    2) press .:SP... key
+    3) press control key
+    NOTE: pressing printable key not allowed
 
-	Для ввода нового названия клавиши подведите курсор
-	ко второй колонке, нажмите .:SP.... и отредактируйте
-	текст названия. Для окончания ввода нажмите .:NL....
+how to ."clear assigned key:".
+    1) move cursor to wanted position
+    2) press .:DE... key
 
+How to change ."key labels:".
+    1) move cursor to label column
+    2) press .:SP... or .:DE... to start editing
+    3) press .:NL... to commit changes
+
+."NOTES:".
+    - some keys cannot be reassigned
+    - key labels are terminated by <space> symbol
 
 ---END

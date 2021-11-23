@@ -88,6 +88,7 @@ static char *codesp = 0;
 extern  int     maxli;
 extern  int     maxco;
 
+LFRAME *lframe = &hwframe;
 
 /*---------------------*/
 /* ОПИСАНИЕ КЛАВИАТУРЫ */
@@ -221,21 +222,22 @@ hw_set()
 	/*-------------------------*/
 	/* ПОЛУЧИТЬ РАЗМЕРЫ ЭКРАНА */
 	/*-------------------------*/
+	/* initialize default frame */
 #ifdef RT11
-	maxli = tgetnum("li");
-	maxco = tgetnum("co");
+	hwframe.maxli = tgetnum("li");
+	hwframe.maxco = tgetnum("co");
 #else
-	/*maxli = maxco = 0;*/
+	/*hwframe.maxli = hwframe.maxco = 0;*/
 	if (0 == gtty_sz()) {
-		maxli = tty_li;
-		maxco = tty_co;
+		hwframe.maxli = tty_li;
+		hwframe.maxco = tty_co;
 	}
-	if (p = getenv("LINES"))    maxli = atoi(p);
-	if (maxli == 0)             maxli = tgetnum("li");
-	if (maxli > MAXLICO)		maxli = MAXLICO;
-	if (p = getenv("COLUMNS"))  maxco = atoi(p);
-	if (maxco == 0)             maxco = tgetnum("co");
-	if (maxco > MAXLICO)		maxco = MAXLICO;
+	if (p = getenv("LINES"))        hwframe.maxli = atoi(p);
+	if (hwframe.maxli == 0)         hwframe.maxli = tgetnum("li");
+	if (hwframe.maxli > MAXLICO)    hwframe.maxli = MAXLICO;
+	if (p = getenv("COLUMNS"))      hwframe.maxco = atoi(p);
+	if (hwframe.maxco == 0)         hwframe.maxco = tgetnum("co");
+	if (hwframe.maxco > MAXLICO)    hwframe.maxco = MAXLICO;
 #endif
 
 	/*--------------------------------*/
@@ -256,3 +258,4 @@ hw_set()
 	do_kbl();       /* НАСТРОИТЬ ТАБЛ. ЛОГ. КОДОВ */
 	free(buf);
 }
+

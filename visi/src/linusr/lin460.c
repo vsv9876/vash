@@ -54,7 +54,7 @@ register char    *str ;         /* текст сообщения об ошибк
 			w_str("Error:");
 			break;
 		case ATT:
-			w_str("Attention!");
+			w_str("/!\\");
 			break;
 		case TXT:
 			break;

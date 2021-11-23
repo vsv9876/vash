@@ -108,13 +108,13 @@ char *s_ins;
 
 
 int hlp_clr() {
-	int cur_co; /*рассчетная позиция курсора перед показом элемента */
+	int cur_co; /*расчетная позиция курсора перед показом элемента */
 	int cur_li;
 
 	if (hlp_onscreen) {
 		hlp_onscreen = 0;
 		cur_co = 0;
-		for (cur_li = clm._y0; cur_li <= maxli; cur_li++) {
+		for (cur_li = clm._y0; cur_li <= lframe->maxli; cur_li++) {
 			cp_set(cur_li, cur_co, TXT); er_eol(TXT);
 		}
 	}
@@ -133,7 +133,7 @@ int hlp_compl()
 	slistn = sgglist->sl_size;
 	slist = sgglist->sl_last;
 
-	for (cur_li = maxli - 3; cur_li >= clm._y0; cur_li--) {
+	for (cur_li = lframe->maxli - 3; cur_li >= clm._y0; cur_li--) {
 		cp_set(cur_li, cur_co, TXT); w_chr('*'); er_eol(TXT);
 	}
 	cur_li = clm._y0;
@@ -141,13 +141,13 @@ int hlp_compl()
 	sprintf(tmps, " <%s> [%d] ", s_debug[s_mode], slistn);
 	w_str(tmps);
 	cur_co += strlen(tmps) + 1;
-	for (n = slistn; n > 0 && slist != NULL && cur_li < maxli - 2 ; n--) {
+	for (n = slistn; n > 0 && slist != NULL && cur_li < lframe->maxli - 2 ; n--) {
 		s = sl_sstr(slist);
 		ssize = strlen(s); /*размер на экране отличается*/
 		cp_set(cur_li, cur_co, TXT);
 		w_str(s);
 		cur_co += ssize + 2;
-		if (cur_co + ssize > maxco - 2) {
+		if (cur_co + ssize > lframe->maxco - 2) {
 			/*next line, begin column*/
 			cur_co = 2; cur_li++;
 		}

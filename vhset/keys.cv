@@ -29,7 +29,7 @@ K2      = ipa    -      "2"     cv_kbl  -       T_kbl2
 ---SCREEN
 ---#                     
 ---#."Keys setup"............. ."Assignment logic     Main key....     2nd".
-=Keys&codes setup
+=Keys & codes setup
 
                                        ."Code      Label    key    key2".                                                          
     .KDESCR............................ .KCOD     .KL.....               
@@ -49,7 +49,7 @@ K2      = ipa    -      "2"     cv_kbl  -       T_kbl2
     .t................................. .t...     .t...... .t.     .t.   
     .t................................. .t...     .t...... .t.     .t.   
     .t................................. .t...     .t...... .t.     .t.   
-                                                                
+=
  get help: .:HE....                 key assignment:   set: .:SP....
      exit: .:EX....				    clear: .:DE....
 

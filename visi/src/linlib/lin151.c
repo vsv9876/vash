@@ -13,6 +13,9 @@
 #include <stdio.h>
 #include <wchar.h>
 #include "line.h"
+#include "line0.h"
+
+extern SCRN scrn;
 
 /*TODO все функции w_w*() должны возвращать ошибку в случае
  * невозможности записи в vtttout,
@@ -29,14 +32,20 @@ wchar_t c;
 	unsigned char s[6];
 	unsigned char *sp;
 	int  cnt;
+	/* save new position of cursor to be expected, then check if inside lframe(screen) borders */
+	scrn.sc_co += 1;
+	/*if (scrn.sc_li <= lframe->maxli && scrn.sc_co <= lframe->maxco) {*/
+	if (scrn.sc_li <= (lframe->baseli + lframe->maxli)
+				&& scrn.sc_co <= (lframe->baseco + lframe->maxco)) {
 
-	cnt = wctomb(s, c);
-	sp = s;
-	while(cnt-- > 0) {
-		fputc(*sp++, vttout);
+		cnt = wctomb(s, c);
+		sp = s;
+		while(cnt-- > 0) {
+			fputc(*sp++, vttout);
+		}
+		/*ret = fputwc(c, vttout); fflush(vttout); if (ret == WEOF) { perror(""); exit(8); }*/
+		/* putc(oc, stdout); */
 	}
-	/*ret = fputwc(c, vttout); fflush(vttout); if (ret == WEOF) { perror(""); exit(8); }*/
-	/* putc(oc, stdout); */
 }
 
 w_wcstrn(s, n)

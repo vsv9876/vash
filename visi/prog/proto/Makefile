@@ -30,11 +30,12 @@ CC            = cc
 LINKER        = cc
 
 include ../../../conf/Makefile
-LDFLAGS       =
+LDFLAGS       = -ltinfo
 
 # Рекомендуется пользоваться исправленной библиотекой termcap:
 # STDLIBS       = -ltermcap
-LIBS          = $(VLIB)/liblinusr.a $(VLIB)/libline.a $(VLIB)/libtermnew.a
+#LIBS          = $(VLIB)/liblinusr.a $(VLIB)/libline.a $(VLIB)/libtermnew.a
+LIBS          = $(VLIB)/liblinusr.a $(VLIB)/libline.a
 VCC           = $(VBIN)/vcc
 VLBP          = $(VBIN)/vlbp
 LBP           = $(VBIN)/lbp

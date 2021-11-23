@@ -24,8 +24,10 @@
 int tty_li = 0;
 int tty_co = 0;
 
+/*
 extern int maxli;
 extern int maxco;
+*/
 
 struct winsize winsz;
 int gtty_sz()
@@ -33,8 +35,8 @@ int gtty_sz()
 	int ret;
 	ret = ioctl(vtti, TIOCGWINSZ, &winsz);
 	if (ret == 0) {
-		maxli = tty_li = winsz.ws_row;
-		maxco = tty_co = winsz.ws_col;
+		hwframe.maxli = tty_li = winsz.ws_row;
+		hwframe.maxco = tty_co = winsz.ws_col;
 	}
 	return ret;
 }
@@ -112,7 +114,7 @@ int inherit;
 			new.c_cc[i] = CNUL;
 		new.c_cc[VSTART] = old.c_cc[VSTART];
 		new.c_cc[VSTOP] = old.c_cc[VSTOP];
-		new.c_cc[VMIN ] = 1;    /* check, may be VMIN=VTIME=0 is better ? */
+		new.c_cc[VMIN ] = 1;    /* TODO check, may be VMIN=VTIME=0 is better ? */
 		new.c_cc[VTIME] = 5;
 	}
 

@@ -22,6 +22,10 @@ extern  char  *nmsubs();
 extern  int     kshow();
 #endif
 
+extern  int     vashelp();
+
+
+
 FUNTAB funtab[] = {
 	{ "read",       0 },
 	{ "sh",         fsh },
@@ -31,7 +35,8 @@ FUNTAB funtab[] = {
 	{ "sus",        v_susp },
 	{ "file",       ffile },
 	{ "ls",         0 },
-	{ "help",       w_help },
+/*	{ "help",       w_help },*/
+	{ "help",       vashelp },
 	{ "msg",        fmsg },
 	{ "err",        fmsgerr },
 	{ "rescan",     rescan },

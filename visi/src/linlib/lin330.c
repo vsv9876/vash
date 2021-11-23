@@ -53,7 +53,7 @@ int    *ofsp;       /* указатель на величину смещения
 
 	wcsbuf = alloca(2*4*(MAXLICO)+1);
 
-	_edshow = edshow; edshow = 0;
+	_edshow = edshow; edshow = 0; /*0; /*hack*/ /* unicode symbols trimmed on start if == 0; seems to be 8-bit encoding ops */
 	_edinff = edinff; edinff = 0;
 	_edinsm = edinsm; edinsm = 1;
 
@@ -77,9 +77,9 @@ register int infflg;
 #ifndef CP_SAV
 	cp_sav();
 #endif
-	cp_set(maxli-1, maxco-6, TXT);
+	cp_set(lframe->maxli - 1, lframe->maxco - 6, TXT);
 	er_eol(TXT);
-	cp_set(maxli-1, maxco-5, TXT|INP);
+	cp_set(lframe->maxli - 1, lframe->maxco - 5, TXT|INP);
 	if ( infflg ) {
 		w_str(":");
 		if ( edinsm ) {
@@ -88,7 +88,7 @@ register int infflg;
 			w_str("Ovr");
 		}
 	} else {
-		cp_set(maxli-1, maxco-8, TXT);
+		cp_set(lframe->maxli - 1, lframe->maxco - 8, TXT);
 		er_eol(TXT);
 	}
 #ifndef CP_SAV
@@ -138,7 +138,7 @@ kbcod cod;
 			s[lend = chg] = cod;
 		}
 		/******* <--(KB_DE)--- ******/
-		cp_set(scrn.sc_li, scrn.sc_co - 1, scrn.sc_at);
+		cp_abset(scrn.sc_li, scrn.sc_co - 1, scrn.sc_at);
 	} else {
 		if(edinsm) {
 			for(j=size; --j>chg; ) s[j]=s[j-1]; /* ВСТАВИТЬ */
@@ -192,24 +192,24 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 	j = 0;
 	while(j<size && str_l[j]) j++;
 	while(j<size)       str_l[j++] = ' ';
-	str_l[size] = 0;
+	str_l[j] = 0; /*str_l[size] = 0; /* terminate visible part of string */
 	if (edshow) {
 		/* показать на экране перед редактированием */
-		cp_set(linenu, column, attrib);
+		cp_abset(linenu, column, attrib);
 		j = 0;
 		while(j<size) w_wchr(str_l[j++]);
 	}
-	i = ofsp ? *ofsp : 0;
+	i = ofsp != NULL ? *ofsp : 0;
 
 	/* ЦИКЛ РЕДАКТИРОВАНИЯ */
 	for( ;; ) {
 		if(i >= size) i = size-1;       /* ВСЕГДА ПРОВЕРЯТЬ!!! */
-		cp_set(linenu, column+i, attrib);
+		cp_abset(linenu, column+i, attrib);
 
 		cod = r_cod(0);
 		/* ПРОТЕСТИРУЕМ ВВОД */
 		ok = ctst ? (*ctst)(cod, size, i) : cod;
-		if(ok == -1) {
+		if(ok == -1) {	/* prevent output outside real screen borders */
 			goto ret;
 		} else if(ok == 0) {
 			bell();
@@ -229,7 +229,7 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 					       w_wchr(str_l[j] = str_l[j+1]);
 					   };
 					   w_wchr(str_l[j] = ' ');
-					   str_l[size] = '\0';
+					   str_l[j/*size*/] = 0;
 					   break;
 				case KB_PR: edinsm=(edinsm ? 0 : 1);
 					   edinfo(1);
@@ -248,8 +248,8 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 				   for(j=i; j<size-1; j++) {
 				       w_wchr(str_l[j] = str_l[j+1]);
 				   };
-				   w_wchr(str_l[j] = ' ');
-				   str_l[size] = '\0';
+				   w_wchr(str_l[j++] = ' ');
+				   str_l[j/*size*/] = 0;
 				   break;
 			/*----------------------------*/
 
@@ -282,7 +282,7 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 	}
 ret:
 	str_l[size] = 0;
-	if(ofsp) *ofsp = i;
+	if(ofsp != NULL) *ofsp = i;
 
 	/* ПОДЧИСТИТЬ ПРОБЕЛЫ В КОНЦЕ СТРОКИ */
 	for (i=size; --i>=0 && (str_l[i]==' ');) ;

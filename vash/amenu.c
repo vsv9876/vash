@@ -139,7 +139,7 @@ itmini()
 	clm._xx = clm._xx1;
 
 	if (clm._xx1 != 1) {
-		clm._xx = maxco/(clm._itmlen + 1);
+		clm._xx = lframe->maxco/(clm._itmlen + 1);
 		if (clm._xx == 0) clm._xx = 1;
 	}
 	clm._yy = (clm._itmmax + clm._xx - 1)/clm._xx;        /* м.б. нужно меньше строчек... */
@@ -151,18 +151,18 @@ itmini()
 		clm._yy = 2;
 		clm._xx = (clm._xx + 1)/2;
 	}
-	clm._x0 = ((maxco - ((clm._itmlen + 1) * clm._xx)) / (clm._xx + 1));
+	clm._x0 = ((lframe->maxco - ((clm._itmlen + 1) * clm._xx)) / (clm._xx + 1));
 	clm._dx = clm._itmlen + 1 + clm._x0;
-/*      dx = itmlen + 1 + ((maxco - ((itmlen + 1) * xx)) / (xx + 1));   */
-	if (clm._dx > maxco) clm._dx = maxco;
+/*      dx = itmlen + 1 + ((lframe->maxco - ((itmlen + 1) * xx)) / (xx + 1));   */
+	if (clm._dx > lframe->maxco) clm._dx = lframe->maxco;
 
-	clm._y0 = maxli - clm._yy - 2;
-	clm._x0 = (maxco - (clm._dx * clm._xx))/2;
+	clm._y0 = lframe->maxli - clm._yy - 2;
+	clm._x0 = (lframe->maxco - (clm._dx * clm._xx))/2;
 
 	if (clm._xx == 1) {
 		clm._ofsx = clm._yy;
 		clm._ofsy = clm._yy/2;
-		clm._x0 = (maxco - clm._itmlen) / 2;
+		clm._x0 = (lframe->maxco - clm._itmlen) / 2;
 	}
 	else  {
 		clm._ofsx = clm._yy * (clm._xx - 1);

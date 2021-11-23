@@ -57,10 +57,10 @@
 char *UP = NULL;        /* переместить курсор вверх на 1 позицию */
 char *BC = NULL;        /* ---------""------- влево -----""----- */
 
-/* размеры экрана */
-int     maxli = 0;/*24;     /* размер по вертикали */
-int     maxco = 0;/*80;     /* --"-- по горизонтали */
-
+/* размеры экрана, устанавливаются через hw_ini() */
+/*int     maxli = 0;/*24;     /* размер по вертикали */
+/*int     maxco = 0;/*80;     /* --"-- по горизонтали */
+LFRAME hwframe = { 0 };
 
 /*---------------------*/
 /* ОПИСАНИЕ КЛАВИАТУРЫ */
@@ -158,25 +158,25 @@ KBL kbl[KBLSIZE] = {
 { KB_AR, "<right>", KBCOD('k','r'), KB_EMPTY       },
 
 /* limited customizing possible */
-{ KB_SP, "<space>", KBCTL(    'S'), KB_EMPTY       },
-{ KB_TA, "Tab-->|", KBCTL(    'I'), KB_EMPTY       },
+{ KB_SP, "/space/", KBCTL(    'S'), KB_EMPTY       },
+{ KB_TA, "^I,Tab ", KBCTL(    'I'), KB_EMPTY       },
 
 /* full customizing supported with vhset */
 { KB_NL, "Enter  ", KBCTL(    'M'), KBCTL(    'J') },
 { KB_DE, "<-del  ", KBCOD('d','e'), KBCTL(    'H') },
                                                    
-{ KB_HE, "F1|^G  ", KBCOD('k','1'), KBCTL(    'G') },
-{ KB_EX, "F2|^X  ", KBCOD('k','2'), KBCTL(    'X') },
+{ KB_HE, "^G,F1  ", KBCOD('k','1'), KBCTL(    'G') },
+{ KB_EX, "^X,F2  ", KBCOD('k','2'), KBCTL(    'X') },
 { KB_CA, "^C     ", KBCTL(    'C'), KB_EMPTY       },
 { KB_RE, "^L     ", KBCTL(    'L'), KB_EMPTY       },
 { KB_PR, "^\\     ", KBCTL(    '\\'), KB_EMPTY     },
                                                    
-{ KB_KI, "Ins|^O ", KBCOD('k','I'), KBCTL(    'O') },
-{ KB_KD, "del->  ", KBCOD('k','D'), KB_EMPTY       },
-{ KB_KH, "Home|^A", KBCOD('k','h'), KBCTL(    'A') },
-{ KB_KE, "End|^E ", KBCOD('@','7'), KBCTL(    'E') },
-{ KB_PU, "PgUp|^B", KBCOD('k','P'), KBCTL(    'B') },
-{ KB_PD, "PgDn|^F", KBCOD('k','N'), KBCTL(    'F') },
+{ KB_KI, "^O,Ins ", KBCOD('k','I'), KBCTL(    'O') },
+{ KB_KD, "Delete ", KBCOD('k','D'), KB_EMPTY       },
+{ KB_KH, "^A,Home", KBCOD('k','h'), KBCTL(    'A') },
+{ KB_KE, "^E,End ", KBCOD('@','7'), KBCTL(    'E') },
+{ KB_PU, "^B,PgUp", KBCOD('k','P'), KBCTL(    'B') },
+{ KB_PD, "^F,PgDn", KBCOD('k','N'), KBCTL(    'F') },
 
 /* extended set with limited support, not supported by vhset yet */
 { KBUSR('0'), "       ", KBCOD('f','0'), KBUSR('0'), KB_EMPTY },
@@ -209,25 +209,25 @@ KBL kbl[KBLSIZE] = {
  *
  */
 LPA lpaout[LPASIZE] = {
-	{       ' ',    0,          "0"     },              /* CMD  */
+	{       '.',    0,          "0"     },              /* CMD  */
 	{       ' ',    0,          "39;49" },              /* TXT  */
-	{       ' ',    A_MR,       "36;40" },              /* HDR  */
+	{       '_',    A_MR,       "36;40" },              /* HDR  */
 	{       ' ',    A_MD,       "39"    },              /* VAR  */
 	{       ' ',    0,          "33"    },              /* ALT  */
 	{       '*',    0,          "32"    },              /* MSE  */
-	{       ' ',    A_MD,       "37;41" },              /* ERR  */
+	{       ' ',    0,          "37;41" },              /* ERR  */
 	{       ' ',    A_MR,       "39;49" },              /* ATT  */
 };
 
 LPA lpainp[LPASIZE] = {
 	{       ' ',    A_MD,           "31;49" },          /* CMD  */
 	{       '|',    0,              "33"    },          /* TXT  */
-	{       ' ',    A_MR|A_US,      "36;40" },          /* HDR  */
-	{       '"',    A_MR,           "37;40" },          /* VAR  */
-	{      '\'',    A_MD,           "39"    },          /* ALT  */
+	{       '\'',   0,              "36"    },          /* HDR  */
+	{       '"',    A_MR,           "39"    },          /* VAR  */
+	{      '\'',    A_MR,           "33"    },          /* ALT  */
 	{       '>',    A_MR,           "32"    },          /* MSE  */
-	{       ' ',    A_US|A_MD|A_MR, "31;47" },          /* ERR  */
-	{       '!',    A_US|A_MD|A_MR, "34;47" },          /* ATT  */
+	{       ' ',    A_MR,           "35;47" },          /* ERR  */
+	{       '!',    A_MR,           "34;47" },          /* ATT  */
 };
 
 int		sgrmode = 1; /* initial monochrome, not a dumb :) */

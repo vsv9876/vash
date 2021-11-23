@@ -108,7 +108,7 @@ char *fill;
 	char newCfill[MAXLICO];
 	int maxlen;
 
-	maxlen = (MAXLICO > maxco ? maxco : MAXLICO) - 1;
+	maxlen = (MAXLICO > lframe->maxco ? lframe->maxco : MAXLICO) - 1;
 	/* если строка fill пустая, редактировать Cfill, иначе просто скопировать fill */
 	if (fill != (char *)0 && fill[0] != '\0') {
 		strcpy(Cfill, fill);
@@ -118,7 +118,7 @@ char *fill;
 		strncpy(newCfill, Cfill, maxlen);
 
 	sprintf(prompts, "-- ");
-	cod = pmtrstr(prompts, newCfill, maxco - strlen(prompts) - 2);
+	cod = pmtrstr(prompts, newCfill, lframe->maxco - strlen(prompts) - 2);
 	switch(cod) {
 	case KB_CA:
 	case KB_EX:

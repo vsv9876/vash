@@ -14,6 +14,41 @@
 /* ВСЯКА ВСЯЧИНА, misc. */
 /*----------------------*/
 
+/* vash-specific screen area control */
+
+static int doscrl = 1;
+scrldo() {
+	doscrl = 1;
+}
+
+scrlarea()
+{
+	int i, n, cltop;
+	if (doscrl == 1) {
+		doscrl = 0; /* prevent unwanted scrolling */
+		n = lframe->maxli;
+		/* same as in shstart() */
+		if (clm._y0 > y0_top)
+			cltop = y0_top - 1;
+		else
+			cltop = clm._y0 - 1;
+		cp_set(cltop, 1, TXT); /* er_eop(TXT);*/
+
+		/*y0_top = 0;    /* установить новую нижнюю границу свитка */
+		for (i = 1; i < n; i++) {
+			er_eol(TXT); /* hack in hope ... */
+			putc('\n', vttout);
+		}
+	}
+}
+
+vashelp(page)
+LINE *page;
+{
+	scrlarea();
+	w_help (page);
+}
+
 /*------*/
 /* ЧАСЫ */
 /*------*/
@@ -26,7 +61,7 @@ showtime(on)
 	nxtjflag = on;
 #ifdef RETRO
 	if ( !on && clockf) {
-		cp_set(1, maxco-8, TXT);
+		cp_set(1, lframe->maxco - 8, TXT);
 		fprintf(vttout, "%8.8s", "");
 	}
 #endif
@@ -52,7 +87,7 @@ showclck()
 #ifndef CP_SAV
 			cp_sav();
 #endif
-			cp_set(maxli-2/*1*/, maxco-8, TXT|INP);
+			cp_set(lframe->maxli - 2/*1*/, lframe->maxco - 8, TXT|INP);
 			fprintf(vttout, "%02d:%02d'%02d",
 			tp->tm_hour, tp->tm_min, tp->tm_sec);
 #ifndef CP_SAV
@@ -168,7 +203,7 @@ scrlnl()
 
 	if (scrolf) {
 		io_set(IO_TTYPE);
-		for (i = clm._y0; i < maxli; i++)
+		for (i = clm._y0; i < lframe->maxli; i++)
 			putc('\n', stdout);
 		io_set(IO_VIDEO);
 	}
@@ -199,16 +234,16 @@ itmshow()
 	if (clm._yy * clm._xx < clm._itmmax) {  /* если не все файлы на экране... */
 		/* отцентрировать... */
 /*
-		showco = (maxco - (itmmax/yy))/2;
+		showco = (lframe->maxco - (itmmax/yy))/2;
 		if (showco < 0) showco = 0;
 */
 		showco = 2;
 		lxx = clm._xx;
 		lyy = clm._yy;
 		litmmax = clm._itmmax;
-		showscale = ((clm._itmmax/lyy) / (maxco - 24)) + 1 ;
+		showscale = ((clm._itmmax/lyy) / (lframe->maxco - 24)) + 1 ; /*TODO WTF is 24 there */
 
-		cp_set(maxli - 2, showco, TXT);
+		cp_set(lframe->maxli - 2, showco, TXT);
 #ifdef DEBUG_NAV
 		sprintf(itmnav, /*"%dK:*/"%d:%d ", /*clm._itmbsz/1024, */clm._itmmax, showscale);
 #endif
@@ -314,7 +349,7 @@ int   size;     /* размер строки для ввода */
 
 	pattl.size = size;
 	pattl.colu = strlen(pmtstr) + 1; /*3;*/
-	pattl.line = maxli - 1;
+	pattl.line = lframe->maxli - 1;
 	pattl.flag = 0;
 	pattl.attr = LVAR|INP;
 	/*NOSTRICT*/

@@ -211,7 +211,7 @@ fnd_ad (lni, page)
 	register LINE *lnj;
 	int     nxt_line ;
 
-	if((nxt_line = (int)lni->line ) < maxli ) { /* forward if possible */
+	if((nxt_line = (int)lni->line ) < lframe->maxli ) { /* forward if possible */
 		for(lnj=lni; lnj->size!=0; lnj++) {     
 			if((lnj->line <= lni->line))
 				continue;

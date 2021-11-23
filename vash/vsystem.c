@@ -127,7 +127,7 @@ void shstart()
 	/*cp_set(0, 0, TXT); er_eol();    /* погасить cwd */
 
 	if (clm._y0 > y0_top)
-		cp_set(y0_top-1, 0, CMD);
+		cp_set(y0_top - 1, 0, CMD);
 	else
 		cp_set(clm._y0 - 1, 0, CMD);
 

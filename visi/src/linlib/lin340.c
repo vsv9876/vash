@@ -251,7 +251,11 @@ out_string:
 #else
 	filch = ' ';
 	if ((line->attr & VIDEO) == HDR && sgrmode == 0) {
-		filch = lpaout[HDR].lpa_p;
+		if (line->attr & VEXT) {
+			filch = lpainp[/*HDR*/ i].lpa_p;
+		} else {
+			filch = lpaout[/*HDR*/ i].lpa_p;
+		}
 	}
 #endif
 	/*==== ПОДСКАЗКА */
@@ -327,7 +331,8 @@ string_simple:
 
 	/*==== КУРСОР ПЕРЕД ВВОДОМ ПЕРВОЙ КЛАВИШИ */
 	/* хинт для полей-переключаетелей */
-	if ((attr & LTYPE) == ALT) {
+	if ((attr & LTYPE) == ALT &&
+			(wcsptr[0]=='[' || wcsptr[0]=='(' || wcsptr[1]==' ')) {
 		cp_set(line->line, 1 + line->colu, attr);
 	} else {
 		cp_set(line->line, line->colu, attr);

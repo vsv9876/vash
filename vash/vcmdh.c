@@ -458,7 +458,7 @@ char  *cmd;
 		bell(); return (ret);
 	}
 	savelm = clm;
-	cp_set(clm._y0 - 1, maxco - 1, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
+	cp_set(clm._y0 - 1, lframe->maxco - 1, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
 	/* сначала синхронизация истории из файла? */
 	if (histsn) {
 		cmdghist(homedir);
@@ -470,7 +470,7 @@ char  *cmd;
 	clm._itms   = cmdptr;          /* УКАЗАТЕЛИ НА СТРОКИ КОМАНД */
 	clm._itmmax = cmdplast;      /* ПОСЛЕДНЯЯ КОМАНДА В ИСТОРИИ */
 	clm._vf     = (LINE *)0;		/* hint to avoid new overlapping malloc? /* TODO WTF */
-	clm._itmlen = maxco - ((strlen(pmtsh)) * 2); /*по феншую, отступ на промптер слева и справа*/
+	clm._itmlen = lframe->maxco - ((strlen(pmtsh)) * 2); /*по феншую, отступ на промптер слева и справа*/
 	clm._ltmpl  = &tmplate;
 
 	clm._itm    = cmdpi;         /* ТЕКУЩАЯ КОМАНДА */

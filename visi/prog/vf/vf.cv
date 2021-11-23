@@ -454,6 +454,7 @@ char **argv;
 	pre_vf(0);
 	scrlnl();
 
+	visini();
 	hw_set();
 	io_set(IO_VIDEO);
 	signal(SIGINT, onintr);

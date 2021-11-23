@@ -217,8 +217,11 @@ vmain()
 /* $$narg = 1 ;            /* не выдавать подсказку на ввод аргументов */
 #endif
 
+LFRAME lfmain = { 0 };
+
 main()
 {
+	int i;
 #define VHSET_DEBUG
 #ifdef VHSET_DEBUG
 	int ch;
@@ -228,12 +231,25 @@ main()
 		fscanf(stdin, "%c", &ch);
 	}
 #endif
+    if ((s = getenv("VHSET_LIB")) != (char *)0) vexdir = s;
     visini();
 
     /* specific for this utility - save statically compiled constants before do_kbl() */
     kbl_std();
 
     hw_set();
+
+	lfmain.maxli  =  24;
+	/* lfmain.baseli = -24; */
+	lfmain.baseli = hwframe.maxli - lfmain.maxli;
+	//lfmain.baseco = 0;
+	lfmain.maxco  = hwframe.maxco;
+	lframe = &lfmain;
+
+	/* keep content of a terminal emulator's screen which area is bigger then standard 24x80 */
+	for (i = 1; i < lframe->maxli; i++) {
+		putc('\n', stdout);
+	}
 
     io_set(IO_VIDEO);
 

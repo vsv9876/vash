@@ -188,7 +188,7 @@ char *mfile;    /* имя файла программы меню */
 	clm._itms   = lbls;          /* указатели на строки меню */
 	clm._itmmax = lblmax;        /* количество пунктов */
 	clm._vf     = (LINE *)0;
-	clm._itmlen = maxco/2;
+	clm._itmlen = lframe->maxco/2;
 	clm._ltmpl  = &tmplate;
 
 	clm._itm    = lblsi;         /* текущий пункт меню */

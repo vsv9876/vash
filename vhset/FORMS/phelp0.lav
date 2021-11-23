@@ -1,32 +1,142 @@
 ---LINES
-var     = ipv   -       -       -       -         "Сидоров"
-alt1    = ipa   -       -       -       -         "ДА"
-alt2    = ipa   -       -       -       -         "нет"
-mse     = ipm   -       -       -       -         " Конец работы "
----#sp      = h     "ПРОБЕЛ"
+var     = ipv   -       -       -       -         "3.141593"
+alt1    = ipa   -       -       -       -         "YES"
+alt2    = ipa   -       -       -       -         "[x]"
+mse     = ipm   -       -       -       -         " Quit "
+VAR     = gv - - - - " VAR "
+ALT     = ga - - - - " ALT "
+MSE     = gm - - - - " MSE "
 
----SCREEN
-LINLIB 1986,1990 (C) Вовк С.В.          ."Основные команды"................
+---SCREEN                                                          
+=LINLIB generic keyboard command/actions
++
++                 ."on active line"..........        ."common".................
++.MSE. .mse....   menu item select:   .:SP...        get help:          .:HE... 
++                             select: .:NL...        exit/close page:   .:EX... 
++.ALT. .alt2.     alter or toggle,                   refresh page:      .:RE... 
++                            forward: .:SP...        cancel:            .:CA... 
++                           backward: .:DE...        next line:         .:TA... 
++.VAR. .var.....  switch to edit,                                              
++                       keep content: .:SP...        ."page navigation"........
++                              clear: .:DE...        jump to 1st line:  .:KH... 
++                                                         - last line:  .:KE... 
++."in edit mode"................ ."variant"..        next page/part:    .:PU... 
++toggle Ins/Ovr mode:    .:KI... .:PR .:PR...        prev page/part:    .:PD... 
++erase left from cursor: .:DE...                                               
++    erase below cursor: .:KD... .:PR .:DE...        ."special"................
++         erase up to end....... .:PR .:SP...        commit,            
++jump to 1st symbol:     .:KH... .:PR .:AL...          complete editing,          
++  jump to end of text:  .:KE... .:PR .:AR...            next line:     .:NL... 
++                                                    variant prefix:    .:PR... 
++                                                    
+=LINLIB (c) 1986-1990,2020 vsv & team
+---END                          
 
-					1. Выход, конец кадра..... .:EX....
-."Примеры активных полей:"....
-					2. Выбрать из меню:
-	пункт меню:  .mse.............     подвести курсор, нажать .:SP....
-					3. Щелкнуть переключатель:
-		     .alt1.                             вперед.... .:SP....
-     переключатель:  .alt2.                             назад..... .:DE....
-					4. Перейти к редактированию:
-  строка для ввода:  .var.......           сохранить содержимое... .:SP....
-					   стереть................ .:DE....
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+                                                                               
 
-					5. Обновить экран......... .:RE....
 
-=Команды редактирования поля (редактор строки)
 
-6. Закончить ввод.......... .:NL....    9. Быстро подвести курсор:
-7. Удалить символ:                          в начало поля... .:PR.... .:AL....
-   слева от курсора........ .:DE....        в конец текста.. .:PR.... .:AR....
-   над курсором... .:PR.... .:DE....    8. Режим ВСТАВКА/Замена:
-   до конца строки .:PR.... .:SP....                         .:PR.... .:PR....
 
----END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

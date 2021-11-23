@@ -2,61 +2,55 @@
 var     = ipv   -       -       -       -         "3.141593"
 alt1    = ipa   -       -       -       -         "YES"
 alt2    = ipa   -       -       -       -         "[x]"
-mse     = ipm   -       -       -       -         " Quit/Exit "
----#sp      = h     "space "
-sp      = iv    -       -       -       -     "[space]"
+mse     = ipm   -       -       -       -         " Quit "
+VAR     = gv - - - - " VAR "
+ALT     = ga - - - - " ALT "
+MSE     = gm - - - - " MSE "
 
+---SCREEN                                                          
+=LINLIB generic keyboard command/actions
++
++                 ."on active line"..........        ."common".................
++.MSE. .mse....   menu item select:   .:SP...        get help:          .:HE... 
++                             select: .:NL...        exit/close page:   .:EX... 
++.ALT. .alt2.     alter or toggle,                   refresh page:      .:RE... 
++                            forward: .:SP...        cancel:            .:CA... 
++                           backward: .:DE...        next line:         .:TA... 
++.VAR. .var.....  switch to edit,                                              
++                       keep content: .:SP...        ."page navigation"........
++                              clear: .:DE...        jump to 1st line:  .:KH... 
++                                                         - last line:  .:KE... 
++."in edit mode"................ ."variant"..        next page/part:    .:PU... 
++toggle Ins/Ovr mode:    .:KI... .:PR .:PR...        prev page/part:    .:PD... 
++erase left from cursor: .:DE...                                               
++    erase below cursor: .:KD... .:PR .:DE...        ."special"................
++         erase up to end....... .:PR .:SP...        commit,            
++jump to 1st symbol:     .:KH... .:PR .:AL...          complete editing,          
++  jump to end of text:  .:KE... .:PR .:AR...            next line:     .:NL... 
++                                                    variant prefix:    .:PR... 
++                                                    
+=LINLIB (c) 1986-1990,2020 vsv & team
+---END                          
 
----SCREEN                                     
-=generic keyboard help
-
-+common keys:              ."line control".........  ."key".  ."action"......           
-+ .:HE... get help         menu item:                                                  
-+ .:EX... exit page                .mse............  .:SP...  select                   
-+ .:RE... refresh page                               .:NL...  select optional                  
-+ .:CA... cancel           selector/toggler:                                                   
-+ .:AU...                          .alt2.            .:SP...  toggle forward           
-+ .:AD...                                            .:DE...  toggle backward          
-+ .:AL...                  variable:                                        
-+ .:AR...                          .var.....         .:SP...  keep content  
-+ .:TA... next line                                  .:DE...  erase         
-+                                   
-+optional:                 ."line editing".........  ."key". ."alternative".
-+ .:KH...                  Ins/Ovr mode              .:KI... .:PR... .:PR...
-+ .:KE...                  commit changes            .:NL...                
-+ .:PU...                  erase left from cursor    .:DE...                
-+ .:PD...                  erase below cursor        .:KD...                
-+                          erase up to end                   .:PR... .:SP...
-+                          jump to 1st symbol        .:KH... .:PR... .:AL...
-+LINLIB/VISI               jump to end of text       .:KE... .:PR... .:AR...
-+(c) 1986-1990 vsv                                       
-
----END
-                        
- LINLIB/VISI          
- 1986-1990 (c)                               
-
-
-."control keys:"..................     
- - select menu item:       .:SP...     
- - start line editing:                 
-     * keep content        .:SP...     
-     * clear before edit   .:DE...     
- - selector cycle/toggle:              
-              * forward    .:SP...     
-              * backward   .:DE...     
-
- ."all page control keys"................
-
- - Get help                .:HE...
- - Exit, end of the page   .:EX...
- - Refresh screen          .:RE...
- 
- - Page context navigation:   
-   * to next line:       .:TA... 
-   * arrow keys, 
-   .:KH... .:KE... .:PU... .:PD...
-       
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+                                                                               
 
 
 
@@ -66,16 +60,83 @@ sp      = iv    -       -       -       -     "[space]"
 
 
 
-   ."line types".................
- 
-   .var....... - editable string
-   .alt2.         - selector
-   .mse............ - menu item
- 
-  - Get help                .:HE...
-  - Exit, end of the page   .:EX...
-  - Refresh screen          .:RE...
- 
- - Move to next line.... .:TA... 
- - Navigation:
- .:AU... .:AD... .:AL... .:AR... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,27 +1,26 @@
 ---LINES
----#sp      = gh    - - - - "ПРОБЕЛ"
 ---SCREEN
-=Настройка атрибутов видеотерминала
+=video attributes setup
 
-  соглашения LINLIB:
-  поля в пределах экрана (или страницы) могут быть показаны в двух режимах:
-	."w - вывод (запись)". -- начальное состояние при выводе на экран
-	."r - ввод"........... -- поле активно, на него указывает курсор
-  Соответственно, два набора видеоатрибутов и подсказок (символ в начале поля)
+  Settings mode (color,monochrome,...) may be changed pressing .'0 .'1 .'2
 
-  Для изменения атрибута или подсказки подведите курсор к соответствующему
-  полю таблицы, затем нажмите одну из клавиш:
-		.:SP....  (для изменения на выводе)
-		.:DE....  (для изменения на вводе)
+  .:SP... or key .:DE... changes an attribute value in set "w" or "r"
 
-  ."логические видеоатрибуты:".......................................
+  .'w or .'o selects /set "w"/		.:KI... switches keyboard input
+  .'r or .'i selects /set "r"/		 between /set "w"/ or /set "r"/
 
-    cmd - терминал в текстовом режиме (телетайп)
-    TXT - пояснительный текст, комментарий на экране
-    HDR - заголовок
-    VAR - поле для строковых и числовых типов данных
-    ALT - переключатель, выбор из альтернативы
-    MSE - пункт меню
-    ERR - текст сообщения об ошибке
-    ATT - текст предупреждения, видеоатрибут для привлечения внимания
+* /set "w"/ (write, output) is used when line is shown
+* /set "r"/ (read, input) is used when line is pointed by cursor (active)
+
+." logical type of *lines* : "....................
+    CMD - initial text mode (restored on exit)
+    TXT - comment and labels before active lines
+    HDR - header
+    VAR - editable text or number (variables)
+    ALT - selector or alterator
+    MSE - menu selection point
+    ERR - error message text
+    ATT - warning or attention message
+
 ---END
+* line is a thing which links data and representation in variety of aspects
