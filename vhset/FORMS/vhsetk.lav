@@ -3,7 +3,7 @@
 =keyboard settings
 
 how to ."assign". a key to action:
-    1) move cursor to column after key label
+    1) move cursor to column "key" or "key2"
     2) press .:SP... key
     3) press control key
     NOTE: pressing printable key not allowed
@@ -17,8 +17,8 @@ How to change ."key labels:".
     2) press .:SP... or .:DE... to start editing
     3) press .:NL... to commit changes
 
-."NOTES:".
+    ."notes:".
     - some keys cannot be reassigned
-    - key labels are terminated by <space> symbol
+    - key labels are terminated by <space> symbol (not shown after)
 
 ---END

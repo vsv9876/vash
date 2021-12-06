@@ -60,6 +60,8 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 {
 	kbcod cod;
 	int syscod;             /* код возврата system */
+	int codexit, codsig;
+
 	int cmdrun;             /* ФЛАГ: КОМАНДА ЗАПУСКАЛАСЬ */
 	int justrun;            /* флаг: запускать, не редактировать */
 	int okwait;             /* флаг: после wait() ожидать подтверждения пробелом, если OK */
@@ -217,18 +219,24 @@ std_shell:
 			justrun = 0;
 			scrldo();
 			if(syscod) {
+				codexit = cod1(syscod); /*TODO cleanup trick, replace with stdlib.h and sys/wait.h stuff */
+				codsig  = cod0(syscod);
 				at_set(ERR);
-				sprintf(tmpstr, "[ exit=%d, sig=%d ]\r",
-				cod1(syscod), cod0(syscod)); /*TODO cleanup trick, replace with stdlib.h stuff */
-				w_str(tmpstr);
+				if (codsig) {
+					sprintf(tmpstr, "[ exit= %d, signal= %d ]", codexit, codsig);
+				} else {
+					sprintf(tmpstr, "[ exit= %d ]", codexit);
+				}
+				/*w_str(tmpstr); cp_cret();*/
 			}
 			else {
 				if (okwait == 1) {
 					at_set(HDR);
-					sprintf(tmpstr, "[ ok ]\r");
-					w_str(tmpstr);
+					sprintf(tmpstr, "[ ok ]");
+					/*w_str(tmpstr); cp_cret();*/
 				}
 			}
+			w_str(tmpstr); cp_cret();
 			at_set(CMD);
 			if (okwait == 1) {
 				do {
@@ -247,11 +255,11 @@ std_shell:
 					/*at_set(TXT); er_eol();*/
 					er_eop(0);
 					/*VARARGS*/
-					w_str("\r");
+					cp_cret(); /*w_str("\r");*/
 				} while (cod == KB_NL);
 			} else {
 				at_set(0);
-				w_str("\r");
+				cp_cret(); /*w_str("\r");*/
 			}
 			/* проверка завершения команды sh */
 			er_eol(0); fflush(vttout);

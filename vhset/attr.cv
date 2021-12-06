@@ -33,7 +33,7 @@
 	LPA_PI = &lpa_pi;
 	W_so   = &wamask[0];
 	W_us   = &wamask[1];
-	W_vs   = &wamask[2];
+	W_vs   = &wamask[2]; /* not a video attribute */
 	W_md   = &wamask[3];
 	W_mr   = &wamask[4];
 	W_mb   = &wamask[5];
@@ -58,7 +58,7 @@
 	ATT     = g7p - -      cvt_atr - "ATT "
 	so      = ia - W_so   cvt_va  - LPA_B
 	us      = ia - W_us   cvt_va  - LPA_B
-	vs      = ia - W_vs   cvt_va  - LPA_B
+---#	vs      = ia - W_vs   cvt_va  - LPA_B
 	md      = ia - W_md   cvt_va  - LPA_B
 	mr      = ia - W_mr   cvt_va  - LPA_B
 	mb      = ia - W_mb   cvt_va  - LPA_B
@@ -81,8 +81,8 @@
 	M       = g2 - "* "  cvt_pi  - LPA_B
 	p0      = g1 - "0"   cvt_pim - -
 	p1      = g1 - "1"   cvt_pim - -
----#	lh      = v  - -     -       - namelh
-	lh      = g  - -     -       - namelh
+	lh      = v  - -     -       - namelh
+---#	lh      = g  - -     -       - namelh
 
 
 
@@ -90,29 +90,29 @@
 ---#
 ---# WARNING! please, keep in mind that
 ---# column of elements in string 3 (which contains .TXT. .HDR. ...)
----# must be equal an column of corresponding element in the matrox of
----# attribute selectors (contains .t) because
+---# must be equal a column of corresponding element in the matrox of
+---# attribute selectors (which contains .t) because
 ---# format conversion function for selector depends on screen coordinates of it.
 ---# for example, columns of fields .t and .HDR must be the same
 ---# 
 ---# place of .sgraAT line must be below .sgr line
 ---#.lh........................................................................
 ---#
+="Video attributes".
 .lh............................................................................
-+
-="Video attributes setup".
 +
 +.p0............ .CMD.   .TXT.   .HDR.   .VAR.   .ALT.   .MSE.   .ERR.   .ATT.
 +.p1............   
 +
 +line prompter:  .P.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++
 +."monochrome".  .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +   outstand:so  .so     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +  underline:us  .us     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +bright/bold:md  .md     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +    reverse:mr  .mr     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+    :mk/hidden  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
++     hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +."color"......  .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 + foreground:fg  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 + background:bg  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
@@ -121,18 +121,12 @@
   settings mode: .sgrm..........    SGR: .sgrAT.....             help: .:HE....
                                                               set r/w: .:KI....
 
- 
-
-
 ---# debug garbage below...
----#+    :mk/hidden         .mk.  .t..  .t..  .t..  .t..  .t..  .t..  .t..
----#+    :vs/background     .vs.  .t..  .t..  .t..  .t..  .t..  .t..  .t..    
----#+		    .pi    .t     .t     .t     .t     .t     .t     .t  
+---#+         vs:vs  .vs.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---#+       code edit:  .hl... .hl... .hl... .hl... .hl... .hl... .hl... .hl...
 ---#	 ."mode:".  .sgrm..........     .sgrAT.....          get help: .:HE....
 ---# markup:
----#	:  :       :...   :...   :...   :...   :...   :...   :...   :...  :........:
 ---#	:  :          :...  :...  :...  :...  :...  :...  :...  :...  :........:
 ---#+                      .hl.................................................
----#+                .hl............................................................
+---#+           .hl............................................................
 ---END

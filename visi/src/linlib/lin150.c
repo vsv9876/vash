@@ -191,12 +191,17 @@ int c;
 	oc &= 0177;
 #endif
 	/* save new position of cursor to be expected, then check if inside screen borders */
+	/* TODO think about w_wchr instead w_chr totally in linlib screen model */
+#ifdef BUGNOFEATURE
 	scrn.sc_co += 1;
 	if (scrn.sc_li <= (lframe->baseli + lframe->maxli)
 			&& scrn.sc_co <= (lframe->baseco + lframe->maxco)) {
 		putc(oc, vttout);
 		/* putc(oc, stdout); */
 	}
+#else
+	putc(oc, vttout);
+#endif
 }
 /*---------------------------------------------*/
 /* Перекодировть символ ESC-последовательности */

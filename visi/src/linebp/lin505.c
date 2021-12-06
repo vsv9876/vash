@@ -23,7 +23,7 @@ extern  IN_PORTS in_help[];
 
 extern char   *vexdir;  /* Каталог вынесенных описаний страниц */
 
-w_help(page)
+w_help(page) /* TODO rewrite this one */
 /*--------------------------------*/
 /* ПОКАЗАТЬ СПРАВОЧНУЮ ИНФОРМАЦИЮ */
 /*--------------------------------*/
@@ -44,8 +44,12 @@ char    *page;
 		/*fprintf(vttout, " #%d ", i); /* there was stdout, why? */
 		/*fprintf(vttout, "help page #%d '%s'", i, pages[i]);*/
 		w_msg(INP|HDR, " help");
-		sprintf(tmps, " page #%d: '%s'", i, pages[i]);
+		sprintf(tmps, " #%d: '%s'", i, pages[i]);
 		w_str(tmps);
+		w_str(" -- to get more, press ");
+		w_lh_str(":HE");
+		/*at_set(TXT); w_str("");*/
+		er_eol(TXT);
 		if(pages[i]) {
 			if(phelp=b_page(vexdir, pages[i], in_help)) {
 				w_page(phelp);

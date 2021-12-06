@@ -157,13 +157,14 @@ KBL kbl[KBLSIZE] = {
 { KB_AL, "<left> ", KBCOD('k','l'), KB_EMPTY       },
 { KB_AR, "<right>", KBCOD('k','r'), KB_EMPTY       },
 
-/* limited customizing possible */
-{ KB_SP, "/space/", KBCTL(    'S'), KB_EMPTY       },
+/* limited customizing possible (labels only) */
+{ KB_SP, "\\space\\",
+					KBCTL(    'S'), KB_EMPTY       },
 { KB_TA, "^I,Tab ", KBCTL(    'I'), KB_EMPTY       },
 
 /* full customizing supported with vhset */
 { KB_NL, "Enter  ", KBCTL(    'M'), KBCTL(    'J') },
-{ KB_DE, "<-del  ", KBCOD('d','e'), KBCTL(    'H') },
+{ KB_DE, "^H,<-- ", KBCOD('d','e'), KBCTL(    'H') },
                                                    
 { KB_HE, "^G,F1  ", KBCOD('k','1'), KBCTL(    'G') },
 { KB_EX, "^X,F2  ", KBCOD('k','2'), KBCTL(    'X') },
@@ -209,25 +210,25 @@ KBL kbl[KBLSIZE] = {
  *
  */
 LPA lpaout[LPASIZE] = {
-	{       '.',    0,          "0"     },              /* CMD  */
-	{       ' ',    0,          "39;49" },              /* TXT  */
-	{       '_',    A_MR,       "36;40" },              /* HDR  */
-	{       ' ',    A_MD,       "39"    },              /* VAR  */
-	{       ' ',    0,          "33"    },              /* ALT  */
-	{       '*',    0,          "32"    },              /* MSE  */
-	{       ' ',    0,          "37;41" },              /* ERR  */
-	{       ' ',    A_MR,       "39;49" },              /* ATT  */
+	{       '.',    0,          "39;49" },              /* CMD  0*/
+	{       ' ',    0,          ""      },              /* TXT  1*/
+	{       '_',    A_MR,       "36;40" },              /* HDR  2*/
+	{       ' ',    A_MD,       ""      },              /* VAR  3*/
+	{       ' ',    0,          "33"    },              /* ALT  4*/
+	{       '*',    0,          "32"    },              /* MSE  5*/
+	{       ' ',    A_MR,       "31;47" },              /* ERR  6*/
+	{       ' ',    A_MR,       "39;49" },              /* ATT  7*/
 };
 
 LPA lpainp[LPASIZE] = {
-	{       ' ',    A_MD,           "31;49" },          /* CMD  */
-	{       '|',    0,              "33"    },          /* TXT  */
-	{       '\'',   0,              "36"    },          /* HDR  */
-	{       '"',    A_MR,           "39"    },          /* VAR  */
-	{      '\'',    A_MR,           "33"    },          /* ALT  */
-	{       '>',    A_MR,           "32"    },          /* MSE  */
-	{       ' ',    A_MR,           "35;47" },          /* ERR  */
-	{       '!',    A_MR,           "34;47" },          /* ATT  */
+	{       ' ',    A_MD,           "31;49" },          /* CMD  0*/
+	{       '|',    0,              "33"    },          /* TXT  1*/
+	{       '\'',   A_MD,           "34"    },          /* HDR  2*/
+	{       '"',    A_MR,           "34;47" },          /* VAR  3*/
+	{      '\'',    A_MR,           "34;43" },          /* ALT  4*/
+	{       '>',    A_MR,           "32"    },          /* MSE  5*/
+	{       ' ',    A_MR|A_US,      "35;47" },          /* ERR  6*/
+	{       '!',    A_MR,           "33;40" },          /* ATT  7*/
 };
 
 int		sgrmode = 1; /* initial monochrome, not a dumb :) */

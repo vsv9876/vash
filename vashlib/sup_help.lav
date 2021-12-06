@@ -18,26 +18,26 @@ ymax    = ipv   -       "%4d"   -       t_ymax  yy_max
 
 
 ---SCREEN
-  please, press .:HE.... again to get generic help about keyboard and screen
-
- ."flags:  ".  ."description                                                 ". 
- lines max     number of screen lines allowed for main menu
- history/sync  save on exit or sync on every command
- scroll        keep comand listing on screen
- panel/keybar  show macro labels of keys 0...9
- title(who)    title of session (show user,host,current dir if configured)
+=vash setup in brief
+				    Please, use man vash for full description
+               ."preferences". 
+ max lines     number of screen lines (rows) allowed for main menu
+ history/sync  history save on exit or sync on every command
+ scroll        keep command listing or clear screen on every command
+ panel/keybar  show action labels of keys 0...9 
+ title(who)    title of vash session - depends on environment .'VASH_LABEL
  title on xterm if supported by X window manager
  mail_biff     indicate new mail incoming
- clock         show current time on the screen
+ clock         show clock, during screen mode only
 
                ."readonly runtime parameters                                 ".
  maxli/maxco   maximum lines/columns (size of the screen)
- vexdir        directory where configuration files reside
+ vexdir        search path for directories with configuration files
 
-               ."setup parameter for debug only                              ".
-               NOTE: it's better to don't touch if not sure, read manual
+               ."setup parameters for debug only                             ".
+               NOTE: it's better to don't touch if not sure, read manual 1st
  --:           command for fill of main menu
  -i:           input file - whatching it for new scan of main menu
  -@:           substitution rule for items from main menu
- -o:           parameter not used, reserved
+---# -o:           parameter not used, reserved
 ---END

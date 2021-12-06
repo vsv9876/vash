@@ -452,7 +452,7 @@ char *out;
 	c = ed_cod = r_cod(0);
 	if (ed_cod == KB_CA) return(TRUE);
 	if (strchr(fgbg_cod, c) == NULL) {
-		w_msg(ATT|INP, "please, use key from list:"); at_set(ATT); w_str(fgbg_cod);
+		w_msg(ATT|INP, "please, use key from list:"); at_set(ATT|VEXT); w_str(fgbg_cod);
 		return(FALSE);
 	}
 	w_msg(TXT, "");

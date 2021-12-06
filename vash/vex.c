@@ -13,6 +13,8 @@ extern  char   *vexdir;
 /*extern  char   *vlibpath;*/
 extern  int     y0_top;
 
+extern int sgrmode;
+
 char   *onoff[] = { "[ ]", "[X]", 0 };
 /*char   *onoff[] = { " | ", " x ", 0 };*/
 
@@ -77,6 +79,7 @@ IN_PORTS inport[] = {
 	{ "lmaxli",     &lfmain.maxli },
 	{ "baseli",     &lfmain.baseli },
 	{ "u8nopa",     &u8nopass },
+	{ "SGR",        &sgrmode },
 	{ 0,            0       },
 };
 

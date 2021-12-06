@@ -33,15 +33,15 @@ F2	= c "."
 
 ---# suspend on new line key before debug section below
 ---#ym      = iv    n       "%3d"   -       t_ymax  yy_max
-ym      = iv    -       "%3d"   -       t_ymax  yy_max
+ym      = ivp   -       "%3d"   -       t_ymax  yy_max
 
-y0      = g     -       "%3d"   -       -       y0
-yt      = g     -       "%3d"   -       -       y0_top
+y0      = v     -       "%3d"   -       -       y0
+yt      = v     -       "%3d"   -       -       y0_top
 li      = v     -       "%3d"   -       -       maxli
 co      = v     -       "%3d"   -       -       maxco
-bli	 = vi    -      "%d"   -       -       baseli
-lli      = vi    -      "%d"   -       -       lmaxli
-
+bli	 = vip   -      "%3d"  -       -       baseli
+lli      = vip   -      "%3d"  -       -       lmaxli
+C       = ipv    -      "%1d"  -       -       SGR
 
 
 
@@ -50,17 +50,20 @@ lli      = vi    -      "%d"   -       -       lmaxli
 ---SCREEN
 ."vash setup parameters"......................... help: .:HE....  exit: .:EX....
 
-+max .ym lines       .h.-h,history   .s.-s,scroll        .F1  sh -c allways
-+    .li maxli       .S.-S,sync      .p.-p,panel/keybar  .u8  only ASCII
-+    .co maxco       .m.-m,mail_biff .w.-w,title               
-+                    .c.-c,clock     .x.-x,xterm title
-                                                                
- ."debug only parameters"....................................       
-+--  .fs......................................................      baseli .bli
-+-@  .rs......................................................      lmaxli .lli            
++max .ym. lines      .h.-h,history   .s.-s,scroll        .F1  sh -c allways
++                    .S.-S,sync      .p.-p,panel/keybar  .u8  only ASCII
++    .lli lmaxli     .m.-m,mail_biff .w.-w,title               
++    .bli baseli     .c.-c,clock     .x.-x,xterm title
+                                                               
+ ."debug only parameters".....................................                  
++--  .fs......................................................      maxli  .li 
++-@  .rs......................................................      maxco  .co 
 +-i  .is......................................................      y0_top .yt
-+                                                                       y0 .y0
----#+ -o: .os........................................................   y0 .y0
+                                                                        y0 .y0
++    .C   sgrmode                                                   
+
+
+---#+ -o: .os........................................................          
 vashrc: .vashrc.................................................................
 vapath: .vpath..................................................................
 vexdir: .vexdir.................................................................

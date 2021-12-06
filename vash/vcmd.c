@@ -274,7 +274,7 @@ char *cmdlbl;   /* вывеска взамен команды */
 
 	if (cmd) {
 	    /* выполнить подстановки */
-	    cmdsub(tmpcmd, cmd, clm._itm, 1);
+	    cmdsub(tmpcmd, cmd, clm._itm, 1); /* TODO: при команде cd здесь не нужно задваивать символы '\\' */
 	    cmd = tmpcmd;
 	}
 	return( vshcmd(cmd, (char *)0) );

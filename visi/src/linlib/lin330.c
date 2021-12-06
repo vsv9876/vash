@@ -191,7 +191,7 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 	/* заполнить пробелами конец строки */
 	j = 0;
 	while(j<size && str_l[j]) j++;
-	while(j<size)       str_l[j++] = ' ';
+	while(j<size)       str_l[j++] = L' ';
 	str_l[j] = 0; /*str_l[size] = 0; /* terminate visible part of string */
 	if (edshow) {
 		/* показать на экране перед редактированием */
@@ -199,7 +199,7 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 		j = 0;
 		while(j<size) w_wchr(str_l[j++]);
 	}
-	i = ofsp != NULL ? *ofsp : 0;
+	i = (ofsp != NULL) ? *ofsp : 0;
 
 	/* ЦИКЛ РЕДАКТИРОВАНИЯ */
 	for( ;; ) {

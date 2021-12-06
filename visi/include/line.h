@@ -284,7 +284,7 @@ extern  int     hw_set(), do_kbl();
 /* lin(3) - управление терминалом: логический уровень */
 
 extern  kbcod   k_pars();
-extern  int     bell(), cp_fet(), cp_sav(), cp_set(), cp_abset();
+extern  int     bell(), cp_fet(), cp_sav(), cp_set(), cp_abset(), cp_cret();
 extern  int     er_eol(), er_eop(), er_pag(), er_scr();
 extern  kbcod   e_str(), r_line(), r_page();
 extern  int     allcod, edinff;

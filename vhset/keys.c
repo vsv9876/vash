@@ -138,7 +138,7 @@ char *str;
 		cp_set(line->line, line->colu, ATT|INP);
 		w_strn("<?>", line->size);
 
-		w_msg(ATT, "Please, press new key...");
+		w_msg(ATT|VEXT, "Please, press key to be assigned...");
 		tmpcod = r_key();
 		if (tmpcod == 0)
 			w_msg(ERR, "Unknown key");

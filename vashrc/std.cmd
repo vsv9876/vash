@@ -8,6 +8,10 @@
 
 -1!sh
 
+:RE
+:^R
+	* * ;clear
+
 # switch context to command editing, old content will be preserved
 #:EX
 :CA

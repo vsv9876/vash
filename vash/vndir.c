@@ -612,7 +612,7 @@ cwdshow()
 			fprintf(stderr, "Can't exec /bin/pwd\n");
 			fatal();
 		}
-		fgets(cwdpath, 400, wdf);
+		fgets(cwdpath, 400, wdf); /* TODO WTF */
 		for (s=cwdpath; *s != '\n'; s++) ; *s = '\0';
 		pclose(wdf);
 	}
@@ -789,14 +789,14 @@ int newflag;    /* если 0, то только обновить каталог
 vchdir(cdarg)
 char *cdarg;
 {
-	char  nwdpath[400];     /* НОВЫЙ КАТАЛОГ */
+	char  nwdpath[400];     /* НОВЫЙ КАТАЛОГ */ /*TODO FTW 400 */
 	char  tmppath[400];
 	register char *p;
 
 	p = nwdpath;
 	if (*cdarg != '/') {
 		strcpy(nwdpath, cwdpath);
-		strcat(nwdpath, "/");
+		if (strcmp(nwdpath,"/")!=0)	strcat(nwdpath, "/");
 		strcat(nwdpath, cdarg);
 	}
 	else

@@ -99,6 +99,7 @@ showconfig:
 	@echo VISI=$(VISI)
 	@echo CFLAGS_ASH=$(CFLAGS_ASH)
 	@echo CFLAGS_VISI=$(CFLAGS_VISI)
+	@echo VERSION=$(VERSION)
 
 # $(BLDCFG) $(VISI)/include/line.h $(VISILIB_LIST)
 visi_lib: setup

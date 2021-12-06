@@ -209,6 +209,12 @@ register int awi;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 /* УСТАНОВКА ПОЗИЦИИ КУРСОРА */
 /* И АТРИБУТОВ ТЕКСТА        */
 /*---------------------------*/
+cp_cret() /* set cursor at column=0 at the unknown(yet not synced) row */
+{
+	scrn.sc_co = 0;
+	w_raw("\r");
+}
+
 cp_abset(li, co, at) /* absolute in hw screen coordinates */
 int li, co, at;
 {
