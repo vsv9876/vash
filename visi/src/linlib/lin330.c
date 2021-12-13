@@ -36,11 +36,11 @@ int     edshow = 1;     /* флаг: показывать строку до ре
 /*static int edbak = 0;	/* флаг: копировать буфер редактирования обратно при выходе из e_str */
 
 
-re_str(str_l, size, ctst, ofsp)
+re_str(u8s, size, ctst, ofsp)
 /*
- * Редактор строки без показа старого содержимого
+ * Редактор строки без предварительного показа старого содержимого (e_str() wrapper)
  */
-char   *str_l;      /* строка для редактирования*/
+char   *u8s;      /* строка для редактирования*/
 int     size;       /* размер поля редактирования */
 kbcod (*ctst)();    /* тест для ввода печатаемых кодов */
 int    *ofsp;       /* указатель на величину смещения от нач. поля */
@@ -51,15 +51,15 @@ int    *ofsp;       /* указатель на величину смещения
 	int len, len2;		/* занятая символами длина строки, до и после редактирования */
 	mbstate_t ps = { 0 };
 
-	wcsbuf = alloca(2*4*(MAXLICO)+1);
+	wcsbuf = alloca(2*4*(MAXLICO)+1); /* TODO: dependency from str_l size, not a CONSTANT */
 
-	_edshow = edshow; edshow = 0; /*0; /*hack*/ /* unicode symbols trimmed on start if == 0; seems to be 8-bit encoding ops */
+	_edshow = edshow; edshow = 0;
 	_edinff = edinff; edinff = 0;
 	_edinsm = edinsm; edinsm = 1;
 
-	len = u8wcs(wcsbuf, str_l);
+	len = u8wcs(wcsbuf, u8s);
 	cod = e_str(wcsbuf, size, ctst, ofsp);
-	len = wcsrtombs(str_l, &wcsbuf, 2*4*(MAXLICO)+1, &ps);
+	len = wcsrtombs(u8s, &wcsbuf, 2*4*(MAXLICO)+1, &ps);
 
 	edshow = _edshow;
 	edinff = _edinff;
@@ -112,57 +112,71 @@ static showed()
 */
 
 /* ВЫПОЛНИТЬ ИЗМЕНЕНИЯ И ПОКАЗАТЬ */
-static int chgstr(s, size, ofs, cod)
-register wchar_t *s;
-int  size;
-int ofs;
-kbcod cod;
+/* note: string buffer may be longer then visible size */
+static int chgstr(wcs, vsize, i, cod)
+register wchar_t *wcs; /* editing string buffer pointer */
+int  vsize;		/* visible size of the field/line on the screen */
+int i;			/* position of the change if required */
+kbcod cod;		/* kbcod() pressed */
 {
 	register int j;
-	register int lend;      /* ПОЗИЦИЯ ПОСЛЕДНЕГО НЕПУСТОГО СИМВОЛА */
-		 int chg;       /* ПОЗИЦИЯ ИЗМЕНЕНИЯ */
+	register int i_end;      /* position of last significant (non-space) symbol */
+		 int i_chged;       /* position of symbol to be changed */
+#ifdef UNLIM_STR_BUFF_OK
+	int size = 0;	/* size (length) of string buffer, without trailing 0 */
+	int vshift = 0;	/* visible part shift of s from beginning */
+	int i_shift = 0; /* cursor position inside of visible part of s */
 
-	/* НАЙТИ ЛОГ. КОНЕЦ СТРОКИ */
-	if(edinsm) {
-		for(lend=size; lend>0 && s[--lend]==' ';) ;
-		if(lend<ofs) lend=ofs;
+	for (j = 0; wcs[j] != 0; i++)
+		; size = j;
+	/* calculate vshift and i_shift */
+	if (size > vsize) {
+		vshift = (i / (vsize/2)) * (vsize/2);
+		i_shift = size % vsize;
 	}
-	chg = ofs;
-	if(cod==KB_DE) {
+	/* TODO: make vsize and size usage correct below this point */
+#endif
+	/* find logical end of edited text in the string */
+	if(edinsm) {
+		for(i_end = vsize; i_end > 0 && wcs[--i_end] == ' ';) ;
+		if(i_end < i) i_end = i;
+	}
+	i_chged = i;
+	if(cod == KB_DE) {
 		cod = ' ';
-		ofs = --chg;
+		i = --i_chged;
 		if(edinsm) {
-			for(j=chg; j<lend; j++) s[j]=s[j+1];
-			s[j++]=' ';
+			for(j = i_chged; j < i_end; j++) wcs[j] = wcs[j+1];
+			wcs[j++] = ' ';
 		} else {
-			s[lend = chg] = cod;
+			wcs[i_end = i_chged] = cod;
 		}
 		/******* <--(KB_DE)--- ******/
 		cp_abset(scrn.sc_li, scrn.sc_co - 1, scrn.sc_at);
 	} else {
 		if(edinsm) {
-			for(j=size; --j>chg; ) s[j]=s[j-1]; /* ВСТАВИТЬ */
-			lend += (lend<(size-1) ? 1 : 0);
+			for(j = vsize; --j > i_chged; ) wcs[j] = wcs[j-1]; /* ВСТАВИТЬ */
+			i_end += (i_end < (vsize-1) ? 1 : 0);
 		} else {
-			lend = chg;
+			i_end = i_chged;
 		}
-		s[chg] = cod;
-		ofs += 1;
+		wcs[i_chged] = cod;
+		i += 1;
 	}
 
-	for(j=chg; j<=lend; j++) w_wchr(s[j]);   /* НА ЭКРАН!!! */
-	return (ofs);
+	for(j = i_chged; j <= i_end; j++) w_wchr(wcs[j]);   /* НА ЭКРАН!!! */
+	return (i);
 }
 
 
-kbcod e_str(str_l, size, ctst, ofsp)
+kbcod e_str(wc_s, size, ctst, ofsp)
 /*-----------------*/
 /* РЕДАКТОР СТРОКИ */
 /*-----------------*/
-register wchar_t    *str_l;  /* СТРОКА ДЛЯ РЕДАКТИРОВАНИЯ*/
-int     size;           /* РАЗМЕР ПОЛЯ РЕДАКТИРОВАНИЯ */
-kbcod   (*ctst)();      /* ТЕСТ ДЛЯ ВВОДА ПЕЧАТАЕМЫХ КОДОВ */
-int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕНИЯ ОТ НАЧ. ПОЛЯ */
+register wchar_t    *wc_s;  /* wide char string to be edited -- СТРОКА ДЛЯ РЕДАКТИРОВАНИЯ*/
+int     size;           /* size of field visible -- РАЗМЕР ПОЛЯ РЕДАКТИРОВАНИЯ */
+kbcod   (*ctst)();      /* test&check for input a printable codes -- ТЕСТ ДЛЯ ВВОДА ПЕЧАТАЕМЫХ КОДОВ */
+int     *ofsp;          /* index pointer for editing position (cursor position) -- УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕНИЯ ОТ НАЧ. ПОЛЯ */
 {
 	/* НАЧАЛО ПОЛЯ И VIDEO ЗАДАЮТСЯ ЧЕРЕЗ cp_set();
 	 * ctst ВОЗВРАЩАЕТ 0, ЕСЛИ КОД НЕ ИЗМЕНЯЕТ СТРОКУ;
@@ -190,14 +204,14 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 */
 	/* заполнить пробелами конец строки */
 	j = 0;
-	while(j<size && str_l[j]) j++;
-	while(j<size)       str_l[j++] = L' ';
-	str_l[j] = 0; /*str_l[size] = 0; /* terminate visible part of string */
+	while(j<size && wc_s[j]) j++;
+	while(j<size)       wc_s[j++] = L' ';
+	wc_s[j] = 0; /*str_l[size] = 0; /* terminate visible part of string */
 	if (edshow) {
 		/* показать на экране перед редактированием */
 		cp_abset(linenu, column, attrib);
 		j = 0;
-		while(j<size) w_wchr(str_l[j++]);
+		while(j<size) w_wchr(wc_s[j++]);
 	}
 	i = (ofsp != NULL) ? *ofsp : 0;
 
@@ -215,21 +229,21 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 			bell();
 		} else {
 			switch(cod/* = ok*/) {
-			case KB_PR: /* ДОП. КОМАНДЫ РЕДАКТОРА СТРОКИ */
+			case KB_PR: /* prefixed option -- ДОП. КОМАНДЫ РЕДАКТОРА СТРОКИ */
 				switch(r_cod(0)) {
 				case KB_AR: /* КОНЕЦ ЗНАЧАЩЕЙ ИНФ. */
-					   for(i=size-1; isspace(str_l[i]);	i--); i++; break;
+					   for(i=size-1; isspace(wc_s[i]);	i--); i++; break;
 				case KB_AL: i = 0; break;
 				case ' ':
 					   for(j=i; j<size; j++) {
-						w_wchr(str_l[j] = ' ');
+						w_wchr(wc_s[j] = ' ');
 					   }; break;
 				case KB_DE:
 					   for(j=i; j<size-1; j++) {
-					       w_wchr(str_l[j] = str_l[j+1]);
+					       w_wchr(wc_s[j] = wc_s[j+1]);
 					   };
-					   w_wchr(str_l[j] = ' ');
-					   str_l[j/*size*/] = 0;
+					   w_wchr(wc_s[j] = ' ');
+					   wc_s[j/*size*/] = 0;
 					   break;
 				case KB_PR: edinsm=(edinsm ? 0 : 1);
 					   edinfo(1);
@@ -239,17 +253,17 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 
 			/* linlib 4 since 2017-05 */
 			case KB_KE: /* КОНЕЦ ЗНАЧАЩЕЙ ИНФ. */
-			   for(i=size-1; isspace(str_l[i]);	i--); i++; break;
+			   for(i=size-1; isspace(wc_s[i]);	i--); i++; break;
 			case KB_KH: i = 0; break;
 			case KB_KI: edinsm=(edinsm ? 0 : 1);
 				   edinfo(1);
 				   break;
 			case KB_KD:
 				   for(j=i; j<size-1; j++) {
-				       w_wchr(str_l[j] = str_l[j+1]);
+				       w_wchr(wc_s[j] = wc_s[j+1]);
 				   };
-				   w_wchr(str_l[j++] = ' ');
-				   str_l[j/*size*/] = 0;
+				   w_wchr(wc_s[j++] = ' ');
+				   wc_s[j/*size*/] = 0;
 				   break;
 			/*----------------------------*/
 
@@ -269,24 +283,24 @@ int     *ofsp;          /* УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕН
 			case KB_NL: goto ret;
 			case KB_DE:
 				   if(i==0)      goto ret;
-				   i = chgstr(str_l, size, i, cod);
+				   i = chgstr(wc_s, size, i, cod);
 				   break;
 			default:
 				/*if(cod1(cod))   goto ret;/*НО МОЖНО И ЛУЧШЕ*/
 				if(ISCTL(cod))   goto ret;
-				else            i=chgstr(str_l, size, i, cod);
+				else            i=chgstr(wc_s, size, i, cod);
 
 			}
 		}
 		/* КОНЕЦ ЦИКЛА РЕДАКТОРА */
 	}
 ret:
-	str_l[size] = 0;
+	wc_s[size] = 0;
 	if(ofsp != NULL) *ofsp = i;
 
 	/* ПОДЧИСТИТЬ ПРОБЕЛЫ В КОНЦЕ СТРОКИ */
-	for (i=size; --i>=0 && (str_l[i]==' ');) ;
-	str_l[++i] = 0;
+	for (i=size; --i>=0 && (wc_s[i]==' ');) ;
+	wc_s[++i] = 0;
 	edinfo(0);
 /*	wctomb(ext_l, str_l);*/
 	return(cod);

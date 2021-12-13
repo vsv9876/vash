@@ -13,7 +13,7 @@
 
 ---PAGE linem
 ---LINES
-m_exit  = ipm      -   -   mkexit  tst_m   " Конец работы "
+m_exit  = ipm      -   -   mkexit  tst_m   " close, quit "
 
 s_raw   = ipv      -   -	-       -	u8s
 s_var   = ipv      -   -	cvt_s   -	u8s
@@ -27,20 +27,23 @@ s_vi	= ipv      -   "%d"	-       -	&vi
 
 
 ---SCREEN
-=тестирование исполняющей библиотеки LINLIB V4-Unicode
+=testing in runtime library ov VISI/LINLIB V4-Unicode
 
-			  .m_exit.......
 
-		str_raw   .s_raw....
-		str_var   .s_var....
-		str_tst   .s_tst....
-		s_double  .s_vd.................
-		s_float   .s_vf..........
-		s_long    .s_vl.....
-		s_short   .s_vh.....
-		s_int     .s_vi.
 
----#   .:?  .:HE....  Вывод Подсказки (Help)
+	          .m_exit.......            
+                                            
+	str_raw   .s_raw..                  
+	str_var   .s_var..                  .'?,/       dump string
+	str_tst   .s_tst..                  
+	s_double  .s_vd.................    .'+,=       dump numbers
+	s_float   .s_vf..........           
+	s_long    .s_vl.....                .:KI..  dump string with byte hex
+	s_short   .s_vh.....                
+	s_int     .s_vi.                    .:HE....  get help
 
-	.:TA....  показать буфер строки
+
+
+
+
 ---END

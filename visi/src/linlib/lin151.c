@@ -35,8 +35,8 @@ wchar_t c;
 	/* save new position of cursor to be expected, then check if inside lframe(screen) borders */
 	scrn.sc_co += 1;
 	/*if (scrn.sc_li <= lframe->maxli && scrn.sc_co <= lframe->maxco) {*/
-	if (scrn.sc_li <= (lframe->baseli + lframe->maxli)
-				&& scrn.sc_co <= (lframe->baseco + lframe->maxco)) {
+	if (scrn.sc_li < (lframe->baseli + lframe->maxli)
+				&& scrn.sc_co < (lframe->baseco + lframe->maxco)) {
 
 		cnt = wctomb(s, c);
 		sp = s;

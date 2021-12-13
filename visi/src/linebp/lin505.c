@@ -23,53 +23,65 @@ extern  IN_PORTS in_help[];
 
 extern char   *vexdir;  /* Каталог вынесенных описаний страниц */
 
-w_help(page) /* TODO rewrite this one */
+static hlppmt(i, phelp)
+int i;
+LINE *phelp;
+{
+	char tmps[48];
+	/*w_msg(INP|MSE, "Help");*/
+	sprintf(tmps, " help #%d '%s' ", i, phelp);
+	w_msg(HDR, tmps);
+	er_eol(TXT);
+
+}
+
+
+w_help(page)
 /*--------------------------------*/
 /* ПОКАЗАТЬ СПРАВОЧНУЮ ИНФОРМАЦИЮ */
 /*--------------------------------*/
 char    *page;
 {
+	char tmps[200];
     char *pages[3];
     LINE *phelp = (LINE *)NULL;
     register int i;
-    char tmps[48];
 
-    pages[1] = page;
+    pages[1] = page !=0 ? page : "";
     pages[2] = phelp0;
 
     for (i = 1; i> 0; ) {
 		if (i > 2)  i = 1;
 		er_pag();
-		/*w_msg(INP|MSE, "Help");*/
-		/*fprintf(vttout, " #%d ", i); /* there was stdout, why? */
-		/*fprintf(vttout, "help page #%d '%s'", i, pages[i]);*/
-		w_msg(INP|HDR, " help");
-		sprintf(tmps, " #%d: '%s'", i, pages[i]);
-		w_str(tmps);
-		w_str(" -- to get more, press ");
-		w_lh_str(":HE");
-		/*at_set(TXT); w_str("");*/
-		er_eol(TXT);
 		if(pages[i]) {
-			if(phelp=b_page(vexdir, pages[i], in_help)) {
+			if(phelp = b_page(vexdir, pages[i], in_help)) {
 				w_page(phelp);
 				d_page(phelp);
-				cp_set(-1, 0, TXT);
-				switch(r_cod(0)) {
-
-				case KB_HE:
-					i++;
-				case KB_RE:
-					continue;
-				default:
-					i = 0;
-				}
-			} else {
-				at_set(ERR);
-				fprintf(vttout, " not found on %s", vexdir);
+				hlppmt(i, pages[i]);
+				at_set(TXT);
+				w_str("-- get next: ");
+				w_lh_str(":HE");
 				fflush(vttout);
-				if ( ++i > 2 )   return(FALSE);
+			} else {
+				hlppmt(i, pages[i]);
+				at_set(ERR);
+				sprintf(tmps, "not in \"%s\"", vexdir);
+				w_str(tmps);
+				fflush(vttout);
+				/*if ( ++i > 2 )   return(FALSE);*/
 			}
+		}
+
+		cp_set(-1, 0, TXT);
+
+		switch(r_cod(0)) {
+		case '?':
+		case KB_HE:
+					i++;
+		case KB_RE:
+					continue;
+		default:
+					i = 0;
 		}
     }
     er_pag();

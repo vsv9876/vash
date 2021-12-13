@@ -191,17 +191,19 @@ int c;
 	oc &= 0177;
 #endif
 	/* save new position of cursor to be expected, then check if inside screen borders */
-	/* TODO think about w_wchr instead w_chr totally in linlib screen model */
-#ifdef BUGNOFEATURE
-	scrn.sc_co += 1;
-	if (scrn.sc_li <= (lframe->baseli + lframe->maxli)
-			&& scrn.sc_co <= (lframe->baseco + lframe->maxco)) {
+	/* if byte is a part of UTF-8, advance cursor position only on 1st one */
+	if (mb_cur_max == 1) {
+		/* single-byte encoding is active */
+		scrn.sc_co += 1;
+	} else {
+		if (c <= 0177) /*1st unicode(UTF-8) symbol */
+		scrn.sc_co += 1;
+	}
+	if (scrn.sc_li < (lframe->baseli + lframe->maxli)
+			&& scrn.sc_co < (lframe->baseco + lframe->maxco)) {
 		putc(oc, vttout);
 		/* putc(oc, stdout); */
 	}
-#else
-	putc(oc, vttout);
-#endif
 }
 /*---------------------------------------------*/
 /* Перекодировть символ ESC-последовательности */

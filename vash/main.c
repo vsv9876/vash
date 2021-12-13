@@ -159,6 +159,11 @@ char **argv;
 	lfmain.maxli  =  24;
 	/* lfmain.baseli = -24; */
 	lfmain.baseli = hwframe.maxli - lfmain.maxli;
+	/* correct below maxsize */
+	if (lfmain.baseli < 0) {
+		lfmain.maxli = hwframe.maxli;
+		lfmain.baseli = 0;
+	}
 	//lfmain.baseco = 0;
 	lfmain.maxco  = hwframe.maxco;
 	lframe = &lfmain;
