@@ -1,57 +1,60 @@
 ---LINES
----#sp      = h     "space "
-sp      = iv    -       -       -       -     "|space|"
 
 
-
-
-
+mainv   = gh    -       -       -       -     "main view"
+cmded   = gh    -       -       -       -     "command editor"
+exiti   = gh    -       -       -       -     "exit code indicator"
+hist    = gh    -       -       -       -     "history"
+runcmd  = gm    -       -       -       -     "//run_a_command//.........."
 
 ---SCREEN                                     
 =vash context switching diagram
-                                              
- ,--> ."main view"................      --keys from std profile:--
- :              :    :    :    :         * lowercase letter key:                
- : ."history".  :    :    :    :           {1} - type unix command from scratch 
- :  :      ^    :    {1}  :    :         * uppercase letter key or digit key:   
- :  :      : .:CA... :    {2}  :           {2} - get a template to editor       
- :  : .:HE...   :    :    :    {3}         {3} - run a command defined          
- :  :      :    :    v    v    :            
- :  `-> ."command editor"...   :         .:CA... - switch between main view and
- :          ^            :     :            command editor, keeping both states
- :          :       .:NL...    :             
- :          :            :     :        --command editor keys--                 
- :          :            v     v         .:NL... - run a command                
- .:SP...    :   //_run_a_command_//      .:HE... - get history search view      
- :          :         :                      
- ^--- ."exit code indicator"..          --exit code indicator keys--            
-          ^             :                .:NL... - trap for mistakes protection 
-          `-- .:NL... <-'                .:SP... - return to main view          
-                                                                             
-                                        
+ 
+.'--main_view_keys--                       .mainv............................. 
+ * .:CA... - switch between main view and   ^   :               :       :      
+     command editor, keeping both states    : .:CA...       .'[a-z]     :      
+ * lowercase letters or '.' or '/':         :   :  .hist....    :   .'[0-9A-Z] 
+   - type unix command from scratch  {1}    :   :   ^     :    {1}    :   :    
+ * digit, uppercase, and other:             :   :   :     :     :    {2}  :    
+   - edit a command from template    {2}    :   : .:HE... :     :     :  {3}   
+   - run a command immediately       {3}    :   :   :     :     :     :   :    
+                                            : .cmded..................... :    
+.'--command_editor_keys--                   :          ^         :        :    
+  .:NL... - run a command                 .:SP...      :       .:NL...    :    
+  .:HE... - get history search view         :       .:AL...      :        :    
+                                            :       .'[a-z]  .runcmd.......... 
+.'--exit_code_indicator_keys--              :          :        :              
+  .:NL... - trap for mistakes protection   .exiti................. <---        
+  .:SP... - return to main view                                  ---> .:NL...  
+  .:AL..., .:AU..., .:AD..., .:AR... - return to command editor                          
+                                                      
+ * main view keys may be vary, depending of used profile
+
 
 ---#=vash (C) 1990-2021 Sergey Vovk
 ---END
- --keys of main view, profile dependend--
+--# backup garbage, to be deleted below...
+
+--keys of main view, profile dependend--
  :     :     .'[a-z./]  .'[A-Z0-9]      
 
                                          .:NL... - take a command from history
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            
+,--> ."main view"................  
+:              :    :    :    :    
+: ."history".  :    :    :    :    
+:  :      ^    :    {1}  :    :    
+:  :      : .:CA... :    {2}  :    
+:  : .:HE...   :    :    :    {3}  
+:  :      :    :    v    v    :    
+:  `-> ."command editor"...   :    
+:          ^            :     :    
+:          :       .:NL...    :    
+:          :            :     :    
+:          :            v     v    
+.:SP...    :   //_run_a_command_// 
+:          :         :             
+^--- ."exit code indicator"..      
+         ^             :           
+         `-- .:NL... <-'                                                       
                                             
  

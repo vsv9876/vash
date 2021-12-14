@@ -158,8 +158,7 @@ KBL kbl[KBLSIZE] = {
 { KB_AR, "<right>", KBCOD('k','r'), KB_EMPTY       },
 
 /* limited customizing possible (labels only) */
-{ KB_SP, "\\space\\",
-					KBCTL(    'S'), KB_EMPTY       },
+{ KB_SP, "Space  ", KBCTL(    'S'), KB_EMPTY       },
 { KB_TA, "^I,Tab ", KBCTL(    'I'), KB_EMPTY       },
 
 /* full customizing supported with vhset */
