@@ -111,31 +111,70 @@ static showed()
 }
 */
 
+/* can be represented as wchar_t[], where [0] and [1] initialised before usage */
+typedef struct {
+	wchar_t wco_sig;	/* allways (wchar_t)-1 */
+	wchar_t wco_size;	/* size of srtring container */
+	wchar_t wcs[];	/* string container */
+} wcsobj_t;
+
+wcsobj_t wcotest = {
+		-1, 20, L"test"
+};
+
+#ifdef DURA_TODO
+/* calculate vshift and i_shift */
+int vshift(vsize, i)
+int vsize;
+int i;
+{
+	int vshift;
+	vshift = ((i * 2)/vsize) * (vsize/2);
+	return vshift;
+}
+int ishift(vshift, i)
+int vshift;
+int i;
+{
+	int ishift;
+	ishift = i - vshift;
+	return ishift;
+}
+#endif
+
+
 /* ВЫПОЛНИТЬ ИЗМЕНЕНИЯ И ПОКАЗАТЬ */
 /* note: string buffer may be longer then visible size */
-static int chgstr(wcs, vsize, i, cod)
-register wchar_t *wcs; /* editing string buffer pointer */
+static int chgstr(wcsobj, vsize, i, cod)
+wcsobj_t *wcsobj;     /* editing string object buffer */
 int  vsize;		/* visible size of the field/line on the screen */
 int i;			/* position of the change if required */
 kbcod cod;		/* kbcod() pressed */
 {
+	register wchar_t *wcs; /* editing string buffer pointer */
 	register int j;
 	register int i_end;      /* position of last significant (non-space) symbol */
 		 int i_chged;       /* position of symbol to be changed */
-#ifdef UNLIM_STR_BUFF_OK
-	int size = 0;	/* size (length) of string buffer, without trailing 0 */
-	int vshift = 0;	/* visible part shift of s from beginning */
-	int i_shift = 0; /* cursor position inside of visible part of s */
 
-	for (j = 0; wcs[j] != 0; i++)
-		; size = j;
-	/* calculate vshift and i_shift */
-	if (size > vsize) {
-		vshift = (i / (vsize/2)) * (vsize/2);
-		i_shift = size % vsize;
-	}
-	/* TODO: make vsize and size usage correct below this point */
+		int size = 0;	/* size (length) of string buffer, without trailing 0 */
+		int vshift = 0;	/* start of visible part of s */
+		int i_shift = 0; /* cursor position inside of visible part of s */
+
+	wcs = wcsobj;
+	if (wcsobj->wco_sig == -1) {
+		size = wcsobj->wco_size;
+		/*wcs = &(wco->wcs);*/
+		wcs++; wcs++; /* shift pointer to real string buffer */
+#ifdef DURA_TODO
+		if (size > vsize && vsize > 2) {
+			vshift = vshift(vsize, i);
+			i_shift = ishift(vshift, i);
+		}
 #endif
+		/* TODO: make vsize and size usage correct below this point */
+
+	}
+
 	/* find logical end of edited text in the string */
 	if(edinsm) {
 		for(i_end = vsize; i_end > 0 && wcs[--i_end] == ' ';) ;

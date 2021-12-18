@@ -9,134 +9,25 @@ MSE     = gm - - - - " MSE "
 
 ---SCREEN                                                          
 =LINLIB generic keyboard command/actions
-                                                                                
-+."common"..........             ."on active line"...          --sample-view--      
-+get help:          .:HE...      menu item select:    .:SP...  .MSE. .mse.....       
-+exit/close page:   .:EX...                  select:  .:NL...                        
-+refresh page:      .:RE...      alter or toggle,              .ALT. .alt2.          
-+cancel:            .:CA...                 forward:  .:SP...                        
-+next line:         .:TA...                backward:  .:DE...                        
-+                                switch to edit,               .VAR. .var.....       
-+."page navigation".                   keep content:  .:SP...                        
-+jump to 1st line:  .:KH...                   clear:  .:DE...                        
-+     - last line:  .:KE...                                                         
-+next page/part:    .:PU...     ."in edit mode".........           --option----        
-+prev page/part:    .:PD...     toggle Ins/Ovr mode:     .:KI...   .:PR .:PR...        
-+                               erase left from cursor:  .:DE...                       
-+."special".........                erase below cursor:  .:KD...   .:PR .:DE...        
-+commit,                                 erase up to end.......... .:PR .:SP...        
-+  complete editing,            jump to 1st symbol:      .:KH...   .:PR .:AL...        
-+    next line:     .:NL...       jump to end of text:   .:KE...   .:PR .:AR...        
-+option prefix:     .:PR...                                                         
-+                                                                                      
-=LINLIB (c) 1986-1990,2020 vsv & team
+                                                                              
++."common"..........            .MSE.   .mse..... -------select menu item:
++get help:          .:HE...                       .:SP... or .:NL...
++exit/close page:   .:EX...                               
++refresh page:      .:RE...     .ALT.   .alt2.    --------alter or toggle:
++cancel:            .:CA...                       .:SP... - forward
++next line:         .:TA...                       .:DE... - backward
++                               
++."page navigation".            .VAR.   .var..... --------switch to edit: 
++jump to 1st line:  .:KH...                       .:SP... - keep content
++     - last line:  .:KE...                       .:DE... - clear field
++next page/part:    .:PU...                                                     
++prev page/part:    .:PD...     ."in edit mode"........          --with-prefix-
++                               erase left from cursor:  .:DE...              
++."special".........                erase below cursor:  .:KD...  .:PR .:DE...
++commit,                               erase up to end:           .:PR .:SP...
++  complete editing,            jump to 1st symbol:      .:KH...  .:PR .:AL...
++    next line:     .:NL...       jump to end of text:   .:KE...  .:PR .:AR...
++option prefix:     .:PR...     toggle Ins/Ovr mode:     .:KI...  .:PR .:PR... 
++                               
+=LINLIB (c) 1986-1990,2020 vsv&team
 ---END                          
-
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-                                                                               
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

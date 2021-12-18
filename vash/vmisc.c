@@ -363,19 +363,22 @@ int   size;     /* размер строки для ввода */
 	for ( ;; ) {
 		w_msg(TXT, pmtstr);
 		savedf = edinff;
-		edinff = 0;     /* не показывать состояние редактора */
+		/*edinff = 0;     /* не показывать состояние редактора */
 		cod = r_line(&pattl, 0);
 		edinff = savedf;
 		switch (cod) {
 		default:
 			continue;
 		case KB_NL:
+		case KB_CA:
 		case KB_EX:
 			return(cod);
 			break;
+/*
 		case KB_CA:
 			return(0);
 			break;
+*/
 		}
 	}
 }

@@ -153,7 +153,7 @@ kbcod cod;
 
 	total = 0;
 	/* ввести шаблон пометки */
-	sprintf(prompts, " mark #%c", cod);
+	sprintf(prompts, " mark #%c ", cod);
 	switch(pmtrstr(prompts, pattfs, 40)) {
 	case KB_CA:
 	case KB_EX:
@@ -223,7 +223,7 @@ int f_mark(cmd)
 char *cmd;
 {
 	kbcod cod;
-	cod = cmd[0]; /*переделать на нормальный макрос для kbcod */
+	cod = cmd[0]; /* TODO: переделать на нормальный макрос для kbcod */
 
 	switch (cod) {
 	case '+':

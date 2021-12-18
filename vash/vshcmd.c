@@ -73,6 +73,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	justrun = 0;
 	okwait = 1;  /* флаг: после wait() не ожидать подтверждения пробелом, если OK */
 	cod = 0;
+	int atrib;
 
 	if (cmd == (char *)0) {
 	    /* используется последняя команда */
@@ -236,18 +237,29 @@ std_shell:
 					/*w_str(tmpstr); cp_cret();*/
 				}
 			}
-			w_str(tmpstr); cp_cret();
+			cp_cret(); w_str(tmpstr); /*cp_sav();*/
 			at_set(CMD);
 			if (okwait == 1) {
 				do {
 					fflush(vttout);
 					fflush(stdout);
 					cod = r_cod(0);
-					at_set(ATT|VEXT);
+					at_set(atrib = ATT|VEXT);
 					/*VARARGS*/
 					if (cod == KB_NL) {
-					  sprintf(tmpstr, " Please, press SPACE bar or type a command ");
-					  w_str(tmpstr);
+					  /*sprintf(tmpstr, "-- SPACE bar or type a command ");*/
+					  /*w_str(" -- ");*/
+/*
+					  at_set(0); w_str("<");
+ 					  w_lh_str(":NL"); at_set(0); w_str("> does nothing -- please, use <");
+*/
+ 					  at_set(0); w_str("-- please, use <");
+					  w_lh_str(":SP"); at_set(0); w_str("> or <");
+					  w_lh_str(":CA"); at_set(0); w_str(">, then press ");
+					  w_lh_str(":HE"); at_set(0); w_str(" to get help ");
+					  at_set(atrib); w_str(" -- ");
+					  er_eop(atrib);
+					  /*cp_fet();*/ /*w_str(tmpstr);*/
 					}
 					/*if (cod == KB_AU) {
 					 *	unr_c(cod);

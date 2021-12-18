@@ -5,32 +5,31 @@ mainv   = gh    -       -       -       -     "main view"
 cmded   = gh    -       -       -       -     "command editor"
 exiti   = gh    -       -       -       -     "exit code indicator"
 hist    = gh    -       -       -       -     "history"
-runcmd  = gm    -       -       -       -     "//run_a_command//.........."
+runcmd  = gm    -       -       -       -     "/_run_a_command_/.........."
 
 ---SCREEN                                     
-=vash context switching diagram
+=vash context switching diagram **
  
-.'--main_view_keys--                       .mainv............................. 
+--main_view_keys--                         .mainv............................. 
  * .:CA... - switch between main view and   ^   :               :       :      
-     command editor, keeping both states    : .:CA...       .'[a-z]     :      
- * lowercase letters or '.' or '/':         :   :  .hist....    :   .'[0-9A-Z] 
-   - type unix command from scratch  {1}    :   :   ^     :    {1}    :   :    
- * digit, uppercase, and other:             :   :   :     :     :    {2}  :    
-   - edit a command from template    {2}    :   : .:HE... :     :     :  {3}   
-   - run a command immediately       {3}    :   :   :     :     :     :   :    
-                                            : .cmded..................... :    
-.'--command_editor_keys--                   :          ^         :        :    
-  .:NL... - run a command                 .:SP...      :       .:NL...    :    
-  .:HE... - get history search view         :       .:AL...      :        :    
-                                            :       .'[a-z]  .runcmd.......... 
-.'--exit_code_indicator_keys--              :          :        :              
-  .:NL... - trap for mistakes protection   .exiti................. <---        
-  .:SP... - return to main view                                  ---> .:NL...  
-  .:AL..., .:AU..., .:AD..., .:AR... - return to command editor                          
-                                                      
- * main view keys may be vary, depending of used profile
-
-
+     command editor, keeping both states    : .:CA...       .'[a-z./]   :      
+ * lowercase letters or '.' or '/':         :   :  .hist....    :       :
+   - type unix command from scratch  {1}    :   :   ^     :     :   .'[0-9A-Z]
+ * digit, uppercase, and other:             :   :   :     :    {1}    :    :  
+   - edit a command from template    {2}    :   : .:HE... :     :     :    :  
+   - run a command immediately       {3}    :   :   :     :     :    {2}   :   
+                                            :   :   :     :     :     :    :
+--command_editor_keys--                     :  .cmded...................   :  
+  .:HE... - get history search view         :     ^   :                   {3} 
+  .:NL... - run a command                 .:CA... : .:NL...                :  
+                                          .:SP... :   `---> .runcmd.......... 
+--exit_code_indicator_keys--                :     :           :              
+  .:NL... - trap for mistakes protection   .exiti............... <--
+  .:SP..., .:CA... - return to main view                     `--> .:NL...  
+  any other - return to command editor
+=                                   
+ * main view keys may be vary, depending of profile in use
+** please, use command 'man vash' to get full description
 ---#=vash (C) 1990-2021 Sergey Vovk
 ---END
 --# backup garbage, to be deleted below...
