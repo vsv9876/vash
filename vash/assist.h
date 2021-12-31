@@ -1,4 +1,6 @@
-
+/*
+ * visual assistant shell
+ */
 #include "line.h"
 
 #ifndef assist_h_def
@@ -109,5 +111,6 @@ extern  char *Cfill;
 extern  char Crepf[];
 extern  char Coutf[];
 extern  char Csubs[];
+
 
 #endif /* assist_h_def */

@@ -10,10 +10,11 @@
 #
 # Умолчания: заполнить(fill), откуда(in), куда(out).
 #
--fexec ps -f -u $LOGNAME
--i
+#-fexec ps -f -t `tty` -u $LOGNAME
+-fexec ps -x
+-i/proc/.
 -o/dev/null
--@2
+-@1
 #
 # -@$3
 # -@20-25
@@ -24,14 +25,14 @@
 
 # НАЗВАНИЯ КЛАВИШ
 #-1proc>
--2INT
--3test
+-2HUP
+-3env
 -4QUIT
 -5TERM
--6
+-6test
 -7ALRM
 -8KILL
--9SETUP
+-9setup
 -0exit
 
 @std.mark
@@ -40,37 +41,48 @@
 
 :U2
 :2
-       * -   kill -1 #@
-       * +   kill -1 ##
+    * -   kill -1 #@
+    * +   kill -1 ##
 :U3
 :3
-       * -   kill -0 #@
-       * +   kill -0 ##
+    * *   ;ps -f e -p #@ | sed -E 's/( )([A-Za-z0-9_]*=)/\n\2/g' | #m
+#    * +   :ps -f e -q #, | sed -E 's/( )([A-Za-z0-9_]*=)/\n\2/g' | #m
+#    * +  :ps -f -q #, | #m
 :U4
 :4
-       * -   kill -3 #@
-       * +   kill -3 ##
+    * -   kill -3 #@
+    * +   kill -3 ##
 :U5
 :5
-       * -   kill -15 #@
-       * +   kill -15 ##
+    * -   kill -15 #@
+    * +   kill -15 ##
+:U6
+:6
+    * -   kill -0 #@
+    * +   kill -0 ##
 :U7
 :7
-       * -   kill -14 #@
-       * +   kill -14 ##
+    * -   kill -14 #@
+    * +   kill -14 ##
 :U8
 :8
-       * -   kill -9 #@
-       * +   kill -9 ##
+    * -   kill -9 #@
+    * +   kill -9 ##
 :U9
 :9
-       * *   _sup
+    * *   _sup
+
+:^D
 :EX
 :U0
 :0
-       * *     :exit
+    * *     :exit
 :&
-       * *     _cmdset ps.rc
+    * *     _cmdset ps.rc
+       
+:L
+    * -   :ps -fll -p #@
+    * +   :ps -fll -q #, | #m
 
 :=
     * * _rescan

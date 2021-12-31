@@ -40,7 +40,7 @@ extern LPA lpaout[];
 
 extern int allcod;
 
-#define FLOAT_CVT /*not supported, use line->cvtf instead, please*/
+#define FLOAT_CVT /*not supported, use line->cvtf instead, please*//*TODO WTF comment about */
 
 /*#define DEBUG_R_LINE*/
 #ifdef DEBUG_R_LINE
@@ -268,11 +268,11 @@ out_string:
 	if( !(fmtlock = ((attr & FLO) == FLO))) { /*=== ЕСЛИ НЕ БЛОКИРОВАН */
 		if(line->cvtf) {                /* ЧЕРЕЗ ФУНКЦИЮ */
 			(*(line->cvtf))(line, cod, "w", u8buf);
-			u8size = u8wcs(wcsptr, u8buf);
+			u8size = u8swcs(wcsptr, u8buf);
 		}
 		else if(line->cvts) {           /* В СТИЛЕ printf */
 			cvts_out(line, u8buf);
-			u8size = u8wcs(wcsptr, u8buf);
+			u8size = u8swcs(wcsptr, u8buf);
 		}
 		else {                          /* ПРОСТО СТРОКА */
 			/* editptr = line->varl; /*varl показывает на UTF-8, а нужно wchar_t*/
@@ -283,7 +283,7 @@ out_string:
 	} else {
 string_simple:
 		/*strncpy(s, line->varl, size); s[size] = 0;*/
-		u8size = u8wcsn(wcsptr, line->varl, size);
+		u8size = u8snwcs(wcsptr, line->varl, size);
 		wcsptr[size] = 0;
 	}
 

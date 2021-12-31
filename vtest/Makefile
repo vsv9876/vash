@@ -21,7 +21,7 @@ VISI          = ../visi
 VBIN          = $(VISI)/bin
 VLIB          = $(VISI)/lib
 
-PROGRAM       = pmain
+PROGRAM       = vtest
 EXECMODE      =  711
 #DEST          = /usr/local
 DESTDIR       =

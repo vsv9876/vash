@@ -37,6 +37,7 @@
 #ifndef line_h_def
 #define line_h_def
 #include <stdio.h>
+#include <wchar.h>
 
 /******* эти константы определяются через Makefile, CFLAGS_VISI */
 /* #define USE_TERMIO    /* must be enabled on SYSTEM V */
@@ -124,7 +125,7 @@ typedef short  bool;     /* короткий формат для целых чи
 #define tocod0(c)     ((c)  & 0x00ff)     /* prepare 1st symbol */
 #define tocod1(c) (((c)<<8) & 0xff00)     /* prepare 2nd symbol */
 
-#define KBPRE 0x1f000000    /* kbcod control prefix, outside Unicode space which below 0x10ffffff */
+#define KBPRE 0x1f000000    /* kbcod control prefix, outside Unicode space below 0x10ffffff */
 /* сформировать код клавиши (kbcod из двух типа char) */
 #define KBCOD(c0, c1)   (KBPRE|tocod0(c0)|tocod1(c1))
 #define KBUSR( c )      (KBPRE|tocod0('U')|tocod1(c))
@@ -268,6 +269,42 @@ typedef struct {
 extern LFRAME hwframe; /* hardware frame, initialized in hw_ini() */
 extern LFRAME *lframe; /* logical current frame, by default is &hwframe */
 
+/*
+ * string object limited itself
+ * can be represented as wchar_t[], where [0] and [1] initialised before usage
+ */
+
+#define WCO_SIG ((wchar_t)-1)
+typedef struct {
+	wchar_t wco_sig;	/* allways (wchar_t)-1 */
+	wchar_t wco_size;	 /* size of string container */
+	wchar_t wcs[];	/* string container */
+} wcsobj_t;
+#define const_wcsobj(z,s) { WCO_SIG,z,s }
+
+typedef unsigned char u8char_t;
+
+#define U8O_SIG (0xFF)
+typedef struct {
+	u8char_t u8o_sig;	/* allways (u8char_t)0xFF */
+	u8char_t u8o_sizeh;	/* size of string container */
+	u8char_t u8o_sizel;	/* size of string container */
+	u8char_t u8s[];		/* string container */
+} u8sobj_t;
+#define const_u8sobj(z,s) { U8O_SIG,(z/256),(z%256),s }
+
+extern int wco_size(), wcsobj();
+extern int u8o_size(), u8sobj();
+/* convert string objects couple functions */
+extern int u8owco(), wcou8o();
+
+/* unicode utf-8 limited support */
+extern  int mb_cur_max;
+extern  int u8nopass;
+extern  int u8slen(), u8swcs(), u8snwcs();
+extern char *u8pxx();
+
+
 /*--------------------*/
 /* функции библиотеки */
 /*--------------------*/
@@ -297,12 +334,6 @@ extern  int     w_msg(), w_emsg(), w_help(), u_page(), d_page();
 extern  LINE	*b_page();
 extern FILE     *dafopen();
 
-/* unicode utf-8 limited support */
-extern  int mb_cur_max;
-extern  int u8nopass;
-extern  int u8len(), u8wcs(), u8wcsn();
-extern char *u8pxx();
-
 #define er_page er_pag
 #define r_str   e_str
 
@@ -313,6 +344,11 @@ extern char *u8pxx();
 /* internal function, called from hw_set only */
 extern int	gtty_sz();
 extern int tty_li, tty_co;
+
+/* watch/clock and e_str indicator shares common place on the screen */
+#define WSHOW_LI (lframe->maxli - 2)
+#define WSHOW_CO (lframe->maxco - 9)
+#define WSHOW_AT TXT|VEXT
 
 
 #endif /* line_h_def */

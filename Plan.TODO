@@ -83,8 +83,10 @@
  *  - f2:menu - rework to support std-profiles
 
     - Часы - убрать секунды (или сделать опцию)
+      -- WTF: #define CP_SAV
 ********************************************************************
     -- MEMO
     -   a=F find . ! -path \*/.git/\* -type d | sed s,^./,, 
     
     - $ man rpm|egrep "^[ \t]+-([^ ])+" | sed 's/ /\n/g' | grep -e ^- |sort -u | less
+    - 中文素养    国际站 == vtest

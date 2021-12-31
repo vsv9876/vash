@@ -75,6 +75,7 @@ showclck()
 	time_t curtime;
 	struct tm *tp;
 	struct tm *localtime();
+	char tmps[12] = "";
 
 	if (clockf) {
 
@@ -87,9 +88,11 @@ showclck()
 #ifndef CP_SAV
 			cp_sav();
 #endif
-			cp_set(lframe->maxli - 2/*1*/, lframe->maxco - 8, TXT|INP);
-			fprintf(vttout, "%02d:%02d'%02d",
-			tp->tm_hour, tp->tm_min, tp->tm_sec);
+			/*cp_set(lframe->maxli - 2 //1//, lframe->maxco - 8, TXT|INP);*/
+			cp_set(WSHOW_LI, WSHOW_CO, WSHOW_AT);
+			sprintf(tmps, "%02d:%02d'%02d",
+					tp->tm_hour, tp->tm_min, tp->tm_sec);
+			w_str(tmps);
 #ifndef CP_SAV
 			cp_fet();
 #endif

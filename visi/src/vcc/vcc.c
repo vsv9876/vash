@@ -636,7 +636,7 @@ int     typ;            /* 'h', 'c', 'k', 'K', '?' */
 		for(os=lbpo; *os; os++) ;       /* НАЙТИ КОНЕЦ */
 		*os++ = '"';
 		while(*s) {
-			if(*s == '"') *os++ = '\\';
+			if(*s == '"' || *s == '\\') *os++ = '\\';
 			/*sprintf(os++, "%lc", *s++);*/
 			sprintf(mb_s, "%lc", *s++);
 			for(mb_ptr = mb_s; *mb_ptr != '\0'; mb_ptr++) {
@@ -933,7 +933,7 @@ fil_sc()
 
 	/*s = lbpo; /* lbpo все еще в utf-8 */
 	/*fprintf(stderr, "lbpo:='%s'\n", lbpo); fflush(stderr);*/
-	len = u8wcsn(wclbpo, lbpo, LBPOSIZE);
+	len = u8snwcs(wclbpo, lbpo, LBPOSIZE);
 	s = wclbpo;
 
 	savescr = scr = &scrp[ MAX_BUF_CO * cur_li ];

@@ -162,7 +162,7 @@
 
 :&
 #       Программа (настройка) ash для работы с процессами
-	* *     :ASH=l20ps; export ASH; exec vash ps.rc
+	* *     ;env VASH=l20spw VASH_LABEL='ps ' vash ps.rc
 #        * *     _cmdset ps.rc
 
 

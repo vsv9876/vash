@@ -45,11 +45,11 @@ char *str; /*utf8 buffer*/
 
 	if (str != NULL /*&& *str != '\0'*/ && *spp != NULL ) {
 		if(*mod == 'r') {
-			/*u8mbsn(*spp, str, size);*/
+			/*u8snu8s(*spp, str, size);*/
 			strcpy(*spp, str);
 		}
 		else    {
-			/*strncpy*/u8mbsn(str, *spp, size);
+			/*strncpy*/u8snu8s(str, *spp, size);
 			/*if (strlen(*spp) >= size) str[size] = '\0';/*это обрезание лучше выполнять в [wr]_line*/
 		}
 	} else {
@@ -94,7 +94,7 @@ char *str;
 			strcpy(sp, str);
 		}
 		else    {
-			/*strncpy*/u8mbsn(str, sp, size);
+			/*strncpy*/u8snu8s(str, sp, size);
 			/*if (strlen(sp) >= size) str[size] = '\0';/* миссия [wr]_line*/
 		}
 	}

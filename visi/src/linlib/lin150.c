@@ -29,6 +29,12 @@
 #include "line.h"
 #include "line0.h"
 
+#define VTTOUT_DEBUG_OFF
+#ifdef VTTOUT_DEBUG
+#include <stdlib.h>
+#include <time.h>
+#endif
+
 /*
 **      ВЫВОД НА ЭКРАН СТРОК В КОДАХ ТЕРМИНАЛА
 **      И С ПЕРЕКОДИРОВКОЙ (ПО РЕЖИМАМ ДРАЙВЕРА)
@@ -83,7 +89,25 @@ extern  int osgflg;             /* ФЛАГИ ДРАЙВЕРА (old.sg_flags) */
 int w_putc(c)
 register int c;
 {
+#ifdef VTTOUT_DEBUG
+	int nanosec = 0;
+	struct timespec req = { 0 };
+	struct timespec rem = { 0 };
+	char *sleepenv;
+
+	if ((sleepenv = getenv("VTTOUT_SLEEP")) != NULL) {
+		req.tv_sec  = 0;
+		req.tv_nsec = 1000 * atoi(sleepenv); /* in microseconds, not nanoseconds */
+	}
+#endif
+
 	fputc(c, vttout);
+#ifdef VTTOUT_DEBUG
+	if (sleepenv != NULL) {
+		fflush(vttout);
+		nanosleep(&req, &rem);
+	}
+#endif
 }
 /*--------------------------------*/
 /* ВЫВОД СТРОКИ В КОДАХ ТЕРМИНАЛА */
@@ -109,7 +133,8 @@ register char *s;
 		if(((osgflg & LCASE)!=0) && (c >= 0140) && (c < 0177))
 			c |= 0200;
 #endif
-		fputc( c, vttout );
+		w_putc( c );
+		/*fputc( c, vttout );*/
 		/* fputc( c, stderr ); */
 		/* fputc( c, stdout ); */
 	}
@@ -189,19 +214,28 @@ int c;
 #endif /* DEMOS2CYR */
 #ifdef  ASCII7
 	oc &= 0177;
+#else
+	oc &= 0xFF;
 #endif
-	/* save new position of cursor to be expected, then check if inside screen borders */
 	/* if byte is a part of UTF-8, advance cursor position only on 1st one */
 	if (mb_cur_max == 1) {
 		/* single-byte encoding is active */
 		scrn.sc_co += 1;
 	} else {
-		if (c <= 0177) /*1st unicode(UTF-8) symbol */
-		scrn.sc_co += 1;
+		/* 1st byte of UTF-8 symbol or ASCII symbol */
+		if (oc <= 0177 || (oc & 0xC0))
+			scrn.sc_co += 1;
 	}
-	if (scrn.sc_li < (lframe->baseli + lframe->maxli)
-			&& scrn.sc_co < (lframe->baseco + lframe->maxco)) {
-		putc(oc, vttout);
+	/* prevent write_out(printing) outside of logical frame */
+	if (
+			scrn.sc_li < (lframe->baseli + lframe->maxli)
+			&& scrn.sc_li >= lframe->baseli
+			&& scrn.sc_co < (lframe->baseco + lframe->maxco)
+			&& scrn.sc_co >= lframe->baseco
+	   )
+	{
+		w_putc( oc );
+		/*putc(oc, vttout);*/
 		/* putc(oc, stdout); */
 	}
 }

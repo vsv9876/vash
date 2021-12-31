@@ -13,7 +13,9 @@
 
 ---PAGE linem
 ---LINES
-m_exit  = ipm      -   -   mkexit  tst_m   " close, quit "
+m_exit  = ipm      -   -    mkexit  tst_m    " quit "
+e_tst1  = ipm      -   "7"  e_tst   m_test   " edit1 test "
+e_tst2  = ipm      -   "18" e_tst   m_test   " edit2 test "
 
 s_raw   = ipv      -   -	-       -	u8s
 s_var   = ipv      -   -	cvt_s   -	u8s
@@ -24,25 +26,24 @@ s_vl	= ipv      -   "%ld"	-       -	&vl
 s_vh	= ipv      -   "%hd"	-       -	&vh
 s_vi	= ipv      -   "%d"	-       -	&vi
 ---# unsupported
-
-
 ---SCREEN
-=testing in runtime library ov VISI/LINLIB V4-Unicode
+=testing VISI/LINLIB V4-Unicode library + runtime
 
 
-
-	          .m_exit.......            
-                                            
-	str_raw   .s_raw..                  
-	str_var   .s_var..                  .'?,/       dump string
-	str_tst   .s_tst..                  
-	s_double  .s_vd.................    .'+,=       dump numbers
-	s_float   .s_vf..........           
-	s_long    .s_vl.....                .:KI..  dump string with byte hex
-	s_short   .s_vh.....                
-	s_int     .s_vi.                    .:HE....  get help
-
-
+            .m_exit.......          .:HE.... get help
+            .e_tst1.......          .'"'     e_str(3)
+            .e_tst2.......          .':;     e_str(5)
+                                    .'?/     dump e_str object
+  str_raw   .s_raw..                .'|\     dump string with byte hex
+  str_var   .s_var..                
+  str_tst   .s_tst..                
+  s_double  .s_vd.................  .'+=     dump numbers
+  s_float   .s_vf..........         
+  s_long    .s_vl.....              
+  s_short   .s_vh.....               
+  s_int     .s_vi.                  
+                                    
+                                    
 
 
 

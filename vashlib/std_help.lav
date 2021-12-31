@@ -4,32 +4,32 @@
 mainv   = gh    -       -       -       -     "main view"
 cmded   = gh    -       -       -       -     "command editor"
 exiti   = gh    -       -       -       -     "exit code indicator"
-hist    = gh    -       -       -       -     "history"
+hist    = gh    -       -       -       -     "history menu"
 runcmd  = gm    -       -       -       -     "/_run_a_command_/.........."
 
 ---SCREEN                                     
 =vash context switching diagram **
  
 --main_view_keys--                         .mainv............................. 
- * .:CA... - switch between main view and   ^   :               :       :      
-     command editor, keeping both states    : .:CA...       .'[a-z./]   :      
- * lowercase letters or '.' or '/':         :   :  .hist....    :       :
-   - type unix command from scratch  {1}    :   :   ^     :     :   .'[0-9A-Z]
- * digit, uppercase, and other:             :   :   :     :    {1}    :    :  
+ * .:CA... - switch between main view and   ^   :       ^       :       :      
+     command editor, keeping both states    : .:CA...  .'=  .'[a-z./]   :      
+ * lowercase letters or '.' or '/':         :   :       :       :       :
+   - type unix command from scratch  {1}    :   : .hist........ :   .'[0-9A-Z]
+ * digit, uppercase, and other:             :   :   ^     :    {1}    :    :  
    - edit a command from template    {2}    :   : .:HE... :     :     :    :  
-   - run a command immediately       {3}    :   :   :     :     :    {2}   :   
+   - run a command immediately       {3}    :   :   :   .:NL... :    {2}   :   
                                             :   :   :     :     :     :    :
 --command_editor_keys--                     :  .cmded...................   :  
   .:HE... - get history search view         :     ^   :                   {3} 
   .:NL... - run a command                 .:CA... : .:NL...                :  
                                           .:SP... :   `---> .runcmd.......... 
 --exit_code_indicator_keys--                :     :           :              
-  .:NL... - trap for mistakes protection   .exiti............... <--
+  .:NL... - trap for mistakes protection   .exiti...............<--
   .:SP..., .:CA... - return to main view                     `--> .:NL...  
   any other - return to command editor
-=                                   
+                                   
  * main view keys may be vary, depending of profile in use
-** please, use command 'man vash' to get full description
+ ** please, use command 'man vash' to get full description
 ---#=vash (C) 1990-2021 Sergey Vovk
 ---END
 --# backup garbage, to be deleted below...

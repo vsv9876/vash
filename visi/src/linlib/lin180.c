@@ -22,7 +22,7 @@
  */
 
 /* копировать n символов UTF-8 в строку wchar_t */
-int u8wcsn(dst, s, n)
+int u8snwcs(dst, s, n)
 wchar_t *dst;
 const char    *s;
 int      n;
@@ -36,26 +36,49 @@ int      n;
 }
 
 /* копировать строку UTF-8 в строку wchar_t */
-int u8wcs(dst, src)
+int u8swcs(dst, src)
 char    *src;
 wchar_t *dst;
 {
-	return(u8wcsn(dst, src, MAXLICO*4));
+	return(u8snwcs(dst, src, MAXLICO*4));
+}
+
+/* копировать n символов в строку UTF-8 из строки wchar_t */
+int wcsnu8s(dst, s, n)
+wchar_t *dst;
+const char    *s;
+int      n;
+{
+	int len;
+	mbstate_t ps = { 0 };
+	mbsinit(&ps);
+    len = wcsrtombs(dst, &s, n, &ps);
+    		/*mbsrtowcs(dst, &s, n, &ps);*/
+
+	return len;
+}
+
+/* копировать в строку UTF-8 из строки wchar_t */
+int wcsu8s(dst, src)
+char    *src;
+wchar_t *dst;
+{
+	return(wcsnu8s(dst, src, MAXLICO*4));
 }
 
 /* вернуть количество символов (не байт) в строке UTF-8 */
-int u8len(str)
+int u8slen(str)
 char *str;	/* multibyte string */
 {
 	int len;
 
-    len = u8wcs(NULL, str);
+    len = u8swcs(NULL, str);
 
     return len;
 }
 
 /* копировать n символов UTF-8, из строки в строку, завершить нулем */
-int u8mbsn(dst, s, n)
+int u8snu8s(dst, s, n)
 char *dst;
 char *s;
 size_t n;
@@ -64,11 +87,49 @@ size_t n;
 	const wchar_t *from = tmp;
 	size_t len;
 
-	u8wcsn(tmp, s, n);
+	u8snwcs(tmp, s, n);
 	tmp[n] = L'\0';
 	len = wcstombs(dst, from, 4*MAXLICO);
 	if (len < 0) *dst = '\0'; /* all string to be dropped */
 	return(len);
+}
+
+
+/* convert string objects couple functions */
+int u8owco(dst, s)
+wcsobj_t *dst;
+u8sobj_t *s;
+{
+	int size;
+	size = u8o_size(s);
+	dst->wco_sig = WCO_SIG;
+	dst->wco_size = size;
+	return (u8snwcs(dst->wcs, s->u8s, size));
+}
+
+int wcou8o(dst, so)
+u8sobj_t *dst;
+wcsobj_t *so;
+{
+	int size;
+	size = wco_size(so);
+	dst->u8o_sig = U8O_SIG;
+	dst->u8o_sizeh = size / 256;
+	dst->u8o_sizel = size % 256;
+	return (wcsnu8s(&(dst->u8s), &(so->wcs), size));
+}
+
+/* cannot be implemented as a macro */
+int u8o_size(u8o)
+u8sobj_t *u8o;
+{
+	 return ((256*(u8o->u8o_sizeh))+(u8o->u8o_sizel));
+}
+
+int wco_size(wco)
+wcsobj_t *wco;
+{
+	return( wco->wco_size);
 }
 
 

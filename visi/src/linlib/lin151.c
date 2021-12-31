@@ -32,20 +32,23 @@ wchar_t c;
 	unsigned char s[6];
 	unsigned char *sp;
 	int  cnt;
-	/* save new position of cursor to be expected, then check if inside lframe(screen) borders */
-	scrn.sc_co += 1;
+	/* 
+	 * check if inside lframe(screen) borders, writeout,
+	 * then save new position of cursor to be expected
+ 	 */
 	/*if (scrn.sc_li <= lframe->maxli && scrn.sc_co <= lframe->maxco) {*/
 	if (scrn.sc_li < (lframe->baseli + lframe->maxli)
-				&& scrn.sc_co < (lframe->baseco + lframe->maxco)) {
-
+	 && scrn.sc_co < (lframe->baseco + lframe->maxco)) {
 		cnt = wctomb(s, c);
 		sp = s;
 		while(cnt-- > 0) {
-			fputc(*sp++, vttout);
+			w_putc( *sp++ );
+			/*fputc(*sp++, vttout);*/
 		}
 		/*ret = fputwc(c, vttout); fflush(vttout); if (ret == WEOF) { perror(""); exit(8); }*/
 		/* putc(oc, stdout); */
 	}
+	scrn.sc_co += 1;
 }
 
 w_wcstrn(s, n)

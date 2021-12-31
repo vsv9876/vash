@@ -15,16 +15,28 @@ extern char    *pmtsh;/* = ".$"; /*"sh>" ;*/
 /*YESXSTR*/
 int pmtshsz;            /* размер подсказки */
 
-static  char cmd0[4*MAXLICO + 2] = "";    /* ТЕКУЩАЯ КОМАНДА ОБОЛОЧКИ, размер для utf-8 */
-static  int  cmdsize = 0;       /* МАКС. РАЗМЕР СТРОКИ */
-static  int  pos = 0;           /* позиция в строке */
+/* command buffer is a string object, it is not a simple string of C/C++ */
+static  u8char_t cmdbuf[4*MAXLICO + 4] = "   ";    /* size for u8sobj_t cmdo -- below */
+static  int  cmdsize = 0;       /* vsize e_str -- depends of screen width */
+static  int  pos = 0;           /* i     e_str    позиция в строке */
 static  int old_pos = 0;		/* позиция курсора до попытки окончить ввод (completion),
 								если изменилась, выполнена вставка в буфер команды */
-extern int hlp_cmpl();
-/*
- * ФУНКЦИЯ w_cmd ВЫЗЫВАЕТСЯ В ЭТОМ МОДУЛЕ
- * И В МОДУЛЕ РАБОТЫ С ИСТОРИЕЙ
- */
+
+/*static  u8sobj_t *cmdo = cmdbuf;*/
+static  u8char_t *cmd0 = &cmdbuf[3]/*((u8sobj_t *)cmdbuf)->u8s*/;
+static  u8sobj_t *cmdo = &cmdbuf[0];
+
+static int done = 0;
+cmdo_init()
+{
+	if(done == 0) {
+		done = 1;
+		cmdo->u8o_sig = U8O_SIG;
+		cmdo->u8o_sizeh = MAXLICO / 256;
+		cmdo->u8o_sizel = MAXLICO % 256;
+	}
+}
+
 w_cmd(cmd)
 register char *cmd;
 {
@@ -35,10 +47,10 @@ register char *cmd;
 	at_set(CMD|INP);
 	/*if (getuid() == 0) pmtsh = ".#";*/
 	w_str(pmtsh);
-	cp_set(cmd_li, pmtshsz, CMD);
-	for(i = 0; cmd[i] && i < cmdsize; i++)
-		w_chr(cmd[i]);
-	cp_set(cmd_li, pmtshsz, CMD); /* base for field for string to be edited */
+//	cp_set(cmd_li, pmtshsz, CMD);
+//	for(i = 0; cmd[i] && i < cmdsize; i++)
+//		w_chr(cmd[i]);
+	cp_set(cmd_li, pmtshsz, CMD); /* point to start re_str() editor */
 }
 
 scrlst()        /* курсор к началу свитка */
@@ -70,6 +82,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
 	cmdsize = lframe->maxco - 1 - pmtshsz;
+	cmdo_init(); /* once called */
 	justrun = 0;
 	okwait = 1;  /* флаг: после wait() не ожидать подтверждения пробелом, если OK */
 	cod = 0;
@@ -93,7 +106,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			strncpy(cmd0, cmd, (size_t)cmdsize); /*TODO: WTF*/
 			cmd0[cmdsize] = 0;
 		}
-		pos = /*strlen*/u8len(cmd0);
+		pos = /*strlen*/u8slen(cmd0);
 	}
 
 	for (;;) {
@@ -103,11 +116,14 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		case KB_HE:
 		case KB_AU:
 		case KB_AD:
-			pos = /*strlen*/u8len(cmd0);     /* курсор в конец */
+			pos = /*strlen*/u8slen(cmd0);     /* курсор в конец */
 		default:
 			w_cmd(cmd0);
 		}
-		cod = re_str((char *)&cmd0[0], cmdsize, 0, &pos);
+		/*cod = re_str((char *)&cmdbuf[0], cmdsize, 0, &pos);*/
+		showtime(0);
+		cod = re_str(cmdo, cmdsize, 0, &pos);
+		showtime(1);
 	    }
 		switch(cod) {
 		default:
@@ -115,7 +131,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			continue;
 		case KB_HE:
 			/* similar as on KB_EX */
-			if (cmdvew(cmd0) >=2) {
+			if (cmdvew(cmd0) >= 2) {
 				w_msg(TXT, " ");
 				w_msg(TXT, "");
 				if (cmdrun) {
@@ -139,7 +155,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 				bell();
 			break;
 		case KB_RE:
-			er_pag(); w_cmd(cmd0);
+			er_pag(); w_cmd(cmd0); /*TODO: er_pag() covers extra space on screen - better er_eop() below y0_top */
 			break;
 		case KB_TA:
 			/* completion */
@@ -162,7 +178,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 				cmd = "";
 			}
 			/* сохранить команду, если ее редактировали */
-			if (strncmp(cmd, cmd0, /*strlen*/u8len(cmd0)) != 0) {
+			if (strncmp(cmd, cmd0, /*strlen*/u8slen(cmd0)) != 0) {
 				if (histsn) {
 					cmdghist(homedir);
 				}
@@ -244,20 +260,17 @@ std_shell:
 					fflush(vttout);
 					fflush(stdout);
 					cod = r_cod(0);
-					at_set(atrib = ATT|VEXT);
+					at_set(atrib = CMD|VEXT);
 					/*VARARGS*/
 					if (cod == KB_NL) {
 					  /*sprintf(tmpstr, "-- SPACE bar or type a command ");*/
 					  /*w_str(" -- ");*/
-/*
-					  at_set(0); w_str("<");
- 					  w_lh_str(":NL"); at_set(0); w_str("> does nothing -- please, use <");
-*/
- 					  at_set(0); w_str("-- please, use <");
+ 					  at_set(atrib); w_str(" --");
+ 					  at_set(0);     w_str(" please, use <");
 					  w_lh_str(":SP"); at_set(0); w_str("> or <");
-					  w_lh_str(":CA"); at_set(0); w_str(">, then press ");
-					  w_lh_str(":HE"); at_set(0); w_str(" to get help ");
-					  at_set(atrib); w_str(" -- ");
+					  w_lh_str(":CA"); at_set(0); w_str(">, then get help: ");
+					  w_lh_str(":HE"); at_set(0); w_str(" ");
+					  at_set(atrib); w_str("-- ");
 					  er_eop(atrib);
 					  /*cp_fet();*/ /*w_str(tmpstr);*/
 					}
