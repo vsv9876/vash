@@ -44,15 +44,14 @@ below.
 .B Vash
 is an interactive screen-oriented program
 with several features intended to simplify and to accelerate
-an interaction with unix shells via command string,
+an interaction with unix shell via command string,
 see section
-.B FEATURES
-\.
+.B FEATURES.
 
 .PP
 .B Vash
 is an interpreter which programmed with \fIconfig files\fR
-also named as
+also named
 .I vash profiles\.
 Please, see section
 .B PROFILES
@@ -62,7 +61,7 @@ Some features of \fBvash\fR are tuneable with \fIenvironment\fR variables,
 see sections
 .B ENVIRONMENT
 and
-.B SETUP\.
+.B SETUP.
 .PP
 Preferrable way to start \fBvash\fR is calling script named
 \'\fBv\fR\' which simply prepares environment before running \fBvash\fR.
@@ -96,15 +95,17 @@ refer to online pages and keep quiet.
 Just after start,
 .B vash
 is showing a \fImain view\fR\ of objects to be manipulated.
-Arrow keys on keyboard are used to move cursor which pointing an object from list\.
+.I Arrow keys
+on keyboard are used to move cursor which pointing an object from list\.
 Then operator have to press a key to do an action on object\.
 .PP
 Most popular actions has labels shown in bottom of the screen.
 Action may be done on single object pointed by cursor or on a group of objects
-marked from selection.
+marked from 
+.I selection.
 .SS profiles
 Actions are programmed in \fIprofiles\fR\. Default profile is about files in
-current directory. They can be be viewed, edited, copied, removed and so on\.
+current directory. They can be viewed, edited, copied, removed and so on\.
 .SS "one-key shirtcuts"
 In \fImain view\fR context, pressing a key switches to \fIcommand editing\fR
 context or run particular command immediately\.
@@ -118,14 +119,15 @@ If operator types english lowercase letter in \fImain view\fR context,
 switches context to \fIcommand editor\fR recognising
 beginning of unix command.
 .br
-Other keys
-used as shortcuts running assigned command, or start command editing from
+Other keys may be used as 
+.I shortcuts
+to run particular shell command, or to start command editing from
 template. For example, run 'ls -l' by pressing letter 'L'\.
 This shortens needs of keyboard input.
 More complicated tools such a
 .I parameterized
-command
-.I templates and history,
+shell command
+.I history,
 explained in section
 .B VIEWS AND CONTEXT SWITCHING.
 
@@ -159,7 +161,8 @@ provides own dialogue
 only on a part of a terminal screen.
 The rest of the screen leaves for 
 command output listing.
-\fBVash\fR switches keyboad between one of two modes:
+
+\fBVash\fR switches keyboard between one of two modes:
 .IP * 2
 \fItty mode\fR
 during command execution;
@@ -401,8 +404,9 @@ or return to
 .I main view.
 .PP
 Command editing may be continued from different points.
-Pressing \fIleft arrow\fR key puts cursor on position in command string
-before key \fIEnter\fR was pressed. Other arrow keys puts cursor at the end.
+Pressing \fIleft arrow\fR key puts cursor on that position in command string
+which was before key \fIEnter\fR was pressed.
+Other arrow keys puts cursor at the end.
 
 .PP
 Preventing mistakes during mixing tty and screen modes,
@@ -419,11 +423,12 @@ TODO
 .SH "PROFILES"
 .PP
 Profile is a list of directives with very simple syntax,
-read by \fBvash\fR on start on on special command.
+read by \fBvash\fR on start or on special command.
 \fB1st\fR symbol of string is a \fIkeyword\fR,
 and rest of the string is parameters of a statement.
 .B Parser
-of profiles builds internal tables used as program \fBvash\fR running with.
+of profiles builds internal tables used as a program
+\fBvash\fR running with.
 .RS 4
 .TP
 .B #
@@ -438,7 +443,8 @@ setup parameter, defines variouse constants and parameters
 include nested section from file specified as argument
 .TP
 .B :
-entry with key_code to \fIkey action program\fR, multiple heads allowed following each other.
+entry with key_code to \fIkey action program\fR, multiple
+heads allowed following each other.
 .br
 Key_code specified in one of form:
 .RS 12
@@ -475,7 +481,8 @@ object name pattern.
 An action may be command with optional parameters (template) or label of
 another program, or internal function.
 .SS internal functions
-designated with names with has underline symbol in 1st position. Some of them may have parameters.
+designated with names which has underline symbol in 1st position.
+Some of them may have parameters.
 
 .PP
 some commands is internal and never passed to execution by external shell.

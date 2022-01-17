@@ -28,10 +28,9 @@ K2      = ipa    -      "2"     cv_kbl  -       T_kbl2
 
 ---SCREEN
 ---#                     
----#."Keys setup"............. ."Assignment logic     Main key....     2nd".
-=Key labels & codes
-
-                                       ."Code    key key2  Label  ".
+---#=Key labels & codes
+---#
+."Action"............................. ."Code    key key2  Label  ". ."".......
     .KDESCR............................ .KCOD             .KL..... 
     .t................................. .t...             .t...... 
     

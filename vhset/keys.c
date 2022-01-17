@@ -23,8 +23,8 @@ static KBDESCR keynm[] = {
 	{ KB_AD, "cursor down" },
 	{ KB_AL, "cursor left" },
 	{ KB_AR, "cursor right" },
-	{ KB_SP, "space bar, menu/selector" },
-	{ KB_TA, "Tab, advance next line"},
+	{ KB_SP, "select/toggle (space bar)" },
+	{ KB_TA, "advance next line (Tab)"},
 
 	{ KB_NL, "Return, complete input" },
 	{ KB_DE, "erase left from cursor" },

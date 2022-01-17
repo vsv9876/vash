@@ -131,7 +131,7 @@ int i;
 	if (Rstop > 5)
 		Rstop = 5;
 
-#define DEBUG_VSHIFT
+#define DEBUG_VSHIFT_OFF
 #ifdef  DEBUG_VSHIFT
 	cp_sav();
 	cp_set(0, -30, TXT|VEXT);
