@@ -1,59 +1,59 @@
 ---LINES
 
-
 mainv   = gh    -       -       -       -     "main view"
+mainvk  = gv    -       -       -       -     "main view keys:"
+
 cmded   = gh    -       -       -       -     "command editor"
-exiti   = gh    -       -       -       -     "exit code indicator"
-hist    = gh    -       -       -       -     "history menu"
-runcmd  = gm    -       -       -       -     "/_run_a_command_/.........."
+cmdedk  = gv    -       -       -       -     "command editor keys:"
 
----SCREEN                                     
-=vash context switching diagram **
- 
---main_view_keys--                         .mainv............................. 
- * .:CA... - switch between main view and   ^   :       ^       :       :      
-     command editor, keeping both states    : .:CA...  .'=  .'[a-z./]   :      
- * lowercase letters or '.' or '/':         :   :       :       :       :
-   - type unix command from scratch  {1}    :   : .hist........ :   .'[0-9A-Z]
- * digit, uppercase, and other:             :   :   ^     :    {1}    :    :  
-   - edit a command from template    {2}    :   : .:HE... :     :     :    :  
-   - run a command immediately       {3}    :   :   :   .:NL... :    {2}   :   
-                                            :   :   :     :     :     :    :
---command_editor_keys--                     :  .cmded...................   :  
-  .:HE... - get history search view         :     ^   :                   {3} 
-  .:NL... - run a command                 .:CA... : .:NL...                :  
-                                          .:SP... :   `---> .runcmd.......... 
---exit_code_indicator_keys--                :     :           :              
-  .:NL... - trap for mistakes protection   .exiti...............<--
-  .:SP..., .:CA... - return to main view                     `--> .:NL...  
-  any other - return to command editor
-                                   
- * main view keys may be vary, depending of profile in use
- ** please, use command 'man vash' to get full description
----#=vash (C) 1990-2021 Sergey Vovk
+exit    = gh    -       -       -       -     "exit code indicator"
+exitk   = gv    -       -       -       -     "exit code indicator keys:"
+
+hist    = gh    -       -       -       -     "history view"
+histk   = gv    -       -       -       -     "history view keys:"
+
+runcmd  = gv    -       -       -       -     "//_run_a_command_//.........."
+m       = gm    -       -       -       -     "*)"
+
+
+---SCREEN
+=vash workflow diagram
+ .m. see 'man vash' for details        
+                                       .mainvk.................................
+     .'lowercase letters or '.' or '/': - type unix command from scratch  {1}
+     .'uppercase, digit, and other key: - edit a command from template    {2} 
+                                        - run instant command macro       {3} 
+ .mainv.............................                                              
+ ^  ^               .'[a-z./] |        .cmdedk.................................
+ |  |   .m.             |     |        .:NL... - run a command                  
+ |  |   .hist.........  | .'[A-Z0-9]   .:HE... - search in history view         
+ |  |      ^   .:NL...  |   |   |      .:HE... - search in history view 
+ | .:CA... |     |     {1}  |   |      .:CA... - switch between main view and 
+ |  |      |     |      |  {2}  |           command editor, keeping both states
+ |  |      |     |      |   |  {3}          command editor, keeping both states
+ |  v    .:HE..  |      |   |   |      .histk..................................
+ |  .cmded....................  |      .:NL... - get a command to editor    .m.
+ |          ^         .:NL...   |                                              
+ |          |           |       |      .exitk..................................
+ .:SP...    |   .runcmd.............   .:SP..., .:CA... - return to main view  
+ .:CA...   .m.          |               any key - return to command editor  .m.
+ .exit..............................   
+ .:NL... -->                           .:NL... - defencive trap for mistakes
 ---END
---# backup garbage, to be deleted below...
+=vash, visual assistant for shell (C) 1990-1993,2018-2022 vsv
+ may be vary, depending of profile in use 
 
---keys of main view, profile dependend--
- :     :     .'[a-z./]  .'[A-Z0-9]      
-
-                                         .:NL... - take a command from history
-,--> ."main view"................  
-:              :    :    :    :    
-: ."history".  :    :    :    :    
-:  :      ^    :    {1}  :    :    
-:  :      : .:CA... :    {2}  :    
-:  : .:HE...   :    :    :    {3}  
-:  :      :    :    v    v    :    
-:  `-> ."command editor"...   :    
-:          ^            :     :    
-:          :       .:NL...    :    
-:          :            :     :    
-:          :            v     v    
-.:SP...    :   //_run_a_command_// 
-:          :         :             
-^--- ."exit code indicator"..      
-         ^             :           
-         `-- .:NL... <-'                                                       
-                                            
- 
+    <-- .:NL...
+      -->
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      

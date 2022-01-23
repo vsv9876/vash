@@ -151,10 +151,10 @@
 :[?]
 :HE
 # show help
-#	* * _cmdset std.help.rc
+#	* * _cmdset std_help.rc
 # obsolete, will be removed - use man vash instead, please
-#	* * ;vash std.help.rc
-	* * _help std_help.lb
+	* * ;env VASH_LABEL='help! ' vash -1 std_help.rc
+#	* * _help std_help.lb
 
 :NL
 #:[;]

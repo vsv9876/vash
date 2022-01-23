@@ -36,18 +36,20 @@ LIBRARY       = vash
 MAKEFILE      = Makefile
 
 PROFILES      = \
-		std.help \
+		std_help \
 
 
 ASHCMD        =
 
 
-OBJS	      = phelp0.lb\
+OBJS	      = about_vash.lb\
+		phelp0.lb\
 		sup.lb\
 		sup_help.lb\
 		std_help.lb
 
-SRCS	      = phelp0.lav\
+SRCS	      = about_vash.lav\
+		phelp0.lav\
 		sup.lav\
 		sup_help.lav\
 		std_help.lav

@@ -34,6 +34,7 @@ wcs[n]cmp(3)
        int wcsncmp(const wchar_t *s1, const wchar_t *s2, size_t n);
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+wcwidth(3)	determine columns needed for a wide character
 wcswidth(3)	determine columns needed for a fixed-size wide-character string
        #define _XOPEN_SOURCE             /* See feature_test_macros(7) */
        #include <wchar.h>

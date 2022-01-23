@@ -1,0 +1,56 @@
+#! /usr/bin/vash
+#
+# std_help.rc
+#
+# Wed Sep 12 15:46:39 MSD 1990
+# 2022-01-23
+#
+-f_std_help.menu
+-i
+#-o.
+-@1
+
+-1
+-2
+-3
+-4
+-5
+-6
+-7
+-8
+-9setup
+-0return
+#-------------------------debug
+:KI
+    ??? ?    _sup
+:=
+    ??? ?    _rescan
+#-------------------------
+:CA
+:EX
+:U0
+:0
+#    * * _cmdset .ashstd
+    * * :exit
+:U9
+:9
+    * * _help sup_help.lb
+:[#]
+    * * _file #@
+:[?]
+:HE
+    * * _help std_help.lb
+:[ ]
+:NL
+    * * +nl
++nl
+# 
+###	* * Return     _cmdset std.rc
+#
+    * * Return     :exit
+    * * Keyboard   _help phelp0.lb
+    * * Context    _help std_help.lb
+    * * About      _help about_vash.lb
+
+@std.final
+

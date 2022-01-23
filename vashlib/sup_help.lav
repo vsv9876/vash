@@ -34,7 +34,7 @@ ymax    = ipv   -       "%4d"   -       t_ymax  yy_max
  maxli/maxco   maximum lines/columns (size of the screen)
  vexdir        search path for directories with configuration files
 
-               ."setup parameters for debug only                             ".
+               ."debug of profiles                                           ".
                NOTE: it's better to don't touch if not sure, read manual 1st
  --:           command for fill of main menu
  -i:           input file - whatching it for new scan of main menu
