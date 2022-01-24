@@ -20,26 +20,27 @@ m       = gm    -       -       -       -     "*)"
 =vash workflow diagram
  .m. see 'man vash' for details        
                                        .mainvk.................................
-     .'lowercase letters or '.' or '/': - type unix command from scratch  {1}
-     .'uppercase, digit, and other key: - edit a command from template    {2} 
+     .'lowercase letters or '.' or '/'  - type unix command from scratch  {1}
+     .'uppercase, digit, and other key  - edit a command from template    {2} 
                                         - run instant command macro       {3} 
  .mainv.............................                                              
- ^  ^               .'[a-z./] |        .cmdedk.................................
- |  |   .m.             |     |        .:NL... - run a command                  
- |  |   .hist.........  | .'[A-Z0-9]   .:HE... - search in history view         
- |  |      ^   .:NL...  |   |   |      .:HE... - search in history view 
- | .:CA... |     |     {1}  |   |      .:CA... - switch between main view and 
- |  |      |     |      |  {2}  |           command editor, keeping both states
- |  |      |     |      |   |  {3}          command editor, keeping both states
+ ^  ^             .'[a-z./]   |        .cmdedk.................................
+ |  |   .m.             | .'[A-Z0-9]   .:NL... - run a command                  
+ |  |   .hist.........  |   |   |      .:HE... - search in history view         
+ | .:CA..  ^   .:NL... {1}  |   |      .:CA... - switch between main view and 
+ |  |      |   .:CA..   |   |   |           command editor, keeping both states
+ |  |      |     |      |  {2}  |      
  |  v    .:HE..  |      |   |   |      .histk..................................
- |  .cmded....................  |      .:NL... - get a command to editor    .m.
- |          ^         .:NL...   |                                              
- |          |           |       |      .exitk..................................
- .:SP...    |   .runcmd.............   .:SP..., .:CA... - return to main view  
- .:CA...   .m.          |               any key - return to command editor  .m.
- .exit..............................   
+ |  .cmded.................... {3}     .:NL... - get a command to editor    .m.
+ |       ^            .:NL...   |      .:CA... - return to editor untouched
+ |       |              |       |                                              
+.:SP...  |       .runcmd............   .exitk..................................
+.:CA..  .m.             |              .:SP..., .:CA... - return to main view  
+ .exit....................              any key - return to command editor  .m.
  .:NL... -->                           .:NL... - defencive trap for mistakes
----END
+                                                                            
+
+---END                                                                          
 =vash, visual assistant for shell (C) 1990-1993,2018-2022 vsv
  may be vary, depending of profile in use 
 
