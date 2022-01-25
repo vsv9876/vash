@@ -1,5 +1,3 @@
-! filler char must be '~' or '_', not limited by '.'
-
 
     -- BUGS/FIX
 
@@ -8,70 +6,68 @@
     - cleanup, readme, LICENSE
 
     -- DOC/MAN
-  * - man page vash.1 (en/ru)
+  > - man page vhset.1 (en)
     - man linlib (en)
     ------------------------------------------------------------------------------
     
     -- LINLIB, VHSET, 
 
-    -- Unicode/UTF-8 complete
+ >- filler char must be [~_#], not limited by [.]
+
+    -- Unicode/UTF-8 support:
+      implement wcwidth() into w_wchr() and editor
  
-    -- новая навигация r_page(), более каноническая - PgUp/PgDown, Home/End
+  >*  -- новая навигация r_page(), более каноническая - PgUp/PgDown, Home/End
     -- статусная строка (трей приложения)
 
-    +- ограничение вывода на экран по maxli,maxco: cp_set,w_chr
-    +- поддержка панелей - спец.версии cp_set,at_set,w_panel
-    
     -- навести порядок с инициализацией vexdir - см. пример vtest/pmain.c
     
- ** -- редактор строки должен уметь редактировать "бесконечные" строки в ограниченном окне линии -
-	    //- скролить по горизонтали, гистерезис <> видимой части строки!
-	    //- r_line(), line.h, vcc/vlbp
+ ** -- редактор "бесконечныx" строк в ограниченном окне линии -
+            //- r_line(), line.h, vcc/vlbp
 	    //- e_str/w_str: контроль границ буфера строки (4K bytes),
+    - BUG: строка strobj_t обрезается на старте редактирования команды
 
- *+  -- ANSI Color SGR/256
-    ++ навести порядок vhset с нулевой страницей настройки (основные клавиши) -
-	    // похоже что 4 кнопки стрелок переопределять _никогда_ не требуется, но
-    --	    ////   должен быть выбор "языков" навигации/редактирования -
-	    ////  наверное, команды для редактирования строки и переходов между контекстами
-    --	    ////  должны быть более удобными, желательно выбор linlib/vi/emacs
+    -+  ANSI Color SGR/256
+    --	//   должен быть выбор "языков" навигации/редактирования -
+	//  как минимум, для команд редактирования строки и переходов между контекстами
+    --	//  желательно выбор linlib/vi/emacs
 
-    ++ синонимы клавишных команд (сейчас спрятаны)
-
-    ++ новые страницы справки HELP PAGES rewrite/reduce
-
-
-    + line.h: INP(LPA) -
+    -+ line.h: INP(LPA) -
 	пересмотреть концепцию второго ряда логических атрибутов (для ввода) -
 	// реально нужны только VAR,MSE и для красоты ALT
 	// остальные LPA можно использовать для сообщений, и индикаторов,
-	// но сейчас они странно называются и это источник путаницы;
-    + добавлен "забытый" CMD
+	// но сейчас они странно называются и это источник путаницы;	
+    - LBP/VLBP: добавить атрибуты до полного набора (для раскраски страниц)
 
     - наследование от stty cooked: intr, erase, werase, kill, eof
     - ^Z для SYSV (ISC) lin132/lin140 must be redefined, also Del/BS, Ctl-W, Ctl-U
     ------------------------------------------------------------------------------
 
     -- VASH:
-
+    
+ >- trap like on <Enter> for all Ctrl-* excluding Ctrl-C
+ 
  ** don't inherite stty from child, killed abnormally
 
- *  - оптимизация файлов настройки (директива include?)
  *  - list main menu with PgUp/PgDown/Home/End
- *  - cmd menu: TAB completion must show next frame of candidates
+    - cmd menu: TAB completion must show next frame of candidates
     -- main menu: filter on command '_'
+    -- main menu: mode stat on objects driven by flags (now :Fa)
     -- main menu: render compact //count width in every column
 
  *  -+?- pass vash flags on execve() as environ
 
- ++ VAPATH,VEXDIR like PATH
-
  -+ rescan dir: keep cursor near last known item,
     //// it is need more sofisticated comparizon (ex., rm -f ##)
+    -- keep last item name regarding -@ parameter - after rescan
+    -- mavigation r_page() on PgUp/PgDn/Home/End
+    -- rendering main view more compact, find max on every column
+    -- VASH_LABEL fill from header (1st line) of commands like ps, df
 
-    history:
-    - search simple pattern via menu and ^R
-    -- special case for cd command history
+    VASH history:
+*>  - search simple pattern via menu and ^R
+*>  - navigate on PgUp, etc
+    -? special case for cd command history
     - separate cache and log(conduit) files
     - compatible with .bash_history (timestamp)
 
@@ -89,4 +85,5 @@
     -   a=F find . ! -path \*/.git/\* -type d | sed s,^./,, 
     
     - $ man rpm|egrep "^[ \t]+-([^ ])+" | sed 's/ /\n/g' | grep -e ^- |sort -u | less
+
     - 中文素养    国际站 == vtest
