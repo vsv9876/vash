@@ -47,16 +47,12 @@
     
     VASH history:
 *>  - navigate on PgUp, etc
+ *  - list main menu with PgUp/PgDown/Home/End
     -? special case for cd command history
     - separate cache and log(conduit) files
     - compatible with .bash_history (timestamp)
 *>  - search simple pattern via menu and ^R
 
- >>>>- trap like on <Enter> for all Ctrl-* including Ctrl-C
- 
- ** don't inherite stty from child, killed abnormally
-
- *  - list main menu with PgUp/PgDown/Home/End
     - cmd menu: TAB completion must show next frame of candidates
     -- main menu: filter on command '_'
     -- main menu: mode stat on objects driven by flags (now :Fa)
