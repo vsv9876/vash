@@ -79,6 +79,8 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	int okwait;             /* флаг: после wait() ожидать подтверждения пробелом, если OK */
 	int slsize;				/* количество возможных окончаний */
 
+	int trapcod;		/* flag: trap, no return from code exit indicator */
+
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
 	cmdsize = lframe->maxco - 1 - pmtshsz;
@@ -238,7 +240,7 @@ std_shell:
 			if(syscod) {
 				codexit = cod1(syscod); /*TODO cleanup trick, replace with stdlib.h and sys/wait.h stuff */
 				codsig  = cod0(syscod);
-				at_set(ERR);
+				at_set(CMD|VEXT/*ERR*/);
 				if (codsig) {
 					sprintf(tmpstr, "[ exit= %d, signal= %d ]", codexit, codsig);
 				} else {
@@ -259,29 +261,41 @@ std_shell:
 				do {
 					fflush(vttout);
 					fflush(stdout);
+					trapcod = 0;
 					cod = r_cod(0);
-					at_set(atrib = CMD|VEXT);
-					/*VARARGS*/
-					if (cod == KB_NL) {
+					switch (cod) {
+					case KB_AU:
+					case KB_AD:
+					case KB_AL:
+					case KB_AR:
+						trapcod = 0;
+						break;
+					default:
+						if (cod == KB_NL || cod < ' ' || ISCTL(cod)) {
+							trapcod = 1;
+						}
+						break;
+					}
+
+					at_set(atrib = MSE|VEXT);
+					if (trapcod) {
 					  /*sprintf(tmpstr, "-- SPACE bar or type a command ");*/
-					  /*w_str(" -- ");*/
  					  at_set(atrib); w_str(" --");
- 					  at_set(0);     w_str(" please, use <");
+ 					  at_set(0);     w_str(" please, press <");
+ 					  /*
 					  w_lh_str(":SP"); at_set(0); w_str("> or <");
 					  w_lh_str(":CA"); at_set(0); w_str(">, then get help: ");
+ 					   */
+					  w_lh_str(":SP"); at_set(0); w_str(">, then get help: ");
 					  w_lh_str(":HE"); at_set(0); w_str(" ");
-					  at_set(atrib); w_str("-- ");
+					  at_set(atrib); w_str("--");
 					  er_eop(atrib);
 					  /*cp_fet();*/ /*w_str(tmpstr);*/
 					}
-					/*if (cod == KB_AU) {
-					 *	unr_c(cod);
-					}*/
-					/*at_set(TXT); er_eol();*/
 					er_eop(0);
-					/*VARARGS*/
 					cp_cret(); /*w_str("\r");*/
-				} while (cod == KB_NL);
+					w_str(tmpstr);
+				} while (trapcod);
 			} else {
 				at_set(0);
 				cp_cret(); /*w_str("\r");*/

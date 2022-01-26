@@ -83,19 +83,31 @@ extern LINEMENU clm;    /* ТЕКУЩЕЕ МЕНЮ (current lines menu) */
 /*#define ofsx        clm._ofsx*/
 /*#define ofsy        clm._ofsy*/
 
-extern  char   *yesno[];
-extern  int     scrolf, oneitm, panelf, whodirf, xtermf, histf, histsn, clockf, cmailf, loginf;
-extern  char   *envshell;
-extern  char   *homedir;
-extern  char   *vexdir; /* vash extra files directory */
-extern  char   *vapath; /* vash library search path */
-extern  char   *vashrc; /* vash runtime cmdset (rc, profile) */
-extern  char   *cwd;
-extern  int     t_file();
+/*extern  char   *yesno[];*/
 
-extern  int     /*maxli, maxco,*/ y0_top;
+extern int     scrolf;
+extern int     oneitm;
+extern int     panelf;
+extern int     whodirf;
+extern int     xtermf;
+extern int     histf;
+extern int     histf;
+extern int     histsn;
+extern int     clockf;
+extern int     cmailf;
+extern int     loginf;
+
+extern char   *envshell;
+extern char   *homedir;
+extern char   *vexdir; /* vash extra files directory */
+extern char   *vapath; /* vash library search path */
+extern char   *vashrc; /* vash runtime cmdset (rc, profile) */
+extern char   *cwd;
+extern int     t_file();
+
+extern int     /*maxli, maxco,*/ y0_top;
 extern LFRAME  lfmain;
-extern  int    vashlp(), scrldo(), scrlarea();
+extern int    vashlp(), scrldo(), scrlarea();
 
 extern int cmdphist(),visini(), cmdset(), fil_vf(), scrlst(), scrlnl(), cmdsub(), fatal(), clritm();
 extern int itmshow(), cmdghist(), u_menu(), itmadj(), itmini(), pre_vf(), patcmp();

@@ -16,16 +16,10 @@
 #define USRATTR6 ERR|PAD|NED
 #define USRATTR7 ATT|PAD|NED
 
-/*#define USRATTR0 HDR|MID|PAD|NED*/
 #define USRATTR0 HDR|PAD
 
 #undef  LALT
-#define LALT TXT|MID|NED
 #define LALT ALT|MID|NED
-/*#undef  LHDR
-#define LHDR HDR|PAD|NED|PMT
-*/
-/* #define USRATTR0 LALT*/
 
 ---PAGE linem
 ---PORTS
@@ -77,8 +71,8 @@
 	bg      = ia - "b"   cvt_co  - LPA_B
 	sgr     = ia - -     cvt_sgr - LPA_B
 ---# 	pi      = g0 - "# "  cvt_pi  - LPA_B
----#	M       = g1 - ". "  cvt_pi  - LPA_B
-	M       = g2 - "* "  cvt_pi  - LPA_B
+	M       = g3 - "| "  cvt_pi  - LPA_B
+---#	M       = g2 - "* "  cvt_pi  - LPA_B
 	p0      = g1 - "0"   cvt_pim - -
 	p1      = g1 - "1"   cvt_pim - -
 	lh      = v  - -     -       - namelh
@@ -105,19 +99,18 @@
 +.p1............   
 +
 +line prompter:  .P.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+
-+."monochrome".  .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++                .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +   outstand:so  .so     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +  underline:us  .us     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +bright/bold:md  .md     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +    reverse:mr  .mr     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +     hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+."color"......  .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++                .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 + foreground:fg  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 + background:bg  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +  stripe:fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+.""...........................................................................
++
   settings mode: .sgrm..........    SGR: .sgrAT.....             help: .:HE....
                                                               set r/w: .:KI....
 
@@ -129,4 +122,5 @@
 ---#	:  :          :...  :...  :...  :...  :...  :...  :...  :...  :........:
 ---#+                      .hl.................................................
 ---#+           .hl............................................................
+---#+.""...........................................................................
 ---END
