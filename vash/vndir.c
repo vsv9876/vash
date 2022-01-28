@@ -349,7 +349,7 @@ vls()
     return(0);  /* OK */
 }
 
-vfill()
+vcat()
 /*
  * встроенная команда (аналог cat), понимает vapath
  * сделана копипастой из vls()
@@ -364,7 +364,7 @@ vfill()
     unsigned char    *fname; /* item name, from main menu */
     char	*file; /* name of file to be read */
     char    *s;
-    char   itmname[256]; /**/
+    char   itmname[4*MAXLICO]; /**/
     char  *ip;
 
     /*if (index(Cfill, 'a')) aflag = 1;*/
@@ -750,9 +750,17 @@ int newflag;    /* если 0, то только обновить каталог
 			return(0);
 	    }
 	}
-	else if(Cfill[0] == '_') { /*целый набор встроенных команд */
-		if ( vfill() ) { /* возвращает 0, если все хорошо */
-			w_emsg("vfill() failed");
+/*
+	else if(Cfill[0] == '_') { целый набор встроенных команд
+		if ( vcat() ) {  возвращает 0, если все хорошо
+			w_emsg("vcat() failed");
+			return(0);
+		}
+	}
+*/
+	else if(Cfill[0] == '<') { /* список в файле по пути vapath */
+		if ( vcat() ) { /* возвращает 0, если все хорошо */
+			w_emsg("vcat() failed");
 			return(0);
 		}
 	}
@@ -764,9 +772,9 @@ int newflag;    /* если 0, то только обновить каталог
 		||  (fpls = popen(tmpbuf, "r")) == NULL) {
 			cp_set(-1, 0, ERR);
 			io_set(IO_TTYPE);
-			fprintf(vttout, "\n");
-			fprintf(stdout, /* stderr */
-	"\nFill command failed with error ('%s')\n", tmpbuf);/*Cfill);*/
+			fprintf(vttout, "\n"); fflush(vttout);
+			fprintf(stderr,
+	"\nFill vf failed ('%s')\n", tmpbuf);/*Cfill);*/
 			perror(Cfill);
 			fatal();
 		}

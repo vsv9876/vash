@@ -264,6 +264,9 @@ std_shell:
 					trapcod = 0;
 					cod = r_cod(0);
 					switch (cod) {
+					case KB_HE:
+						w_help("excode_help.lb");
+						break;
 					case KB_AU:
 					case KB_AD:
 					case KB_AL:
@@ -281,7 +284,7 @@ std_shell:
 					if (trapcod) {
 					  /*sprintf(tmpstr, "-- SPACE bar or type a command ");*/
  					  at_set(atrib); w_str(" --");
- 					  at_set(0);     w_str(" please, press <");
+ 					  at_set(0);     w_str(" please, type a command, or press <");
  					  /*
 					  w_lh_str(":SP"); at_set(0); w_str("> or <");
 					  w_lh_str(":CA"); at_set(0); w_str(">, then get help: ");

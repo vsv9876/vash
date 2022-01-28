@@ -46,13 +46,15 @@ OBJS	      = about_vash.lb\
 		phelp0.lb\
 		sup.lb\
 		sup_help.lb\
-		std_help.lb
+		std_help.lb\
+		excode_help.lb
 
 SRCS	      = about_vash.lav\
 		phelp0.lav\
 		sup.lav\
 		sup_help.lav\
-		std_help.lav
+		std_help.lav\
+		excode_help.lav
 
 SUFFIX        = .lav:s .la:s .lb:o
 

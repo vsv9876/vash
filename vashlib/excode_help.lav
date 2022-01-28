@@ -1,0 +1,22 @@
+---LINES
+ok	= gh - - - - "[ ok ]"
+err	= gv - - - - "[ exit= 1 ]"
+---SCREEN
+=command run & exit code indicator
+
+  when command completed, You get indicator in one of form:
+  .ok...       -- on success
+  .err........ -- if command terminates with error or on a signal
+
+  Warning:
+  .:NL... and some other codes takes a trap on this point, preventing mistakes
+  
+  Pass codes are:
+  
+  .:SP... returns to main menu
+  .:AU... returns to command editor
+	options: .:AL... cursor position restored
+	         other printable keys start a command from scratch
+  .:HE... get this page
+  
+---END

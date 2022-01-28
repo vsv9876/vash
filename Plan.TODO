@@ -1,10 +1,10 @@
 
     -- BUGS/FIX
 
-! e2k: не открывается из профиля простой файл -f (обычно там команда)
 ! лишняя терминация бесконечных строк внутри r_line/w_line
 
     -- DOC/MAN
+
   > - man page vhset.1 (en)
     - man linlib (en)
     ------------------------------------------------------------------------------
@@ -13,23 +13,19 @@
 
   >*  -- новая навигация r_page(), более каноническая - PgUp/PgDown, Home/End
     -- статусная строка (трей приложения)
-
- >- filler char must be [~_#], not limited by [.]
+	
 
     -- Unicode/UTF-8 support:
       implement wcwidth() into w_wchr() and editor
  
     -- навести порядок с инициализацией vexdir - см. пример vtest/pmain.c
     
- ** -- редактор "бесконечныx" строк в ограниченном окне линии -
+ >>-- BUG: строка strobj_t обрезается на старте редактирования команды
+   -- редактор "бесконечныx" строк в ограниченном окне линии -
             //- r_line(), line.h, vcc/vlbp
 	    //- e_str/w_str: контроль границ буфера строки (4K bytes),
-    - BUG: строка strobj_t обрезается на старте редактирования команды
 
     -+  ANSI Color SGR/256
-    --	//   должен быть выбор "языков" навигации/редактирования -
-	//  как минимум, для команд редактирования строки и переходов между контекстами
-    --	//  желательно выбор linlib/vi/emacs
 
     -+ line.h: INP(LPA) -
 	пересмотреть концепцию второго ряда логических атрибутов (для ввода) -
@@ -37,6 +33,7 @@
 	// остальные LPA можно использовать для сообщений, и индикаторов,
 	// но сейчас они странно называются и это источник путаницы;	
     - LBP/VLBP: добавить атрибуты до полного набора (для раскраски страниц)
+ >- LBP/VLBP/VCC: filler char must be [~_#], not limited by [.]
 
     - наследование от stty cooked: intr, erase, werase, kill, eof
     - ^Z для SYSV (ISC) lin132/lin140 must be redefined, also Del/BS, Ctl-W, Ctl-U
@@ -44,6 +41,8 @@
 
     -- VASH:
 *>  - refactoring: convert single flags into array with constants #define in assist.h
+	- setup flag: mask ExCI for ;: variants of execution
+	- setup flag: sh -c only 
     
     VASH history:
 *>  - navigate on PgUp, etc

@@ -5,7 +5,7 @@
 # Wed Sep 12 15:46:39 MSD 1990
 # 2022-01-23
 #
--f_std_help.menu
+-f<std_help.menu
 -i
 #-o.
 -@1
