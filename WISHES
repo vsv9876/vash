@@ -1,0 +1,79 @@
+DOC/MAN
+
+  > - man page vhset.1 (en)
+    - man linlib (en)
+
+LINLIB, VHSET, 
+
+    - наследование от stty cooked: intr, erase, werase, kill, eof
+    - ^Z для SYSV (ISC) lin132/lin140 must be redefined, also Del/BS, Ctl-W, Ctl-U
+
+    -- навести порядок с инициализацией vexdir - см. пример vtest/pmain.c
+    
+    -+  ANSI Color SGR/256
+
+LBP+VCC/VLBP
+
+    -+ line.h: INP(LPA) -
+	пересмотреть концепцию второго ряда логических атрибутов (для ввода) -
+	// (реально нужны только VAR,MSE и для красоты ALT отличается от VAR)
+	// остальные LPA можно использовать для сообщений, и индикаторов,
+	// но сейчас они странно называются и это источник путаницы;
+
+
+VASH
+     - history:
+
+    -? special case for cd command history
+    - separate shorthand cache and log(conduit) files
+    - compatible with .bash_history (timestamp)
+
+ -+ rescan dir: keep cursor near last known item,
+         -- keep last item name regarding -@ parameter - after rescan
+	 // it's required more sofisticated comparizon (ex., after 'rm -f ##')
+
+    -- rendering main view more compact (find max wifth on every column)
+    -- VASH_LABEL fill from header (1st line) of commands like ps, df
+
+    argv/argc call:
+    -? add flag to argv "jump to directory"
+    - extended file attributes (<rwx> unsufficient) permissions check 
+    - work with very big directories and inode numbers
+      (without static constant allocation for main meny storag, with malloc+realloc)
+
+    - cmd menu: TAB completion must show next frame of candidates
+    -- main menu: filter on command '_'
+    -- main menu: mode stat on objects driven by flags (now :Fa)
+    -- main menu: render compact //count width in every column
+    
+ *  - f2:menu - rework to support std-profiles
+
+    - Часы - убрать секунды (или сделать опцию)
+      -- WTF: #define CP_SAV
+
+
+
+NOTES AND THINK
+
+	from man egrep about encoding ANSI colors:
+              See  the  Select  Graphic  Rendition  (SGR)   section   in   the
+              documentation  of  the  text terminal that is used for permitted
+              values  and  their  meaning  as  character  attributes.    These
+              substring  values are integers in decimal representation and can
+              be concatenated with semicolons.  grep takes care of  assembling
+              the  result  into  a  complete  SGR sequence (\33[...m).  Common
+              values to concatenate include 1 for bold, 4 for underline, 5 for
+              blink,  7 for inverse, 39 for default foreground color, 30 to 37
+              for foreground colors, 90 to 97  for  16-color  mode  foreground
+              colors,  38;5;0  to  38;5;255  for  88-color and 256-color modes
+              foreground colors, 49 for default background color, 40 to 47 for
+              background  colors,  100  to  107  for  16-color mode background
+              colors, and 48;5;0 to 48;5;255 for 88-color and 256-color  modes
+              background colors.
+
+    -- MEMO
+    a=F find . ! -path \*/.git/\* -type d | sed s,^./,, 
+    
+    man rpm|egrep "^[ \t]+-([^ ])+" | sed 's/ /\n/g' | grep -e ^- |sort -u | less
+
+    中文素养    国际站 == vtest

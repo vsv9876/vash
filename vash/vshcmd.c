@@ -271,6 +271,8 @@ std_shell:
 					case KB_AD:
 					case KB_AL:
 					case KB_AR:
+					case KB_CA:
+					/*case KB_EX:*/
 						trapcod = 0;
 						break;
 					default:
@@ -284,15 +286,13 @@ std_shell:
 					if (trapcod) {
 					  /*sprintf(tmpstr, "-- SPACE bar or type a command ");*/
  					  at_set(atrib); w_str(" --");
- 					  at_set(0);     w_str(" please, type a command, or press <");
- 					  /*
-					  w_lh_str(":SP"); at_set(0); w_str("> or <");
-					  w_lh_str(":CA"); at_set(0); w_str(">, then get help: ");
- 					   */
-					  w_lh_str(":SP"); at_set(0); w_str(">, then get help: ");
-					  w_lh_str(":HE"); at_set(0); w_str(" ");
+ 					  at_set(CMD);     w_str(" please, type a command or <");
+					  w_lh_str(":SP");
+					  at_set(CMD); w_str("> to return ");
 					  at_set(atrib); w_str("--");
-					  er_eop(atrib);
+					  at_set(CMD); w_str(" help: ");
+					  w_lh_str(":HE");
+					  er_eop(CMD);
 					  /*cp_fet();*/ /*w_str(tmpstr);*/
 					}
 					er_eop(0);

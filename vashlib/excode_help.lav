@@ -1,6 +1,11 @@
 ---LINES
 ok	= gh - - - - "[ ok ]"
 err	= gv - - - - "[ exit= 1 ]"
+
+
+
+
+
 ---SCREEN
 =command run & exit code indicator
 
@@ -8,15 +13,18 @@ err	= gv - - - - "[ exit= 1 ]"
   .ok...       -- on success
   .err........ -- if command terminates with error or on a signal
 
-  Warning:
-  .:NL... and some other codes takes a trap on this point, preventing mistakes
-  
   Pass codes are:
+    .:SP... or .:CA...
+	return to main menu
+    .:HE... get this page then returns to main menu
+    .:AU... .:AD... .:AR...
+	return to command editor 
+    .:AL...
+	return to command editor with cursor position restored
+    other printable keys:
+	type another command from scratch
   
-  .:SP... returns to main menu
-  .:AU... returns to command editor
-	options: .:AL... cursor position restored
-	         other printable keys start a command from scratch
-  .:HE... get this page
+  Warning about defencive trap:
+    .:NL... and other control codes discarded preventing unexpected action
   
 ---END
