@@ -7,23 +7,26 @@
 
 
 ---SCREEN
-=about: VASH, Visual Assistant for shell (c) 1990-1993,1996,2018-2022 vsv
+=about vash
 
-Vash provides variety of tools intended to speedup user interaction with
-command string, designed to be intuitive and simple. 
+    vash, Visual Assistant for shell
+    (c) 1990-1993,1996,2018-2022 vsv
 
-Please, refer to 'man vash' for details.
+ Vash provides variety of tools intended to speedup user interaction with
+ command string, designed to be intuitive and simple. 
 
-Vash dialogues split into contexts, such as main view, command editor,
-setup page and other. In every context, similar actions performed with
-same keys, with some resonable exclusions.
+ Please, refer to 'man vash' for details.
 
-Context-depended help pages is accesible on-line pressing key .:HE... 
-Pressing .:HE... again shows help page about common library keys.
-Pressing any other key will return from help page.
+ Vash dialogues are splitted up by contexts, such as main view, command editor,
+ setup page and other. In every context, similar actions performed with
+ same keys, with some resonable exclusions.
+ 
+ .:HE... - get context-depended help page.
+ in help context .:HE... - get help page about common library keys.
+ any other key will return from help context.
 
-Visual representation of dialogues and keyboard assignments may be changed
-on Your taste with 'vhset' command, using VHSET and TERM environment.
-Please, refer to on-line help pages of 'vhset' and to 'man vhset' for details.
+ Visual representation of dialogues and keyboard assignments may be changed
+ on Your taste with 'vhset' command, using environment VHSET and TERM.
+ Please, refer to 'man vhset' for details.
 
 ---END

@@ -270,7 +270,10 @@ int vexcmd(cmd, cmdlbl)
 char *cmd;      /* "сырая" команда, требуются подстановки */
 char *cmdlbl;   /* вывеска взамен команды */
 {
-	char    tmpcmd[140];
+	/*char    tmpcmd[140];*/
+	char *tmpcmd;
+
+	tmpcmd = alloca(4*2*(MAXLICO+1));
 
 	if (cmd) {
 	    /* выполнить подстановки */

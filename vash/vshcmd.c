@@ -83,7 +83,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
-	cmdsize = lframe->maxco - 1 - pmtshsz;
+	cmdsize = lframe->maxco - 1 - pmtshsz; /*TODO size must be defined by command editor buffer*/
 	cmdo_init(); /* once called */
 	justrun = 0;
 	okwait = 1;  /* флаг: после wait() не ожидать подтверждения пробелом, если OK */
@@ -91,10 +91,9 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	int atrib;
 
 	if (cmd == (char *)0) {
-	    /* используется последняя команда */
+	    /* используется последняя команда (уже в буфере) */
 	    ;
-	}
-	else {
+	} else {
 		if (*cmd == ':' || *cmd == ';') {
 			okwait = (*cmd == ';')? 0 : 1;
 			justrun = 1;
@@ -104,9 +103,10 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			strcpy(cmd0, cmd);
 		}
 		else {
-			/* копир. только то, что на экране */
-			strncpy(cmd0, cmd, (size_t)cmdsize); /*TODO: WTF*/
-			cmd0[cmdsize] = 0;
+			/* копир. только то, что ПОМЕСТИТСЯ на экране -- TODO FTW*/
+			/*strncpy(cmd0, cmd, (size_t)cmdsize); TODO: WTF
+			cmd0[cmdsize] = 0;*/
+			strcpy(cmd0, cmd);
 		}
 		pos = /*strlen*/u8slen(cmd0);
 	}

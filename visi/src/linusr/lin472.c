@@ -35,7 +35,6 @@ char *str; /*utf8 buffer*/
 {
 	char **spp;
 
-#ifndef OLD_CVT_SP
 	int size;
 
 	spp = (char **)(line->varl);
@@ -44,27 +43,18 @@ char *str; /*utf8 buffer*/
 	if (line->attr & PMT) size -= 1;
 
 	if (str != NULL /*&& *str != '\0'*/ && *spp != NULL ) {
+		/* trimming to line->size will be done in [wr]_line context */
 		if(*mod == 'r') {
-			/*u8snu8s(*spp, str, size);*/
 			strcpy(*spp, str);
 		}
 		else    {
-			/*strncpy*/u8snu8s(str, *spp, size);
-			/*if (strlen(*spp) >= size) str[size] = '\0';/*это обрезание лучше выполнять в [wr]_line*/
+			strcpy(str, *spp);
 		}
+/*
 	} else {
 		*str = '\0';
+*/
 	}
-#else
-
-	spp = (char **)line->varl;
-	if(*mod == 'r') {
-		strcpy(*spp, str);
-	}
-	else    {
-		strcpy(str, *spp);
-	}
-#endif
 	return(TRUE);
 }
 
@@ -94,8 +84,7 @@ char *str;
 			strcpy(sp, str);
 		}
 		else    {
-			/*strncpy*/u8snu8s(str, sp, size);
-			/*if (strlen(sp) >= size) str[size] = '\0';/* миссия [wr]_line*/
+			u8snu8s(str, sp, size);
 		}
 	}
 	return(TRUE);

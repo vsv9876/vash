@@ -1,9 +1,6 @@
 
 BUGS/FIX
 
-! -- лишняя терминация бесконечных строк внутри r_line/w_line
-  -- обрезание команды из истории при взятии в буфер редактирования по кнопке Enter
-
 ! -- лишнее перечитывание главного меню, например std_help.rc (но третий раз не перечитывает) 
 
 DOC/MAN
@@ -44,8 +41,10 @@ VASH:
     
     -- list main menu with PgUp/PgDown/Home/End
 
-*>  - history search:
+*>  - history, history search:
 	-- simple pattern via menu and ^R (highlight, select) 
+	-- rename .ashhist to .history.vash
+		-- store format 'timestamp,usageCount,protected,cmd'
 
  *  -+?- export vash flags changed in setup, on execve() with VASH= environment
 

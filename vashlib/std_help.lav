@@ -12,34 +12,35 @@ exitk   = gv    -       -       -       -     "exit code indicator keys:"
 hist    = gh    -       -       -       -     "history view"
 histk   = gv    -       -       -       -     "history view keys:"
 
-runcmd  = gv    -       -       -       -     "\\_run_a_command_\\.........."
+runcmd  = gv    -       -       -       -     ":>_run_a_command_<:.........."
 m       = gm    -       -       -       -     " *)"
 
 
+
 ---SCREEN
-=vash workflow diagram
-                                       .mainvk.................................
-           .'lowercase, also '.' or '/' - type unix command from scratch    {1}
-				      .'uppercase, digit, and any other: 
- .mainv.............................      - edit a command from template    {2} 
- ^  ^            .'[a-z./] .'[A-Z0-9]   or - execute the command profiled **{3}
- :  :    .m            :     :    :    
- :  :   .hist......... :     :    :    .histk..................................
- : .:CA.. ^   .:NL...  :     :    :    .:NL... - take a command to editor    .m
- :  :     :   .:CA..  {1}    :    :    .:CA... - return to editor untouched
- :  :     :     :      :    {2}   :    
- :  v   .:HE..  :      :     :   {3}   .cmdedk.................................
- :  .cmded......................  :    .:NL... - run a command, sync history .m
- :       ^    .:NL...             :    .:HE... - search in history view        
- :       :      :                 :    .:CA... - switch between main view and 
-.:SP...  :      .runcmd............         command editor, keeping both states
-.:CA..  .m              :              
- .exit....................             .exitk..................................
-         -->  .:NL...                  .:SP..., .:CA... - return to main view  
-                                        any key - return to command editor   .m
-                                       .:NL... - defencive trap for mistakes   
-    .m. see 'man vash' for details
-                                       
+."vash workflow diagram".............. .mainvk.................................
++                                      .'lowercase, also '.' or '/':    
+                                         - type unix command from scratch   {1}
++ .mainv.............................  .'uppercase, digit, and any other:  
++ :  :     ^      .'[a-z./] .'[A-Z0-9]     - edit a command from template   {2}  
++ ^  :     :            :     :    :       - execute the command profiled   {3}  
++ :  ^    .m            :     :    :           
++ :  :   .hist......... :     :    :   .histk..................................   
++ : .:CA.   :  .:NL...  :     :    :   .:NL... - take a command to editor    .m   
++ :  :      ^  .:CA..  {1}   {2}  {3}  .:CA... - return to editor untouched   
++ :  v      :    :      :     :    :             
++ :  :    .:HE.. :      :     :    :   .cmdedk.................................     
++ :  .cmded......................  :   .:NL... - run a command, sync history .m      
++ :      :     .:NL...             :   .:HE... - search in history view              
++ :      ^       :                 :   .:CA... - switch between main view and      
++.:SP... :       .runcmd............        command editor, keeping both states       
++.:CA.. .m               :                   
++ .exit....................            .exitk..................................      
++         -->  .:NL...                 .:NL... - defencive trap for mistakes                      
++                                      .:SP..., .:CA... - return to main view            
++                                       any key - return to command editor   .m         
++ .m. see 'man vash' for details       
+
 ---END                                 
 =vash, visual assistant for shell (C) 1990-1993,2018-2022 vsv
  may be vary, depending of profile in use 
@@ -47,14 +48,22 @@ m       = gm    -       -       -       -     " *)"
     <-- .:NL...
       -->
       
+    - type unix command from scratch  {1}
+.'uppercase, digit, and any other: 
+    - edit a command from template    {2}
+  or - execute the command profiled **{3}
       
+ .histk..................................
+ .:NL... - take a command to editor    .m
+ .:CA... - return to editor untouched
       
-      
-      
-      
-      
-      
-      
-      
-      
-      
+ .cmdedk.................................
+ .:NL... - run a command, sync history .m
+ .:HE... - search in history view        
+ .:CA... - switch between main view and 
+      command editor, keeping both states
+ 
+ .exitk..................................
+ .:SP..., .:CA... - return to main view  
+  any key - return to command editor   .m
+ .:NL... - defencive trap for mistakes   

@@ -450,7 +450,7 @@ char  *cmd;
 	extern int  y0_top;     /* определено в vshcmd */
 	extern char *pmtsh;    /* --"-- */
 	LINEMENU savelm;
-	kbcod hv_cod;
+	kbcod cod;
 
 	int ret = 0;
 
@@ -491,8 +491,8 @@ char  *cmd;
 	}
 	cmdpp = cmd;    /* ДЛЯ КОПИРОВАНИЯ НОВОЙ КОМАНДЫ */
 
-	hv_cod = h_menu();
-	switch(hv_cod) {
+	cod = h_menu();
+	switch(cod) {
 	default:
 		ret = 1;
 		break;
