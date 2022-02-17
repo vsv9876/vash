@@ -327,7 +327,7 @@ kbcod cod;
 		break;
 	case '=':
 		/* использовать как команду-заполнитель главного меню */
-		strncpy(Cfill, cmd, MAXLICO);
+		strncpy(Cfill, cmd, STRBUF);
 		break;
 	case KB_NL:
 		/* СКОПИРОВАТЬ КОМАНДУ В РАБОЧИЙ БУФЕР */

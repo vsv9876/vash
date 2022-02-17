@@ -15,8 +15,8 @@ extern char    *pmtsh;/* = ".$"; /*"sh>" ;*/
 /*YESXSTR*/
 int pmtshsz;            /* размер подсказки */
 
-/* command buffer is a string object, it is not a simple string of C/C++ */
-static  u8char_t cmdbuf[4*MAXLICO + 4] = "   ";    /* size for u8sobj_t cmdo -- below */
+/* command buffer is a string object, it is not a simple char-type string */
+static  u8char_t cmdbuf[4 + 4*STRBUF] = "   ";    /* size for u8sobj_t cmdo -- below */
 static  int  cmdsize = 0;       /* vsize e_str -- depends of screen width */
 static  int  pos = 0;           /* i     e_str    позиция в строке */
 static  int old_pos = 0;		/* позиция курсора до попытки окончить ввод (completion),
@@ -61,7 +61,7 @@ scrlst()        /* курсор к началу свитка */
 }
 
 
-static char tmpstr[MAXLICO*2];
+static char tmpstr[STRBUF * 2];
 
 vshcmd(cmd, cmdlbl)
 /*
@@ -80,6 +80,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	int slsize;				/* количество возможных окончаний */
 
 	int trapcod;		/* flag: trap, no return from code exit indicator */
+	int msgat;			/*exit code message attribute*/
 
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
@@ -163,6 +164,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			/* completion */
 			if ((sgglist = sl_init()) != NULL) {
 				old_pos = pos;
+				/* TODO: maxco заменить на размер буфера команды, TAB#2,#3>> */
 				if ((slsize = try_compl(&cmd0[0], &pos, lframe->maxco - 2)) < 0) bell();
 				if (pos == old_pos && sgglist->sl_size > 0) {
 					hlp_compl();
@@ -240,7 +242,7 @@ std_shell:
 			if(syscod) {
 				codexit = cod1(syscod); /*TODO cleanup trick, replace with stdlib.h and sys/wait.h stuff */
 				codsig  = cod0(syscod);
-				at_set(CMD|VEXT/*ERR*/);
+				at_set(msgat = ERR);
 				if (codsig) {
 					sprintf(tmpstr, "[ exit= %d, signal= %d ]", codexit, codsig);
 				} else {
@@ -250,7 +252,7 @@ std_shell:
 			}
 			else {
 				if (okwait == 1) {
-					at_set(HDR);
+					at_set(msgat = HDR);
 					sprintf(tmpstr, "[ ok ]");
 					/*w_str(tmpstr); cp_cret();*/
 				}
@@ -282,21 +284,22 @@ std_shell:
 						break;
 					}
 
-					at_set(atrib = MSE|VEXT);
+					at_set(atrib = ATT /*MSE|VEXT*/);
 					if (trapcod) {
 					  /*sprintf(tmpstr, "-- SPACE bar or type a command ");*/
  					  at_set(atrib); w_str(" --");
- 					  at_set(CMD);     w_str(" please, type a command or <");
-					  w_lh_str(":SP");
-					  at_set(CMD); w_str("> to return ");
+ 					  at_set(TXT);     w_str(" please, type next command ");
 					  at_set(atrib); w_str("--");
-					  at_set(CMD); w_str(" help: ");
+					  at_set(TXT); w_str(" continue: ");
+					  w_lh_str(":SP");
+					  at_set(TXT); w_str("   help: ");
 					  w_lh_str(":HE");
-					  er_eop(CMD);
+					  at_set(TXT); w_str(" "); er_eol(TXT);
 					  /*cp_fet();*/ /*w_str(tmpstr);*/
 					}
 					er_eop(0);
 					cp_cret(); /*w_str("\r");*/
+					at_set(msgat);
 					w_str(tmpstr);
 				} while (trapcod);
 			} else {

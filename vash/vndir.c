@@ -52,8 +52,8 @@ int     itmci = -1;             /* Current item's index */
 
 struct  stat cwdstat;
 
-char    cwdpath[400];   /* CURRENT working directory full name */
-char    lwdpath[400];   /* LAST working directory full name */
+char    cwdpath[STRBUF];   /* CURRENT working directory full name */
+char    lwdpath[STRBUF];   /* LAST working directory full name */
 
 int rescan()
 {
@@ -364,7 +364,7 @@ vcat()
     unsigned char    *fname; /* item name, from main menu */
     char	*file; /* name of file to be read */
     char    *s;
-    char   itmname[4*MAXLICO]; /**/
+    char   itmname[4*STRBUF]; /**/
     char  *ip;
 
     /*if (index(Cfill, 'a')) aflag = 1;*/
@@ -530,6 +530,29 @@ vlstag() {
 	}
 }
 
+int binpwd(cwd)
+char *cwd;
+{
+#ifdef  pdp11
+	if (cwdpath[0] == '\0' && getwd(cwdpath) == 0) {
+		fprintf(stderr, "getwd() == 0\n");
+		fatal();
+	}
+#endif
+#ifdef SYSV
+	if (cwdpath[0] == '\0') {
+		FILE *wdf;
+		char *s;
+		if ((wdf=popen("/bin/pwd", "r")) == NULL) {
+			fprintf(stderr, "Can't exec /bin/pwd\n");
+			fatal();
+		}
+		fgets(cwdpath, STRBUF-1, wdf); /* TODO WTF */
+		for (s=cwdpath; *s != '\n'; s++) ; *s = '\0';
+		pclose(wdf);
+	}
+#endif
+}
 
 /*
  * current working directory show (and other related info)
@@ -538,8 +561,8 @@ vlstag() {
  */
 cwdshow()
 {
-	char cwd_tmpstr[140]; /* cwdpath fraction to be shown, TODO change constant to some reasonable */
-	char lbl_tmpstr[140];
+	char cwd_tmpstr[STRBUF]; /* cwdpath fraction to be shown */
+	char lbl_tmpstr[STRBUF];
 	register int x;
 	int     showli;     /* строка показа */
 	int     deltco;     /* если в последней строке экрана, то == 1 */
@@ -556,9 +579,6 @@ cwdshow()
 	mailf2 = 1;
 
 	if (panelf) {
-#ifdef ONTOP_SCREEN
-		showli = 0;         deltco = 0;
-#else
 		if (clm._y0 > y0_top) {
 			showli = y0_top-1;
 			cp_set(y0_top-1, 0, TXT);
@@ -569,13 +589,12 @@ cwdshow()
 		}
 		er_eop(TXT);
 		/*showli = y0_top-1 clm._y0 -1;*/ deltco = 0;
-#endif
 	} else {
 	    showli = lframe->maxli - 1;   deltco = 1;
 	}
 
 	if ((ashlbl=getenv("VASH_LABEL")) == (char *)0) {
-		ashlbl = "";
+		ashlbl = "vash -- :";
 #ifdef SYSV
 		usrlbl = getenv("LOGNAME");
 #else
@@ -592,40 +611,22 @@ cwdshow()
 
 	if (Crepf[0] != '\0') {
 		sprintf(mode_tmpstr,
-		" %s <%s> %s", Crepf, rwxmode(&cwdstat), (usrlbl == NULL? "" : usrlbl));
+		" %s <%s> %s ", Crepf, rwxmode(&cwdstat), (usrlbl == NULL? "" : usrlbl));
 	} else {
 		strcpy(mode_tmpstr, " * ");
 	}
 	lblen += strlen(mode_tmpstr);
 
-#ifdef  pdp11
-	if (cwdpath[0] == '\0' && getwd(cwdpath) == 0) {
-		fprintf(stderr, "getwd() == 0\n");
-		fatal();
-	}
-#endif
-#ifdef SYSV
-	if (cwdpath[0] == '\0') {
-		FILE *wdf;
-		char *s;
-		if ((wdf=popen("/bin/pwd", "r")) == NULL) {
-			fprintf(stderr, "Can't exec /bin/pwd\n");
-			fatal();
-		}
-		fgets(cwdpath, 400, wdf); /* TODO WTF */
-		for (s=cwdpath; *s != '\n'; s++) ; *s = '\0';
-		pclose(wdf);
-	}
-#endif
+	binpwd(cwdpath);
 /*	sprintf(tmpstr, "[ %s ]", cwdpath); */
 	if (xtermf) {
 		w_raw("\033]0;");
 		w_str(lbl_tmpstr);
 
 		w_str(cwdpath);
-		w_str(" ");
+		/*w_str(" ");
 		w_str(mode_tmpstr);
-		w_str(":");
+		w_str(":");*/
 
 		w_raw("\007"); /* terminate escape sequence for xterm window title */
 	}
@@ -637,39 +638,26 @@ cwdshow()
 		w_str(lbl_tmpstr);
 		/*w_str(" ");*/
 
-#define ONE_LINE_CONT
-#ifdef ONE_LINE_CONT
 		sprintf(cwd_tmpstr, "%s", cwdpath);
 		/*cp_set(showli, lblen, ATT);*/
-		x = strlen(cwd_tmpstr);
+		x = 0;
 		x += deltco;
-		if (x > (lframe->maxco - lblen)) {
-			/*cp_set(showli, lblen + 1, HDR);*/
-			w_str("<");
-			w_str(&cwd_tmpstr[x - lframe->maxco + lblen + 2 + deltco]);
-		}
-		else {
-			/*cp_set(showli, lframe->maxco - x - deltco, HDR);*/
-			w_str(cwd_tmpstr);
+		if (NULL != index(ashlbl, ':')) {
+			x += strlen(cwd_tmpstr);
+			if (x > (lframe->maxco - lblen)) {
+				/*cp_set(showli, lblen + 1, HDR);*/
+				w_str("<");
+				w_str(&cwd_tmpstr[x - lframe->maxco + lblen + 2 + deltco]);
+			}
+			else {
+				/*cp_set(showli, lframe->maxco - x - deltco, HDR);*/
+				w_str(cwd_tmpstr);
+			}
 		}
 		x += lblen;
 		/*x += strlen(mode_tmpstr);*/
 		for (; x < lframe->maxco; x++) w_chr(' ');
 		w_str(mode_tmpstr);
-#else
-		sprintf(cwd_tmpstr, "[ %s ]", cwdpath);
-		cp_set(showli, lblen+1, HDR); er_eol();
-		x = strlen(cwd_tmpstr);
-		x += deltco;
-		if (x > (lframe->maxco - lblen)) {
-			cp_set(showli, lblen + 1, HDR);
-			w_str(&cwd_tmpstr[x - lframe->maxco + lblen + 1 + deltco]);
-		}
-		else {
-			cp_set(showli, lframe->maxco - x - deltco, HDR);
-			w_str(cwd_tmpstr);
-		}
-#endif
 	}
 #ifdef DEBUG
 	sprintf(cwd_tmpstr, "0x%07lx", (unsigned long)vf);

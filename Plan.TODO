@@ -3,6 +3,10 @@ BUGS/FIX
 
 ! -- лишнее перечитывание главного меню, например std_help.rc (но третий раз не перечитывает) 
 
+!! # vgs
+File descriptor 3 (/dev/tty) leaked on vgs invocation. Parent PID 11891: vash
+File descriptor 4 (/tmp/ashQGy1TN) leaked on vgs invocation. Parent PID 11891: vash
+
 DOC/MAN
     ------------------------------------------------------------------------------
     
@@ -12,7 +16,7 @@ LINLIB, VHSET,
 
     -- статусная строка (трей приложения)
 	
-    -- UTF-8: implement wcwidth() into w_wchr() and editor
+    -- UTF-8: implement wcwidth() into editors r_line(),e_str()
 
     -- r_key(): correct input for non-unicode 8-bit encodings
  

@@ -63,7 +63,7 @@ int co;
 kbcod cod;
 {
 	char *sbuf;
-	sbuf = calloc(MAXLICO + 1, sizeof(wchar_t));
+	sbuf = calloc(STRBUF, sizeof(wchar_t));
 
 	cp_set(li, co, TXT);
 	if (cod == L'\0') {

@@ -74,6 +74,7 @@ int execmode;
 		/* здесь переопределить станд. файлы, -- man credentials(7) ?*/
 		//setsid();
 		//setpgrp();
+		fclose(vttout);
 		/*...*/
 
 #ifndef LUNIX

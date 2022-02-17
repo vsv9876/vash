@@ -1,4 +1,5 @@
 Return   - back to main view
 About    - generic info about vash
-Context  - workflow diagram, context switching
 Keyboard - description of generic usage
+Context  - workflow diagram, context switching
+Exit     - exit code indicator

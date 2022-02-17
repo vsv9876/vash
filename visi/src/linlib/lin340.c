@@ -221,9 +221,9 @@ register LINE    *line; /* УКАЗАТЕЛЬ НА ЛИНИЮ */
 	wchar_t *editptr;         /* начало строки для редактора, после промптера */
  register
 	wchar_t *wcsptr;
-	wchar_t  wcsbuf[STRLEN];  /* рабочая строка во внутренней кодировке */
+	wchar_t  wcsbuf[STRBUF];  /* рабочая строка во внутренней кодировке */
 
-	char    u8buf[4*STRLEN + 2]; /*промежуточная строка в кодировке UTF-8*/
+	char    u8buf[4*STRBUF + 2]; /*промежуточная строка в кодировке UTF-8*/
 	int		u8size;			     /* размер в символах в промежуточной строке*/
 
 	attr = line->attr;
@@ -330,7 +330,7 @@ string_simple:
 	if(onexit || posp == (int *)(-1)) return(cod);    /* КОНЕЦ ДЛЯ ВЫЗОВА ЧЕРЕЗ w_line */
 
 	/*==== КУРСОР ПЕРЕД ВВОДОМ ПЕРВОЙ КЛАВИШИ */
-	/* хинт для полей-переключаетелей */
+	/* хинт для полей-переключателей */
 	if ((attr & LTYPE) == ALT &&
 			(wcsptr[0]=='[' || wcsptr[0]=='(' || wcsptr[1]==' ')) {
 		cp_set(line->line, 1 + line->colu, attr);

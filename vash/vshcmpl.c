@@ -28,7 +28,7 @@ char *s_ins;
 {
     struct stat statbuf;
     extern char *rwxmode();
-    char tmps[(MAXLICO * 3) + 3];
+    char tmps[STRBUF * 4];
     char  ftype;	/* file (or dir) type */
     u_short mode;
     char *s;
@@ -166,7 +166,7 @@ char *patt;
 {
 	FILE *pipe;
 	char *filestr; /*[BUFSMAX+1];*/
-	char *inss; /*[MAXLICO+1]; /**/
+	char *inss; /*[STRBUF]; /**/
 	int count;
 	size_t sz, pattsz;
 	char *s;
@@ -176,19 +176,19 @@ char *patt;
 	count = 0;
 	pattsz = strlen(patt); /*тут нужен именно strlen*/
 
-	if ((inss = malloc((size_t)MAXLICO + 1)) == NULL) {
+	if ((inss = malloc((size_t)STRBUF)) == NULL) {
 		ok = -2; goto ret;
 	}
 
 	pipe = popen(from, "r");
 	if (pipe != NULL) {
-		if ((filestr = malloc((size_t)MAXLICO + 1)) == NULL) {
+		if ((filestr = malloc((size_t)STRBUF)) == NULL) {
 			ok = -2; goto ret; /*in hope this never happen*/
 		}
 		while(!feof(pipe)) {
 			s = fgets((s = filestr), BUFSMAX, pipe);
 			if (s != NULL && strncmp(patt, filestr, /*strlen(patt)*/pattsz) == 0) { /*тут нужен именно strlen*/
-					/*strncpy(inss, s + pattsz, MAXLICO);*/
+					/*strncpy(inss, s + pattsz, STRBUF);*/
 					/*skip trailing LF */
 					sz = strlen(filestr); /*тут нужен именно strlen*/
 					if (sz > 0 && filestr[sz-1] == '\n') {
@@ -224,7 +224,7 @@ ret:
 char *sgg_ext(s_base)
 char *s_base;
 {
-	static  char s_buf[MAXLICO + 1] = "";
+	static  char s_buf[STRBUF] = "";
 	SLIST  *slist;
 	size_t	slist_sz;
 	char  **sggstr; /* массив указателей на строки sgglist */
@@ -388,11 +388,11 @@ int  *curpos; /* текущая позиция курсора в буфере */
 int maxpos; /* максимальное значение позиции в буфере строки */
 {
 #ifdef DEBUGS
-    static char debugs[MAXLICO+1];			/* completion string */
+    static char debugs[STRBUF];			/* completion string */
 #endif
-/*	char s_ins[MAXLICO+1] = "";		/* suggestion string to be inserted */
-    char s_dir[MAXLICO+1]; /* база (например, путь до каталога) */
-	char s_base[MAXLICO+1]; /* хвост (например, префикс имени в каталоге) */
+/*	char s_ins[STRBUF] = "";		/* suggestion string to be inserted */
+    char s_dir[STRBUF]; /* база (например, путь до каталога) */
+	char s_base[STRBUF]; /* хвост (например, префикс имени в каталоге) */
     int argc, x_in, x_out, ins_len /*, dir_len, base_len;*/;
     int base_x, dir_x, dir_end;
     char contxt, conold;   /* cmd scaner context: 's'eparator, 'a'rg, 'n'ull, 'i'ni */

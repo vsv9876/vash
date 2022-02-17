@@ -15,8 +15,8 @@ extern  int     y0_top;
 
 extern int sgrmode;
 
-char   *onoff[] = { "[ ]", "[X]", 0 };
-/*char   *onoff[] = { " | ", " x ", 0 };*/
+/*char   *onoff[] = { "[ ]", "[X]", 0 };*/
+char   *onoff[] = { "[ ]", "[*]", 0 };
 
 #ifdef RETRO
 extern  char    Cfill[];
@@ -32,7 +32,7 @@ register LINE *line;
 kbcod cod;
 {
 	int *var;
-	char *s = calloc(sizeof(char), MAXLICO);
+	char *s = calloc(sizeof(char), STRBUF);
 
 	var = (int *)line->varl;
 	if (*var < 2 || *var > (lframe->maxli - 4)) {

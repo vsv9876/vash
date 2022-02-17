@@ -190,7 +190,7 @@ int sh_esc;			/*требуется экранирование для /bin/sh*/
     int sh_req = 0;	/* флаг - сделаны подстановки, требуется вызов /bin/sh*/
     char *ptmp;
 
-    ptmp = alloca(4*2*(MAXLICO+1));
+    ptmp = alloca(4*2*STRBUF);
 
     *ptmp_sh = '\0';
     while (*p) {
@@ -273,7 +273,7 @@ char *cmdlbl;   /* вывеска взамен команды */
 	/*char    tmpcmd[140];*/
 	char *tmpcmd;
 
-	tmpcmd = alloca(4*2*(MAXLICO+1));
+	tmpcmd = alloca(4*2*STRBUF);
 
 	if (cmd) {
 	    /* выполнить подстановки */

@@ -35,7 +35,7 @@ register char *s;
 	extern  char *sys_errlist[];    /* АНГЛ. СПИСОК СООБЩЕНИЙ */
 	extern  char *sys_rerrlist[];   /* РУСС. СПИСОК СООБЩЕНИЙ */
 #endif
-	char    outstr[STRLEN];
+	char    outstr[STRBUF];
 	char	*erstr;
 
 #ifndef RETRO

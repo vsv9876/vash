@@ -221,7 +221,7 @@ fatal()
 	exit(1);
 }
 
-char itmnav[MAXLICO+1] = "";
+char itmnav[STRBUF] = "";
 
 itmshow()
 /* показать положение "окна" */

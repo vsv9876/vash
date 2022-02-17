@@ -134,7 +134,7 @@ typedef short  bool;     /* короткий формат для целых чи
 #define ISCTL( c )      (((c)&KBPRE) != 0 ? 1 : 0)
 #endif /*KBCOD_INT32*/
 
-#define STRLEN MAXLICO+2 /*82 /* размер строки ввода TODO 4096 */
+#define STRBUF (MAXLICO+2) /*82 /* размер строки ввода TODO 4096 */
 #ifndef FALSE           /* определение м.быть в др. месте */
 #define TRUE    1
 #define FALSE   0
@@ -303,6 +303,8 @@ extern  int mb_cur_max;
 extern  int u8nopass;
 extern  int u8slen(), u8swcs(), u8snwcs();
 extern char *u8pxx();
+
+extern 	int w_wchr(), w_wcstrn(), w_wcstr();
 
 
 /*--------------------*/

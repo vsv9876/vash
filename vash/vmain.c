@@ -105,10 +105,10 @@ char *fill;
 	register LINE *line;
 	extern kbcod pmtrstr(); /* ввод строки с промптером */
 	char prompts[100];
-	char newCfill[MAXLICO];
+	char newCfill[STRBUF];
 	int maxlen;
 
-	maxlen = (MAXLICO > lframe->maxco ? lframe->maxco : MAXLICO) - 1;
+	maxlen = (STRBUF > lframe->maxco ? lframe->maxco : STRBUF) - 1;
 	/* если строка fill пустая, редактировать Cfill, иначе просто скопировать fill */
 	if (fill != (char *)0 && fill[0] != '\0') {
 		strcpy(Cfill, fill);

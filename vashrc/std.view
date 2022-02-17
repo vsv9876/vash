@@ -50,7 +50,7 @@
 # dodo script companion, not in use
 # 	r?? T .a             :tail -f #@
 # 	r?? T a              :tail -f #@
-	r?? T *              :#m #@
+	r?? T *              ;#m #@
 # 	r?? E *              _msg file empty, zero length
 # interface files in /dev, /sys, ... - stat(2) show them as zero length regular files
 	r?? E *              :cat #@

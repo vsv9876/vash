@@ -5,7 +5,7 @@
 # Wed Sep 12 15:46:39 MSD 1990
 # 2022-01-23
 #
--f<std_help.menu
+-f< std_help.menu
 -i
 #-o.
 -@1
@@ -34,7 +34,8 @@
     * * :exit
 :U9
 :9
-    * * _help sup_help.lb
+#    * * _help sup_help.lb
+    * * _sup
 :[#]
     * * _file #@
 :[?]
@@ -51,6 +52,9 @@
     * * Keyboard   _help phelp0.lb
     * * Context    _help std_help.lb
     * * About      _help about_vash.lb
+    * * Exit       _help excode_help.lb
 
+:Z
+    * * _msg #k masked
 @std.final
 

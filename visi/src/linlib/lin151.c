@@ -25,20 +25,26 @@ extern SCRN scrn;
 /*
  * выдать символ с перекодировкой в UTF-8 из внутреннего формата
  */
-w_wchr(c)
+int w_wchr(c)
 wchar_t c;
 {
 	/*wint_t ret;*/
 	unsigned char s[6];
 	unsigned char *sp;
 	int  cnt;
+	int cwidth;
+
+	cwidth = wcwidth(c);
 	/* 
-	 * check if inside lframe(screen) borders, writeout,
+	 * check if inside lframe(screen) borders,
+	 * then writeout, and
 	 * then save new position of cursor to be expected
  	 */
-	/*if (scrn.sc_li <= lframe->maxli && scrn.sc_co <= lframe->maxco) {*/
-	if (scrn.sc_li < (lframe->baseli + lframe->maxli)
-	 && scrn.sc_co < (lframe->baseco + lframe->maxco)) {
+
+	if (scrn.sc_li >= lframe->baseli
+	 && scrn.sc_co >= lframe->baseco
+	 && scrn.sc_li < (lframe->baseli + lframe->maxli)
+	 && scrn.sc_co <= (lframe->baseco + lframe->maxco - cwidth)) {
 		cnt = wctomb(s, c);
 		sp = s;
 		while(cnt-- > 0) {
@@ -48,10 +54,10 @@ wchar_t c;
 		/*ret = fputwc(c, vttout); fflush(vttout); if (ret == WEOF) { perror(""); exit(8); }*/
 		/* putc(oc, stdout); */
 	}
-	scrn.sc_co += 1;
+	scrn.sc_co += cwidth/*1*/;
 }
 
-w_wcstrn(s, n)
+int w_wcstrn(s, n)
 /* ВЫДАТЬ СТРОКУ ЗАДАННОЙ ДЛИНЫ, ДОПОЛНИТЬ ПРОБЕЛАМИ */
 register wchar_t *s;
 register int n;
@@ -63,7 +69,7 @@ register int n;
 	while(--n>=0) w_wchr(L' ');
 }
 
-w_wcstr(s)
+int w_wcstr(s)
 register wchar_t *s;
 {
 	for(; *s; s++) {
