@@ -29,7 +29,6 @@
 #include "line.h"
 #include "line0.h"
 
-#define VTTOUT_DEBUG_OFF
 #ifdef VTTOUT_DEBUG
 #include <stdlib.h>
 #include <time.h>

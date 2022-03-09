@@ -40,7 +40,7 @@ int u8swcs(dst, src)
 char    *src;
 wchar_t *dst;
 {
-	return(u8snwcs(dst, src, MAXLICO*4));
+	return(u8snwcs(dst, src, STRBUF*4));
 }
 
 /* копировать n символов в строку UTF-8 из строки wchar_t */
@@ -63,7 +63,7 @@ int wcsu8s(dst, src)
 char    *src;
 wchar_t *dst;
 {
-	return(wcsnu8s(dst, src, MAXLICO*4));
+	return(wcsnu8s(dst, src, STRBUF*4));
 }
 
 /* вернуть количество символов (не байт) в строке UTF-8 */
@@ -89,7 +89,7 @@ size_t n;
 
 	u8snwcs(tmp, s, n);
 	tmp[n] = L'\0';
-	len = wcstombs(dst, from, 4*MAXLICO);
+	len = wcstombs(dst, from, 4*STRBUF);
 	if (len < 0) *dst = '\0'; /* all string to be dropped */
 	return(len);
 }

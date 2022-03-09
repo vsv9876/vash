@@ -16,7 +16,7 @@ typedef struct {
 typedef struct {
 	void *sl_prev;	/* pointer to prev element */
 	size_t ssize;	/* string size stored, index of trailing zero */
-	char sstr[10]; 	/* starting point of string data, declared size does not matter */
+	wchar_t sstr[10]; 	/* starting point of string data, declared size does not matter */
 } SLIST;
 
 typedef struct {
@@ -25,7 +25,7 @@ typedef struct {
 	size_t	sl_size;
 } SLIST_HEAD;
 
-extern char *sl_sstr();
+extern wchar_t *sl_sstr();
 extern SLIST *sl_add();
 extern SLIST_HEAD *sl_init();
 extern SLIST *sl_prev();

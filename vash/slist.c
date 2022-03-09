@@ -6,8 +6,10 @@
  *
  *  Created on: 19 aug. 2018 г.
  *      Author: vsv
+ *
  */
 
+#include <wchar.h>
 #include <stdlib.h>
 #include <string.h>
 #include "slist.h"
@@ -15,13 +17,13 @@
 /*
  * return ptr to string stored in this list element
  */
-char *sl_sstr(slist)
+wchar_t *sl_sstr(slist)
 SLIST *slist;
 {
-	char *s;
+	wchar_t *s;
 
-	s = (char *)slist;
-	s += sizeof(SLIST_PTR);
+	/*s += sizeof(SLIST_PTR);*/
+	s = slist->sstr;
 	return s;
 }
 
@@ -31,21 +33,21 @@ SLIST *slist;
  */
 SLIST *sl_add(head, str)
 SLIST_HEAD *head;
-char  *str;
+wchar_t  *str;
 {
 	SLIST *ptr;
 	SLIST *prev;
 	size_t ssize;
-	char  *s;
+	wchar_t  *s;
 
-	ssize = strlen(str);
+	ssize = wcslen(str);
 
-	ptr   = malloc(sizeof(SLIST_PTR) + ssize + 2);
-	/*ptr = malloc(sizeof(SLIST_PTR)); /* + ssize);*/
+	ptr   = malloc(sizeof(SLIST_PTR) + (sizeof(wchar_t) * (ssize + 2)));
+
 	if (ptr != NULL) {
 		ptr->ssize = ssize;
 		s = sl_sstr(ptr);
-		strncpy(s, str, ssize);
+		wcsncpy(s, str, ssize);
 		s[ssize] = '\0'; /**/
 		prev = NULL;
 		if (head->sl_first == NULL) {
@@ -59,13 +61,12 @@ char  *str;
 	}
 	return ptr;
 }
+
 /*
  * init list,
  * returns pointer to first element
  */
-
 SLIST_HEAD *sl_init()
-/*char *name; /* first element store name of the list as a string */
 {
 	SLIST_HEAD *head;
 	SLIST *ptr;
@@ -114,11 +115,11 @@ SLIST_HEAD *head;
 }
 
 /*
- * check for duplicate for pattern; return non-zero if pattern already stored
+ * return non-zero if pattern already stored
  */
-int sl_chkdup(head, patt)
+int sl_find(head, patt)
 SLIST_HEAD *head;
-char *patt;
+wchar_t *patt;
 {
 	SLIST *p;
 	SLIST *prev;
@@ -131,7 +132,8 @@ char *patt;
 	for (p = head->sl_last; i > 0 && p->sl_prev != NULL; i--) {
 		prev = sl_prev(p);
 		/*free(p->sstr);*/
-		if (strcmp(sl_sstr(p), patt) == 0) return 1;
+		if (wcscmp(sl_sstr(p), patt) == 0)
+			return 1;
 		p = prev;
 	}
 	return 0;
@@ -142,10 +144,8 @@ SLIST_HEAD *head;
 {
 	SLIST *p;
 	SLIST *prev;
-	/*SLIST_HEAD *head;*/
 	size_t i, count;
 
-	/*head = headp;*/
 	i = count = head->sl_size;
 	/* from last element to head */
 	for (p = head->sl_last; i > 0 && p->sl_prev != NULL; i--) {

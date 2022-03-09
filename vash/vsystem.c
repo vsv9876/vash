@@ -72,8 +72,10 @@ int execmode;
 			signal( SIGQUIT, SIG_DFL );
 		}
 		/* здесь переопределить станд. файлы, -- man credentials(7) ?*/
-		//setsid();
-		//setpgrp();
+#if 0
+		setsid();
+		setpgrp();
+#endif
 		fclose(vttout);
 		/*...*/
 
@@ -260,9 +262,9 @@ int  execapnd;
 	if (cmdlbl == (char *)0) {
 		cmdlbl = cmd2;  /* саму команду и показать */
 	}
-//	at_set(TXT);
-	at_set(0); er_eop(0);
-	at_set(0|INP);
+	/*at_set(TXT);*/
+	at_set(CMD); er_eop(CMD);
+	at_set(CMD|INP);
 	w_str(pmtsh);
 	er_eop(0);
 	fflush(vttout);
@@ -369,8 +371,10 @@ char *cmdlbl;   /* строка для индикации, как правило
 	execmode |= (execargv ? ASH_NOSH : 0);
 	shstart();
 	syscod = shexec(cmdp, cmdlbl, execmode, execapnd);
-// moved to shexec() for readability
-//	fprintf(stdout, " "); fflush(stdout);
-//	io_set(IO_VIDEO);
+#if 0
+    moved to shexec() for readability
+	fprintf(stdout, " "); fflush(stdout);
+	io_set(IO_VIDEO);
+#endif
 	return(syscod);
 }

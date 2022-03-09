@@ -18,7 +18,7 @@ DEST  = /usr
 TOPDIR = .
 
 MAKECONF   = ./conf/Makefile
-BLDCFG	= conf.cfg
+BLDCFG	= BLD.cfg
 
 BLD	= $(TOPDIR)/BLD
 #BLD	= .
@@ -73,11 +73,14 @@ setup:
 	else \
 		echo '***************************' ; \
 		echo '' ; \
-		echo Plase, do $(MAKE) config 1st; \
+		echo Plase, do $(MAKE) config ; \
 		echo '' ; \
 		echo '***************************' ; \
 	false; \
 	fi   
+
+$(BLDCFG):
+	touch $(BLDCFG)
 
 prep cfg config:;
 	./configure
@@ -135,8 +138,6 @@ clean:
 	cd $(VASH); $(MAKE) clean
 	cd vashlib; $(MAKE) clean
 	cd vtest; $(MAKE) clean
-	rm -f $(BLDCFG) 
-	touch $(BLDCFG)
 #	cd vashlib/LIB; $(MAKE) clean
 #	cd vashlib/LIB-$(ASHLIB); $(MAKE) clean
 
@@ -150,6 +151,8 @@ distclean:	clean
 			-name a \
 		')' -exec rm -f '{}' ';'
 	rm -rf $(BLD)
+	rm -f  $(BLDCFG) 
+#	touch $(BLDCFG)
 
 $(DEST):
 	mkdir -p $(DEST)

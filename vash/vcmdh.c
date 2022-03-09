@@ -20,9 +20,8 @@
 #define CMDP 40         /* КОЛИЧЕСТВО КОМАНД В БУФЕРЕ */
 /*#define CMDHL 8         /* КОЛИЧЕСТВО КОМАНД В МЕНЮ НА ЭКРАНЕ */
 #else
-#define CMDP 80        /* КОЛИЧЕСТВО КОМАНД В БУФЕРЕ */
-/*#define CMDHL 8         /* КОЛИЧЕСТВО КОМАНД В МЕНЮ НА ЭКРАНЕ */
-#define CMDB (CMDP * MAXLICO) /* 8192       /* два полных экрана истории хватит... */
+#define CMDP 80                /* command power of buffer */
+#define CMDB (CMDP * MAXLICO)  /* 8192 */      /* command buffer size */
 #endif /* TINYSMALL */
 
 extern char *homedir;
@@ -48,16 +47,20 @@ char *from;
 
 #define strcpy mystrcpy
 
-int cmddel(cmd)
 /*
  * УБРАТЬ ИЗ БУФЕРА
  * возвращается номер удаляемой команды.
  */
-char *cmd;
+int cmddel(cmd0)
+wchar_t *cmd0;
 {
+	u8char_t cmd[4 * STRBUF];
+
 	register int i;
 	int savenext;      /* индекс указателя следующей команды */
 	int delsize;    /* размер удаляемой команды */
+
+	wcsu8s(cmd, cmd0);
 
 /***
 	if (*cmd == '\0')
@@ -121,20 +124,27 @@ int     reqsz;  /* РАЗМЕР, КОТОРЫЙ ТРЕБУЕТСЯ ОСТАВИ�
 		cmdptr[i++] = 0;
 }
 
-int cmdput(cmd)
 /*
  * ПОЛОЖИТЬ В БУФЕР
  */
-char *cmd;
+int cmdput(newcmd)
+u8char_t *newcmd;
 {
-	int newsize;
+	int reqsize;
 	char *p;
+#if 0
+	u8char_t cmd[4 * STRBUF];
+	wcsu8s(cmd, newcmd);
+#else
+	u8char_t *cmd;
+	cmd = newcmd;
+#endif
 
 	if (*cmd == 0)          /* НИЧЕГО НЕ ДЕЛАТЬ */
 		return(0);
 	cmddel(cmd);           /* УБРАТЬ СТАРУЮ КОПИЮ */
-	newsize = strlen(cmd) + 1;
-	cmdsqz(newsize);
+	reqsize = strlen(cmd) + 1;
+	cmdsqz(reqsize);
 
 	/* ПОЛОЖИТЬ НОВУЮ КОМАНДУ */
 	p = cmdbuf;
@@ -144,26 +154,26 @@ char *cmd;
 
 	cmdplast++;
 	cmdpi = cmdplast;       /* МОДИФИЦИРОВАТЬ ИНДЕКСЫ */
-	cmdbufree += newsize;
+	cmdbufree += reqsize;
 
-#ifdef DURA
+#if 0
 	/* сначала синхронизация истории в файл? */
 	/* при каждом изменении истории команд!!! */
-	if (histsn == 1) cmdphist(homedir);
+	if (histsn == 1) cmdphist();
 #endif
 	return(-1);
 }
 
-int cmdprv(cmd)
 /*
  * ВЗЯТЬ ПРЕДЫДУЩУЮ КОМАНДУ ИЗ БУФЕРА
  */
-char *cmd;
+int cmdprv(cmd)
+wchar_t *cmd;
 {
 	if (cmdpi > 0) cmdpi--;
 	else    return(0);
 	if (cmdptr[cmdpi])
-		strcpy(cmd, cmdptr[cmdpi]);
+		/*strcpy*/u8swcs(cmd, cmdptr[cmdpi]);
 	return(1);
 }
 
@@ -171,12 +181,12 @@ int cmdnxt(cmd)
 /*
  * ВЗЯТЬ СЛЕДУЮЩУЮ КОМАНДУ ИЗ БУФЕРА
  */
-char *cmd;
+wchar_t *cmd;
 {
 	if (cmdptr[cmdpi] && cmdplast > cmdpi)
 		cmdpi++;
 	if (cmdptr[cmdpi]) {
-		strcpy(cmd, cmdptr[cmdpi]);
+		/*strcpy*/u8swcs(cmd, cmdptr[cmdpi]);
 		return(1);
 	}
 	else    *cmd = 0;
@@ -220,9 +230,9 @@ static time_t hflast = (time_t)0; /* zero for fisrt time comparizon */
  * returns 1, if get commands from history file
  * returns 0, if no read done
  */
-cmdghist(hdp)
-char *hdp;
+cmdghist()
 {
+
 	FILE *fp;
 	struct stat	hfstat;
 	time_t      hftime;
@@ -232,7 +242,7 @@ char *hdp;
 	register char *p;
 	register int i;
 
-	strcpy(filename, hdp);
+	strcpy(filename, homedir);
 	strcat(filename, hfile);
 
 	if (stat(filename, &hfstat) < 0)
@@ -275,8 +285,7 @@ char *hdp;
 /*
  * put commands from buffer cmdb[] to file in home directory
  */
-cmdphist(hdp)
-char *hdp;
+cmdphist()
 {
 	char filename[200];
 	struct stat	hfstat;
@@ -285,9 +294,9 @@ char *hdp;
 	int ok;
 	register char **pp;
 
-	if (hdp == (char *)0) return(0) ; /* history file is not defined */
+	if (homedir == (char *)0) return(0) ; /* history file is not defined */
 
-	strcpy(filename, hdp);
+	strcpy(filename, homedir);
 	strcat(filename, hfile);
 
 	if ((fp = fopen(filename, "w")) == NULL)
@@ -305,7 +314,7 @@ char *hdp;
 	return(ok);
 }
 
-static  char *cmdpp;
+static  wchar_t *cmdpp;
 
 int t_hist(line, cod)
 /*
@@ -323,7 +332,9 @@ kbcod cod;
 	case ';':
 	case ' ':
 		/* ДОБАВИТЬ КОМАНДУ В РАБОЧИЙ БУФЕР */
-		strcat(cmdpp, cmd);
+		/*strcat(cmdpp, cmd)s*/
+		while(*cmdpp != L'\0') cmdpp++;
+		u8swcs(cmdpp, cmd);
 		break;
 	case '=':
 		/* использовать как команду-заполнитель главного меню */
@@ -331,7 +342,7 @@ kbcod cod;
 		break;
 	case KB_NL:
 		/* СКОПИРОВАТЬ КОМАНДУ В РАБОЧИЙ БУФЕР */
-		strcpy(cmdpp, cmd);
+		/*strcpy*/u8swcs(cmdpp, cmd);
 		break;
 	case KB_DE:
 		/* УБРАТЬ КОМАНДУ ИЗ ПАМЯТИ */
@@ -350,7 +361,7 @@ kbcod cod;
 			w_page(clm._vf, 0);
 			/* синхронизировать историю при удалении каждой команды */
 			if (histsn) {
-				cmdphist(homedir);
+				cmdphist();
 			} /*else {
 				cp_set(-1, -14, ATT|INP);
 				w_str("will not saved");
@@ -363,10 +374,10 @@ kbcod cod;
 	return (TRUE);
 }
 
-kbcod h_menu()
 /*
  * РАБОТА С МЕНЮ БУФЕРА ИСТОРИИ КОМАНД.
  */
+kbcod h_menu()
 {
 	register unsigned i;
 	kbcod cod;
@@ -444,8 +455,8 @@ static  LINE tmplate =
  * returns 0, in case no view was done
  * returns 2, in case select of new content for Cfill
  */
-cmdvew(cmd)
-char  *cmd;
+cmdvew(cmd0)
+wchar_t  *cmd0;
 {
 	extern int  y0_top;     /* определено в vshcmd */
 	extern char *pmtsh;    /* --"-- */
@@ -461,7 +472,7 @@ char  *cmd;
 	cp_set(clm._y0 - 1, lframe->maxco - 1, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
 	/* сначала синхронизация истории из файла? */
 	if (histsn) {
-		cmdghist(homedir);
+		cmdghist();
 		w_str("=");
 	}
 	er_eop(TXT);
@@ -489,7 +500,7 @@ char  *cmd;
 		y0_top = clm._y0;
 		scrlnl();
 	}
-	cmdpp = cmd;    /* ДЛЯ КОПИРОВАНИЯ НОВОЙ КОМАНДЫ */
+	cmdpp = cmd0;    /* ДЛЯ КОПИРОВАНИЯ НОВОЙ КОМАНДЫ */
 
 	cod = h_menu();
 	switch(cod) {

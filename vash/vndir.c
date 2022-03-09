@@ -814,7 +814,7 @@ char *cdarg;
 	}
 	if (chdir(nwdpath) < 0) {
 		w_emsg(
-		"Can't change directory to ");
+		"Can't chdir to ");
 		w_str(nwdpath);
 		return(-1);
 	}

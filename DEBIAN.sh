@@ -4,7 +4,7 @@
 # dirty hack for Debian9 and probably for any debian-compatible -
 # only fakeroot and dpkg requred
 
-BLDCFG=conf.cfg
+BLDCFG=BLD.cfg
 
 arch=`dpkg --print-architecture`
 

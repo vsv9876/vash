@@ -29,7 +29,7 @@ LIBRARY	      = libline.a
 MAKEFILE      = Makefile
 
 # CLAGS_VISI наследуется из ../Makefile, возможные значения определены в line.h
-CFLAGS_VISI   =
+#CFLAGS_VISI   =
 CFLAGS        = $(CFLAGS_VISI) -I../../include
 LINT          = lint
 CI            = ci -f -n$(VERSION) -m"ВЕРСИЯ $(VERSION)" -sRel

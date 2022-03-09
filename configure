@@ -2,7 +2,7 @@
 
 #echo Warning! there no automatic configuration prepared,
 #echo please, use 'make cfg' instead
-BLDCONF=./conf.cfg
+BLDCONF=./BLD.cfg
 
 mypwd=`pwd`
 mydir=`basename $mypwd`

@@ -16,29 +16,34 @@ extern char    *pmtsh;/* = ".$"; /*"sh>" ;*/
 int pmtshsz;            /* размер подсказки */
 
 /* command buffer is a string object, it is not a simple char-type string */
-static  u8char_t cmdbuf[4 + 4*STRBUF] = "   ";    /* size for u8sobj_t cmdo -- below */
+/* static  u8char_t cmdbuf[4 + 4*STRBUF] = "   ";    /* size for u8sobj_t cmdo -- below */
+
+static  wchar_t cmdbuf[4 + STRBUF] = L"   ";    /* size for wcsobj_t cmdo -- below */
+
 static  int  cmdsize = 0;       /* vsize e_str -- depends of screen width */
 static  int  pos = 0;           /* i     e_str    позиция в строке */
 static  int old_pos = 0;		/* позиция курсора до попытки окончить ввод (completion),
 								если изменилась, выполнена вставка в буфер команды */
-
-/*static  u8sobj_t *cmdo = cmdbuf;*/
+#if 0
 static  u8char_t *cmd0 = &cmdbuf[3]/*((u8sobj_t *)cmdbuf)->u8s*/;
 static  u8sobj_t *cmdo = &cmdbuf[0];
+#else
+static  wchar_t *cmd0 = &cmdbuf[2]/*((wcsobj_t *)cmdbuf)->u8s*/;
+static  wcsobj_t *cmdo = (wcsobj_t *)/*&*/cmdbuf/*[0]*/;
+#endif
 
 static int done = 0;
 cmdo_init()
 {
 	if(done == 0) {
 		done = 1;
-		cmdo->u8o_sig = U8O_SIG;
-		cmdo->u8o_sizeh = MAXLICO / 256;
-		cmdo->u8o_sizel = MAXLICO % 256;
+		cmdo->wco_sig = WCO_SIG;
+		cmdo->wco_size = STRBUF;
 	}
 }
 
 w_cmd(cmd)
-register char *cmd;
+register wchar_t *cmd;
 {
 	register int i;
 	int cmd_li = -1 /*y0_top - 1*/; /* on bootom line or on top of scroll occupied by vash */
@@ -47,10 +52,13 @@ register char *cmd;
 	at_set(CMD|INP);
 	/*if (getuid() == 0) pmtsh = ".#";*/
 	w_str(pmtsh);
-//	cp_set(cmd_li, pmtshsz, CMD);
-//	for(i = 0; cmd[i] && i < cmdsize; i++)
-//		w_chr(cmd[i]);
 	cp_set(cmd_li, pmtshsz, CMD); /* point to start re_str() editor */
+
+	/* TODO: merge with e_str() code */
+#if 0
+	for(i = 0; cmd[i] && i < cmdsize; i++)
+		w_chr(cmd[i]);
+#endif
 }
 
 scrlst()        /* курсор к началу свитка */
@@ -63,10 +71,23 @@ scrlst()        /* курсор к началу свитка */
 
 static char tmpstr[STRBUF * 2];
 
-vshcmd(cmd, cmdlbl)
+/*
+ * compare new command vs old command to be saved in history
+ */
+static int cmd0cmp(cmd, cmd0, size)
+char *cmd;
+wchar_t *cmd0;
+size_t size;
+{
+	u8char_t new[4 * STRBUF];
+	wcsu8s(new, cmd0);
+	return strncmp(cmd, new, size);
+}
+
 /*
  * выполнить команду /bin/sh
  */
+vshcmd(cmd, cmdlbl)
 char *cmd;      /* команда для выполнения */
 char *cmdlbl;   /* вывеска для показа вместо команды */
 {
@@ -81,6 +102,8 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 
 	int trapcod;		/* flag: trap, no return from code exit indicator */
 	int msgat;			/*exit code message attribute*/
+
+	u8char_t *u8cmd0[4 * STRBUF];	/* command to be executed */
 
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
@@ -99,17 +122,12 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			okwait = (*cmd == ';')? 0 : 1;
 			justrun = 1;
 			cod = KB_NL;
-			/* копируем команду полностью */
+			/* пропускаем первый символ, затем копируем команду полностью */
 			cmd++;
-			strcpy(cmd0, cmd);
 		}
-		else {
-			/* копир. только то, что ПОМЕСТИТСЯ на экране -- TODO FTW*/
-			/*strncpy(cmd0, cmd, (size_t)cmdsize); TODO: WTF
-			cmd0[cmdsize] = 0;*/
-			strcpy(cmd0, cmd);
-		}
-		pos = /*strlen*/u8slen(cmd0);
+		/*strcpy*/u8swcs(cmd0, cmd);
+
+		pos = /*strlen*//*u8slen*/wcslen(cmd0);
 	}
 
 	for (;;) {
@@ -119,7 +137,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		case KB_HE:
 		case KB_AU:
 		case KB_AD:
-			pos = /*strlen*/u8slen(cmd0);     /* курсор в конец */
+			pos = /*strlen*//*u8slen*/wcslen(cmd0);     /* курсор в конец */
 		default:
 			w_cmd(cmd0);
 		}
@@ -148,9 +166,10 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		case KB_AU:
 			/* пред. команда */
 			/* синхронизировать историю, если в буфере набираемой команды пусто */
-			if (histsn && cmd0[0] == 0) cmdghist(homedir);
-			if ( !cmdprv(cmd0) )
+			if (histsn && cmd0[0] == 0) cmdghist();
+			if (!cmdprv(cmd0))
 				bell();
+
 			break;
 		case KB_AD:
 			/* следующая команда */
@@ -164,8 +183,10 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			/* completion */
 			if ((sgglist = sl_init()) != NULL) {
 				old_pos = pos;
-				/* TODO: maxco заменить на размер буфера команды, TAB#2,#3>> */
-				if ((slsize = try_compl(&cmd0[0], &pos, lframe->maxco - 2)) < 0) bell();
+
+				if ((slsize = try_compl(&cmd0[0], &pos,STRBUF/*lframe->maxco - 2*/)) < 0)
+					bell();
+
 				if (pos == old_pos && sgglist->sl_size > 0) {
 					hlp_compl();
 					cmdrun = 1; /*для восстановления главного меню*/
@@ -182,29 +203,31 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 				cmd = "";
 			}
 			/* сохранить команду, если ее редактировали */
-			if (strncmp(cmd, cmd0, /*strlen*/u8slen(cmd0)) != 0) {
+			if (cmd0cmp(cmd, cmd0, /*strlen*//*u8slen*/wcslen(cmd0)) != 0) {
+			/*if (strncmp(cmd, cmd0, strlenu8slenwcslen(cmd0)) != 0) {*/
 				if (histsn) {
-					cmdghist(homedir);
+					cmdghist();
 				}
 
-				cmdput(cmd0);
+				wcsu8s(tmpstr, cmd0);
+				cmdput(tmpstr/*cmd0*/);
 
 				if (histsn) {
-					cmdphist(homedir);
+					cmdphist();
 				}
 				/* заставить при повт.запуске снова сохранять: */
 				cmd = "";
 			}
 			/* конец работы? */
-			if(strcmp(cmd0, "exit")==0) {
+			if(/*strcmp*/wcscmp(cmd0, L"exit")==0) {
 				onexit(0); exit(0);
 			}
 			/* домашний каталог */
-			if (strcmp(cmd0, "cd") == 0) {
+			if (/*strcmp*/wcscmp(cmd0, L"cd") == 0) {
 				char    *homedir;
 				if ((homedir=getenv("HOME")) == NULL) {
 					w_emsg(
-					"env HOME= undefined");
+					"undefined: env HOME= ");
 					return(0);
 				}
 				if (vchdir(homedir) < 0) {
@@ -214,11 +237,15 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			}
 
 			/* перейти в каталог? */
-			if (strncmp(cmd0, "cd ", 3) == 0) {
-				if (index(cmd0, ';'))
+			if (/*strncmp*/wcsncmp(cmd0, L"cd ", 3) == 0) {
+				if (/*index*/wcschr(cmd0, L';') != NULL) {
 					goto std_shell;
+				}
 
-				if (vchdir(&cmd0[3]) < 0) {
+				/* TODO: shell syntax substitutions there, then vchdir*/
+				wcsu8s(tmpstr, &cmd0[3]);
+
+				if (vchdir(/*&cmd0[3]*/tmpstr) < 0) {
 					return(0);
 				}
 				else    {
@@ -236,7 +263,9 @@ std_shell:
 
 			cmdrun = 1;
 
-			syscod = vsystem(cmd0, cmdlbl);
+			wcsu8s(u8cmd0, cmd0);
+
+			syscod = vsystem(u8cmd0, cmdlbl);
 			justrun = 0;
 			scrldo();
 			if(syscod) {
@@ -329,7 +358,7 @@ std_shell:
 				if (cod1(cod) == 0) {
 					/* ввод новой команды */
 					cmd0[0] = cod;
-					cmd0[1] = '\0';
+					cmd0[1] = L'\0';
 					pos = 1;
 					continue;
 				}

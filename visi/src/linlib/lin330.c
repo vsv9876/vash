@@ -61,6 +61,7 @@ static int Nsize = 0;	/* size */
  */
 static char inf_old[7] = "  :..."; /* index state on editing string */
 static char inf_new[7] = "      ";
+
 static edinfo( infflg )
 register int infflg;
 {
@@ -289,6 +290,30 @@ kbcod cod;		/* kbcod() pressed */
 /*
  * Редактор строки без предварительного показа старого содержимого (e_str() wrapper)
  */
+#if 1
+kbcod re_str(wcso, vsize, ctst, ofsp)
+wcsobj_t   *wcso;   /* wchar_t editing object or simple string */
+int     vsize;      /* visible size - размер поля редактирования */
+kbcod (*ctst)();    /* тест для ввода печатаемых кодов */
+int    *ofsp;       /* указатель на величину смещения от нач. поля */
+{
+	kbcod cod;
+	int     _edshow, _edinff, _edinsm;
+
+	_edshow = edshow; edshow = 1; /* 0 */
+	_edinff = edinff; edinff = 0; /* 0 */
+	_edinsm = edinsm; edinsm = 1;
+
+	cod = e_str(wcso/*buf*/, vsize, ctst, ofsp);
+
+	edshow = _edshow;
+	edinff = _edinff;
+	edinsm = _edinsm;
+
+	return cod;
+}
+#else
+/* вариант с конвертацией u8sobj_t -> wcsobj_t и обратно */
 kbcod re_str(u8o, vsize, ctst, ofsp)
 u8sobj_t   *u8o;      /* UTF-8 encoded -- editing object or simple string */
 /*char   *u8s;      /* строка для редактирования*/
@@ -342,6 +367,7 @@ int    *ofsp;       /* указатель на величину смещения
 	}
 	return cod;
 }
+#endif
 
 
 kbcod e_str(wcsobj, vsize, ctst, ofsp)
@@ -363,7 +389,7 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 	int     size;           /* size of string */
 	int     vshift = 0;			/* shift to visible part of the string edited */
 	int		vshift_prev = 0;
-	int     i_prev;			/* internal cursor position on previouse cycle */
+	int     i_prev;			/* internal cursor position on previous cycle */
 	register int i;			/* internal cursor position */
 	register int j;
 	register int  column;      /* ПОЗИЦИЯ И СТРОКА НА ЭКРАНЕ */
@@ -371,7 +397,7 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 			 int  attrib; /* логический видеоатрибут */
 		 kbcod    cod;
 		 kbcod    ok;
-	/*wchar_t  *str_l;	 /* СТРОКА ДЛЯ РЕДАКТИРОВАНИЯ, внутри этой функции */
+	/*wchar_t  *str_l;	 /* СТРОКА ДЛЯ РЕДАКТИРОВАНИЯ внутри этой функции */
 
 	column = scrn.sc_co;
 	linenu = scrn.sc_li;
@@ -394,7 +420,7 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 	j = 0;
 	while(j < size && wc_s[j]) j++;
 	while(j < size)       wc_s[j++] = L' ';
-	//wc_s[j] = 0;
+/*	wc_s[j] = 0;*/
 	wc_s[size] = L'\0'; /* terminate all, not only visible part of the string */
 
 	i = 0; /* always start from zero position on regular lines via r_line() */

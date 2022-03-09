@@ -92,7 +92,7 @@
 ---# place of .sgraAT line must be below .sgr line
 ---#.lh........................................................................
 ---#
-="Video attributes".
+=Video attributes
 .lh............................................................................
 +
 +.p0............ .CMD.   .TXT.   .HDR.   .VAR.   .ALT.   .MSE.   .ERR.   .ATT.

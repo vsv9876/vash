@@ -106,3 +106,6 @@ extern char *tcapo[];
 #define t_lh  tcapo[22] /* ИМЯ КЛАВИАТУРЫ (РАСШИРЕНИЕ LINLIB) */
 
 #endif /* line0_h_def */
+
+
+/*#define VTTOUT_DEBUG*/

@@ -66,7 +66,7 @@ int ok;
 	putchar('\n');
 #endif
 	if (ok == 0 && histf && homedir != (char *)0 && histsn == 0) {
-		cmdphist(homedir);
+		cmdphist();
 	}
 	unlink(tmpflnm);
 
@@ -164,7 +164,7 @@ char **argv;
 		lfmain.maxli = hwframe.maxli;
 		lfmain.baseli = 0;
 	}
-	//lfmain.baseco = 0;
+	/*lfmain.baseco = 0;*/
 	lfmain.maxco  = hwframe.maxco;
 	lframe = &lfmain;
 

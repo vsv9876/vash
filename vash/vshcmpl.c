@@ -8,7 +8,8 @@
 
 /*#define DEBUGS 1 /*debug TAB completion printout*/
 
-#define BUFSMAX 4000
+/*#define BUFSMAX 4000*/
+#define BUFSMAX 4*STRBUF
 
 extern char *getenv();
 /* suggestion mode */
@@ -19,12 +20,16 @@ enum sugg_mode s_mode;
 SLIST_HEAD *sgglist;
 static hlp_onscreen = 0;
 
-static char tstats[6];
+static char tstats[6];  /* type+mode from stat() filled in cmpl_stat */
+
+
+/*#define wchar wchar_t*/
+
 
 char *cmpl_stat(s_dir, s_base, s_ins)
-char *s_dir;
-char *s_base;
-char *s_ins;
+wchar_t *s_dir;
+wchar_t *s_base;
+wchar_t *s_ins;
 {
     struct stat statbuf;
     extern char *rwxmode();
@@ -41,16 +46,16 @@ char *s_ins;
 			s_mode == cd_dir)) {
 	}
 */
-	if (strcmp(s_dir, s_base) == 0) {
-		sprintf(tmps, "%s%s", s_base, s_ins);
+	if (wcscmp(s_dir, s_base) == 0) {
+		sprintf(tmps, "%ls%ls", s_base, s_ins);
 	} else {
-		sprintf(tmps, "%s/%s%s", s_dir, s_base, s_ins);
+		sprintf(tmps, "%ls/%ls%ls", s_dir, s_base, s_ins);
 	}
 
 	if (stat (tmps, &statbuf) < 0) {
 		return NULL;
 	} else {
-	/*копипаста из tstat2() */
+	/* sorry, its a copypaste from tstat2() */
 	/*if (1) {*/
 	    /* выяснить тип файла */
 	    mode = statbuf.st_mode;
@@ -79,28 +84,26 @@ char *s_ins;
 }
 
 /*
- * проверить, уместно ли рассматривать кандидата на завершение команды
+ * check a candidat for completion
  */
 int sgg_valid(s_dir, s_base, s_ins)
-char *s_dir;
-char *s_base;
-char *s_ins;
+wchar_t *s_dir;
+wchar_t *s_base;
+wchar_t *s_ins;
 {
-	char *s;
-	s = tstats;
 
 	if (s_mode == path_cmd) return 1;
 	if(cmpl_stat(s_dir, s_base, s_ins) == NULL) {
 		return 0;
 	}
 	if (s_mode == cd_dir) {
-		if (s[0] == 'd' && s[1] =='r' && s[3] == 'x')
+		if (tstats[0] == 'd' && tstats[1] =='r' && tstats[3] == 'x')
 			return 1;
 	} else if (s_mode == path_cmd || s_mode == command) {
-		if (s[0] != 'd' && s[3] == 'x')
+		if (tstats[0] != 'd' && tstats[3] == 'x')
 			return 1;
 	} else if (s_mode == file_dir) {
-		if (s[1] == 'r')
+		if (tstats[1] == 'r')
 			return 1;
 	}
 	return 0;
@@ -119,12 +122,17 @@ int hlp_clr() {
 		}
 	}
 }
+
+/*
+ * help screen with completion suggestions list, called by <Tab> KB_TA
+ * TODO: list like /bin/ls - columns compact view which is better readable
+ */
 int hlp_compl()
 {
 	SLIST *slist;
 	int slistn, n;
 	char tmps[20];
-	char *s;
+	wchar_t *s;
 	int ssize;
 	int cur_co; /*расчетная позиция курсора перед показом элемента */
 	int cur_li;
@@ -133,19 +141,20 @@ int hlp_compl()
 	slistn = sgglist->sl_size;
 	slist = sgglist->sl_last;
 
+	/* show stars on 1st columns for debug TODO cleanup*/	
 	for (cur_li = lframe->maxli - 3; cur_li >= clm._y0; cur_li--) {
 		cp_set(cur_li, cur_co, TXT); w_chr('*'); er_eol(TXT);
 	}
 	cur_li = clm._y0;
-	cp_set(cur_li, cur_co, TXT|INP); /*er_eop();*/
+	cp_set(/*cur_li*/ -2, cur_co, TXT|INP); /*er_eop();*/
 	sprintf(tmps, " <%s> [%d] ", s_debug[s_mode], slistn);
 	w_str(tmps);
-	cur_co += strlen(tmps) + 1;
+	/* cur_co += strlen(tmps) + 1;*/
 	for (n = slistn; n > 0 && slist != NULL && cur_li < lframe->maxli - 2 ; n--) {
 		s = sl_sstr(slist);
-		ssize = strlen(s); /*размер на экране отличается*/
+		ssize = wcslen(s); /*размер на экране отличается*/
 		cp_set(cur_li, cur_co, TXT);
-		w_str(s);
+		w_wcstr(s);
 		cur_co += ssize + 2;
 		if (cur_co + ssize > lframe->maxco - 2) {
 			/*next line, begin column*/
@@ -159,14 +168,14 @@ int hlp_compl()
 
 /* returns elements count or -1 if error; fill sugg.string if found exact one candidat */
 int sh_sugg(dirp, patt, from/*, insp*/)
-char *dirp;
-char *from;
-char *patt;
+wchar_t *dirp;
+wchar_t *patt;
+char *from;	/* shell command to get context of suggestion */
 /*char *insp;*/
 {
-	FILE *pipe;
-	char *filestr; /*[BUFSMAX+1];*/
-	char *inss; /*[STRBUF]; /**/
+	FILE *pipe0;
+	char *filestr; /* utf-8 file string after fgets() */
+	wchar_t *inss; /* element of list */
 	int count;
 	size_t sz, pattsz;
 	char *s;
@@ -174,37 +183,38 @@ char *patt;
 	SLIST *slist;
 
 	count = 0;
-	pattsz = strlen(patt); /*тут нужен именно strlen*/
+	pattsz = wcslen(patt); /*тут нужен именно strlen*/
 
-	if ((inss = malloc((size_t)STRBUF)) == NULL) {
+	if ((inss = malloc((size_t)sizeof(wchar_t) * (size_t)STRBUF)) == NULL) {
 		ok = -2; goto ret;
 	}
 
-	pipe = popen(from, "r");
-	if (pipe != NULL) {
-		if ((filestr = malloc((size_t)STRBUF)) == NULL) {
+	pipe0 = popen(from, "r");
+	if (pipe0 != NULL) {
+		if ((filestr = malloc((size_t)(STRBUF))) == NULL) {
 			ok = -2; goto ret; /*in hope this never happen*/
 		}
-		while(!feof(pipe)) {
-			s = fgets((s = filestr), BUFSMAX, pipe);
-			if (s != NULL && strncmp(patt, filestr, /*strlen(patt)*/pattsz) == 0) { /*тут нужен именно strlen*/
-					/*strncpy(inss, s + pattsz, STRBUF);*/
-					/*skip trailing LF */
-					sz = strlen(filestr); /*тут нужен именно strlen*/
-					if (sz > 0 && filestr[sz-1] == '\n') {
-							filestr[sz-1] = '\0';
-					}
-					if (sl_chkdup(sgglist, filestr) == 0) {
-						if (sgg_valid(dirp, patt, filestr+/*strlen(patt)*/pattsz)) {
-						slist = sl_add(sgglist, filestr);
+		while ( NULL != (s = fgets((s = filestr), BUFSMAX, pipe0))) {
+			/*s = fgets((s = filestr), BUFSMAX, pipe);*/
+			u8swcs(inss, filestr);
+			if (wcsncmp(patt, inss, pattsz) == 0) {
+				/*strncpy(inss, s + pattsz, STRBUF);*/
+				/*skip trailing LF */
+				sz = wcslen(inss); /*тут нужен именно strlen*/
+				if (sz > 0 && inss[sz - 1] == '\n') {
+					inss[sz - 1] = '\0';
+				}
+				if (sl_find(sgglist, inss) == 0) {
+					if (sgg_valid(dirp, patt, &inss[pattsz])) {
+						slist = sl_add(sgglist, inss);
 						count++;
 					}
 				}
 			}
 		}
 		free(filestr);
-		clearerr(pipe);
-		pclose(pipe);
+		clearerr(pipe0);
+		pclose(pipe0);
 	} else {
 		ok = -1; goto ret;
 	}
@@ -221,39 +231,40 @@ ret:
  * потому что все строки в sgglist уже имеют общую часть s_base
  *
  */
-char *sgg_ext(s_base)
-char *s_base;
+wchar_t *sgg_ext(s_base)
+wchar_t *s_base;
 {
-	static  char s_buf[STRBUF] = "";
+	static  wchar_t s_buf[STRBUF] = L"";
 	SLIST  *slist;
 	size_t	slist_sz;
-	char  **sggstr; /* массив указателей на строки sgglist */
-	char  *s;
-	char  *str;
+	wchar_t  **sggstr; /* массив указателей на строки sgglist */
+	wchar_t  *s;
+	wchar_t  *str;
 	int i, k, x_ext; /* длина образца, расширенная */
 	int	all;
 
 	s_buf[0] = '\0'; /* sure clean on exit */
 
-	x_ext = strlen(s_base);
+	x_ext = wcslen(s_base);
 
 	slist_sz = sgglist->sl_size;
 	if (slist_sz == 0) return s_buf;
 
 	slist    = sgglist->sl_last;
-	sggstr = (char **)malloc(sizeof(char *) * slist_sz);
+	sggstr = (char **)malloc(sizeof(wchar_t *) * slist_sz);
 	if (sggstr == NULL) return s_buf; /* nothing to do */
 	i = slist_sz;
 	while(i > 0) {
 		i -= 1;
 		s = sl_sstr(slist);
-		sggstr[i] = s + x_ext; slist = sl_prev(slist);
+		sggstr[i] = &s[x_ext];
+		slist = sl_prev(slist);
 	}
 
 	/*расширять образец сравнения на один символ из первого (попавшегося) кандидата*/
 	str = sggstr[0];
 	i = 0;
-	while (i < MAXLICO && str[i] != '\0') {
+	while (i < STRBUF && str[i] != '\0') {
 		/*расширить образец на один символ */
 		s_buf[i] = str[i];
 		s_buf[++i] = '\0';
@@ -261,7 +272,8 @@ char *s_base;
 		/* поочередно сравнить образец со строками sgglist */
 		all = 1;
 		for (k = 0; k < slist_sz; k++) {
-			if (strncmp(s_buf, sggstr[k], i) != 0) all = 0;
+			if (wcsncmp(s_buf, sggstr[k], i) != 0)
+				all = 0;
 		}
 		if (!all) {
 			s_buf[--i] = '\0'; /* затереть последний символ, он не подошел */
@@ -273,7 +285,7 @@ char *s_base;
 }
 
 /*
- * deduplicate array of pointers to string, if content equal, leave firts one and squieeze
+ * deduplicate array of pointers to string, if content equal, leave 1st one then squieeze;
  * return number of elements in array when squeeze done
  */
 int sdedup(pathp, maxnpath)
@@ -306,17 +318,17 @@ int maxnpath;
  */
 int do_compl(/*s_mode, *//*insp,*/ dirp, basep)
 /*char *insp; /* pointer to suggestion string to be inserted */
-char *dirp; /* pointer to dir */
-char *basep; /*pointer to base */
+wchar_t *dirp; /* pointer to dir */
+wchar_t *basep; /*pointer to base */
 {
 	int res = 0;  /*	result: count of suggestions variants, -1 if impossible on errors */
-	char *dir;
-	char *bufs; /*[BUFSMAX+1]*/;
-	char *tmps;
-	char *pathbin;
+	wchar_t *dir;
+	char *bufs; char *tmps;	/* couple of string buffers for sprintf */;
+
+	wchar_t *pathbin;
 #define MAXNPATH 50
 	char *pathdir[MAXNPATH];
-	char *path;
+	char *path;		/* env PATH element iterator like */
 	int n, maxnpath, n2, ndup; /* n2 for deduplicate path dirs */
 
 	tmps = malloc((size_t)(BUFSMAX + 1));
@@ -334,9 +346,12 @@ char *basep; /*pointer to base */
 			res = 1; goto ret;
 		}
 #endif
-		if (strcmp(dirp, basep) == 0) {	dir = ".";
-		} else {						dir = dirp; }
-		sprintf(bufs, "ls -A1 %s 2>/dev/null", dir);
+		if (wcscmp(dirp, basep) == 0) {
+			dir = L".";
+		} else {
+			dir = dirp;
+		}
+		sprintf(bufs, "ls -A1 %ls 2>/dev/null", dir);
 		res = sh_sugg(dirp, basep, bufs);
 	} else if (s_mode == path_cmd) {
 		/* для каждого каталога в PATH просмотреть файлы и построить общее содержимое в sgglist */
@@ -382,8 +397,8 @@ ret:
  *
  * другие функции вызываются для подбора вариантов, но не для ввода
  */
-try_compl(cmd, curpos, maxpos)
-char *cmd; /* буфер строки набираемой команды */
+try_compl(cmd0, curpos, maxpos)
+wchar_t  *cmd0; /* буфер строки набираемой команды */
 int  *curpos; /* текущая позиция курсора в буфере */
 int maxpos; /* максимальное значение позиции в буфере строки */
 {
@@ -391,8 +406,8 @@ int maxpos; /* максимальное значение позиции в бу�
     static char debugs[STRBUF];			/* completion string */
 #endif
 /*	char s_ins[STRBUF] = "";		/* suggestion string to be inserted */
-    char s_dir[STRBUF]; /* база (например, путь до каталога) */
-	char s_base[STRBUF]; /* хвост (например, префикс имени в каталоге) */
+    wchar_t s_dir[STRBUF];      /* база (например, путь до каталога) */
+	wchar_t s_base[STRBUF];     /* хвост (например, префикс имени в каталоге) */
     int argc, x_in, x_out, ins_len /*, dir_len, base_len;*/;
     int base_x, dir_x, dir_end;
     char contxt, conold;   /* cmd scaner context: 's'eparator, 'a'rg, 'n'ull, 'i'ni */
@@ -400,7 +415,7 @@ int maxpos; /* максимальное значение позиции в бу�
     int ok;
     char *s;
     int   c;
-    char *s_ins;
+    wchar_t *s_ins; /* the suggestion word to be inserted */
     /*char *stats;*/
     size_t pattsz;
 
@@ -416,50 +431,53 @@ int maxpos; /* максимальное значение позиции в бу�
     for (x_in = 0; x_in < *curpos && x_in < maxpos; x_in++) {
     	/* determine current context */
     	/* skip leading spaces and separators between args */
-    	if (cmd[x_in] == ' ') /* || cmd[x_in] == '\0') */ {
+    	if (cmd0[x_in] == ' ') /* || cmd[x_in] == '\0') */ {
     		contxt = 's'; /* TODO '\ ' which is not separator */
-    	} else if (cmd[x_in] == ';'
-    			|| cmd[x_in] == '|'
-				|| cmd[x_in] == '&'
+    	} else if (cmd0[x_in] == ';'
+    			|| cmd0[x_in] == '|'
+				|| cmd0[x_in] == '&'
 				   ) {
     		contxt = 'n'; conold = 's'; argc = 0;
     	} else {
     		contxt = 'a';
     	}
-    	if (conold != contxt) {
-        	/* context changed just now */
-    		if (contxt == 's') {
-    			dir_x = dir_end = base_x = 0;
-    			s_dir[dir_x] = s_base[base_x] = '\0';
-    			if (conold == 'a') argc++;
-    			//goto the_moon;
-    		}
-    		if (contxt == 'a') {
+		if (conold != contxt) {
+			/* context changed just now */
+			if (contxt == 's') {
+				dir_x = dir_end = base_x = 0;
+				s_dir[dir_x] = s_base[base_x] = '\0';
+				if (conold == 'a')
+					argc++;
+				/*goto the_moon;*/
+			}
+			if (contxt == 'a') {
 				dir_x = base_x = 0;
 			}
-    	}
-    	if (contxt == 's') goto the_moon;
+		}
+		if (contxt == 's')
+			goto the_moon;
 		if (contxt == 'a') {
-			if (cmd[x_in] == '/') {
+			if (cmd0[x_in] == '/') {
 				base_x = 0;
-				s_dir[dir_x++] = cmd[x_in];
+				s_dir[dir_x++] = cmd0[x_in];
 				dir_end = dir_x;
-				//s_base[base_x] = '\0';
+				/*s_base[base_x] = '\0';*/
 			} else {
-				s_dir[dir_x++] = cmd[x_in];
-				s_base[base_x++] = cmd[x_in];
+				s_dir[dir_x++] = cmd0[x_in];
+				s_base[base_x++] = cmd0[x_in];
 			}
 			/* terminate resulting substrings */
 			s_dir[dir_x] = s_base[base_x] = '\0';
 		}
-		the_moon:
-		conold = contxt; /* remember current context for next hope */
+		the_moon: conold = contxt; /* remember current context for next hope */
     }
     if (dir_end != 0) s_dir[dir_end] = '\0'; /* terminate if differ */
 
-    /* выбрать тип подстановки - текущий каталог, команда, параметр команды */
+    /*
+     *  выбрать тип подстановки - текущий каталог, команда, параметр команды, TODO: ключ команды
+     *  */
     if (argc == 0) {
-    	if (strcmp(s_dir, s_base) == 0) {
+    	if (wcscmp(s_dir, s_base) == 0) {
         	/* команда из PATH, не содержит '/'; base и dir одинаковы */
     		s_mode = path_cmd;
     	} else {
@@ -467,27 +485,28 @@ int maxpos; /* максимальное значение позиции в бу�
     		s_mode = command;
     	}
     } else if (argc > 0) {
-    	s_mode = file_dir; /* относительный путь к файлу */
-        if (strncmp(&cmd[0], "cd ", 3) == 0) {
-        	/* директория для cd */
-        	s_mode = cd_dir;
-        } else {
-        	if (s_dir[0] == '-') {
-        		if (s_dir[1] == '-')
-        			s_mode = flaglong;
-        		else
-        			s_mode = flag;
-        	}
-        }
+		s_mode = file_dir; /* относительный путь к файлу */
+		if (wcsncmp(&cmd0[0], L"cd ", 3) == 0) {
+			/* директория для cd */
+			s_mode = cd_dir;
+		} else {
+			if (s_dir[0] == '-') {
+				if (s_dir[1] == '-')
+					s_mode = flaglong;
+				else
+					s_mode = flag;
+			}
+		}
     }
 
-    x_in = strlen(cmd);
+    x_in = wcslen(cmd0);
     if (x_in < *curpos) *curpos = x_in; /* вернуть курсор к концу набираемой строки */
 
     ok = -2;
+
     /* найти и выполнить подстановку, если однозначно;
-     * иначе сигнал TODO (или показать список)
-     * */
+     * иначе сигнал (или TODO: показать список)
+     */
     s_ins = "";
     if (contxt == 'a' || (contxt == 's' && argc == 0)) {
     	if ((ok = do_compl(/*s_mode,*/ /*s_ins,*/ s_dir, s_base)) < 0) {
@@ -495,20 +514,22 @@ int maxpos; /* максимальное значение позиции в бу�
     	} else if (ok == 1) {
 			if (sgglist->sl_size == 1) {
 				s_ins = sl_sstr(sgglist->sl_last);
-				pattsz = strlen(s_base);
+				pattsz = wcslen(s_base);
 				/* skip common part of patt and suggestion */
 				s_ins += pattsz;
 			}
 		} else {
 			/* find common part from several suggestions */
 			s_ins = sgg_ext(s_base);
-			ins_len = strlen(s_ins);
+			ins_len = wcslen(s_ins);
 			if (ins_len == 0) {
 				bell(); /*TODO visual menu of suggestions there */
 			}
 		}
-    	ins_len = strlen(s_ins);
-    	/* insert a completion just found into cmd buffer */
+    	ins_len = wcslen(s_ins);
+		/*
+		 * insert a completion just found into cmd buffer
+		 */
     	if (ins_len >= 0) {
 			/* advance one symbol on success: '/' on dir, ' ' otherwise */
     		if (sgglist->sl_size == 1) {
@@ -524,10 +545,15 @@ int maxpos; /* максимальное значение позиции в бу�
 				s_ins[ins_len] = c; ins_len += 1; s_ins[ins_len] = '\0';
 
     		}
+    		/* растолкать место для вставки */
 			for(x_out = maxpos - ins_len, x_in = maxpos; x_in >= *curpos; x_in--, x_out--)
-				cmd[x_in] = cmd[x_out];
+				cmd0[x_in] = cmd0[x_out];
+
+			/* insert into command editor buffer */
+			/*u8swcs(wcstmp, s_ins);*/
 			for(x_out=0, x_in=*curpos; x_out < ins_len; x_out++, x_in++)
-				cmd[x_in] = s_ins[x_out];
+				cmd0[x_in] = s_ins[x_out];
+
 			*curpos += ins_len;
     	}
     }

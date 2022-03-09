@@ -115,7 +115,7 @@ extern int vincmd(), vexcmd(), fnsplit(), vcmd(), cwdshow();
 extern int patcmp(), ok_msg();
 extern int gidchk(), filetype(), prefix();
 extern int try_compl(), hlp_compl(), hlp_clr(), cmdput(), vsystem(), showtime();
-extern int sl_chkdup();
+extern int sl_find();
 
 extern int cvt_vf(), cvt_s();
 

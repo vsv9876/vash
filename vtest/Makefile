@@ -2,7 +2,7 @@
 SHELL         = /bin/sh
 
 include		../conf/Makefile
-include		../conf.cfg
+include		../BLD.cfg
 
 ##
 ##      +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
