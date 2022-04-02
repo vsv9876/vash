@@ -139,6 +139,40 @@ wchar_t *patt;
 	return 0;
 }
 
+static int chk(s)
+wchar_t *s;
+{
+	int sum;
+	sum = 0;
+	while( *s != L'\0') {
+		sum = sum + *s++;
+	}
+	return sum;
+}
+
+int sl_chk(head)
+SLIST_HEAD *head;
+{
+	SLIST *p;
+	SLIST *prev;
+	size_t n, i, count;
+	int sum, schk;
+
+	sum = n = count = head->sl_size;
+	/*return sum;*/
+	/* from last element to head */
+	for (p = head->sl_last, i = 0;
+			i < n && sl_prev(p) != NULL;
+			i++) {
+		schk = chk(sl_sstr(p));
+		sum += schk;
+		prev = sl_prev(p);
+		p = prev;
+	}
+
+	return sum;
+}
+
 SLIST_HEAD *sl_free(head)
 SLIST_HEAD *head;
 {

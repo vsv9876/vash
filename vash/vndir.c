@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <ediag.h>
+#include <wchar.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -554,6 +555,120 @@ char *cwd;
 #endif
 }
 
+size_t cwd_fmt(char *ctmps, char *cpath, int room)
+{
+	int cwd_vx;
+	int v_size, last_size; /* visible size of path, vsize of last element*/
+	int nlast, n, i; /*slash: total, current, index in ctmps*/
+	u8char_t *s;
+	u8char_t *snext;
+	wchar_t  wc;
+	volatile wchar_t *ws;
+	wchar_t *w_path;
+	wchar_t *w_tmps;
+
+	v_size = u8vsize(cpath);
+	last_size = 0;
+
+	if (v_size <= room) {
+		strcpy(ctmps, cpath);
+		return (v_size);
+	} else {
+		w_path = calloc(STRBUF, sizeof(wchar_t));
+		w_tmps = calloc(STRBUF, sizeof(wchar_t));
+		/*count elements, convert cpath*/
+		nlast = 0;
+		ws = w_path;
+		for(s = cpath; *s != 0; s = snext, ws++) {
+			if (*s == '/') {
+				nlast++;
+			}
+			snext = u8pxx(s, ws);
+		}
+		/*
+		 *  /home/user/project/subproject/subdir.d
+		 *  /home/user/p* /s* /s*r.d
+		 */
+		for (n = i = 0, ws = w_path; /*i < room && */*ws != 0; ws++) {
+			if (i >= room/**ws != L'\0'*/) {
+				/*i--;*/
+				w_tmps[i++] = L'>';
+				break;
+			}
+			if (*ws == L'/') {
+				n++;
+			}
+			if (n < nlast) {
+				if (n < 3) {
+					w_tmps[i++] = *ws;
+					continue;
+				}
+				else {
+					if (*ws == L'/') {
+						if ((last_size = vsize(ws)) <= room - i) {
+							wcscpy(&w_tmps[i], ws);
+							i += last_size;
+							break;
+						}
+						last_size = 0;
+						w_tmps[i++] = *ws++;  /*  '/' */
+						w_tmps[i++] = *ws;    /*  1st symbol of path element */
+						/* about 2nd symbol */
+						if (*ws == 0) {
+							break;
+						} else {
+							ws++;
+							if (ws[1] == L'/' || ws[1] == 0) {
+								w_tmps[i++] = *ws;	/* 2nd symbol is last one in element */
+							} else {
+								w_tmps[i++] = L'*'; /* path element consists of 3 symbols and more*/
+							}
+						}
+					}
+					continue;
+				}
+			}
+			else {
+				/*last element expected to be as verbose as possible*/
+				if (*ws == L'/') {
+					if ((last_size = vsize(ws)) <= room - i) {
+						wcscpy(&w_tmps[i], ws);
+						i += last_size;
+						break;
+					}
+					w_tmps[i++] = *ws++; /*  '/' */
+					w_tmps[i++] = *ws; /*  1st symbol */
+					/* about 2nd symbol */
+					if (*ws == 0) {
+						break;
+					} else {
+						ws++;
+						if (ws[1] == L'/' || ws[1] == 0) {
+							w_tmps[i++] = *ws;	/* 2nd symbol */
+						} else {
+							w_tmps[i++] = L'*'; /* 3rd symbol exists */
+						}
+					}
+				}
+				if (last_size > 0) {
+					if (vsize(ws) > room - i) {
+						continue;
+					}
+					w_tmps[i++] = *ws; /* visible tail */
+					/*if (i >= room) {
+						w_tmps[i++] = L'>';
+						break;
+					}*/
+				}
+			}
+
+		}
+	}
+	w_tmps[i++] = L'\0';
+	wcstombs(ctmps, w_tmps, STRBUF);
+	return (vsize(w_tmps));
+}
+
 /*
  * current working directory show (and other related info)
  * if xtermf, use xterm escapes '\E]0;'....'^G'
@@ -564,6 +679,8 @@ cwdshow()
 	char cwd_tmpstr[STRBUF]; /* cwdpath fraction to be shown */
 	char lbl_tmpstr[STRBUF];
 	register int x;
+	int cwd_x;			/* visible width of cwd_tmpstr */
+	int cwd_room;		/* space to display cwd_tmpstr */
 	int     showli;     /* строка показа */
 	int     deltco;     /* если в последней строке экрана, то == 1 */
 	/*int     cwdirf = 1;		/* flag: cwdshow in console; TODO global flag via setup */
@@ -588,34 +705,35 @@ cwdshow()
 			cp_set(clm._y0 - 1, 0, TXT);
 		}
 		er_eop(TXT);
-		/*showli = y0_top-1 clm._y0 -1;*/ deltco = 0;
+		/*showli = y0_top-1 clm._y0 -1;*/
+		deltco = 0;
 	} else {
-	    showli = lframe->maxli - 1;   deltco = 1;
+	    showli = lframe->maxli - 1;
+	    deltco = 1;
 	}
 
 	if ((ashlbl=getenv("VASH_LABEL")) == (char *)0) {
 		ashlbl = "vash -- :";
+	}
 #ifdef SYSV
-		usrlbl = getenv("LOGNAME");
+	usrlbl = getenv("LOGNAME");
 #else
-		usrlbl = getenv("USER");
+	usrlbl = getenv("USER");
 #endif
-		if (usrlbl == (char *)0)
-			usrlbl = "Unknown USER";
-	} else {
-		usrlbl = NULL;
+	if (usrlbl == NULL) {
+		usrlbl = "";
 	}
 
 	sprintf(lbl_tmpstr, "%s", ashlbl);
-	lblen = strlen(lbl_tmpstr);
+	lblen = /*strlen*/u8vsize(lbl_tmpstr);
 
 	if (Crepf[0] != '\0') {
-		sprintf(mode_tmpstr,
-		" %s <%s> %s ", Crepf, rwxmode(&cwdstat), (usrlbl == NULL? "" : usrlbl));
+		sprintf(mode_tmpstr, " %s <%s> %s ",
+				Crepf, rwxmode(&cwdstat), usrlbl);
 	} else {
 		strcpy(mode_tmpstr, " * ");
 	}
-	lblen += strlen(mode_tmpstr);
+	lblen += /*strlen*/u8vsize(mode_tmpstr);
 
 	binpwd(cwdpath);
 /*	sprintf(tmpstr, "[ %s ]", cwdpath); */
@@ -624,39 +742,27 @@ cwdshow()
 		w_str(lbl_tmpstr);
 
 		w_str(cwdpath);
-		/*w_str(" ");
-		w_str(mode_tmpstr);
-		w_str(":");*/
+		/*w_str(" "); w_str(mode_tmpstr); w_str(":");*/
 
 		w_raw("\007"); /* terminate escape sequence for xterm window title */
 	}
 	if (whodirf) {
 		cp_set(showli, 0, HDR);
-		/*w_str(mode_tmpstr);*/
-
-		/*at_set(ATT);*/
 		w_str(lbl_tmpstr);
-		/*w_str(" ");*/
 
-		sprintf(cwd_tmpstr, "%s", cwdpath);
-		/*cp_set(showli, lblen, ATT);*/
+		cwd_room = lframe->maxco - lblen - 2 - deltco;
+
 		x = 0;
 		x += deltco;
+		cwd_x = 0;
 		if (NULL != index(ashlbl, ':')) {
-			x += strlen(cwd_tmpstr);
-			if (x > (lframe->maxco - lblen)) {
-				/*cp_set(showli, lblen + 1, HDR);*/
-				w_str("<");
-				w_str(&cwd_tmpstr[x - lframe->maxco + lblen + 2 + deltco]);
-			}
-			else {
-				/*cp_set(showli, lframe->maxco - x - deltco, HDR);*/
-				w_str(cwd_tmpstr);
-			}
+			cwd_x = cwd_fmt(cwd_tmpstr, cwdpath, cwd_room);
+			w_str(cwd_tmpstr);
 		}
-		x += lblen;
-		/*x += strlen(mode_tmpstr);*/
-		for (; x < lframe->maxco; x++) w_chr(' ');
+		for (x = cwd_x; x <= cwd_room; x++) {
+			w_chr(' ');
+		}
+		cp_set(showli, lframe->maxco - u8vsize(mode_tmpstr) - deltco, HDR);
 		w_str(mode_tmpstr);
 	}
 #ifdef DEBUG

@@ -222,15 +222,15 @@ int c;
 		scrn.sc_co += 1;
 	} else {
 		/* 1st byte of UTF-8 symbol or ASCII symbol */
-		if (oc <= 0177 || (oc & 0xC0))
+		if (oc <= 0177 || (oc & 0xC0) != 0x80)
 			scrn.sc_co += 1;
 	}
 	/* prevent write_out(printing) outside of logical frame */
 	if (
-			scrn.sc_li < (lframe->baseli + lframe->maxli)
-			&& scrn.sc_li >= lframe->baseli
-			&& scrn.sc_co < (lframe->baseco + lframe->maxco)
-			&& scrn.sc_co >= lframe->baseco
+			scrn.sc_li <= (lframe->baseli + lframe->maxli)
+			&& scrn.sc_li > lframe->baseli
+			&& scrn.sc_co <= (lframe->baseco + lframe->maxco)
+			&& scrn.sc_co > lframe->baseco
 	   )
 	{
 		w_putc( oc );

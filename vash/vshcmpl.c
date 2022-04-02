@@ -111,23 +111,129 @@ wchar_t *s_ins;
 
 
 int hlp_clr() {
-	int cur_co; /*расчетная позиция курсора перед показом элемента */
+	int cur_co; /* расчетная позиция курсора перед показом элемента */
 	int cur_li;
 
 	if (hlp_onscreen) {
 		hlp_onscreen = 0;
 		cur_co = 0;
 		for (cur_li = clm._y0; cur_li <= lframe->maxli; cur_li++) {
-			cp_set(cur_li, cur_co, TXT); er_eol(TXT);
+			cp_set(cur_li, cur_co, TXT);
+			er_eol(TXT);
 		}
 	}
 }
 
+static int old_n = 0;
+static int old_chk = 0;
+static int n_cur_co = 0; /* n в начале последней колонки показанной в предыдущий раз*/
+static int maxover = 0; /* флаг если последняя колонка вышла за пределы экрана */
+int hlp_clear() {
+	old_n = old_chk = n_cur_co = maxover = 0;
+}
+
+#define START_CO 1
+#define GAP_CO 3
 /*
- * help screen with completion suggestions list, called by <Tab> KB_TA
- * TODO: list like /bin/ls - columns compact view which is better readable
+ * help screen with completion suggestions list, called by <Tab> KB_TA;
+ * list like /bin/ls - columns compact view
  */
 int hlp_compl()
+{
+	SLIST *sl_n;
+	int sl_size, n, nx; /* start from 1 not 0 (size 0 if empty list) */
+	char tmps[40];
+	wchar_t *s;
+	int ssize;
+	int new_chk;
+	int cur_co = 0; /* расчетная позиция курсора перед показом элемента */
+	int cur_li = 0;
+	int maxwidth = 0; /* максимальная ширина в колонке */
+
+	int li_start = clm._y0;
+	int li_end =  lframe->maxli - 3;
+
+	sl_size = sgglist->sl_size;
+	sl_n = sgglist->sl_last;
+
+	for (cur_li = li_start; cur_li <= li_end; cur_li++) {
+		cp_set(cur_li, cur_co, TXT);
+		er_eol(TXT);
+	}
+
+	if (old_chk != (new_chk = sl_chk(sgglist))) {
+		old_chk = new_chk;
+		maxwidth = 0;
+		n = old_n = 1;
+	} else {
+		n = old_n;
+		if (n >= sl_size && maxover == 0) {
+			n = 1;
+		}
+		if (maxover > 0) {
+			n = n_cur_co;
+		}
+	}
+	maxover = 0;
+	for (nx = 1; nx < n && sl_n != NULL; nx++) {
+		sl_n = sl_prev(sl_n); /* skip the part of list already shown */
+	}
+
+	cur_li = li_start;
+	maxwidth = 0;
+	cur_co += START_CO;
+	for (  ; n <= sl_size && sl_n != NULL && cur_li <= li_end; n++) {
+		if (cur_li == li_start) {
+			n_cur_co = n;
+		}
+		s = sl_sstr(sl_n);
+		ssize = /*wcslen*/vsize(s); /* visible size is differ */
+		if (maxwidth < ssize)
+			maxwidth = ssize;
+		if (cur_co + maxwidth /*+ START_CO*/ >= lframe->maxco) {
+			maxover = 1;
+			/*break;*/
+		}
+
+		cp_set(cur_li, cur_co, TXT);
+		w_wcstr(s);
+
+		cur_li++;
+		if (cur_li > li_end) {
+			/* start printing next column */
+			cur_li = li_start;
+			if (maxover == 0) {
+				cur_co += maxwidth + GAP_CO;
+			} else {
+				if (cur_co == START_CO) {
+					/*sl_n = sl_prev(sl_n);*/
+					maxover = 0;
+					break;
+				}
+				cur_co = START_CO;
+				/*maxover = 0;*/
+				break;
+			}
+			maxwidth = 0;
+		}
+		sl_n = sl_prev(sl_n);
+	}
+	old_n = n;
+
+	sprintf(tmps, "   <%s> [%-d/%-d] ", s_debug[s_mode], n, sl_size);
+	cp_set(-2, 0, TXT|INP); /*er_eop();*/
+	w_str(tmps);
+
+	if (n < sl_size) {
+		cp_set(-2, 40, TXT|INP);
+		w_str(">>");
+	}
+
+	hlp_onscreen = 1;
+	return 1;
+}
+
+int hlp_compl_notused()
 {
 	SLIST *slist;
 	int slistn, n;
@@ -141,9 +247,9 @@ int hlp_compl()
 	slistn = sgglist->sl_size;
 	slist = sgglist->sl_last;
 
-	/* show stars on 1st columns for debug TODO cleanup*/	
+	/* show stars on 1st columns for debug TODO cleanup*/
 	for (cur_li = lframe->maxli - 3; cur_li >= clm._y0; cur_li--) {
-		cp_set(cur_li, cur_co, TXT); w_chr('*'); er_eol(TXT);
+		cp_set(cur_li, cur_co, TXT); w_chr('-'); er_eol(TXT);
 	}
 	cur_li = clm._y0;
 	cp_set(/*cur_li*/ -2, cur_co, TXT|INP); /*er_eop();*/
@@ -351,7 +457,7 @@ wchar_t *basep; /*pointer to base */
 		} else {
 			dir = dirp;
 		}
-		sprintf(bufs, "ls -A1 %ls 2>/dev/null", dir);
+		sprintf(bufs, "ls -A1r %ls 2>/dev/null", dir);
 		res = sh_sugg(dirp, basep, bufs);
 	} else if (s_mode == path_cmd) {
 		/* для каждого каталога в PATH просмотреть файлы и построить общее содержимое в sgglist */
@@ -375,7 +481,7 @@ wchar_t *basep; /*pointer to base */
 			maxnpath = sdedup(pathdir, maxnpath);
 			/*prepare suggestion list*/
 			for(n = 0; n < maxnpath && pathdir[n] != NULL; n++) {
-				sprintf(tmps, "ls -A %s 2>/dev/null", pathdir[n]);
+				sprintf(tmps, "ls -A1r %s 2>/dev/null", pathdir[n]);
 				res = sh_sugg(dirp, basep, tmps);
 			}
 		}

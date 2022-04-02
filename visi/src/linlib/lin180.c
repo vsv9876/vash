@@ -13,9 +13,50 @@
 #include <stdlib.h>
 #include <alloca.h>
 #include <stdio.h>
+
+#define _XOPEN_SOURCE
 #include <wchar.h>
+
 #include "line.h"
 
+
+/*
+ * visible size of wide char string
+ */
+int vsize(wchar_t *s)
+{
+	wchar_t *sp;
+	wchar_t c;
+	int size, w;
+
+	sp = s;
+	for (size = 0; *sp != 0; sp++) {
+		c = *sp;
+		w = wcwidth(c);
+		size += w;
+	}
+	return size;
+}
+
+/*
+ * visible size of utf-8 string
+ */
+int u8vsize(char *s)
+{
+	char *sp;
+	wchar_t c;
+	int vsize, w;
+
+	sp = s;
+	for (vsize = 0;
+			*sp != 0;
+			/*sp++*/sp = u8pxx(sp, NULL)) {
+		w = u8snwcs(&c, sp, 1);
+		w = wcwidth(c);
+		vsize += w;
+	}
+	return vsize;
+}
 
 /*
  * поддержка UTF8
@@ -134,13 +175,13 @@ wcsobj_t *wco;
 
 
 /* p++ -- указатель на следующий UTF-8 символ в строке, вернуть NULL если указывает на '\0' */
-char *u8pxx(p, wc)
-char *p;
+u8char_t *u8pxx(p, wc)
+u8char_t *p;
 wchar_t *wc;
 {
 	char stmp[8];
 	char *s;
-	int cod;
+	unsigned int cod;
 
 	unsigned int cc;      /* current byte from input string */
 	unsigned int cbytes;  /* bytes count in codepoint */
@@ -151,7 +192,9 @@ wchar_t *wc;
 	if (cod == '\0') {
 		p = NULL;
 	} else {
-		if (cod <= 0b01111111) return p; /* ASCII - 1 byte plus*/
+		if (cod <= 0b01111111)
+			goto on_return;/*return p; *//* ASCII - 1 byte plus*/
+
 		cc = cod;
 		if         ((0b11111000 & cc) == 0b11110000) {
 			cmask = 0b00000111; cbits = 3; cbytes = 4;
@@ -172,6 +215,8 @@ wchar_t *wc;
 			cod |= (cc & 0b00111111);
 		}
 	}
+
+on_return:
 	if (wc != (wchar_t *)NULL) *wc = cod;
 	return p;
 }

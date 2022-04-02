@@ -298,11 +298,13 @@ extern int u8o_size(), u8sobj();
 /* convert string objects couple functions */
 extern int u8owco(), wcou8o();
 
+extern int vsize(wchar_t *);
+extern int u8vsize(char *);
 /* unicode utf-8 limited support */
 extern  int mb_cur_max;
 extern  int u8nopass;
 extern  int u8slen(), u8swcs(), u8snwcs();
-extern char *u8pxx();
+extern u8char_t *u8pxx();
 
 extern 	int w_wchr(), w_wcstrn(), w_wcstr();
 

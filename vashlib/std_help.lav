@@ -23,10 +23,10 @@ m       = gv    -       -       -       -     " *)"
 +.mainvk.................................    exit:                     help:
 +.'lowercase or .'. or .'/ :                 .:EX...                   .:HE...
 +  - type a command from scratch      {1}    .mainv...........................
-+.'uppercase or .'digit or .'other :          ^   ^ .:CA. .'[a-z./] .'[A-Z0-9]
-+    - edit a command from template   {2}     :   :   :         :     :     : 
-+    - execute predefined command     {3}     :   :   :        {1}   {2}    : 
-+                                             :  .:CA.:         :     :     : 
++.'uppercase or .'digit or .'other :          ^   ^   :   .'[a-z./] .'[A-Z0-9]
++    - edit a command from template   {2}     :   : .:CA.       :     :     : 
++    - execute predefined command     {3}     : .:CA. :        {1}   {2}    : 
++                                             :   :   :         :     :     : 
 +.cmdedk.................................     :  .cmded...................  : 
 +.:NL... - run a command, sync history .m     :     ^   ^  .:HE...  .:NL... : 
 +.:HE... - switch to history view             :     :   :     :        :    : 

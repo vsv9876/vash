@@ -25,6 +25,7 @@ typedef struct {
 	size_t	sl_size;
 } SLIST_HEAD;
 
+extern int sl_chk();
 extern wchar_t *sl_sstr();
 extern SLIST *sl_add();
 extern SLIST_HEAD *sl_init();
