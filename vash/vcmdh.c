@@ -52,7 +52,7 @@ char *from;
  * возвращается номер удаляемой команды.
  */
 int cmddel(cmd0)
-wchar_t *cmd0;
+/*wchar_t*/u8char_t *cmd0;
 {
 	u8char_t cmd[4 * STRBUF];
 
@@ -60,7 +60,7 @@ wchar_t *cmd0;
 	int savenext;      /* индекс указателя следующей команды */
 	int delsize;    /* размер удаляемой команды */
 
-	wcsu8s(cmd, cmd0);
+	/*wcsu8s*/strcpy(cmd, cmd0);
 
 /***
 	if (*cmd == '\0')

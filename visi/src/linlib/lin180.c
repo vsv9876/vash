@@ -99,10 +99,10 @@ int      n;
 	return len;
 }
 
-/* копировать в строку UTF-8 из строки wchar_t */
+/* копировать строку wchar_t в строку UTF-8 */
 int wcsu8s(dst, src)
-char    *src;
 wchar_t *dst;
+const char *src;
 {
 	return(wcsnu8s(dst, src, STRBUF*4));
 }

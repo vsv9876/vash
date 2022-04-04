@@ -91,7 +91,6 @@ extern int     panelf;
 extern int     whodirf;
 extern int     xtermf;
 extern int     histf;
-extern int     histf;
 extern int     histsn;
 extern int     clockf;
 extern int     cmailf;
