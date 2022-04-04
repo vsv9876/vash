@@ -58,7 +58,7 @@ int yes;
 				at_set(TXT);
 				w_chr(' ');
 			}
-			cp_set(-1, base, TXT);
+			cp_set(-1, base, /*TXT*/LKEY);
 			w_chr(k->kc_key);
 			sprintf(tmpstr, "%-6.6s", k->kc_cap);
 			at_set(HDR);
