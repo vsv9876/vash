@@ -169,9 +169,9 @@ char **argv;
 	lframe = &lfmain;
 
 	if (getuid() == 0) {
-		pmtsh = "# ";
+		pmtsh = " # ";
 	} else {
-		pmtsh = "$ ";
+		pmtsh = " $ ";
 	}
 
 	/*

@@ -28,10 +28,21 @@ extern char *homedir;
 extern int histsn;
 
 static  char    cmdbuf[CMDB+1];   /* БУФЕР КОМАНД */
-static  char   *cmdptr[CMDP+1];   /* УКАЗАТЕЛИ НА КОМАНДЫ */
-static  int     cmdplast = 0;   /* ИНДЕКС ПОСЛЕДНЕЙ КОМАНДЫ */
-static  int     cmdpi = 0;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ */
+static  char   *cmdptr[CMDP+1];   /* КОМАНДЫ */
 static  int     cmdbufree = 0;     /* ИНДЕКС СВОБОДНОГО МЕСТА В БУФЕРЕ */
+static  int     cmdplast = 0;   /* ИНДЕКС ПОСЛЕДНЕЙ КОМАНДЫ */
+
+static  char   *cmdpsel[CMDP+1];  /* команды отобранные поиском */
+
+static  int     cmdpi = -3;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ */
+static  int     cmdpisel = -3;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ в фильтрованом списке */
+static  int     cmdsmax;	    /* количество пунктов фильтрованого списка */
+
+cmdhreset() {
+	/* сбросить все текущие индексы меню истории, применяется при запуске команды */
+	cmdpi = cmdpisel = -2;
+}
+
 
 int mystrcpy(to, from)
 char *to;
@@ -49,7 +60,7 @@ char *from;
 
 /*
  * УБРАТЬ ИЗ БУФЕРА
- * возвращается номер удаляемой команды.
+ * возвращается номер удаляемой команды или -1 если удалять было нечего
  */
 int cmddel(cmd0)
 /*wchar_t*/u8char_t *cmd0;
@@ -66,7 +77,7 @@ int cmddel(cmd0)
 	if (*cmd == '\0')
 		return(-1);
  ***/
-	for (i = 0; cmdptr[i]; i++)
+	for (i = 0; cmdptr[i]; i++) {
 		if (strcmp(cmd, cmdptr[i]) == 0) {
 			delsize = strlen(cmd) + 1;
 			/* СКОПИРУЕМ СОДЕРЖИМОЕ БУФЕРА В НОВОЕ МЕСТО */
@@ -76,10 +87,24 @@ int cmddel(cmd0)
 			}
 			cmdbufree -= delsize;
 			savenext = i; cmdplast--;
+
+			/* настроить индекс на следующую команду после удаленной */
+/*
+			if (clm._vf != (LINE *)0) {
+				clm._itmmax = cmdplast;
+				if (clm._itms == cmdptr) {
+					cmdpi = i;
+				}
+				if (clm._itms == cmdpsel) {
+					cmdpisel = i;
+				}
+			}
+*/
 			while (i <= CMDP)
 				cmdptr[i++] = 0;
 			return(savenext);
 		}
+	}
 	return(-1);
 }
 
@@ -170,11 +195,23 @@ u8char_t *newcmd;
 int cmdprv(cmd)
 wchar_t *cmd;
 {
-	if (cmdpi > 0) cmdpi--;
-	else    return(0);
-	if (cmdptr[cmdpi])
+	wchar_t tmp[4 * STRBUF];
+	if (cmdpi >= cmdplast)
+		cmdpi = cmdplast/* - 1*/;
+	if (cmdpi > 0)
+		cmdpi--;
+	else
+		return (0);
+	if (cmdptr[cmdpi]) {
+		/* не предлагать дважды последнюю команду */
+		u8swcs(tmp, cmdptr[cmdpi]);
+		if (wcscmp(tmp, cmd) == 0) {
+			cmdpi--;
+		}
 		/*strcpy*/u8swcs(cmd, cmdptr[cmdpi]);
-	return(1);
+
+	}
+	return (1);
 }
 
 int cmdnxt(cmd)
@@ -348,17 +385,19 @@ kbcod cod;
 		/* УБРАТЬ КОМАНДУ ИЗ ПАМЯТИ */
 		if (cmdplast > 2 ) {
 			cmddel(cmd);
-			clritm();
-			clm._itmmax = cmdplast;
+			/*clritm();*/
+			/*clm._itmmax = cmdplast;*/
 /***
 			if (itm < cmdplast);
 			else    itm = cmdplast - 1;
 			if (itm > 1)
 				itm -= 1;
  ***/
+/*
 			pre_vf();
 			itmshow();
 			w_page(clm._vf, 0);
+*/
 			/* синхронизировать историю при удалении каждой команды */
 			if (histsn) {
 				cmdphist();
@@ -383,9 +422,14 @@ kbcod h_menu()
 	kbcod cod;
 
 	/* первоначальный показ на экране */
-	cp_set(clm._y0, 0, TXT);
-	w_str("!");	er_eop(TXT);
-	w_cmd(cmdpp);   /* ОСТАВИТЬ КОМАНДУ НА ЭКРАНЕ */
+
+#if 0
+	/* ОСТАВИТЬ КОМАНДУ НА ЭКРАНЕ */
+	for (i = clm._y0 -1; i <= lframe->maxli -1 ; i++) {
+		cp_set(clm._y0, 0, TXT); er_eol(TXT);
+	}
+	/*w_cmd(cmdpp);*/
+#endif
 	itmshow();
 	w_page(clm._vf, 0);
 
@@ -401,10 +445,12 @@ kbcod h_menu()
 		default:
 			break;
 		case KB_HE:      /* справка */
+#if 0
 			cp_set(-1, 0, TXT);
 			fprintf(vttout, "Cmd# %2d/%2d, use %d (%d%%)",
 			clm._itm, cmdplast, cmdbufree, (int)((cmdbufree * 100)/CMDB));
 			break;
+#endif
 		case '=':
 		case ';':
 		case KB_CA:
@@ -427,8 +473,10 @@ kbcod h_menu()
 			/* проваливаемся... */
 #else
 		case KB_DE:
-			cod = KB_AU;
-			/* проваливаемся... */
+			/*cod = KB_AU;*/
+			return(cod);
+			break;
+			/* НЕ проваливаемся... */
 #endif
 		case KB_AL:
 		case KB_AU:
@@ -462,48 +510,182 @@ wchar_t  *cmd0;
 	extern char *pmtsh;    /* --"-- */
 	LINEMENU savelm;
 	kbcod cod;
+	
+	int ret;
 
-	int ret = 0;
+	int cmp_sz;
+	int i;
+	u8char_t u8cmp[4+STRBUF];
+	u8char_t **cmds;
+	u8char_t **pcmd;
+	u8char_t  *p;
 
-	if (cmdplast <= 1) {
-		bell(); return (ret);
-	}
 	savelm = clm;
-	cp_set(clm._y0 - 1, lframe->maxco - 1, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
-	/* сначала синхронизация истории из файла? */
-	if (histsn) {
-		cmdghist();
-		w_str("=");
-	}
-	er_eop(TXT);
 
-	/* инициализация меню команд */
-	clm._itms   = cmdptr;          /* УКАЗАТЕЛИ НА СТРОКИ КОМАНД */
-	clm._itmmax = cmdplast;      /* ПОСЛЕДНЯЯ КОМАНДА В ИСТОРИИ */
-	clm._vf     = (LINE *)0;		/* hint to avoid new overlapping malloc? /* TODO WTF */
-	clm._itmlen = lframe->maxco - ((strlen(pmtsh)) * 2); /*по феншую, отступ на промптер слева и справа*/
-	clm._ltmpl  = &tmplate;
+	/* start setup new instance of clm */
+	/*clm._itms   = cmdpsel*//*cmdptr*/;          /* УКАЗАТЕЛИ НА СТРОКИ КОМАНД */
 
+	/* force 1st malloc() for extra clm, save clm instance of main menu */
+	clm._vf = (LINE *)0;
+
+#if 0
+	clm._itmmax = cmdplast;      /* количество КОМАНД В ИСТОРИИ */
 	clm._itm    = cmdpi;         /* ТЕКУЩАЯ КОМАНДА */
 	if (cmdpi >= cmdplast) {
 		clm._itm -= 1;
 	}
-	clm._yy_max = 10;
+#endif
+	ret = 0;
+
+	/* сначала синхронизация истории из файла? */
+	if (histsn) {
+		cmdghist();
+	}
+
+	if (cmdplast < 1) {
+		bell(); return (ret);
+	}
+	/*cp_set(clm._y0 - 1, lframe->maxco - 1, TXT);*/   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
+
+restart:
+	/* определить размер списка меню команд, если заказана селекция по образцу ^R */
+	wcsnu8s(u8cmp, cmd0, STRBUF);	/*сравнивать при поиске в utf-8*/
+	cmds = cmdpsel;
+	cmdsmax = 0;
+	cmp_sz = strlen(u8cmp);
+	if (*u8cmp != '\0') {
+		/* заодно посчитать размер полного списка */
+		for (i = 0, pcmd = cmdptr; *pcmd != '\0'; pcmd++) {
+			i++;
+			for (p = *pcmd; *p != '\0'; p++) {
+				/*поиск образца в любом месте команды, не только от начала*/
+				if (strncmp(u8cmp, p, cmp_sz) == 0) {
+					*cmds++ = *pcmd;
+					cmdsmax += 1;
+					/*break;*/
+				}
+			}
+		}
+	}
+	/*cmdplast = i;*/
+	*cmds = '\0';	/* терминировать селектированный список меню команд */
+	/* построить список по шаблону поиска, если шаблона нет, то показывать только полный список */
+	if (cmdpi < 0) {
+		cmdpi = cmdplast - 1; /*anyway conditionless */
+	}
+	if (cmdsmax > 0) {
+		clm._itms = cmdpsel;
+		/*clm._itm*/
+		if (cmdpisel < 0) {
+			cmdpisel = cmdsmax - 1; /* установить индекс в конец списка */
+		}
+	} else {
+		clm._itms = cmdptr;		/* переключиться на полный список истории */
+		/*clm._itm*/
+		if (cmdpi < 0) {
+			cmdpi = cmdplast - 1;
+		}
+	}
+
+rebuild_help_menu:
+
+	/*
+	 * инициализация меню команд
+	 */
+	/* настроить полный или селектированный список команд истории */
+	if (clm._itms == cmdpsel) {
+		clm._itmmax = cmdsmax;	/* размер селектированного списка */
+		clm._itm = cmdpisel; /* установить текущий индекс (было в конец списка) */
+		if (cmdpisel > cmdsmax) {
+			cmdpisel = clm._itm = cmdsmax -1;
+		}
+	} if (clm._itms == cmdptr) {
+		clm._itmmax = cmdplast; /* количество КОМАНД В ИСТОРИИ */
+		clm._itm = cmdpi;       /* восстановить текущий индекс */;
+		if (cmdpi >= cmdplast) {
+			cmdpi = clm._itm = cmdplast -1;
+		}
+	}
+
+	/* hint to avoid new overlapping malloc? /* TODO WTF */
+/*	clm._vf     = (LINE *)0;		*/
+
+	clm._itmlen = lframe->maxco - ((strlen(pmtsh)) * 2); /*по феншую, отступ на промптер слева и справа*/
+	clm._ltmpl  = &tmplate;
+
+	clm._yy_max = 10;		/*TODO вынести в начало функции как константу */
 	clm._itmofs = 0;
 	while((clm._itm - clm._itmofs) >= clm._yy_max)
 		clm._itmofs += clm._yy_max;
-	itmini();
-	pre_vf();
 
-	/* СОХРАНИТЬ СВИТОК */
-	if (y0_top > clm._y0) {
-		y0_top = clm._y0;
-		scrlnl();
+
+#if 0
+	/* force pre_vf() to do new malloc() */
+	if (clm._vf != (LINE *)0) {
+		free(clm._vf);
+		clm._vf = (LINE *)0;
 	}
-	cmdpp = cmd0;    /* ДЛЯ КОПИРОВАНИЯ НОВОЙ КОМАНДЫ */
+#endif
+	/* Подготовить и показать страницу меню истории */
+	itmini();
+	pre_vf();	/* malloc() called inside */
+
+	/* раздвинуть свиток до высоты меню команд истории */
+	if (y0_top > clm._y0) {
+		cp_set(y0_top/*clm._y0*/ - 1, lframe->maxco - 1, TXT);
+		/*er_eop(TXT);*/
+		scrlnl();
+		y0_top = clm._y0;
+		w_cmd(cmd0);
+		w_wcstr(cmd0);
+	}
+
+	/* очистить область свитка, каждый раз при смене содержимого */
+	for (i = y0_top/*clm._y0*/; i <= lframe->maxli -2 ; i++) {
+		cp_set(i, 0,TXT);
+		er_eol(TXT);
+	}
+	cmdpp = cmd0;    /* ДЛЯ КОПИРОВАНИЯ НОВОЙ КОМАНДЫ -- TODO is this string obsolete? */
+
+	w_cmd(cmd0);
+	if (clm._itms == cmdpsel) {
+		at_set(ATT);
+	} else {
+		at_set(TXT);
+	}
+	w_wcstr(cmd0);
 
 	cod = h_menu();
 	switch(cod) {
+	case KB_DE:
+		if (clm._itm >= clm._itmmax) {
+			clm._itm = clm._itmmax;
+		}
+		clm._itm -= 1;
+		if (clm._itm < 0) {
+			clm._itm = 0;
+		}
+		if (clm._itms == cmdpsel) {
+			/*cmdsmax -= 1;*/
+			cmdpisel = clm._itm;
+		} else {
+			cmdpi = clm._itm;
+		}
+		goto restart; /*rebuild_help_menu;*/
+		break;
+	case KB_HE:
+		if (cmdsmax > 0) {
+			if (clm._itms == cmdpsel) {
+				cmdpisel = clm._itm;
+				clm._itms = cmdptr;
+			} else {
+				clm._itms = cmdpsel;
+				cmdpi = clm._itm;
+				/*goto restart;*/
+			}
+			goto rebuild_help_menu;
+		}
+		break;
 	default:
 		ret = 1;
 		break;
@@ -515,8 +697,12 @@ wchar_t  *cmd0;
 	free((char *)clm._vf); clm._vf = (LINE *)0;
 	cp_set(y0_top, 0, TXT); er_eop(TXT);
 
-	cmdpi = clm._itm;    /* НОВОЕ ЗНАЧ. ИНДЕКСА ИСТОРИИ */
-	clm._vf = (LINE *)0;
+	if (clm._itms == cmdptr) {
+		cmdpi = clm._itm; /* НОВОЕ ЗНАЧ. ИНДЕКСА ИСТОРИИ */
+	} else {
+		cmdpisel = clm._itm;
+	}
+	/*clm._vf = (LINE *)0;*/
 	clm = savelm;
 	return(ret);
 }

@@ -9,22 +9,21 @@ err	= gv - - - - "[ exit= 1 ]"
 ---SCREEN
 =command run & exit code indicator
 
-  when command completed, You get indicator in one of form:
-  .ok...       -- on success
-  .err........ -- if command terminates with error or on a signal
+  when command is done, You get an indicator in one of form:
 
-  Pass codes are:
-    .:SP... or .:CA...
-	return to main menu
-    .:HE... get this page then returns to main menu
-    .:AU... .:AD... .:AR...
-	return to command editor 
-    .:AL...
-	return to command editor with cursor position restored
-    other printable keys:
-	type another command from scratch
-  
+  .ok...       -- on success
+  .err........ -- if a command terminated with error or on a signal
+
   Warning about defencive trap:
-    .:NL... and other control codes discarded preventing unexpected action
-  
+    .:NL... does nothing preventing unexpected action
+                                  
+  Pass codes:
+  .:SP... or .:CA...        return to main menu
+  .:HE...                   get this page then returns to main menu
+  .:AU... .:AD... .:AR...   return to command editor, cursor at the end 
+  .:AL...                   return to command editor, cursor at last position
+
+  other printable:	    type another command from scratch
+
+	
 ---END

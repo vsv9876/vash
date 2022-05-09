@@ -363,7 +363,7 @@ int    *ofsp;       /* указатель на величину смещения
 	if (u8o->u8o_sig == U8O_SIG) {
 		len2 = wcou8o(u8o, wcso);
 	} else {
-		len2 = wcsu8s(u8s, wcs, edsize + 1);/*wcsrtombs(u8s, &wcs, 4*(edsizeMAXLICO + 1), &ps);*/
+		len2 = wcsnu8s(u8s, wcs, edsize + 1);/*wcsrtombs(u8s, &wcs, 4*(edsizeMAXLICO + 1), &ps);*/
 	}
 	return cod;
 }

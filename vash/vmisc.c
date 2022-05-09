@@ -206,8 +206,9 @@ scrlnl()
 
 	if (scrolf) {
 		io_set(IO_TTYPE);
-		for (i = clm._y0; i < lframe->maxli; i++)
+		for (i = clm._y0; i < lframe->maxli; i++) {
 			putc('\n', stdout);
+		}
 		io_set(IO_VIDEO);
 	}
 	else    er_pag();

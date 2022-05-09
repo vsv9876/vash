@@ -108,4 +108,4 @@ extern char *tcapo[];
 #endif /* line0_h_def */
 
 
-/*#define VTTOUT_DEBUG*/
+#define VTTOUT_DEBUG

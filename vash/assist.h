@@ -108,6 +108,7 @@ extern int     /*maxli, maxco,*/ y0_top;
 extern LFRAME  lfmain;
 extern int    vashelp(), scrldo(), scrlarea();
 
+extern int cmdhreset();
 extern int cmdphist(),visini(), cmdset(), fil_vf(), scrlst(), scrlnl(), cmdsub(), fatal(), clritm();
 extern int itmshow(), cmdghist(), u_menu(), itmadj(), itmini(), pre_vf(), patcmp();
 extern int vincmd(), vexcmd(), fnsplit(), vcmd(), cwdshow();

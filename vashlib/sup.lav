@@ -1,10 +1,10 @@
 ---PAGE sup
 ---LINES
-versn	= gv   -       -       cvt_sp  -       versn
+versn	= g    -       -       cvt_sp  -       versn
 ---#versn	= v    -       -       cvt_sp  -       versn
-vexdir  = v    -       -       cvt_sp  -       vexdir
-vpath   = v    -       -       cvt_sp  -       vpath
-vashrc  = v    -       -       cvt_sp  -       vashrc
+vpath   = g    -       -       cvt_sp  -       vpath
+vashrc  = g    -       -       cvt_sp  -       vashrc
+vexdir  = g    -       -       cvt_sp  -       vexdir
 buildd  = c    buildd
 
 hl      = gc    -       -       cvt_hl  -       "-"
@@ -74,15 +74,3 @@ vexdir: .vexdir.................................................................
 ---#     1         2         3         4         5         6         7         8
 ---#56789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890
 ---#
-
----# use for debug in SCREEN section
----#    y0:     .y0.
----#    y0_top: .y0t
----#
----#  Please, to return try Ctrl-E or .:EX....
----#	   to get help press     .'?    or .:HE....
----#
-+    .ym lines max   
-+co  .co......       
-+li  .li .bli....bli 
-+y0t .yt .lli..-lmax 

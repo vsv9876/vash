@@ -534,9 +534,9 @@ char   *str;
 		if (sgrmode >= 1) {
 			/*strcpy(outstr, ". ."); /* on PMT spec: ". ." + outstr indexes 0,2 */
 			if (lpa_pi) {
-				strcpy(outstr, "  .");
+				strcpy(outstr, "  |");
 			} else {
-				strcpy(outstr, ".  ");
+				strcpy(outstr, "|  ");
 			}
 			if(lpainp[i].lpa_a & va) outstr[2] = 'x';
 			if(lpaout[i].lpa_a & va) outstr[0] = 'x';

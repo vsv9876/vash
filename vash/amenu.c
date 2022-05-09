@@ -48,7 +48,7 @@ pre_vf()
 			clm._vf[i].line = clm._y0 + j;   /* (i % yy); */
 			clm._vf[i].size = clm._dx;
 			/* clm._vf[i].size = 20; /* test for hack */
-			/* надо учесть атрибут уже помеченных файлов */
+			/* надо учесть атрибут отмеченых файлов */
 			if (*clm._itms[i + clm._itmofs] == MONEY) {
 				clm._vf[i].attr = ATT|INP|NED|LFASTR;
 			} else {

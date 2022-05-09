@@ -198,6 +198,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			w_cmd(cmd0);
 			break;
 		case KB_NL :
+			cmdhreset();
 			if (cmd == (char *)0) {
 				/* для strncmp необходимо */
 				cmd = "";
@@ -271,7 +272,7 @@ std_shell:
 			if(syscod) {
 				codexit = cod1(syscod); /*TODO cleanup trick, replace with stdlib.h and sys/wait.h stuff */
 				codsig  = cod0(syscod);
-				at_set(msgat = ERR);
+				msgat = ERR;
 				if (codsig) {
 					sprintf(tmpstr, "[ exit= %d, signal= %d ]", codexit, codsig);
 				} else {
@@ -281,12 +282,19 @@ std_shell:
 			}
 			else {
 				if (okwait == 1) {
-					at_set(msgat = HDR);
+#if 1
+					msgat = HDR;
 					sprintf(tmpstr, "[ ok ]");
+#else
+					at_set(msgat = (CMD|INP));
+					sprintf(tmpstr, pmtsh);
 					/*w_str(tmpstr); cp_cret();*/
+#endif
 				}
 			}
-			cp_cret(); w_str(tmpstr); /*cp_sav();*/
+			cp_cret();
+			/*at_set(CMD|INP); w_str(pmtsh);*/
+			at_set(msgat); w_str(tmpstr); /*cp_sav();*/
 			at_set(CMD);
 			if (okwait == 1) {
 				do {
@@ -313,30 +321,28 @@ std_shell:
 						break;
 					}
 
-					at_set(atrib = ATT /*MSE|VEXT*/);
+					at_set(atrib = HDR);
 					if (trapcod) {
 					  /*sprintf(tmpstr, "-- SPACE bar or type a command ");*/
- 					  at_set(atrib); w_str(" --");
- 					  at_set(TXT);     w_str(" please, type next command ");
-					  at_set(atrib); w_str("--");
-					  at_set(TXT); w_str(" continue: ");
-					  w_lh_str(":SP");
-					  at_set(TXT); w_str("   help: ");
-					  w_lh_str(":HE");
+ 					  at_set(atrib); w_str(" type a command... ");
+
+					  at_set(TXT); w_str("      help: "); w_lh_str(":HE");
+					  at_set(TXT); w_str(" main menu: "); w_lh_str(":SP");
 					  at_set(TXT); w_str(" "); er_eol(TXT);
 					  /*cp_fet();*/ /*w_str(tmpstr);*/
 					}
-					er_eop(0);
+					er_eop(CMD);
 					cp_cret(); /*w_str("\r");*/
-					at_set(msgat);
-					w_str(tmpstr);
+					/*at_set(CMD|INP); w_str(pmtsh);*/
+					at_set(msgat); w_str(tmpstr);
 				} while (trapcod);
 			} else {
-				at_set(0);
 				cp_cret(); /*w_str("\r");*/
+				at_set(CMD);
 			}
+			cp_cret(); er_eop(TXT);
 			/* проверка завершения команды sh */
-			er_eol(0); fflush(vttout);
+			er_eol(CMD); fflush(vttout);
 			scrlnl();
 			showtime( 1 );          /* часы включить */
 
