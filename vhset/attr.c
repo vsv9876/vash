@@ -100,7 +100,7 @@ char   *str;
 		strcpy(str, line->varl);
 
 		/* couple of lines shown with ofset between them */
-		cp_set(line->line + 1, line->colu + 2, attr|INP);
+		cp_set(line->line + 1, line->colu/* + 2*/, attr|INP);
 
 		/* emulate prompt behavior for input mode - find prompt symbol, show it at 1st position */
 		w_chr((char)(lpainp[attr].lpa_p));
@@ -534,9 +534,9 @@ char   *str;
 		if (sgrmode >= 1) {
 			/*strcpy(outstr, ". ."); /* on PMT spec: ". ." + outstr indexes 0,2 */
 			if (lpa_pi) {
-				strcpy(outstr, "  |");
+				strcpy(outstr, "  :");
 			} else {
-				strcpy(outstr, "|  ");
+				strcpy(outstr, ":  ");
 			}
 			if(lpainp[i].lpa_a & va) outstr[2] = 'x';
 			if(lpaout[i].lpa_a & va) outstr[0] = 'x';
