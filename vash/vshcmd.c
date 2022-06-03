@@ -324,7 +324,8 @@ std_shell:
 					at_set(atrib = HDR);
 					if (trapcod) {
 					  /*sprintf(tmpstr, "-- SPACE bar or type a command ");*/
- 					  at_set(atrib); w_str(" type a command... ");
+					  at_set(TXT); w_str(" -- ");
+					  at_set(atrib); w_str(" type a command... ");
 
 					  at_set(TXT); w_str("      help: "); w_lh_str(":HE");
 					  at_set(TXT); w_str(" main menu: "); w_lh_str(":SP");

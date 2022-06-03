@@ -103,7 +103,9 @@ extern char *tcapo[];
 #define t_me  tcapo[19] /* ВСЕ УБРАТЬ */
 #define t_bl  tcapo[20] /* ЗВОНОК */
 #define t_vb  tcapo[21] /* ВИДЕОЗВОНОК */
-#define t_lh  tcapo[22] /* ИМЯ КЛАВИАТУРЫ (РАСШИРЕНИЕ LINLIB) */
+#define t_zh  tcapo[22] /* start italic */
+#define t_zr  tcapo[23] /* start italic */
+#define t_lh  tcapo[24] /* ИМЯ КЛАВИАТУРЫ (РАСШИРЕНИЕ LINLIB) */
 
 #endif /* line0_h_def */
 

@@ -30,4 +30,4 @@
 #define A_MR    0020
 #define A_MB    0040
 #define A_MK    0100
-
+#define A_ZH	0200

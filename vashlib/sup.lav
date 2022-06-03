@@ -1,10 +1,10 @@
 ---PAGE sup
 ---LINES
-versn	= g    -       -       cvt_sp  -       versn
+versn	= gc   -       -       cvt_sp  -       versn
 ---#versn	= v    -       -       cvt_sp  -       versn
-vpath   = g    -       -       cvt_sp  -       vpath
-vashrc  = g    -       -       cvt_sp  -       vashrc
-vexdir  = g    -       -       cvt_sp  -       vexdir
+vpath   = gc   -       -       cvt_sp  -       vpath
+vashrc  = gc   -       -       cvt_sp  -       vashrc
+vexdir  = gc   -       -       cvt_sp  -       vexdir
 buildd  = c    buildd
 
 hl      = gc    -       -       cvt_hl  -       "-"
@@ -35,10 +35,10 @@ F2	= c "."
 ---#ym      = iv    n       "%3d"   -       t_ymax  yy_max
 ym      = ivp   -       "%3d"   -       t_ymax  yy_max
 
-y0      = g     -       "%3d"   -       -       y0
-yt      = g     -       "%3d"   -       -       y0_top
-li      = g     -       "%3d"   -       -       maxli
-co      = g     -       "%3d"   -       -       maxco
+y0      = gc     -       "%3d"   -       -       y0
+yt      = gc     -       "%3d"   -       -       y0_top
+li      = gc     -       "%3d"   -       -       maxli
+co      = gc     -       "%3d"   -       -       maxco
 bli	 = vip   -      "%3d"  -       -       baseli
 lli      = vip   -      "%3d"  -       -       lmaxli
 C       = ipv    -      "%1d"  -       -       SGR

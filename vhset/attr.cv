@@ -32,6 +32,7 @@
 	W_mr   = &wamask[4];
 	W_mb   = &wamask[5];
 	W_mk   = &wamask[6];
+	W_zh   = &wamask[7]; /* italic */
 	SGR    = &sgrmode;
 ---#	SGR_B  = 0
 ---#	SGRA   = &sgra;
@@ -57,6 +58,7 @@
 	mr      = ia - W_mr   cvt_va  - LPA_B
 	mb      = ia - W_mb   cvt_va  - LPA_B
 	mk      = ia - W_mk   cvt_va  - LPA_B
+	mi	= ia - W_zh   cvt_va  - LPA_B
 ---#	hl      = gca - -     cvt_hl  - "-"
 	hl      = g1  - -     cvt_hl  - "."
 
@@ -69,6 +71,8 @@
 
 	fg      = ia - "f"   cvt_co  - LPA_B
 	bg      = ia - "b"   cvt_co  - LPA_B
+---#	fB      = ia - "f"   cvt_cb  - LPA_B
+---#	bB      = ia - "b"   cvt_cb  - LPA_B
 	sgr     = ia - -     cvt_sgr - LPA_B
 ---# 	pi      = g0 - "# "  cvt_pi  - LPA_B
 	M       = g3 - "| "  cvt_pi  - LPA_B
@@ -93,7 +97,6 @@
 ---#.lh........................................................................
 ---#
 =Video attributes
-.lh............................................................................
 +
 +.p0............ .CMD.   .TXT.   .HDR.   .VAR.   .ALT.   .MSE.   .ERR.   .ATT.
 +.p1............   
@@ -105,10 +108,13 @@
 +bright/bold:md  .md     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +    reverse:mr  .mr     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+     hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
+---#+     hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
++     italic:mi  .mi.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +                .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 + foreground:fg  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+---#+           :fB  .fB     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 + background:bg  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+---#+           :bB  .bB     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +  stripe:fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +
   settings mode: .sgrm..........    SGR: .sgrAT.....             help: .:HE....

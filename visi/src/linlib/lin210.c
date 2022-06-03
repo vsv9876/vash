@@ -140,7 +140,7 @@ char *tcapo[] = {
 	"cs", "sr", "sf", "al", "dl",
 	"so", "se", "us", "ue",
 	"md", "mr", "mb", "mk", "me",
-	"bl", "vb",
+	"bl", "vb", "ZH", "ZR",
 	"lh",   /* ИМЯ КЛАВИАТУРЫ */
 	0 };
 

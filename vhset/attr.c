@@ -12,12 +12,13 @@
 extern LPA lpainp[];
 extern LPA lpaout[];
 
-extern int cvt_co(); /* function there below */
+extern int cvt_co(); /* color */
+extern int cvt_cb(); /* bright mode */
 
 extern char namelh[];
 
 int     wamask[10] = {
-	A_SO,   A_US,   A_VS,   A_MD,	A_MR,   A_MB,   A_MK,	0,      0,      0,
+	A_SO,   A_US,   A_VS,   A_MD,	A_MR,   A_MB,   A_MK,	A_ZH,      0,      0,
 	};
 
 int     lpa_pi = 0;     /* РЕЖИМ ИЗМЕНЕНИЯ АТРИБУТОВ (НА ВВОДЕ/НА ВЫВОДЕ) */
@@ -34,9 +35,11 @@ static char *pimmsg[] = {
 /* Color support for attr.cv page */
 char   *sgrms[] = {
 		"#0-dumb       ",
-		"#1-monochrome ",
+		"#1-mono (b/w) ",
 		"#2-color      ",
-/*		"#3-color256   ",*/
+		"#3-color + bw ",
+/*		"#4-color256   ",*/
+/*		"#5-color256+bw",*/
 		0 };
 extern int		sgrmode; /*global LINLIB mode*/
 
@@ -295,6 +298,18 @@ char *bgp;
 	}
 }
 
+cvt_cb(line, cod, mod, str)
+LINE   *line;
+kbcod   cod;
+char   *mod;
+char   *str;
+{
+	return (TRUE);
+}
+
+
+
+
 cvt_co(line, cod, mod, str)
 /*---------------------*/
 /* формат для атрибута */
@@ -531,7 +546,7 @@ char   *str;
 	i = (int)line->varl;
 
 	if(*mod == 'w') {
-		if (sgrmode >= 1) {
+		if (sgrmode & 1) {
 			/*strcpy(outstr, ". ."); /* on PMT spec: ". ." + outstr indexes 0,2 */
 			if (lpa_pi) {
 				strcpy(outstr, "  :");
@@ -545,7 +560,7 @@ char   *str;
 		    strcpy(str, "   "); /*blank is default*/
 		}
 	} else {
-	    if (sgrmode >= 1) {
+	    if (sgrmode & 1) {
 		if(cod == ' ' || cod == KB_DE) {
 			line4 = getl4(line);
 
@@ -736,9 +751,15 @@ kbcod cod;
 {
 	LINE *l;
 	
-	if (sgrmode == 0) w_raw("\033[m"); /*hint for attributes on dumb mode*/
+	/*if (sgrmode == 0)*/
+	w_raw("\033[m"); /*hint for attributes on dumb mode*/
 	switch(cod) {
-
+	case ('0'):
+	case ('1'):
+	case ('2'):
+	case ('3'):
+	case ('4'):
+	case ('5'):
 	case(' '):
 	case(KB_DE):
 

@@ -41,7 +41,6 @@ extern  char *BC;
 SCRN scrn = { 0 };
 
 extern  LPA lpaout[];
-
 extern  LPA lpainp[];
 
 #define AW_INIT_STATE (A_SO|A_US|A_MD)
@@ -49,6 +48,7 @@ extern  LPA lpainp[];
 /* СТАРОЕ СЛОВО АТРИБУТОВ: */
 static    int awstate = AW_INIT_STATE;  /* ДЛЯ НАЧАЛА ВСЕ ВКЛЮЧЕНО */
 static  char *acstate = (char *)0;
+static    int aixstate = 0;
 extern  int sgrmode;
 
 #define COLOR_ANSI
@@ -56,117 +56,101 @@ extern  int sgrmode;
 
 /* ANSI COLOR out/input, SGR sequence, indexed by LPA (0, TXT, HDR, ... )*/
 /* storage for SGR - this is a text for sprintf "\033[%sm", */
-/*
- * now incorporated into LPA sctructure:
-extern  char *acout[];
-extern  char *acinp[];
-*/
+/*/*/
 
-w_sgr(gsr)
-char *gsr;
+w_sgr(sgr)
+char *sgr;
 {
 	static char s_csi[40] = "";
 	char *s = s_csi;
 	char *fmt;
 
 	if(sgrmode <= 1) {
-		/*awstate = AW_INIT_STATE;*/
-		/* dumb, monochrome */
+		/* dumb + b&w monochrome */
 		return;
 	}
-	if (gsr == (char *)0 || *gsr == '\0') {
-		gsr = lpaout[0].lpa_sgr;
+	if (sgr == (char *)0 || *sgr == '\0') {
+		sgr = lpaout[0].lpa_sgr;  /* CMD == clean all colors by LINLIB concept */
 		acstate = (char *)0;
+		return;
 	}
-	if (acstate == (char *)0 || acstate != gsr) {
-		sprintf(s_csi, "\033[%sm", gsr);
-		w_raw(s_csi);
-		acstate = gsr;
-	}
+	sprintf(s_csi, "\033[%sm", sgr);
+	w_raw(s_csi);
 }
 
 at_set(aw_new)
 /*
- * УСТАНОВИТЬ ВИДЕОАТРИБУТЫ, выбрать для установки  с цветами, хак v3
+ * УСТАНОВИТЬ ВИДЕОАТРИБУТЫ
  */
 register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 {
 	extern SCRN scrn;
 
-	register int aw_old;     /* СЛОВО СТАРЫХ АТРИБУТОВ */
+	int   aw_old;   /* СЛОВО СТАРЫХ АТРИБУТОВ */
 	char *ac_old;
-	register int aw;        /* НОВЫЕ АТРИБУТЫ */
+	int aw;        	/* НОВЫЕ АТРИБУТЫ */
 	char *ac;	/* color to be set */
-	int  aix_new;	/* индекс для поиска по таблицам атрибутов */
+	int  aix;	/* индекс для поиска по таблицам атрибутов */
 
-	/* dumb mode, without attributes at all - in some cases its wrong - vt52 has so/se attribute */
+	/* dumb mode, without attributes at all - in some cases its wrong - vt52+ has so/se attribute */
 	if (sgrmode == 0) return;
 
-	/* VCOLOR (в составе VIDEOM) вероятно, не нужен, и вообще не нужен -- заменен на VEXT*/
-	aw_new &= VIDEOM; /* cleanup arg called, which may contain unsupported constants*/
 	aw_old = awstate;
 	ac_old = acstate;
 
-	scrn.sc_at = aw_new;
-	aix_new    = aw_new & VIDEO;
-	if(aw_new & INP  || aw_new & VEXT) {
-		aw = lpainp[aix_new].lpa_a;
-		ac = lpainp[aix_new].lpa_sgr;
+	aw = aw_new & VIDEOM; /* disable garbage from old code */
+
+	aix    = aw & VIDEO;
+	if((aw & INP) || (aw & VEXT)) {
+		aw = lpainp[aix].lpa_a;
+		ac = lpainp[aix].lpa_sgr;
 	} else {
-		aw = lpaout[aix_new].lpa_a;
-		ac = lpaout[aix_new].lpa_sgr;
+		aw = lpaout[aix].lpa_a;
+		ac = lpaout[aix].lpa_sgr;
 	}
-	/* оптимизация повторной выдачи*/
-	if(aw == aw_old && ac == ac_old) {
-		 /* биты атрибутов не менялись; и расцветка тоже */
+
+	/*if(aix == aixstate) {*/
+	if(ac == acstate && aw == awstate) {
+		 /* биты атрибутов и раскраска не менялись */
 		return;
 	}
-	/* СНАЧАЛА ВСЕ погасить */
-	if(aw_old & A_SO) 					{ w_raw(t_se); }
-	if(aw_old & A_US)					{ w_raw(t_ue); }
-	if(aw_old & (A_MD|A_MR|A_MB|A_MK))	{ w_raw(t_me); }
+	aixstate = aix;
+	scrn.sc_at = aw;
 
-	/* ЗАПОМНИТЬ для оптимизации повторной выдачи */
-	awstate = aw; /*scrn.sc_at;*/
-	/*acstate = ac;*/
+	/* все атрибуты погасить */
+	if(sgrmode & 01) {
+		if(aw_old & A_SO) 					{ w_raw(t_se); }
+		if(aw_old & A_US)		     		{ w_raw(t_ue); }
+		if(aw_old & A_ZH)		     		{ w_raw(t_zr); }
+		if(aw_old & (A_MD|A_MR|A_MB|A_MK)) 	{ w_raw(t_me); }
+	} else {
+		w_raw(t_me);
+	}
+	if (sgrmode > 1) {
+		acstate = (char *)0;
+	}
 
-	/* ТЕПЕРЬ ВКЛЮЧИТЬ */
-	/*if (ac != ac_old) {*/
-		/*w_sgr(0);*/
-	/*w_sgr(lpainp[0].lpa_sgr); /* CMD, used as preamble of GCR */
-	    w_sgr(lpaout[TXT].lpa_sgr); /* TXT as default base for others */
-		w_sgr(ac);
-	/*}*/
-	if(aw != 0) {
+	/* включить атрибуты, сначала b/w mono */
+	if(aw != 0 && sgrmode & 01) { /* all odd modes */
+		if(aw & A_ZH) w_raw(t_zh);
 		if(aw & A_SO) w_raw(t_so);
 		if(aw & A_US) w_raw(t_us);
 		if(aw & A_MD) w_raw(t_md);
 		if(aw & A_MR) w_raw(t_mr);
 		if(aw & A_MB) w_raw(t_mb);
 		if(aw & A_MK) w_raw(t_mk);
+		awstate = aw;
 	}
+	if (sgrmode > 0) {
+	    if (ac != lpaout[TXT].lpa_sgr) {
+	    	w_sgr(lpaout[TXT].lpa_sgr); /* TXT is a base for other */
+	    }
+	    w_sgr(ac);
+	    acstate = ac;
+	}
+
 }
 #else
-char *acout [LPASIZE] = {
-	"",				/* CMD */
-	"",				/* TXT  */
-	"",				/* HDR  */
-	"",				/* VAR  */
-	"",				/* ALT  */
-	"",				/* MSE  */
-	"",				/* ERR  */
-	"",				/* ATT  */
-};
-char *acinp [LPASIZE] = {
-	"",				/* CMD */
-	"",				/* TXT  */
-	"",				/* HDR  */
-	"",				/* VAR  */
-	"",				/* ALT  */
-	"",				/* MSE  */
-	"",				/* ERR  */
-	"",				/* ATT  */
-};
 
 at_set(awi)
 register int awi;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
