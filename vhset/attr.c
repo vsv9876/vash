@@ -9,6 +9,8 @@
 #include "line0.h"
 #include "lineva.h"
 
+static LINE *attrpg;	/* global reference for partial refresh routines */
+
 extern LPA lpainp[];
 extern LPA lpaout[];
 
@@ -412,10 +414,10 @@ char   *str;
 			}
 
 			/* hint in case of TXT attribute - affected all screen view */
-			/*if (lpax == 1)*/
+			if (lpax == 1)
 				sgrtst(line, KB_NL); /*cod);*//*may be better to refresh all the page*/
-			/*else
-				w_line(line4);*/
+			else
+				w_line(line4);
 		}
 	}
 	if(*mod == 'w') {
@@ -549,9 +551,9 @@ char   *str;
 		if (sgrmode & 1) {
 			/*strcpy(outstr, ". ."); /* on PMT spec: ". ." + outstr indexes 0,2 */
 			if (lpa_pi) {
-				strcpy(outstr, "  :");
+				strcpy(outstr, "  .");
 			} else {
-				strcpy(outstr, ":  ");
+				strcpy(outstr, ".  ");
 			}
 			if(lpainp[i].lpa_a & va) outstr[2] = 'x';
 			if(lpaout[i].lpa_a & va) outstr[0] = 'x';
@@ -560,28 +562,30 @@ char   *str;
 		    strcpy(str, "   "); /*blank is default*/
 		}
 	} else {
-	    if (sgrmode & 1) {
-		if(cod == ' ' || cod == KB_DE) {
-			line4 = getl4(line);
+	    if (sgrmode & 01) {
+			if(cod == ' ' || cod == KB_DE) {
+				line4 = getl4(line);
 
-			switch(lpa_pi) {
-			case 0:
-				lpap = lpa_p[0];
-				break;
-			case 1:
-				lpap = lpa_p[1];
-				break;
+				switch(lpa_pi) {
+				case 0:
+					lpap = lpa_p[0];
+					break;
+				case 1:
+					lpap = lpa_p[1];
+					break;
+				}
+				ap = &(lpap[ i ].lpa_a);
+
+				/* do toggle modification */
+				if((*ap) & va) { (*ap) = (*ap) & (~va); }
+				else           { (*ap) = (*ap) | ( va); }
+
+				w_line(line4);
+				if (i == TXT && sgrmode > 1)/* && cod == ' ')*/
+					repage();
+				else
+					reline(i);
 			}
-			ap = &(lpap[ i ].lpa_a);
-
-			/* do toggle modification */
-			if((*ap) & va) { (*ap) = (*ap) & (~va); }
-			else           { (*ap) = (*ap) | ( va); }
-
-			w_line(line4);
-			/*if (i == TXT)/* && cod == ' ')*/
-				repage();
-		}
 	    }
 	}
 	return(TRUE);
@@ -740,6 +744,16 @@ show_pi()
 	}
 }
 
+reline(vai)
+{
+	LINE *l;
+	l = attrpg;
+	for (l = linem; l->size > 0; l++) {
+		if ((l->attr & VIDEO) == vai)
+			w_line (l);
+	}
+}
+
 repage()
 {
 	sgrtst(linem, KB_NL);
@@ -760,7 +774,7 @@ kbcod cod;
 	case ('3'):
 	case ('4'):
 	case ('5'):
-	case(' '):
+	case (' '):
 	case(KB_DE):
 
 	case(KB_NL):
@@ -791,75 +805,7 @@ pag_a()
 	return(TRUE);
 }
 
-#ifdef DURA
-kbcod
-n_page(line_e, page, posp)
-/*-----------------*/
-/* ЧИТАТЬ СТРАНИЦУ */
-/*-----------------*/
-LINE    *line_e;                /* СТРАНИЦА ДЛЯ РЕДАКТИРОВАНИЯ  */
-LINE   **page;                  /* ТЕКУЩАЯ ЛИНИЯ (СТАТУС)       */
-int    *posp;                   /* ПОЗИЦИЯ КУРСОРА ПРИ РЕДАКТИРОВАНИИ */
-{
-	int     cod;            /* КОД, ВОЗВРАЩАЕМЫЙ r_line()   */
-
-	register LINE *lni;             /* УКАЗАТЕЛЬ НА ТЕКУЩУЮ ЛИНИЮ */
-	register LINE *line ;           /* УКАЗАТЕЛЬ НА ВСЮ СТРАНИЦУ */
-
-	line = line_e;
-	if(*page != (LINE *)NULL)
-		lni = *page;
-	else
-		lni = line_e;
-
-	/* ПРОПУСТИТЬ ТО, ЧТО НЕЛЬЗЯ РЕДАКТИРОВАТЬ */
-	while( INP & ~(lni->attr)) {
-		lni++;
-		/* ЗАЦИКЛИТЬСЯ ЧЕРЕЗ НАЧАЛО */
-		if(lni->size == 0)
-			lni = line_e;
-	}
-
-	cod = r_line(lni, posp);
-
-	/* НАЙТИ УКАЗАТЕЛЬ ДЛЯ СЛЕДУЮЩЕГО ЧТЕНИЯ */
-	switch( cod ) {
-	case KB_AR :
-		if ( (lni->flag & SUSR) == FALSE )
-			lni = fnd_ar(lni, line) ;
-		break ;
-	case KB_AL :
-		if ( (lni->flag & SUSL) == FALSE )
-			lni = fnd_al(lni, line) ;
-		break ;
-	case KB_AU :
-		if ( (lni->flag & SUSU) == FALSE )
-			lni = fnd_au(lni, line) ;
-		break ;
-	case KB_AD :
-		if ( (lni->flag & SUSD) == FALSE )
-			lni = fnd_ad(lni, line) ;
-		break ;
-	case KB_NL :
-		if ( (lni->flag & SUSNL) == FALSE )
-			lni = fnd_nxt(lni, line) ;
-		break ;
-	case KB_RE :
-		/*
-		er_pag();
-		w_page(line, 0);
-*/
-		repage();
-		break ;
-	default :
-		break;
-	}
-
-	*page = lni;    /* keep pointer to current line!... */
-	return(cod);
-}
-#endif
-
+static LINE *cline = (LINE *)-1;
 uspage(page, phline)
 /*-----------------------------*/
 /* special for vhset
@@ -868,9 +814,10 @@ LINE *page;
 LINE *phline;           /* pointer to instant page with help screen */
 {
     kbcod   cod;
-    LINE *cline;
 
-    cline = page;
+    attrpg = page;
+    if (cline == (LINE *)-1)
+    	cline = attrpg;
     /*er_pag();*/
     /*w_page(page);*/
     repage();
