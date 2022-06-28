@@ -651,7 +651,7 @@ rebuild_help_menu:
 	if (clm._itms == cmdpsel) {
 		at_set(ATT);
 	} else {
-		at_set(TXT);
+		at_set(CMD);
 	}
 	w_wcstr(cmd0);
 

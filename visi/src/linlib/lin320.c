@@ -47,7 +47,8 @@ extern  LPA lpainp[];
 
 /* СТАРОЕ СЛОВО АТРИБУТОВ: */
 static    int awstate = AW_INIT_STATE;  /* ДЛЯ НАЧАЛА ВСЕ ВКЛЮЧЕНО */
-static  char *acstate = (char *)0;
+#define NOCOLOR (char *)0
+static  char *acstate = NOCOLOR;
 static    int aixstate = 0;
 extern  int sgrmode;
 
@@ -69,20 +70,23 @@ char *sgr;
 		/* dumb + b&w monochrome */
 		return;
 	}
-	if (sgr == (char *)0 || *sgr == '\0') {
+	if (sgr == NOCOLOR || *sgr == '\0') {
 		sgr = lpaout[0].lpa_sgr;  /* CMD == clean all colors by LINLIB concept */
-		acstate = (char *)0;
+		acstate = NOCOLOR;
 		return;
 	}
-	sprintf(s_csi, "\033[%sm", sgr);
-	w_raw(s_csi);
+	if (acstate == (char *)0 || acstate != sgr) {
+		sprintf(s_csi, "\033[%sm", sgr);
+		w_raw(s_csi);
+		acstate = sgr;
+	}
 }
 
 at_set(aw_new)
 /*
  * УСТАНОВИТЬ ВИДЕОАТРИБУТЫ
  */
-register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
+int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 {
 	extern SCRN scrn;
 
@@ -90,32 +94,36 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	char *ac_old;
 	int aw;        	/* НОВЫЕ АТРИБУТЫ */
 	char *ac;	/* color to be set */
-	int  aix;	/* индекс для поиска по таблицам атрибутов */
+	int  ax;	/* индекс для поиска по таблицам атрибутов */
 
 	/* dumb mode, without attributes at all - in some cases its wrong - vt52+ has so/se attribute */
 	if (sgrmode == 0) return;
 
+	aw = (aw_new & VIDEOM); /* disable garbage from old code */
+
 	aw_old = awstate;
+	ac =
 	ac_old = acstate;
-
-	aw = aw_new & VIDEOM; /* disable garbage from old code */
-
-	aix    = aw & VIDEO;
-	if((aw & INP) || (aw & VEXT)) {
-		aw = lpainp[aix].lpa_a;
-		ac = lpainp[aix].lpa_sgr;
-	} else {
-		aw = lpaout[aix].lpa_a;
-		ac = lpaout[aix].lpa_sgr;
+	if (sgrmode > 1) {
+		ac = NOCOLOR;
 	}
 
-	/*if(aix == aixstate) {*/
-	if(ac == acstate && aw == awstate) {
+	scrn.sc_at = aw;
+	ax    = (aw & VIDEO);
+	if((aw & INP) || (aw & VEXT)) {
+		aw = lpainp[ax].lpa_a;
+		ac = lpainp[ax].lpa_sgr;
+	} else {
+		aw = lpaout[ax].lpa_a;
+		ac = lpaout[ax].lpa_sgr;
+	}
+	/* оптимизация повторной выдачи*/
+	if(ac == ac_old && aw == aw_old) {
 		 /* биты атрибутов и раскраска не менялись */
 		return;
 	}
-	aixstate = aix;
-	scrn.sc_at = aw;
+	/*aixstate = ax;
+	scrn.sc_at = aw;*/
 
 	/* все атрибуты погасить */
 	if(sgrmode & 01) {
@@ -127,7 +135,7 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 		w_raw(t_me);
 	}
 	if (sgrmode > 1) {
-		acstate = (char *)0;
+		acstate = NOCOLOR;
 	}
 
 	/* включить атрибуты, сначала b/w mono */
@@ -141,14 +149,13 @@ register int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 		if(aw & A_MK) w_raw(t_mk);
 		awstate = aw;
 	}
-	if (sgrmode > 0) {
+	if (sgrmode > 1) {
 	    if (ac != lpaout[TXT].lpa_sgr) {
 	    	w_sgr(lpaout[TXT].lpa_sgr); /* TXT is a base for other */
 	    }
 	    w_sgr(ac);
 	    acstate = ac;
 	}
-
 }
 #else
 
@@ -210,7 +217,7 @@ int li, co, at;
 	if(co < 0) co = (hwframe.maxco + co);
 
 	/* remember abs pos for w_chr(), w_wchr() */
-	scrn.sc_li = li; scrn.sc_co = co;
+	scrn.sc_li = li; scrn.sc_co = co; scrn.sc_at = (at & VIDEOM);
 
 	if (scrn.sc_li <= hwframe.maxli && scrn.sc_co <= hwframe.maxco) {
 		p = tgoto(t_cm, co, li);
