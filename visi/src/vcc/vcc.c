@@ -435,6 +435,10 @@ register char *lbps;
 		case  'v': strcpy(os, "LVAR"); os += 4; break;
 		case  'A':
 		case  'a': strcpy(os, "LALT"); os += 4; break;
+		case  'E':
+		case  'e': strcpy(os, "ERR"); os += 4; break;
+		case  'X':
+		case  'x': strcpy(os, "VEXT"); os += 4; break;
 		case  'M':
 		case  'm': strcpy(os, "LMSE"); os += 4; break;
 		case  '1':

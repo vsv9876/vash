@@ -1,6 +1,6 @@
 ---LINES
 ok	= gh - - - - "[ ok ]"
-err	= gv - - - - "[ exit= 1 ]"
+err	= ge - - - - "[ exit= 1 ]"
 
 
 

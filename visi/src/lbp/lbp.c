@@ -184,6 +184,14 @@ FILE   *i_fp;
 		case 'm' :
 		    line->attr |= LMSE;
 		    break;
+		case 'E' :                  /* МЕНЮ */
+		case 'e' :
+		    line->attr |= ERR;
+		    break;
+		case 'X' :                  /* МЕНЮ */
+		case 'x' :
+		    line->attr |= VEXT;
+		    break;
 		case 'K' :                  /* НАЗВАНИЕ КЛАВИШИ */
 		case 'k' :
 		    line->attr |= (LKEY);
