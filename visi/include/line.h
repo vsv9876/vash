@@ -306,7 +306,7 @@ extern  int u8nopass;
 extern  int u8slen(), u8swcs(), u8snwcs();
 extern u8char_t *u8pxx();
 
-extern 	int w_wchr(), w_wcstrn(), w_wcstr();
+extern 	int w_wchr(), w_wcstrn(), w_wcstrv(), w_wcstr();
 
 
 /*--------------------*/

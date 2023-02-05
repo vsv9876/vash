@@ -14,8 +14,8 @@
 ---PAGE linem
 ---LINES
 m_exit  = ipm      -   -    mkexit  tst_m    " quit "
-e_tst1  = ipm      -   "7"  e_tst   m_test   " edit1 test "
-e_tst2  = ipm      -   "18" e_tst   m_test   " edit2 test "
+e_tst1  = ipm      -   "7"  e_tst   m_test   " edit1 "
+e_tst2  = ipm      -   "18" e_tst   m_test   " edit2 "
 
 s_raw   = ipv      -   -	-       -	u8s
 s_var   = ipv      -   -	cvt_s   -	u8s
@@ -29,22 +29,22 @@ s_vi	= ipv      -   "%d"	-       -	&vi
 ---SCREEN
 =testing VISI/LINLIB V4-Unicode library + runtime
 
-
-            .m_exit.......          .:HE.... get help
-            .e_tst1.......          .'"'     e_str(3)
-            .e_tst2.......          .':;     e_str(5)
-                                    .'?/     dump e_str object
-  str_raw   .s_raw..                .'|\     dump string with byte hex
-  str_var   .s_var..                
-  str_tst   .s_tst..                
-  s_double  .s_vd.................  .'+=     dump numbers
-  s_float   .s_vf..........         
-  s_long    .s_vl.....              
-  s_short   .s_vh.....               
-  s_int     .s_vi.                  
+---#56789-1234567890
+                   .m_exit.......        .:HE.... get help
+                                                            
+                   .e_tst1.......        .'"'     e_str(3)
+                   .e_tst2.......        .':;     e_str(5)
+  str_raw          .s_raw.               .'?/     show str object
+  str_var          .s_var..              .'|\     dump str with byte hex
+  str_tst          .s_tst...             
+  s_double         .s_vd................. .'+=    dump numbers
+  s_float          .s_vf..........       
+  s_long           .s_vl.....              
+  s_short          .s_vh.....       123456789-123456789-123456789-1234567       
+  s_int            .s_vi.           中文素养中文素养    国际站国际站                   
                                     
-                                    
-
-
-
----END
+   
+ 
+ 
+ 
+---END                                            

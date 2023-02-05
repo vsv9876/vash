@@ -23,28 +23,33 @@ static float  vf = 3.14;
 static int	  vi = 54321;
 static short  vh = 123;
 static long   vl = 99999999;
-
-//static wchar_t wcs[30] = L"абвгдежзиклмн xyz xyz123  ";
-//static wcsobj_t wcso = {
-//				/*0123456789-123456789-123456789-123456789-1 real string in object shorter then declared there */
-//		-1, 30, L"АБВгдежзик!1.\377.5...9#123456789-123"
-//};
+/*
+ * static wchar_t wcs[30] = L"абвгдежзиклмн xyz xyz123  ";
+ * static wcsobj_t wcso = {
+//		/*0123456789-123456789-123456789-123456789-1 real string in object shorter then declared there */
+/*
+ *		-1, 30, L"АБВгдежзик!1.\377.5...9#123456789-123"
+ * };
+ */
 /*chinesse support not ready yet...*/
 /*static wcsobj_t wcso = const_wcsobj( 30, L"АБВгдёЪЩ 中文素养 ..9~123456789~123" );*/
-static wcsobj_t wcso = const_wcsobj( 30, L"АБВгдёЪЩ..~1...5...9~123456789~123" );
+static /*const*/ wcsobj_t wcso = const_wcsobj( 30,
+		L"0123中文素养АБВгдё789国际站789-12345678" );
+	    /*0123456789-123456789-123456789-123456789-123456789-*/
+/*static wcsobj_t wcso = const_wcsobj( 30, L"АБВгдёЪЩ..~1...5...9~123456789~123" );*/
 
-										 /*0123456789-123456789-123456789-123456789-1 */
+ /*0123456789-123456789-123456789-123456789-1 */
 /*static wchar_t wcs = wcso.wcs;*/
-
-/*static const char u8s[STRSIZE] = "国际站абвгдежзиклмн...  ";*/
-static /*const*/ char u8s[STRSIZE] = "абвгдежзиклмн...  ";
-
+static int dummy0=-1,dummy1=-1,dummy2=-1,dummy3=-1;
+static /*const*/ char u8s[STRSIZE] = "а国际站бвгдежзиклмн...  ";
+/*static const char u8s[STRSIZE] = "абвгдежзиклмн...  ";*/
+/*
 //static u8sobj_t u8o = const_u8sobj(
 //		STRSIZE,
 // "абвгдежзиклмн....   0               x   01234567zzz"
 ///*0123456789-123456789-123456789-123456789-123456789-*/
-//		);
-
+/*		);
+*/
 static  u8char_t tmps[4 * STRSIZE] = "";
 
 static  int ex_flg = 0;     /* exit flag */
@@ -88,7 +93,7 @@ kbcod cod;
 
 #define TXT_CO 20
 
-static int sout()
+static sout()
 {
 	unsigned char *s;
 
@@ -101,7 +106,7 @@ static int sout()
 	cp_fet();
 }
 
-static int sout2()
+static sout2()
 {
 	unsigned char *s;
 
@@ -116,16 +121,19 @@ static int sout2()
 	cp_fet();
 }
 
-static int sout3()
+static sout3()
 {
 	extern SCRN scrn;
+	char *wcs;
+
 	cp_sav();
 
-	cp_set(-5, TXT_CO, TXT);
+	cp_set(-3, TXT_CO, TXT);
 	w_str("0123456789-123456789-123456789-123456789-12345");
+	wcs = &wcso.wcs;
 
 	cp_set(-6, TXT_CO-1,  HDR/*ATT*/);
-	sprintf(tmps, "'%ls'", &wcso.wcs);
+	sprintf(tmps, "'%ls'", wcs);
 	w_str(tmps);
 /*
 	sprintf(tmps, " scrn.sc_co=%d ", scrn.sc_co);
@@ -202,7 +210,7 @@ register LINE *line;
 
 #include "pmainv.i"
 
-vmain()
+int vmain()
 /*------------*/
 /* VIDEO MAIN */
 /*------------*/
@@ -218,7 +226,7 @@ vmain()
 		cod = r_page(linem, &cline, 0);
 		keydump(1, 2/*40*/, cod);
 
-		if(ex_flg) return;
+		if(ex_flg) return 0;
 
 		switch(cod) {
 /*

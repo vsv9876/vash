@@ -86,7 +86,7 @@ register int c;
 extern  int osgflg;             /* ФЛАГИ ДРАЙВЕРА (old.sg_flags) */
 
 int w_putc(c)
-register int c;
+int c;
 {
 #ifdef VTTOUT_DEBUG
 	int nanosec = 0;
@@ -116,7 +116,7 @@ register int c;
  * терминал понял правильно...
  */
 w_raw(s)
-register char *s;
+char *s;
 {
 #ifndef USE_W_RAW
 	/* modern documented way to use terminfo/termcap string capabilities */

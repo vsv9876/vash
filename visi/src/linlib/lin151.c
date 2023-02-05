@@ -34,13 +34,13 @@ wchar_t c;
 	int  cnt;
 	int cwidth;
 
-	cwidth = wcwidth(c);
+	cwidth = wcwidth(c); /*TODO: заменить на vsize() ? */
 	/* 
 	 * check if inside lframe(screen) borders,
 	 * then writeout, and
 	 * then save new position of cursor to be expected
  	 */
-
+	/* TODO: check all conditions below... */
 	if (scrn.sc_li >= lframe->baseli
 	 && scrn.sc_co >= lframe->baseco
 	 && scrn.sc_li < (lframe->baseli + lframe->maxli)
@@ -69,7 +69,21 @@ register int n;
 	while(--n>=0) w_wchr(L' ');
 }
 
+int w_wcstrv(s, v)
+/* write wide char string limited by cells on screen */
+register wchar_t *s;
+int v;	/* visual columns occupied */
+{
+	int vsize = 0;
+	do {
+		vsize += wcwidth(*s);
+		if(vsize <= v )
+			w_wchr(*s);
+	} while(*s++);
+}
+
 int w_wcstr(s)
+/* write wide char string */
 register wchar_t *s;
 {
 	for(; *s; s++) {

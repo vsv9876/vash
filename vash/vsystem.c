@@ -23,6 +23,7 @@ extern  char    *pmtsh;
 extern  char    Csubs[];
 
 extern  char  *nmsubs();
+extern  char  *tmpflnm;
 
 
 #define ASH_NOWAIT 001  /* не ждать завершения запущенного процесса */
@@ -44,14 +45,16 @@ int execmode;
 	int forked;             /* флаг: есть порожденный процесс */
 	int syscod;
 	void (*sigint)();
+	int i;
+
 	/* реакция на сигнал(ы) уже была установлена SIG_IGN,
 	   здесь повторяется для надежности, после окончательной
 	   отладки надо убрать */
 	sigint = signal( SIGINT, SIG_IGN);
 
+	pid = 0;
 	if (execmode & ASH_NOFORK) {
 		forked = 0;
-		pid = 0;
 	}
 	else {
 		forked = 1;
@@ -71,6 +74,10 @@ int execmode;
 			signal( SIGINT, SIG_DFL );
 			signal( SIGQUIT, SIG_DFL );
 		}
+		/* закрыть файлы */
+		for (i = 20; i > 2; i--) {
+			close(i);
+		}
 		/* здесь переопределить станд. файлы, -- man credentials(7) ?*/
 #if 0
 		setsid();
@@ -84,7 +91,7 @@ int execmode;
 #else
 		execvp(argv0, argv);
 #endif
-		fprintf(stderr, "%s: vash cannot exec\n", argv0);
+		fprintf(stderr, "%s: command not found\n", argv0);
 		if (forked)
 			exit(1);
 		else    {
@@ -104,6 +111,8 @@ int execmode;
 				if ( pid != piddone)
 					printf("[%d] done\n", piddone);
 			} while ( pid != piddone);
+
+		unlink(tmpflnm); /* временный файл menu2 удаляется после каждого запуска */
 
 		signal( SIGINT, sigint );
 		signal( SIGQUIT, SIG_IGN );

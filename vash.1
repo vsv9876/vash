@@ -118,17 +118,18 @@ If operator types english lowercase letter in \fImain view\fR context,
 .B vash
 switches context to \fIcommand editor\fR recognising
 beginning of unix command.
-.br
-Other keys may be used as 
+.PP
+Every other keys may be used as 
 .I shortcuts
 to run particular shell command, or to start command editing from
 template. For example, run 'ls -l' by pressing letter 'L'\.
 This shortens needs of keyboard input.
+.PP
 More complicated tools such a
 .I parameterized
 shell command
 .I history,
-explained in section
+are explained in section
 .B VIEWS AND CONTEXT SWITCHING.
 
 .\" .SS history, parameters substitution, online help, profiles
@@ -136,7 +137,8 @@ explained in section
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SH "RUNNING VASH"
 .PP
-.B Vash
+.SS general rule
+.B vash
 covers command string interface but not hides it from user.
 .PP
 .SS Command string interface
@@ -145,14 +147,14 @@ is the main target of assistance provided by
 Most popular unix commands can be executed with a single-key
 commands of 
 .B vash\.
-In more complicated cases,
+In more complicated cases
 .B vash
 helps to compose command string with
 .I command editor
 and other
 .I tools.
 .SS ""
-In any case, actual command string will be shown before execution by vash.
+In most of cases actual command string will be shown before execution by vash.
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SS Screen and Keyboard Modes
 .PP
@@ -280,7 +282,7 @@ can be done by pressing any other key then \fIhelp key\fR.
 
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SS Command String Editor
-Pressing lowercase letter key from Main View switches context
+Pressing lowercase letter key from \fIMain View\fR switches context
 to command string editor, starting typing new command from scratch.
 In rare or special cases an unix command may begin with
 .B '.'
@@ -294,7 +296,7 @@ can be assigned to command or command template in profile file.
 Template of command contains places for substitution by an object or
 group of objects. Substitution will be done just before execution.
 .PP
-Key \fICancel\fR switches  context between command editor and Main View.
+Key \fICancel\fR switches  context between \fIcommand editor\fR and \fIMain View\fR.
 By default \fBCtrl-C\fR assigned for this action.
 Content for both view remain untouched.
 
@@ -315,7 +317,7 @@ Parameters for substitution allowed both in command editing mode and in profiles
 all objects separated with spaces; at least one object must be selected
 .TP
 .B #,
-objects, separated by comma; minimum two objects must be selected;
+objects, separated by comma; use curly braces around assumed
 .RE
 
 .PP
@@ -332,15 +334,15 @@ part of object name before suffix
 
 .PP
 There are other form for parameters of substitution.
-Please, see \fISYNTAX.rc\fR file for full explanation.
+Please, see \fIstd.SYNTAX\fR file for full explanation.
 .PP
-How to use substitution tool:
+\fBHow to use substitution tool\fR:
 .br
 Please, select on main view some file names, for example
 .I .bash_profile
 and
 .I Download
-; then type in command editor:
+and then type in command editor:
 .EX
 
     $ ls -ld ##
@@ -355,8 +357,7 @@ then press \fBEnter\fR - the command started will be
 
 .SS stdin/stdout redirection
 Selection may be done pressing '>' or '<' near files in main \fBview\fR.
-Selection will be cleared after command execution and must be repeated
-if requered.
+Selection will be cleared after command execution preventing unwanted behaviour.
 
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .RE

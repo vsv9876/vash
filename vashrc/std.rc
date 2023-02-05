@@ -25,6 +25,7 @@
 -0exit
 
 -f:Fa
+#-fF=a ls -a
 -i.
 -o.
 -@
@@ -32,28 +33,20 @@
 @std.mark
 @std.cmd
 
-# Redo read profile std.rc (this one), for example on debug
+# read a profile (ex this one), for debug
 :KI
     * * _cmdset std.rc
 
-# no ask comfirmation
+# exit with no comfirmation
 :^D
-	* *     ;exit
-# the end, exit/quit
+    * * ;exit
 :EX
 :0
-    * *     exit
+    * * exit
 
-# clear command buffer before editing
-#:CA
-#    * * _sh #
-
-#:EX
-#:CA
-#	* *	_msg please, use ^D (Ctrl-d) for quit
-#	* *	_err please, type exit or press 0 and Return to quit
-
+#
 # User menu
+#
 :2
 :U2
 	r?x ?   _menu2 std.menu
@@ -156,10 +149,6 @@
 	* * ;env VASH_LABEL='help! ' vash -1 std_help.rc
 #	* * _help std_help.lb
 
-:NL
-#:[;]
-	??? ?   +Open
-
 :&
 #       Программа (настройка) ash для работы с процессами
 	* *     ;env VASH=l20spw VASH_LABEL='ps ' vash ps.rc
@@ -174,7 +163,7 @@
 #       Перейти в домашний каталог (HOME)
 	* *     :cd
 #:[U]
-:[:]
+::
 	* *     :cd ..
 
 :A
@@ -188,15 +177,10 @@
 +diff
 	* * * :diff -br ##
 
-#:A
-##       Показать программу клавиш ash (Этот файл).
-#        * *     #m /usr/local/lib/ash/.ashstd
-
 :M
 #       Посмотреть раздел оперативного руководства по компоненте,
 #       правильно работает в каталоге с файлами man (/usr/catman,
 #       /usr/local/man). Может работать в каталогах /bin, /lib /include)
-#       2 строки нужны из-за ошибки в ash, связанной с подстановкой аргумента #*
 	* *.*   :man #*
 	* *     :man #@
 :R
@@ -204,18 +188,7 @@
 # (echo как пример команды sh)
 	* *     for i in ## ;do echo $i; done
 
-
-# retro, obsoleted
-#:V
-#	* *     +Vedit
-#
-#+Vedit
-## быстрый вызов vi, права доступа по записи не проверять
-#	r?? [TE] * ;vi #@
-#	r?? M * :elm -f #@
-
 :F
-:^F
 	* -   :file #@
 	* *   :file ##
 :L
@@ -257,9 +230,6 @@
 :U
 	* -     :du -sh
 	* *	:du -s ##
-
-:[#]
-	* *     _file #@
 
 @std.final
 

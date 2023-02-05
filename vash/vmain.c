@@ -45,7 +45,7 @@ kbcod   cod;
 	return(1);
 }
 
-int t_file(line, cod)
+int t_f1(line, cod)
 /*
  * тест для пунктов меню (имен файлов)
  */
@@ -72,6 +72,8 @@ kbcod cod;
 				if (tstmark(cod))
 					*p = cod;
 				else    return(FALSE);
+				if(*p == '>' || *p == '<')
+					line->attr = ATT|VEXT|INP|NED|LFASTR;
 				break;
 			}
 		}
@@ -87,6 +89,15 @@ kbcod cod;
 		}
 	}
 	return (TRUE);
+}
+
+int t_file(line, cod)
+register LINE *line;
+kbcod cod;
+{
+	if (t_f1(line, cod) == TRUE)
+		w_line(line);
+	return(1);
 }
 
 /*NOXSTR*/
@@ -198,6 +209,8 @@ kbcod cod;
 		switch(*p) {
 		case '>':
 		case '<':
+			line->attr = ATT|VEXT|INP|NED|LFASTR;
+			break;
 		case ' ':
 			line->attr = TXT|INP|NED|LFASTR;
 			break;
@@ -218,14 +231,22 @@ kbcod cod;
 	return 0;
 }
 
-/* попытка: команды пометки вынести во внешние файлы .ashstd */
+/* команды пометки вынести во внешние файлы .ashstd */
 int f_mark(cmd)
 char *cmd;
 {
 	kbcod cod;
-	cod = cmd[0]; /* TODO: переделать на нормальный макрос для kbcod */
+	cod = cmd[0];
 
 	switch (cod) {
+	case ' ':
+	case 'x':
+		cod = ' '; /*NO BREAK*/
+	case '>':
+	case '<':
+		t_file(&clm._vf[clm._itm - clm._itmofs], cod);
+		return(-1);
+		break;
 	case '+':
 	case '-':
 		tutsel(cod);
@@ -257,28 +278,34 @@ char *helpl;
 	itmshow();
 	w_page(clm._vf, 0);
 	keyreq = 1;
+	cmdret = 1;
 
 	clm._itm = i = 0;
-	for ( ;; ) {
-		/* нет сообщений и требуется нарисовать панель */
-		if ( !ok_msg() && keyreq ) {
-			keyshow(panelf); keyreq = 0;
-		}
 
+	for ( ;; ) {
+
+		/* нет сообщений и требуется нарисовать панель */
+		if ( !ok_msg() ) {
+			if ( keyreq ) {
+				keyshow(panelf);
+				keyreq = 0;
+			}
+		}
 		showtime( 1 );  /* восстановить индикацию часов */
+
 		i = clm._itm - clm._itmofs;
+
+		/* entry code of main menu */
 		cod = r_line( &clm._vf[i], 0 );
 
-		if ( ok_msg() ) keyreq = 1;
-		w_emsg("");
+		/* если было сообщение, сбросить после нажатия любой клавиши */
+		/* и затребовать отрисовку панелей */
+		if ( ok_msg() ) {
+			w_emsg("");
+			keyreq = 1;
+		}
 
 		switch (cod) {
-#ifdef HELPRETRO
-		case KB_HE:
-			at_set(TXT);
-			w_help(helpl);
-			/* проваливаемся... */
-#endif
 		case KB_RE:
 			er_pag();
 			cwdshow();
@@ -286,27 +313,6 @@ char *helpl;
 			itmshow(); w_page(clm._vf, 0);
 			keyreq = 1;
 			break;
-#ifdef NOEX_MARK
-		case '+':
-		case '-':
-#endif
-#ifdef VFRETRO
-			if (oneitm)     bell();
-			else
-#endif
-			w_line( &clm._vf[i] );
-#ifdef NOEX_MARK
-			tutsel(cod);
-#endif
-			keyreq = 1;
-			break;
-		case ' ':
-		case '<':
-		case '>':
-			w_line( &clm._vf[i] );
-/*                      if (oneitm) return;     */
-			cod = KB_AD;
-			/* проваливаемся... */
 		case KB_AD:
 		case KB_AR:
 		case KB_AL:
@@ -316,7 +322,7 @@ char *helpl;
 			/* не встроенная команда, надо интерпретировать */
 		default:
 			w_line( &clm._vf[i] );
-			keyreq = 1;
+			/*keyreq = 1;*/
 			if ((cmdret = vcmd(i, cod, clm._vf)) > 0) {
 				/* экран меню испорчен или
 				 * новое главное меню.
@@ -327,21 +333,34 @@ char *helpl;
 					cp_fet();
 					scrlnl(); /* новый y0... */
 				}
-#ifdef  FULLTRUE
-				else    cp_sav(); /* необязательно */
-#endif
 				cwdshow();      /* вывески */
 				itmshow();      /* положение окна */
-				hlp_clr();		/* TODO check if right place?*/
+				/*hlp_clr();		/* TODO check if right place?*/
 				w_page(clm._vf, 0);  /* пункты меню */
-			} else {
-				if (cmdret < 0)
-					keyreq = 0;
 			}
 			/* синхронизировать y0 и y0_top */
 			if (clm._y0 < y0_top)
 				y0_top = clm._y0;
-			break;
+
+			/* hint after SP: advance next line */
+			if (cod == ' ') {
+				cod = KB_AD;
+				i = itmadj(cod);
+				cod = ' ';
+				/*NO BREAK*/
+			}
+
+			if(!ok_msg() && cmdret >= 0)
+				keyreq = 1;
+			else
+				if(ok_msg())
+					keyreq = 0;
+#if 0
+			else
+				keyreq = 0;
+#endif
+			break; /*switch...default:*/
 		}
+
 	}
 }

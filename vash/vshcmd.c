@@ -323,14 +323,13 @@ std_shell:
 
 					at_set(atrib = HDR);
 					if (trapcod) {
-					  /*sprintf(tmpstr, "-- SPACE bar or type a command ");*/
-					  at_set(TXT); w_str(" -- ");
-					  at_set(atrib); w_str(" type a command... ");
-
-					  at_set(TXT); w_str("      help: "); w_lh_str(":HE");
-					  at_set(TXT); w_str(" main menu: "); w_lh_str(":SP");
-					  at_set(TXT); w_str(" "); er_eol(TXT);
-					  /*cp_fet();*/ /*w_str(tmpstr);*/
+					  
+					  at_set(TXT); w_str(" -- please, type a command or click ");
+					  w_lh_str(":SP");
+					  at_set(TXT); w_str(" --      help: ");
+					  w_lh_str(":HE");
+					  at_set(TXT);
+					  er_eol(TXT);
 					}
 					er_eop(CMD);
 					cp_cret(); /*w_str("\r");*/

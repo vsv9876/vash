@@ -29,7 +29,9 @@
  * 
  */
 
+#define _XOPEN_SOURCE
 #include <stdio.h>
+
 #include <wchar.h>
 #include <string.h>
 #include "line.h"
@@ -204,29 +206,33 @@ r_line(line, posp)
 register LINE    *line; /* УКАЗАТЕЛЬ НА ЛИНИЮ */
 	 int     *posp; /* ПОЗИЦИЯ, С КОТОРОЙ НАЧАТЬ РЕДАКТИРОВАТЬ */
 {
-	kbcod   cod;            /* КОД ПОСЛЕДНЕЙ КЛАВИШИ */
-	int     attr;           /* СЛОВО АТРИБУТОВ */
+	kbcod   cod;
+	short   attr;
 	int     cvt_ret;        /* код возврата из sscanf: OK если = 0 */
 	int     tsterror;       /* ФЛАГ ОШИБКИ ТЕСТА */
 	int     midcnt;         /* СЧЕТЧИК ДЛЯ ВЫРАВНИВАНИЯ ПО ЦЕНТРУ */
 	int     filch;          /* ЗНАК ДЛЯ ЗАПОЛНЕНИЯ */
 	int     slen;           /* ДЛИНА СТРОКИ ПЕРЕД ВЫРАВНИВАНИЕМ */
 	int     size;           /* РАЗМЕР ПОЛЯ */
-	int     fmtlock;            /* ФЛАГ: ФОРМАТ ЗАБЛОКИРОВАН */
+	int     fmtlock;        /* ФЛАГ: ФОРМАТ ЗАБЛОКИРОВАН */
 	int     onexit;         /* ФЛАГ: КОНЕЦ РАБОТЫ */
 	int     base;           /* НАЧАЛО ПОЛЕЗНОЙ ИНФОРМАЦИИ: СМЕЩЕНИЕ ОТ ПОДСКАЗКИ */
 
- register
+ /*register*/
 	int  i;
 	wchar_t *editptr;         /* начало строки для редактора, после промптера */
- register
+ /*register*/
 	wchar_t *wcsptr;
-	wchar_t  wcsbuf[STRBUF];  /* рабочая строка во внутренней кодировке */
+	wchar_t  wcsbuf[STRBUF + 1];  /* рабочая строка во внутренней кодировке */
 
-	char    u8buf[4*STRBUF + 2]; /*промежуточная строка в кодировке UTF-8*/
+	char    u8buf[(4*STRBUF) + 4]; /*промежуточная строка в кодировке UTF-8*/
 	int		u8size;			     /* размер в символах в промежуточной строке*/
 
-	attr = line->attr;
+ 	int		vlen;		/* visible size in column occupied on screen */
+ 	int		v;
+ 	int		v_cw;
+
+ 	attr = line->attr;
 
 	/* ВЫЗОВ ЧЕРЕЗ w_line() ? */
 	if(onexit = ((posp == (int *)(-1)) ? 1 : 0))
@@ -240,6 +246,8 @@ out_string:
 	editptr = wcsbuf;
 	base = 0;
 	size = line->size;
+	slen = -1;
+	v = 0;
 
 	i = attr & VIDEO;
 
@@ -284,24 +292,40 @@ out_string:
 string_simple:
 		/*strncpy(s, line->varl, size); s[size] = 0;*/
 		u8size = u8snwcs(wcsptr, line->varl, size);
-		wcsptr[size] = 0;
 	}
-
+	for (v = 0, vlen = 0; v < size; v++) {
+		v_cw = wcwidth(wcsptr[v]);
+		if (vlen + v_cw <= size) {
+			vlen += v_cw;
+		} else {
+			while(vlen++ < size)
+				wcsptr[v++] = 0 ;
+			break;
+		}
+	}
+	/*wcsptr[size] = 0;*/
+	wcsptr[v] = 0;
 	/* slen = strlen(s);*/
 	slen = wcslen(wcsptr);
+	vlen = vsize(wcsptr);
 
 	/*==== ВЫРАВНИВАНИЕ */
 	if(attr & MID) {
-		if((midcnt=((size-slen)/2)) > 0) {
-			for(i= slen+= midcnt; i>=midcnt; i--)
-				wcsptr[i] = wcsptr[i-midcnt];
-			while(i >= 0) wcsptr[i--] = filch;
+		if((midcnt = ((size - /*slen*/vlen)/2)) > 0) {
+			slen += midcnt;
+			for(i = slen; i >= midcnt; i--)
+				wcsptr[i] = wcsptr[i - midcnt];
+			while(i >= 0)
+				wcsptr[i--] = filch;
 		}
 	}
 	/*==== ЗАПОЛНЕНИЕ */
 	if(attr & PAD) {
-		for(i=slen; i<size;)    wcsptr[i++] = filch; wcsptr[size] = 0;
+		for(i = slen; i < size - (vlen-slen);)
+			wcsptr[i++] = filch;
+		wcsptr[size] = 0;
 	}
+
 #ifdef RETRO_R_LINE
 	/*==== КУРСОР, ВИДЕО (НЕ ЗАБЫТЬ ПОДСКАЗКУ) */
 	cp_set(line->line, line->colu, attr);
@@ -326,6 +350,7 @@ string_simple:
 		/* универсальные, показать */
 		cp_set(line->line, line->colu, attr);
 		w_wcstr(wcsbuf);
+		/* w_wcstrv(wcsbuf, size); *//*wrong!! may contain a prompter char */
 	}
 	if(onexit || posp == (int *)(-1)) return(cod);    /* КОНЕЦ ДЛЯ ВЫЗОВА ЧЕРЕЗ w_line */
 

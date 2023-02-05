@@ -1,24 +1,16 @@
 #
 #@ std.view
 #
+# file view
 
 -3VIEW
-# Просмотр файла
+
 :3
 :U3
 	r?x ?   +View
 
-#
-#
 +View
-#
-
-#
-#
-#
-
-	r?? ? *.C       ccat #@
-#                            здесь и далее нужен gzip, слинкованный с zcat
+	r?? ? *.C            ccat #@
 	r?? D *.tar.[zpC]    :gzip -d < #@ | tar -tvf -
 	r?? D *.tar.bz2      :bzip2 -cd < #@ | tar -tvf -
 	r?? D *.tar.gz       :gzip -d < #@ | tar -tvf -
@@ -33,10 +25,10 @@
 	r?? [DT] *.cpio.[Z]  zcat < #@ | cpio -itv
 	r?? [DT] *.cpio.gz   gzip -d < #@ | cpio -itv
 	r?? [DT] *.cpio.[zpC] gzip -d < #@ | cpio -itv
-	r?? [DT] *.[zCp]        gzip -d < #@
-	r?? [DT] *.[Z]          zcat < #@
-	r?? [DT] *.bz2          bzip2 -cd < #@
-	r?? [DT] *.gz           gzip -d < #@
+	r?? [DT] *.[zCp]     gzip -d < #@
+	r?? [DT] *.[Z]       zcat < #@
+	r?? [DT] *.bz2       bzip2 -cd < #@
+	r?? [DT] *.gz        gzip -d < #@
 	r?? [DT] *.src.rpm   ;rpm -qivp ./#@ | #m
 	r?? [DT] *.rpm       ;rpm -qivp ./#@ | #m
 	r?? [DT] *.deb       ;dpkg --info ./#@ | #m
@@ -58,4 +50,4 @@
 #	r?? M *              frm -n #@
 	r?? M *              mutt -Rf #@
 #	??? ? *              _file #@
-	??? ? *              :ls -ld #@ ; file #@
+	??? ? *              :file #@ ; ls -ld #@

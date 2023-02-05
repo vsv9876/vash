@@ -51,6 +51,9 @@ pre_vf()
 			/* надо учесть атрибут отмеченых файлов */
 			if (*clm._itms[i + clm._itmofs] == MONEY) {
 				clm._vf[i].attr = ATT|INP|NED|LFASTR;
+			} else if (*clm._itms[i + clm._itmofs] == '<'
+					|| *clm._itms[i + clm._itmofs] == '>') {
+				clm._vf[i].attr = ATT|VEXT|INP|NED|LFASTR;
 			} else {
 				clm._vf[i].attr = clm._ltmpl->attr; /* TXT|INP|NED|LFASTR; */
 			}

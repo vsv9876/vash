@@ -25,6 +25,7 @@ main()
 /*  MAIN  */
 /*--------*/
 {
+	int ch;
 	if (!setlocale(LC_CTYPE, "")) {
 		fprintf(stderr, "Can't set the specified locale! "
 			"Check LANG, LC_CTYPE, LC_ALL.\n");
@@ -32,7 +33,7 @@ main()
 	} else {
 		mb_cur_max = MB_CUR_MAX;
 	}
-
+	printf("VTEST>"); fflush(stdout); fscanf(stdin, "%c", &ch);
     visini();
     hw_set();
     io_set(IO_VIDEO);

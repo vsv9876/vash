@@ -86,9 +86,8 @@ static  LINE tmplate =
        { 16, 0, 0, 0,
 	       TXT|INP|NED|LFASTR,
 		       (char *)0,
-			       cvt_vf
-			   	   /*cvt_sp*/ ,
-			       t_file,
+			       cvt_vf /*cvt_sp*/,
+			       0 /*t_file*/,
 				       (char*)0 };
 
 char    *itms1[ITMMAX+1];       /* УКАЗАТЕЛИ НА ПУНКТЫ ГЛАВНОГО МЕНЮ */
@@ -303,8 +302,12 @@ args_done:
     if (homedir != (char *)0) {
 		cmdghist(homedir);
 	}
+    /*  tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
     tmpfd = mkstemp(tmpflnm);      /* получить имя временного файла */
-/*  tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
+    if (tmpfd >= 0) {
+    	close(tmpfd);
+    	unlink(tmpflnm);
+    }
 
 	io_set(IO_VIDEO);
 	signal(SIGINT, onintr);

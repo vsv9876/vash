@@ -2,10 +2,12 @@
 #@ std.open
 #
 
-#
+###-4open
 
-#
-#
+:NL
+#:[;]
+	??? ?   +Open
+
 +Open
 #
 
@@ -13,7 +15,7 @@
 #	r?x d .         _msg let You buy a fish on Privoz and screw a brain for him - we stay here on Deribasovskaja :)
 #	r?x d .         _rescan
 
-	r?x d *         :cd #@
+	r?x d *              :cd #@
 	r?? D *.tar.[Z]      zcat < #@ | tar -xvf -
 	r?? D *.tar.[zZCp]   gzip -d < #@ | tar -xvf -
 	r?? D *.tar.bz2      bzip2 -d < #@ | tar -xvf -

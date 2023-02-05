@@ -64,7 +64,6 @@
 
 	sgrAT   = g  - -      -       - SGRAT 
 	sgrm    = ai - sgrms cvt_a   sgrtst SGR
----#	mode    = g  - -      -       - "color mode:"
 	mode    = gc - -      -       - "color mode:"
 	   g    = gn - -      -       - ". .    "
 	   c    = gc - -      -       - ". .    "
@@ -102,21 +101,21 @@
 +.p1............   
 +
 +line prompter:  .P.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+                .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+---#+	         .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++.""...........................................................................
 +   outstand:so  .so     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +  underline:us  .us     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +bright/bold:md  .md     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +    reverse:mr  .mr     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
----#+     hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
+---#+ hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +     italic:mi  .mi.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+                .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+ foreground:fg  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
----#+           :fB  .fB     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+ background:bg  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
----#+           :bB  .bB     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+  stripe:fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
+---#+	         .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +
++ foreground:fg  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++ background:bg  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++  stripe:fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
++.""...........................................................................
   settings mode: .sgrm..........    SGR: .sgrAT.....             help: .:HE....
                                                               set r/w: .:KI....
 
@@ -129,4 +128,6 @@
 ---#+                      .hl.................................................
 ---#+           .hl............................................................
 ---#+.""...........................................................................
+---#+           :fB  .fB     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+---#+           :bB  .bB     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---END

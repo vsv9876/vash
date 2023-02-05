@@ -298,11 +298,13 @@ register char *file;
 {
 	char    cmdlbl[100];    /* вывеска взамен команды */
 	char    tmpcmd[40];
+	char	*tmpflnm;
 
 	switch(menu2(tmpcmd, cmdlbl, file)) {
 	case 1:
 		/* результат команды игнорируется */
 		vshcmd(tmpcmd, cmdlbl);
+		unlink(tmpflnm);
 		/* проваливаемся... */
 	case 0:
 		/* восстановить гл. меню */

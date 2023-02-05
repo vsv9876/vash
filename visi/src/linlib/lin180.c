@@ -27,15 +27,16 @@ int vsize(wchar_t *s)
 {
 	wchar_t *sp;
 	wchar_t c;
-	int size, w;
+	int v_size, w;
 
 	sp = s;
-	for (size = 0; *sp != 0; sp++) {
+	v_size = 0;
+	for (v_size = 0; *sp != 0; sp++) {
 		c = *sp;
 		w = wcwidth(c);
-		size += w;
+		v_size += w;
 	}
-	return size;
+	return v_size;
 }
 
 /*
