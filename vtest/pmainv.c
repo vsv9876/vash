@@ -15,6 +15,7 @@
 #include "line.h"
 #include "line0.h"
 
+allcod = 1;	/* linlib behaviour flag: open to edit with any key; default: space only */
 /* should be big anouth */
 #define STRSIZE 128
 
@@ -34,7 +35,7 @@ static long   vl = 99999999;
 /*chinesse support not ready yet...*/
 /*static wcsobj_t wcso = const_wcsobj( 30, L"АБВгдёЪЩ 中文素养 ..9~123456789~123" );*/
 static /*const*/ wcsobj_t wcso = const_wcsobj( 30,
-		L"0123中文素养АБВгдё789国际站789-12345678" );
+		L"1234567中文素养АБВгдё7890abcdefghij1234567" );
 	    /*0123456789-123456789-123456789-123456789-123456789-*/
 /*static wcsobj_t wcso = const_wcsobj( 30, L"АБВгдёЪЩ..~1...5...9~123456789~123" );*/
 
@@ -168,16 +169,16 @@ int size;
 
 		switch (cod) {
 		case 0:
+		case KB_AD:
 		case KB_AU:
 		case KB_HE:
 		case KB_CA:
 		case KB_EX:
-			for (i = -6; i <= -1; i++) {
+			for (i = -6; i <= -3; i++) {
 				cp_set(i, 0, TXT); er_eol(TXT);
 			}
 			return cod;
 			break;
-		case KB_AD:
 		case KB_RE:
 		case KB_NL:
 			refresh = 1;

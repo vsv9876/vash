@@ -26,9 +26,11 @@
 #include "line.h"
 #include "line0.h"
 
+/* debug column, same as in "vtest/pmainv.c" */
+#define TXT_CO 20
 /*trim _OFF in names to debug */
-#define DEBUG_VSHIFT_OFF
-#define WC_INIT_DEBUG_OFF
+#define DEBUG_VSHIFT
+#define WC_INIT_DEBUG
 
 extern SCRN scrn;
 
@@ -38,20 +40,6 @@ int     edinff = 1;     /* флаг: показывать состояние р�
 int     edshow = 1;     /* флаг: показывать строку до редактирования */
 
 /*static int edbak = 0;	/* флаг: копировать буфер редактирования обратно при выходе из e_str */
-
-/*
-static showed()
-{
-	if ( !edinff )  return;
-	if ( infflg ) {
-		w_msg(scrn.sc_at, "ed:");
-		if ( edinsm )   w_str("Ins") else w_str("Ovr");
-
-	} else {
-		w_emsg("");
-	}
-}
-*/
 
 /* variables actual after calling vshift() */
 static int Lstop, Rstop; /* left stop, right stop -both inside vsize */
@@ -101,7 +89,7 @@ register int infflg;
 	cp_set(lframe->maxli - INF_LI, lframe->maxco - 8, TXT);
 	er_eol(TXT);
 */
-	cp_set(WSHOW_LI, WSHOW_CO, WSHOW_AT); er_eol(WSHOW_AT);
+	cp_set(WSHOW_LI, WSHOW_CO, WSHOW_AT); /*er_eol(WSHOW_AT);*/
 	if ( infflg ) {
 		s = inf_new;
 		if (Nshift == 0) { s[0] = ' ';
@@ -136,6 +124,23 @@ register int infflg;
 }
 
 /*
+ **************************************************************
+   i=27                           v
+   wcs: 0123456789o123456789o123456789o123456789-      size=40
+vshift:                 ^                       ^-- '\0'
+                       >.123456789.1<                  vsize=12
+ stop-          -left      ^--  --^   -right
+        |           |           |           |          i/vsize
+ **************************************************************
+ */
+/*
+ *                        ||||||
+ * ....+ + + + .........+ + + .............
+v= * 0123456789-123456789-123456789-123456789
+i= * 0123468-123456789-135789-123456789
+ * ....****..........***.............
+ * |   | |            ||||
+ */
 
 /* calculate shift of visible part of string after i changed */
 static int v_shift(size, vsize, i)
@@ -146,20 +151,22 @@ int i;		/* index of internal string */
 	int req_shift;
 	int v;	/* visible position */
 	int iv;	/* wc_iv[i] */
+	/*int size_v; /* visible position of end of buffer */
 
-	int ofset = vsize/2;
+	int ofset = vsize/2; /*/2*/
 
+	if (ofset == 0)
+		ofset = 1;
 	Nsize = size;
 	/* calculate margins */
 	Lstop = vsize/3;
 	Rstop = vsize/4;
 	if (Lstop == 0)
 		Lstop = 1;
-	if (Rstop == 0)
-		Rstop = 1;
+	/*if (Rstop == 0)
+		Rstop = 1;*/
 	if (Rstop > 5)
 		Rstop = 5;
-
 #ifdef  DEBUG_VSHIFT
 	cp_sav();
 	cp_set(0, -30, TXT|VEXT);
@@ -173,39 +180,19 @@ int i;		/* index of internal string */
 	if (size <= vsize) {
 		return 0;  /* visibility is 100%, this function is not required */
 	}
-
-	/*
-	 **************************************************************
-	   i=27                           v
-	   wcs: 0123456789o123456789o123456789o123456789-      size=40
-	vshift:                 ^                       ^-- '\0'
-	                       >.123456789.1<                  vsize=12
-	 stop-          -left      ^--  --^   -right
-	        |           |           |           |          i/vsize
-	 **************************************************************
-	 */
-	/*
-	 *                        ||||||
-	 * ....+ + + + .........+ + + .............
-  v= * 0123456789-123456789-123456789-123456789
-  i= * 0123468-123456789-135789-123456789
-	 * ....****..........***.............
-	 * |   | |            ||||
-	 */
 	v = wc_iv[i];
+	/*size_v = wc_iv[size - 1];*/
 	Nmore = 1;
-
 	/* hints 1st... */
 	if (v >= (size - vsize)) {
 		Nshift = size - vsize; /* last visible fragment */
-		goto ret_vshift;
+		/*goto ret_vshift;*/
 	}
-
-	if (v/*i*/ < vsize - Rstop) {
+	if (/*i > 0 &&*/ v/*i*/ < vsize - Rstop) {
 		Nshift = 0;/* 1st visible fragment below Rstop */
 	} else {
 		/* initial settings */
-		Nshift = (v/*i*/ / ofset) * ofset;
+		Nshift = ((v/*i*/ / ofset) * ofset);
 		/* cursor near left border */
 		if (v/*i*/ <= (Nshift + Lstop)) {
 			Nshift -= ofset;
@@ -213,11 +200,12 @@ int i;		/* index of internal string */
 				Nshift = 0;
 		}
 		/* cursor near right border */
-		if (v >= (Nshift + vsize - Rstop)) {
+		if (v      >= (Nshift + vsize - Rstop)) {
 			Nshift += ofset;
 		}
 		/* near end of buffer */
-		if ((Nshift + vsize) > size) {
+		/*if (v      > size_v - vsize) {*/
+		if (Nshift + vsize > size) {
 			Nshift = size - vsize; /* glue visible last portion to end */
 			Nmore = 0;
 		}
@@ -238,6 +226,23 @@ ret_vshift:
 	/*return (Nshift);*/
 }
 
+/* absorb wcsobj paramters */
+int wcsobj_sup(wcsobj, wcs)
+wcsobj_t *wcsobj;
+wchar_t *wcs;
+{
+	int size;
+
+	wcs = wcsobj;
+	if (wcsobj->wco_sig == -1) { /* string object setup */
+		(*wcs)++;
+		(*wcs)++;
+		size = wcsobj->wco_size;
+		size--;
+	}
+	return size;
+}
+
 /*
  * write on screen visible part of string object
  */
@@ -247,37 +252,38 @@ int vsize;	/* size of visible part of wcsobj->wcs */
 /*int i;		/* current position of cursor which have to be visible anyway */
 int vshift;	/* start of visible part of wcsobj->wcs */
 {
-	 wchar_t *wcs;	/* string to be shown */
-	 /*register int k;*/
-	 int 	  size;
-	 int	  i;
-	 int      k;
-	 int 	  iv, w;
+	wchar_t *wcs; /* string to be shown */
+	/*register int k;*/
+	int size;
+	int i;
+	int k;
+	int iv, w;
 
-	 wcs = wcsobj; size = vsize; /* preset for ordinary string */
-	 if (wcsobj->wco_sig == -1) { /* string object setup */
-		 wcs++; wcs++;
-		 size = wcsobj->wco_size;
-		 size--;
-	 }
-	 i = vshift;
-	 iv = wc_iv[vshift];
-	 w = 0;
+	wcs = wcsobj;
+	size = vsize; /* preset for ordinary string */
+	if (wcsobj->wco_sig == -1) { /* string object setup */
+		wcs++;
+		wcs++;
+		size = wcsobj->wco_size;
+		size--;
+	}
+	i = vshift;
+	iv = wc_iv[vshift];
+	w = 0;
 
-	 for ( k = 0; k < vsize; i++, k += w ) {
-		 iv = wc_iv[i];
-		 w = wcwidth(wcs[i]);
-		 if (iv + w <= vsize + wc_iv[vshift]) {
-			 w_wchr(wcs[i]);
-		 } else {
-				 w_wchr(L'<');
-		 }
-	 }
+	for (k = 0; k < vsize; i++, k += w) {
+		iv = wc_iv[i];
+		w = wcwidth(wcs[i]);
+		if (iv + w <= vsize + wc_iv[vshift]) {
+			w_wchr(wcs[i]);
+		} else {
+			w_wchr(L'~');
+		}
+	}
 
 }
 
 #ifdef  WC_INIT_DEBUG
-#define TXT_CO 20
 static wc_init_show(wc_s, size)
 wchar_t *wc_s;
 int size;
@@ -287,12 +293,10 @@ int size;
 	/*cp_set(-5, TXT_CO, TXT);*/
 	cp_set(-5, TXT_CO, TXT);
 	er_eol(TXT);
-	for(iv = i = 0;
-			i < size;
-				i++) {
+	for (iv = i = 0; i < size; i++) {
 		iv = wc_iv[i];
 		/*if (iv + wc_s[i] >= size)
-			continue;*/
+		 continue;*/
 		cp_set(-5, iv + TXT_CO, TXT);
 		ix = i % 10;
 		sprintf(tmps, "%1d", ix);
@@ -304,7 +308,7 @@ int size;
 /*
  *  initial map of string in buffer
  */
-int wc_init(wc_s, size)
+wc_init(wc_s, size)
 wchar_t *wc_s;
 int	size;
 {
@@ -319,18 +323,16 @@ int	size;
      * ....****..........***.............
      * |||||
      */
-	while(j < size
-			&& wc_s[j]
-					&& v < size) {
+	while (j < size && wc_s[j] && v < size) {
 		v_wc = wcwidth(wc_s[j]);
 		/*wc_vw[v] = v_wc;*/
-		wc_iv[j] = v;	/* map visible position to current one */
-		v += v_wc;		/* prepare mapping for next position */
+		wc_iv[j] = v; /* map visible position to current one */
+		v += v_wc; /* prepare mapping for next position */
 		j++;
 	};
 #if 1
-	while(j < size)
-		wc_iv[j] = v++, wc_s[j++] = L' ';  /*map outside of visibility*/
+	while (j < size)
+		wc_iv[j] = v++, wc_s[j++] = L' '; /*map outside of visibility*/
 	wc_s[size] = L'\0';
 #endif
 	 /* terminate all visible part of the string */
@@ -346,64 +348,99 @@ int	size;
  * ВЫПОЛНИТЬ ИЗМЕНЕНИЯ И ПОКАЗАТЬ
  * note: string buffer may be longer then visible size
  * */
+static int fnd_lend(wc_s, i, size)
+wchar_t *wc_s;
+int i;
+int size;
+{
+	int v, j, k;
+	for (v = k = j = 0; j < size; j++) {
+		if (isspace(wc_s[j])) {
+			if (v == 0)
+				k = j;
+			v = 1;
+		} else {
+			v = 0; k = j;
+		}
+	}
+	if (k > 0)
+		i = k;
+	return i;
+}
+
 static int chgstr(wcsobj, vsize, i, cod)
 wcsobj_t *wcsobj;     /* editing string object buffer */
 int  vsize;		/* visible size of the field/line on the screen */
 int i;			/* position of the change if required */
 kbcod cod;		/* kbcod() pressed */
 {
-	register wchar_t *wcs; /* editing string buffer pointer */
+	register wchar_t *wc_s; /* editing string buffer pointer */
 	register int j;
 	register int i_end;      /* position of last significant (non-space) symbol */
 		 int i_chged;       /* position of symbol to be changed */
 
+    wchar_t c;
 		int size = vsize;	/* size (length) of string buffer, without trailing 0 */
 		int vshift = 0;	/* start of visible part of s */
 		int i_shift = 0; /* cursor position inside of visible part of s */
+		int w;			/* width of character to be changed */
 
-	wcs = wcsobj;
+	wc_s = wcsobj;
 	if (wcsobj->wco_sig == -1) {
 		size = wcsobj->wco_size;
 		/*wcs = &(wco->wcs);*/
-		wcs++; wcs++; /* shift pointer to real string buffer */
-
+		wc_s++; wc_s++; /* shift pointer to real string buffer */
+		size--;
 	}
 
 	vshift = v_shift(size, vsize, i);
 
-	/* find logical end of edited text in the string */
-	if(edinsm) {
-		for(i_end = size; i_end > 0 && wcs[--i_end] == ' '; ) ;
-		if(i_end < i) i_end = i;
-	}
+	if(edinsm)
+		i_end = fnd_lend(wc_s, i, size);
+
 	i_chged = i;
+	if (cod == KB_KD) {
+		for (j = i; j < (size - 1); j++) {
+			c = wc_s[j] = wc_s[j + 1];
+			if (j == (size - 1))
+				c = wc_s[j] = L' ';
+		}
+	}
 	if(cod == KB_DE) {
-		/*cod = ' ';*/
+		if (i == 0)
+			return (i);
 		i = --i_chged;
+		/*wc_init(wcs, size);*/
+		w = wcwidth(wc_s[i_chged]);
 		if(edinsm) {
 			for(j = i_chged; j < i_end; j++)
-				wcs[j] = wcs[j+1];
-			wcs[j++] = ' ';
+				wc_s[j] = wc_s[j+1];
+			wc_s[j++] = L' ';
 		} else {
-			wcs[i_end = i_chged] = ' '/*cod*/;
+			wc_s[i_end = i_chged] = L' '/*cod*/;
 		}
+		/*TODO: new position left to width of deleted character*/
 		/******* <--(KB_DE)--- ******/
-		cp_abset(scrn.sc_li, scrn.sc_co - 1, scrn.sc_at);
-	} else {
-		if(edinsm) {
-			for(j = size; --j > i_chged; )
-				wcs[j] = wcs[j-1]; /*Ins*/
-			i_end += (i_end < (size-1) ? 1 : 0);
-		} else {
-			i_end = i_chged; /*Ovr*/
-		}
-		wcs[i_chged] = cod;
-		i += 1;
+		cp_abset(scrn.sc_li, scrn.sc_co - w/*1*/, scrn.sc_at);
 	}
-
+	else if (!ISCTL(cod)) {
+		/* printable, including ' ' */
+		if (edinsm) {
+			for (j = size; --j > i_chged;)
+				wc_s[j] = wc_s[j - 1]; /*Ins*/
+			i_end += (i_end < (size - 1) ? 1 : 0);
+		/*} else {
+			i_end = i_chged;*/ /*Ovr*/
+		}
+		wc_s[i_chged] = cod;
+		i += 1;
+		/*wc_init(wcs, size);*/
+	}
+	wc_init(wc_s, size);
 	/*for(j = i_chged; j <= i_end; j++) w_wchr(wcs[j]); */ /* on screen up to end */
-	for(j = i_chged; j <= i_end && j < (vshift + vsize); j++)
-		w_wchr( wcs[j] ); /* on screen, up to end of visible part of the string */
+	for(j = i_chged; /*j <= i_end &&*/ wc_iv[j] + wcwidth(wc_s[j]) <= wc_iv[vshift] + vsize; j++)
+		w_wchr( wc_s[j] ); /* on screen, up to end of visible part of the string */
+
 	return (i);
 }
 
@@ -490,7 +527,7 @@ int    *ofsp;       /* указатель на величину смещения
 }
 #endif
 
-
+/* find the end of typed text: position of last space after */
 kbcod e_str(wcsobj, vsize, ctst, ofsp)
 /*-----------------*/
 /* РЕДАКТОР СТРОКИ */
@@ -514,6 +551,7 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 	/*int     i_prev;			/* internal cursor position on previous cycle */
 	register int i;			/* internal cursor position */
 	register int j;
+	         int k;
 	register int  column;      /* ПОЗИЦИЯ И СТРОКА НА ЭКРАНЕ */
 			 int  linenu;
 			 int  attrib; /* логический видеоатрибут */
@@ -539,8 +577,6 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 	/* build map: char_width(i)*/
 	wc_iv = alloca((size + 2) * sizeof(int));
 	/*wc_vw = alloca((size + 2) * sizeof(int));*/
-
-	v = j = 0; /* tmp usage of v */
 	wc_init(wc_s, size);
 
 	i = 0; /* always start from zero position on regular lines via r_line() */
@@ -548,6 +584,7 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 		i = *ofsp;
 	}
 
+	v = j = 0; /* tmp usage of v */
 	/*i_prev = i;*/
 	/*v = w_v_obj(wcsobj, vsize, i, vshift);*/
 
@@ -567,14 +604,19 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 	 */
 	/*i_prev = i;*/
 
-	vshift = -1; /*DEBUG*/
+	/*vshift = -1; /*DEBUG*/
 
 	for( ;; ) {
-		/* check everytime - bounce from end of buffer 1 position back */
-		/*if(wc_iv[i] >= size)
-			i = size - 1;*/
-		while(wc_iv[i] /*+ wcwidth(wc_s[i])*/ >= size)
-			i--;
+		/* check everytime - bounce from boundaries of buffer */
+		if (i >= size)
+			i = size - 1;
+		if ((iv = wc_iv[i]) == 0
+				|| iv >= size) {
+			while (wc_iv[i] /*+ wcwidth(wc_s[i])*/ >= size )
+				i -= wcwidth(wc_s[i]);
+			if(i < 0)
+				i = 0;
+		}
 #ifdef DEBUG_VSHIFT
 		cp_sav();
 		sprintf(tmps, "'%lc' ", wc_s[i]);
@@ -608,30 +650,29 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 			switch(cod/* = ok*/) {
 			case KB_PR: /* prefixed option -- ДОП. КОМАНДЫ РЕДАКТОРА СТРОКИ */
 				switch(r_cod(0)) {
-				case KB_AR: /* find the end of typed text */
-					for(i=size-1; isspace(wc_s[i]);	i--)
-						;
-					i++;
+				case KB_AR:
+					/* find the end of typed text */
+					i = fnd_lend(wc_s, i, size);
 					break;
 				case KB_AL:
 					i = 0;
 					break;
-				case ' ':
+				case L' ':
+				case KB_SP:
 					for(j=i; j<size; j++) {
-						c = wc_s[j] = ' ';
+						c = wc_s[j] = L' ';
+						/*if (j < (vshift + vsize))
+							w_wchr(c);*/
+					}
+					wc_init(wc_s, size);
+					for (j = i; j < size; j++) {
+						c = wc_s[j];
 						if (j < (vshift + vsize))
 							w_wchr(c);
-					};
+					}
 					break;
 				case KB_DE:
-					for(j = i; j < (size - 1); j++) {
-					   c = wc_s[j] = wc_s[j+1];
-					   if (j == (size - 1))
-						   c = wc_s[j] = L' ';
-					   if (j < (vshift + vsize))
-						   w_wchr(c);
-					};
-					wc_s[size] = L'\0';
+					i = chgstr(/*wc_s*/wcsobj, vsize, i, cod);
 					break;
 				case KB_PR:
 					edinsm=(edinsm ? 0 : 1); /* toggle Ins/Ovr*/
@@ -644,75 +685,80 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 				break;
 
 			/* linlib 4 since 2017-05 */
-			case KB_KE: /* find the end of typed text */
-				for(i = size-1; isspace(wc_s[i]);	i--)
-					;
-				i++;
+			case KB_KE:
+				i = fnd_lend(wc_s, i, size);
 				break;
+			case KB_PU:
 			case KB_KH:
 				i = 0;
 				break;
 			case KB_PD:
-				i = size-1;
+				i = wc_iv[size - 1];
 				break;
 			case KB_KI:
 				edinsm=(edinsm ? 0 : 1); /* toggle Ins/Ovr*/
 				edinfo(1);
 				break;
 			case KB_KD:
-				for(j = i; j < (size - 1); j++) {
-				   c = wc_s[j] = wc_s[j+1];
-				   if (j == (size - 1))
-					   c = wc_s[j] = L' ';
-				   if (j < (vshift + vsize))
-					   w_wchr(c);
-				};
-				wc_s[size] = L'\0';
+				i = chgstr(/*wc_s*/wcsobj, vsize, i, cod);
 				break;
 			/*----------------------------*/
 
-			case KB_TA: /*bell(); break;*/
-					/*cp_sav(); cpa(-2, 1, ATT); w_str("ta"); cp_fet();*/
-					goto ret;
-					break;
+			case KB_TA: /*TODO smth*//*bell(); break;*/
+				/*cp_sav(); cpa(-2, 1, ATT); w_str("ta"); cp_fet();*/
+				goto ret;
+				break;
 #ifdef OLD_USE_TAB
 			case KB_TA: if(i == size-1) goto ret;
 				   i += 8-(i%8); break;
 #endif
 			case KB_AL:
-					if(i>0) {
-						i--;
-					} else
-						goto ret;
-					break;
+				if (i > 0) {
+					i--;
+				} else
+					goto ret;
+				break;
 			case KB_AR:
-					if(i == size - 1) goto ret;
-					i++;
-					break;
+				if (v/*i*/ == size - 1)
+					goto ret;
+				i++;
+				break;
 			case KB_NL: goto ret;
 			case KB_DE:
-					   if(i==0)      goto ret;
-					   i = chgstr(/*wc_s*/wcsobj, vsize, i, cod);
+				i = chgstr(/*wc_s*/wcsobj, vsize, i, cod);
 					   break;
 			default:
-					if(ISCTL(cod))
-						goto ret;
-					else /* printable codes, including ' ' */
-						i = chgstr(/*wc_s*/wcsobj, vsize, i, cod);
+				if (ISCTL(cod))
+					goto ret;
+				else {/* printable codes, including ' ' */
+					/*if (wc_iv[i] + wcwidth(cod) > size) {
+						bell();
+						 w_wchr(wc_s[i] = L' '); /* cod will not enter ever
+					} else*/
+					i = chgstr(/*wc_s*/wcsobj, vsize, i, cod);
+				}
 			}
 		}
 		/* КОНЕЦ ЦИКЛА РЕДАКТОРА */
 	}
+
 ret:
-	/*wc_init(wc_s, size);	/* TODO: duplicate call wc_init possible..  */
 	iv = iv_ge(size);
 	wc_s[iv/*size*/] = L'\0';
+
+	j = iv - 1;
+	if (wc_iv[j] + wcwidth(wc_s[j]) > size) {
+		bell();
+		w_wchr(wc_s[j] = L' '); /* cod will not enter ever */
+		wc_iv[j] = 1;			/* actualize the map */
+	}
 
 	if(ofsp != NULL)
 		*ofsp = i;
 
 	/* ПОДЧИСТИТЬ ПРОБЕЛЫ В КОНЦЕ СТРОКИ */
-	for (i=size; --i>=0 && (wc_s[i]==' ');) ;
+	for (i = size; --i >= 0 && (wc_s[i] == L' ');)
+		;
 	wc_s[++i] = L'\0';
 	edinfo(0);
 	/*free(wc_iv);*/

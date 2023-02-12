@@ -9,22 +9,45 @@
  *      $Log$
  */
 
-
+static char dim1[4] = "18";
+static char dim2[4] = " 7";
+static char fmtd[10] = "%.20lf";
+static char fmtf[10] = "%.5f";
+static char fmtl[10] = "%ld";
+static char fmth[10] = "%hd";
+static char fmti[10] = "%d";
 
 ---PAGE linem
 ---LINES
 m_exit  = ipm      -   -    mkexit  tst_m    " quit "
-e_tst1  = ipm      -   "7"  e_tst   m_test   " edit1 "
-e_tst2  = ipm      -   "18" e_tst   m_test   " edit2 "
+---#e_tst1  = ipm      -   "7"  e_tst   m_test   " edit1 "
+---#e_tst2  = ipm      -   "18" e_tst   m_test   " edit2 "
+e_tst1      = ipm      -   dim1 e_tst   m_test   " edit1 "
+e_tst2      = ipm      -   dim2 e_tst   m_test   " edit2 "
+d1      = ipv   -   -           -       -   dim1
+d2      = ipv   -   -           -       -   dim2
 
-s_raw   = ipv      -   -	-       -	u8s
-s_var   = ipv      -   -	cvt_s   -	u8s
-s_tst   = ipv      -   -	cvt_s   -	u8s
-s_vd	= ipv      -   "%.20lf" -	-	&vd
-s_vf	= ipv      -   "%.5f"	-	-	&vf
-s_vl	= ipv      -   "%ld"	-       -	&vl
-s_vh	= ipv      -   "%hd"	-       -	&vh
-s_vi	= ipv      -   "%d"	-       -	&vi
+s_raw   = ipv   -   -           -       -   u8s
+s_var   = ipv   -   -           cvt_s   -   u8s
+s_tst   = ipv   -   -           cvt_s   -   u8s
+
+fd      = iv    -   -           -       -   fmtd
+ff      = iv    -   -           -       -   fmtf
+fl      = iv    -   -           -       -   fmtl
+fh      = iv    -   -           -       -   fmth
+fi      = iv    -   -           -       -   fmti
+s_vd	= ipv   -   fmtd        -       -   &vd
+s_vf	= ipv   -   fmtf        -       -   &vf
+s_vl	= ipv   -   fmtl        -       -   &vl
+s_vh	= ipv   -   fmth        -       -   &vh
+s_vi	= ipv   -   fmti        -       -   &vi
+
+---#s_vd	= ipv   -   "%.20lf"    -       -   &vd
+---#s_vf	= ipv   -   "%.5f"      -       -   &vf
+---#s_vl	= ipv   -   "%ld"       -       -   &vl
+---#s_vh	= ipv   -   "%hd"       -       -   &vh
+---#s_vi	= ipv   -   "%d"        -       -   &vi
+
 ---# unsupported
 ---SCREEN
 =testing VISI/LINLIB V4-Unicode library + runtime
@@ -32,19 +55,18 @@ s_vi	= ipv      -   "%d"	-       -	&vi
 ---#56789-1234567890
                    .m_exit.......        .:HE.... get help
                                                             
-                   .e_tst1.......        .'"'     e_str(3)
-                   .e_tst2.......        .':;     e_str(5)
-  str_raw          .s_raw.               .'?/     show str object
-  str_var          .s_var..              .'|\     dump str with byte hex
-  str_tst          .s_tst...             
-  s_double         .s_vd................. .'+=    dump numbers
-  s_float          .s_vf..........       
-  s_long           .s_vl.....              
-  s_short          .s_vh.....       123456789-123456789-123456789-1234567       
-  s_int            .s_vi.           中文素养中文素养    国际站国际站                   
+ s_double .fd..... .s_vd................  .'+=    dump numbers
+ s_float  .ff..... .s_vf..........       
+ s_long   .fl..... .s_vl.....       123456789-123456789-123456789-1234567
+ s_short  .fh..... .s_vh.....       中文素养中文素养    国际站国际站                          
+ s_int    .fi..... .s_vi.           
+ str_raw           .s_raw.               .'?/     show str object
+ str_var           .s_var..              .'|\     dump str with byte hex
+ str_tst           .s_tst...             
+       width1= .d1 .e_tst1.......        .'"'     e_str(3)
+       width2= .d2 .e_tst2.......        .':;     e_str(5)
+                   .m_exit.......
                                     
-   
- 
- 
- 
+                                    
+                                    
 ---END                                            
