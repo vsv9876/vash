@@ -438,7 +438,10 @@ kbcod cod;		/* kbcod() pressed */
 	}
 	wc_init(wc_s, size);
 	/*for(j = i_chged; j <= i_end; j++) w_wchr(wcs[j]); */ /* on screen up to end */
-	for(j = i_chged; /*j <= i_end &&*/ wc_iv[j] + wcwidth(wc_s[j]) <= wc_iv[vshift] + vsize; j++)
+	for(j = i_chged;
+			j <= i_end &&
+			wc_iv[j] + wcwidth(wc_s[j]) <= wc_iv[vshift] + vsize;
+				j++)
 		w_wchr( wc_s[j] ); /* on screen, up to end of visible part of the string */
 
 	return (i);
