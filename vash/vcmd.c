@@ -18,6 +18,7 @@ extern  int		f_mark(); /* пометка пунктов меню (имен фа�
 
 extern  char  *nmsubs();
 
+#define DEBUG_OFF
 #ifdef DEBUG
 extern  int     kshow();
 #endif

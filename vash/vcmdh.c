@@ -40,7 +40,11 @@ static  int     cmdsmax;	    /* количество пунктов фильтр
 
 cmdhreset() {
 	/* сбросить все текущие индексы меню истории, применяется при запуске команды */
-	cmdpi = cmdpisel = -2;
+	/*cmdpi = cmdpisel = -2;*/
+	if (cmdplast > 0)
+		cmdpi = cmdpisel = cmdplast;
+	else
+		cmdpi = cmdpisel = -2/*0*/;
 }
 
 

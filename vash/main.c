@@ -18,7 +18,7 @@ FILE   *tmpfp = NULL;
 /*YESXSTR*/
 /*extern  char *mkstemp();*/
 
-extern  char *getenv();
+/*extern  char *getenv();*/
 
 int     y0_top = 0;   /* Начало свитка на экране */
 
@@ -79,6 +79,35 @@ void onintr(signo)
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	onexit(1); exit(1);
+}
+
+/*ARGSUSED*/
+void sigwinch(signo)
+{
+	if (0 != gtty_sz()) {
+		return;
+	}
+	bell(); /*TODO: remove if DEBUG done */
+
+	/* TODO make better - this is restriction for classic 24 lines */
+	lfmain.maxli  =  24;
+	/* lfmain.baseli = -24; */
+	lfmain.baseli = hwframe.maxli - lfmain.maxli;
+	/* correct below maxsize */
+	if (lfmain.baseli < 0) {
+		lfmain.maxli = hwframe.maxli;
+		lfmain.baseli = 0;
+	}
+	/*lfmain.baseco = 0;*/
+	lfmain.maxco  = hwframe.maxco;
+
+	lframe = &lfmain;
+
+	/* TODO: experimental refresh of */
+	/*itmini();       /* ПОСЧИТАТЬ ГАБАРИТЫ МЕНЮ */
+	/*itmrestor();*/
+	/*pre_vf();       /* СОЗДАТЬ СТРАНИЦУ LINLIB ДЛЯ МЕНЮ */
+	rescan();
 }
 
 static  LINE tmplate =
@@ -154,18 +183,7 @@ char **argv;
 	visini();
 	hw_set();
 
-	/* TODO make better - this is restriction for classic 24 lines */
-	lfmain.maxli  =  24;
-	/* lfmain.baseli = -24; */
-	lfmain.baseli = hwframe.maxli - lfmain.maxli;
-	/* correct below maxsize */
-	if (lfmain.baseli < 0) {
-		lfmain.maxli = hwframe.maxli;
-		lfmain.baseli = 0;
-	}
-	/*lfmain.baseco = 0;*/
-	lfmain.maxco  = hwframe.maxco;
-	lframe = &lfmain;
+	sigwinch(0);
 
 	if (getuid() == 0) {
 		pmtsh = " # ";
@@ -310,6 +328,7 @@ args_done:
     }
 
 	io_set(IO_VIDEO);
+
 	signal(SIGINT, onintr);
 #ifdef DEBUG
 	printf("   Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
@@ -333,6 +352,7 @@ args_done:
 
 			signal( SIGINT, SIG_IGN );
 			signal( SIGQUIT, SIG_IGN );
+			signal(SIGWINCH, sigwinch);
 
 			u_menu(clm._vf, "mainh.lb");
 			onexit(0); exit(0);

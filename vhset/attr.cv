@@ -110,8 +110,7 @@
 +      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---#+ hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +     italic:mi  .mi.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
----#+	         .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+
++	         .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 + foreground:fg  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 + background:bg  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +  stripe:fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.

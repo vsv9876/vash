@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include "line.h"
@@ -15,28 +16,23 @@ extern char    *pmtsh;/* = ".$"; /*"sh>" ;*/
 /*YESXSTR*/
 int pmtshsz;            /* размер подсказки */
 
-/* command buffer is a string object, it is not a simple char-type string */
-/* static  u8char_t cmdbuf[4 + 4*STRBUF] = "   ";    /* size for u8sobj_t cmdo -- below */
-
-static  wchar_t cmdbuf[4 + STRBUF] = L"   ";    /* size for wcsobj_t cmdo -- below */
 
 static  int  cmdsize = 0;       /* vsize e_str -- depends of screen width */
 static  int  pos = 0;           /* i     e_str    позиция в строке */
 static  int old_pos = 0;		/* позиция курсора до попытки окончить ввод (completion),
 								если изменилась, выполнена вставка в буфер команды */
-#if 0
-static  u8char_t *cmd0 = &cmdbuf[3]/*((u8sobj_t *)cmdbuf)->u8s*/;
-static  u8sobj_t *cmdo = &cmdbuf[0];
-#else
-static  wchar_t *cmd0 = &cmdbuf[2]/*((wcsobj_t *)cmdbuf)->u8s*/;
-static  wcsobj_t *cmdo = (wcsobj_t *)/*&*/cmdbuf/*[0]*/;
-#endif
+/* command buffer is a string object, it is not a simple char-type string */
+/* static  u8char_t cmdbuf[4 + 4*STRBUF] = "   ";    /* size for u8sobj_t cmdo -- below */
+volatile static  wchar_t cmdbuf[2 + STRBUF];/* = L"   ";    /* size for wcsobj_t cmdo -- below */
 
-static int done = 0;
+static  wcsobj_t *cmdo = (wcsobj_t *)cmdbuf;
+static  wchar_t *cmd0 = /*cmdo->wcs;*/ &cmdbuf[2];
+
+static int cmdo_init_done = 0;
 cmdo_init()
 {
-	if(done == 0) {
-		done = 1;
+	if(cmdo_init_done == 0) {
+		cmdo_init_done = 1;
 		cmdo->wco_sig = WCO_SIG;
 		cmdo->wco_size = STRBUF;
 	}

@@ -29,8 +29,8 @@
 /* debug column, same as in "vtest/pmainv.c" */
 #define TXT_CO 20
 /*trim _OFF in names to debug */
-#define DEBUG_VSHIFT
-#define WC_INIT_DEBUG
+#define DEBUG_VSHIFT_OFF
+#define WC_INIT_DEBUG_OFF
 
 extern SCRN scrn;
 
@@ -330,11 +330,11 @@ int	size;
 		v += v_wc; /* prepare mapping for next position */
 		j++;
 	};
-#if 1
+
 	while (j < size)
 		wc_iv[j] = v++, wc_s[j++] = L' '; /*map outside of visibility*/
 	wc_s[size] = L'\0';
-#endif
+
 	 /* terminate all visible part of the string */
 	wc_s[j] = 0;
 #ifdef WC_INIT_DEBUG
