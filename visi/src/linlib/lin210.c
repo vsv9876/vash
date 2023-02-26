@@ -139,9 +139,9 @@ char *tcapo[] = {
 	"cm", "cl", "cd", "ce", "ks", "ke",
 	"cs", "sr", "sf", "al", "dl",
 	"so", "se", "us", "ue",
-	"md", "mr", "mb", "mk", "me",
+	"md", "mr", "mb", "mh"/*"mk"*/, "me",
 	"bl", "vb", "ZH", "ZR",
-	"lh",   /* ИМЯ КЛАВИАТУРЫ */
+	"lh",   /* termcap extension: keyboard name , not used anymore */
 	0 };
 
 /* СВЯЗЬ ФИЗИЧЕСКИХ И ЛОГИЧЕСКИХ КОДОВ, А ТАКЖЕ ИМЕН КЛАВИШ */

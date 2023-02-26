@@ -96,13 +96,15 @@ extern char *tcapo[];
 #define t_se  tcapo[12]
 #define t_us  tcapo[13] /* ПОДЧЕРКИВАНИЕ */
 #define t_ue  tcapo[14]
-#define t_md  tcapo[15] /* ЯРКОСТЬ */
-#define t_mr  tcapo[16] /* РЕВЕРС */
-#define t_mb  tcapo[17] /* МИГАНИЕ */
-#define t_mk  tcapo[18] /* РАМКА */
-#define t_me  tcapo[19] /* ВСЕ УБРАТЬ */
-#define t_bl  tcapo[20] /* ЗВОНОК */
-#define t_vb  tcapo[21] /* ВИДЕОЗВОНОК */
+#define t_md  tcapo[15] /* bright */
+#define t_mr  tcapo[16] /* revers */
+#define t_mb  tcapo[17] /* blink */
+/*#define t_mk  tcapo[18]*/
+#define t_mh  tcapo[18] /* dim */
+#define t_me  tcapo[19] /* all remove */
+
+#define t_bl  tcapo[20] /* bell */
+#define t_vb  tcapo[21] /* visual bell */
 #define t_zh  tcapo[22] /* start italic */
 #define t_zr  tcapo[23] /* start italic */
 #define t_lh  tcapo[24] /* ИМЯ КЛАВИАТУРЫ (РАСШИРЕНИЕ LINLIB) */

@@ -25,13 +25,14 @@
 ---PORTS
 	LPA_B = 0
 	LPA_PI = &lpa_pi;
-	W_so   = &wamask[0];
+	W_so   = &wamask[0]; /* not supported */
 	W_us   = &wamask[1];
-	W_vs   = &wamask[2]; /* not a video attribute */
+---#	W_vs   = &wamask[2]; /* not a video attribute */
 	W_md   = &wamask[3];
 	W_mr   = &wamask[4];
 	W_mb   = &wamask[5];
 	W_mk   = &wamask[6];
+	W_mh   = &wamask[6]; /* dim */
 	W_zh   = &wamask[7]; /* italic */
 	SGR    = &sgrmode;
 ---#	SGR_B  = 0
@@ -54,6 +55,7 @@
 	so      = ia - W_so   cvt_va  - LPA_B
 	us      = ia - W_us   cvt_va  - LPA_B
 ---#	vs      = ia - W_vs   cvt_va  - LPA_B
+	mh      = ia - W_mh   cvt_va  - LPA_B
 	md      = ia - W_md   cvt_va  - LPA_B
 	mr      = ia - W_mr   cvt_va  - LPA_B
 	mb      = ia - W_mb   cvt_va  - LPA_B
@@ -68,10 +70,10 @@
 	   g    = gn - -      -       - ". .    "
 	   c    = gc - -      -       - ". .    "
 
+	Bf	= ia - "f"   cvt_cb  - LPA_B
+	Bb	= ia - "b"   cvt_cb  - LPA_B
 	fg      = ia - "f"   cvt_co  - LPA_B
 	bg      = ia - "b"   cvt_co  - LPA_B
----#	fB      = ia - "f"   cvt_cb  - LPA_B
----#	bB      = ia - "b"   cvt_cb  - LPA_B
 	sgr     = ia - -     cvt_sgr - LPA_B
 ---# 	pi      = g0 - "# "  cvt_pi  - LPA_B
 	M       = g3 - "| "  cvt_pi  - LPA_B
@@ -103,14 +105,17 @@
 +line prompter:  .P.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---#+	         .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +.""...........................................................................
-+   outstand:so  .so     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++   standout:so  .so     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +  underline:us  .us     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+bright/bold:md  .md     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++        dim:mh  .mh     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++       bold:md  .md     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +    reverse:mr  .mr     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---#+ hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+     italic:mi  .mi.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
++     italic:mi  .mi     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +	         .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++     bright:fg  .Bf     .t.     .t.     .t.     .t.     .t.     .t.     .t.
++     bright:bg  .Bb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 + foreground:fg  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 + background:bg  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 +  stripe:fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
@@ -127,6 +132,4 @@
 ---#+                      .hl.................................................
 ---#+           .hl............................................................
 ---#+.""...........................................................................
----#+           :fB  .fB     .t.     .t.     .t.     .t.     .t.     .t.     .t.
----#+           :bB  .bB     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---END

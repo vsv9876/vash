@@ -130,7 +130,7 @@ int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 		if(aw_old & A_SO) 					{ w_raw(t_se); }
 		if(aw_old & A_US)		     		{ w_raw(t_ue); }
 		if(aw_old & A_ZH)		     		{ w_raw(t_zr); }
-		if(aw_old & (A_MD|A_MR|A_MB|A_MK)) 	{ w_raw(t_me); }
+		if(aw_old & (A_MD|A_MR|A_MB|/*A_MK|*/A_MH)) 	{ w_raw(t_me); }
 	} else {
 		w_raw(t_me);
 	}
@@ -146,7 +146,8 @@ int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 		if(aw & A_MD) w_raw(t_md);
 		if(aw & A_MR) w_raw(t_mr);
 		if(aw & A_MB) w_raw(t_mb);
-		if(aw & A_MK) w_raw(t_mk);
+		/*if(aw & A_MK) w_raw(t_mk);*/
+		if(aw & A_MH) w_raw(t_mh);
 		awstate = aw;
 	}
 	if (sgrmode > 1) {

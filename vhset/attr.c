@@ -20,7 +20,7 @@ extern int cvt_cb(); /* bright mode */
 extern char namelh[];
 
 int     wamask[10] = {
-	A_SO,   A_US,   A_VS,   A_MD,	A_MR,   A_MB,   A_MK,	A_ZH,      0,      0,
+	A_SO,   A_US,   A_VS,   A_MD,	A_MR,   A_MB,   A_MH/*A_MK*/,	A_ZH,      0,      0,
 	};
 
 int     lpa_pi = 0;     /* РЕЖИМ ИЗМЕНЕНИЯ АТРИБУТОВ (НА ВВОДЕ/НА ВЫВОДЕ) */
@@ -194,7 +194,7 @@ char *str;
 				if (!sgr_csel(line, cod, sgra))
 					return(FALSE);
 			}
-			w_line(line4); /* вызов перенесен в sgr_ed(), но теперь на месте, здесь */
+			w_line(line4); /* вызов был перенесен в sgr_ed(), но теперь на месте, здесь */
 			ref_co(line, cod);
 			w_line(linesgr);
 			/*if (i == TXT)*/
@@ -244,31 +244,35 @@ int ci;    /* stripe color mode index 0 - for foreground, 2 - for background*/
 	}
 }
 
-/* decode old SGR string, assumed format like 34;44 or 44;34 only */
-sgr_decode(sgra, fgp, bgp)
+/* decode old SGR string, assumed format like 34;44 or 44;34 or 94;104 or 104;94 */
+sgr_decode(sgra, fgp, bgp, brifgp, bribgp)
 char *sgra;	/* string with SGR attributes to be scaned */
 char *fgp;
 char *bgp;
+int *brifgp;
+int *bribgp;
 {
-	int ic, cptrok;
-	char *s;
+	char *s = sgra;
 	char *cptr;
 	char c;
+	int cptrok = 0;
 
-	cptrok = 0;
-	ic = 0;
 	*fgp = '\0';
 	*bgp = '\0';
-	s = sgra;
+
 	while (*s != '\0') {
 		c = *s;
 		if (cptrok) {
-			if (strchr(fgbg, c) != NULL) *cptr = c;
+			if (strchr(fgbg, c) != NULL)
+				*cptr = c;
 			cptrok = 0;
 		} else {
 			switch(c) {
-			case	'3': cptrok = 1; cptr = fgp; break;
-			case	'4': cptrok = 1; cptr = bgp; break;
+			case	'3': cptrok = 1; cptr = fgp; *brifgp = 0; break;
+			case	'9': cptrok = 1; cptr = fgp; *brifgp = 1; break;
+			case	'4': cptrok = 1; cptr = bgp; *bribgp = 0; break;
+			case	'1': s++; /* next char is 0 anyway */
+						 cptrok = 1; cptr = bgp; *bribgp = 1; break;
 			case	';': cptrok = 0; break;
 			default:	cptrok = 0; break; /* illegal, error detected... TODO complete*/
 			}
@@ -280,42 +284,45 @@ char *bgp;
 /*
  * format SGR sctring with new parameters
  */
-sgr_encode(s, fgp, bgp)
+sgr_encode(s, fgp, bgp, brifg, bribg)
 char *s; /* output string */
 char *fgp;
 char *bgp;
+int *brifg;
+int *bribg;
 {
 	char fg, bg;
 	fg = *fgp;
 	bg = *bgp;
+	char *bfg;
+	char *bbg;
 
+	 bfg = "3";
+	 bbg = "4";
+	 if (fg != 0) {
+		if (*brifg)
+			bfg = "9";
+	}
+	if (bg != 0) {
+		if (*bribg)
+			bbg = "10";
+	}
 	if (fg != '\0' && bg != '\0') {
-		sprintf(s, "3%c;4%c", fg, bg);
-	} else if (fg != '\0') {
-		s[0] = '3'; s[1] = fg; s[2] = '\0';
-	} else if (bg != '\0') {
-		s[0] = '4'; s[1] = bg; s[2] = '\0';
-	} else if (fg == '\0' && bg == '\0') {
+		sprintf(s, "%s%c;%s%c", bfg, fg, bbg, bg);
+	}
+	else if (fg != '\0') {
+		sprintf(s, "%s%c", bfg, fg);
+	}
+	else if (bg != '\0') {
+		sprintf(s, "%s%c", bbg, bg);
+	}
+	else if (fg == '\0' && bg == '\0') {
 		s[0] = '\0';
 	}
 }
 
+/* color brightness formatting -- copy&paste from cvt_co() */
 cvt_cb(line, cod, mod, str)
-LINE   *line;
-kbcod   cod;
-char   *mod;
-char   *str;
-{
-	return (TRUE);
-}
-
-
-
-
-cvt_co(line, cod, mod, str)
-/*---------------------*/
-/* формат для атрибута */
-/*---------------------*/
 LINE   *line;
 kbcod   cod;
 char   *mod;
@@ -323,7 +330,92 @@ char   *str;
 {
 	char    outstr[20];      /* строка для формирования вывода */
 	int     lpax;			/* index for lpa[] */
-	char    fbx;			/* row on sceen page: 'fg' or 'bg' 1st char significant only, see attr.cv */
+	char    fbx;			/* row on screen page: 'fg' or 'bg' 1st char significant only, see attr.cv */
+	register LINE *line4;   /* pointer to base LINE in 5th row */
+	int vai;				/*video attribute index on sample row*/
+	char *Rsgr;
+	char *Wsgr;
+	/* on input need both: lpaout+lpainp*/
+	char Rfg, Rbg, Wfg, Wbg;
+	int  Rbrifg, Rbribg, Wbrifg, Wbribg;
+
+	Rbrifg = Rbrifg = Wbrifg = Wbrifg = 0;
+
+	fbx = line->cvts[0];	/* 1st symbol in field is significant only */
+	lpax = (int)line->varl; /* lpa*[] index*/
+	if (!(fbx == 'f' || fbx == 'b')) {
+		w_msg(ERR, "internal, cvt_cb(): line.cvts has wrong value");
+		return(FALSE);
+	}
+
+	Rsgr = &lpaout[lpax].lpa_sgr[0];
+	sgr_decode(Rsgr, &Rfg, &Rbg, &Rbrifg, &Rbribg);
+	Wsgr = &lpainp[lpax].lpa_sgr[0];
+	sgr_decode(Wsgr, &Wfg, &Wbg, &Wbrifg, &Wbribg);
+
+	if(*mod == 'w') {
+		if (sgrmode >= 2) {
+			if (lpa_pi) {
+				strcpy(outstr, "  .");
+			} else {
+				strcpy(outstr, ".  ");
+			}
+			if (fbx == 'f') {
+				if (Rbrifg) outstr[0] = '+';
+				if (Wbrifg) outstr[2] = '+';
+			}
+			if (fbx == 'b') {
+				if (Rbribg) outstr[0] = '+';
+				if (Wbribg) outstr[2] = '+';
+			}
+		} else {
+			strcpy(outstr, "   ");
+		}
+	}
+	if (*mod == 'r' && sgrmode >= 2) {
+		if (cod == ' ' || cod == KB_DE) {
+			line4 = getl4(line);
+			/* do toggle modification */
+			if (lpa_pi) {
+				if (fbx == 'f') {
+					Wbrifg = Wbrifg ? 0 : 1;
+				}
+				if (fbx == 'b') {
+					Wbribg = Wbribg ? 0 : 1;
+				}
+				sgr_encode(Wsgr, &Wfg, &Wbg, &Wbrifg, &Wbribg);
+			} else {
+				if (fbx == 'f') {
+					Rbrifg = Rbrifg ? 0 : 1;
+				}
+				if (fbx == 'b') {
+					Rbribg = Rbribg ? 0 : 1;
+				}
+				sgr_encode(Rsgr, &Rfg, &Rbg, &Rbrifg, &Rbribg);
+			}
+			/* actualize new view of page */
+			w_line(line4);
+			if (lpax == TXT && sgrmode > 1)/* && cod == ' ')*/
+				repage();
+			else
+				reline(lpax);
+		}
+	}
+
+	strcpy(str, outstr);
+	return (TRUE);
+}
+
+/* color control formatting */
+cvt_co(line, cod, mod, str)
+LINE   *line;
+kbcod   cod;
+char   *mod;
+char   *str;
+{
+	char    outstr[20];      /* строка для формирования вывода */
+	int     lpax;			/* index for lpa[] */
+	char    fbx;			/* row on screen page: 'fg' or 'bg' 1st char significant only, see attr.cv */
 	int		gv;
 	int		i;
 	register LINE *line4;   /* указатель на базовую линию в 5-й строке */
@@ -333,6 +425,7 @@ char   *str;
 	char *Rsgr;
 	char *p;
 	char Wfg, Wbg, Rfg, Rbg;
+	int  Wbrifg, Wbribg, Rbrifg, Rbribg;
 	Wfg = Wbg = Rfg = Rbg = 0;
 
 	fbx = line->cvts[0];
@@ -342,10 +435,10 @@ char   *str;
 		return(FALSE);
 	}
 	Wsgr = &lpaout[lpax].lpa_sgr[0];
-	sgr_decode(Wsgr, &Wfg, &Wbg);
+	sgr_decode(Wsgr, &Wfg, &Wbg, &Wbrifg, &Wbribg);
 
 	Rsgr = &lpainp[lpax].lpa_sgr[0];
-	sgr_decode(Rsgr, &Rfg, &Rbg);
+	sgr_decode(Rsgr, &Rfg, &Rbg, &Rbrifg, &Rbribg);
 
 	if(*mod == 'r' && sgrmode >= 2) {
 		if(cod == ' ' || cod == KB_DE) {
@@ -361,7 +454,7 @@ char   *str;
 				break;
 			}
 
-			/* do sircle around selection of SGR code number (fgbg[] array) */
+			/* do circle around selection of SGR code number (fgbg[] array) */
 			gv = *p;
 			if (cod == ' ') {
 				switch(gv) {
@@ -396,10 +489,10 @@ char   *str;
 			/* prepare and store new result of SGR */
 			switch (lpa_pi) {
 			case 0:
-				sgr_encode(Wsgr, &Wfg, &Wbg);
+				sgr_encode(Wsgr, &Wfg, &Wbg, &Wbrifg, &Wbribg);
 				break;
 			case 1:
-				sgr_encode(Rsgr, &Rfg, &Rbg);
+				sgr_encode(Rsgr, &Rfg, &Rbg, &Rbrifg, &Rbribg);
 				break;
 			}
 
@@ -453,9 +546,10 @@ char *out;
 	char c;
 	char fg = 0;	/* scan SGR indexes - BG, FG, and iterators */
 	char bg = 0;
+	int brifg, bribg;
 	int i;
 
-	sgr_decode(sgra, &fg, &bg);
+	sgr_decode(sgra, &fg, &bg, &brifg, &bribg);
 
 	if ((getlsgr(line, sgrats)) == (LINE *)0) {
 		return(FALSE);
@@ -503,7 +597,7 @@ char *out;
 	return(TRUE);
 }
 
-sgr_ed(line, cod)
+sgr_ed_notused(line, cod)
 /*редактор атрибутов цвета (SGR composer)*/
 LINE *line;
 kbcod cod;
@@ -737,8 +831,11 @@ show_pi()
 	LINE *l;
 
 	for(l=linem; l->size > 0; l++) {
-		if (l->cvtf == cvt_pi || l->cvtf == cvt_pim ||
-			l->cvtf == cvt_va || l->cvtf == cvt_sgr) {
+		if (l->cvtf == cvt_pi
+				|| l->cvtf == cvt_pim
+				|| l->cvtf == cvt_va
+				|| l->cvtf == cvt_sgr
+				|| l->cvtf == cvt_cb) {
 			w_line(l);			/*break;  multiply lines there */
 		}
 	}
