@@ -149,34 +149,34 @@ char *tcapo[] = {
 KBL kbl[KBLSIZE] = {
 
 /* KEYPAD ON, it is possible to redefine as usual */
-{ KB_KP, "Ctrl-K ", KBCTL(    'K'), KB_EMPTY }, /* kbl[0] */
+{ KB_KP, "^K     ", KBCTL(    'K'), KB_EMPTY }, /* kbl[0] */
 
 /* default values, cannot be redefined vith vhset */
-{ KB_AU, "<up>   ", KBCOD('k','u'), KB_EMPTY       },
-{ KB_AD, "<down> ", KBCOD('k','d'), KB_EMPTY       },
-{ KB_AL, "<left> ", KBCOD('k','l'), KB_EMPTY       },
-{ KB_AR, "<right>", KBCOD('k','r'), KB_EMPTY       },
+{ KB_AU, "[up]   ", KBCOD('k','u'), KB_EMPTY       },
+{ KB_AD, "[down] ", KBCOD('k','d'), KB_EMPTY       },
+{ KB_AL, "[left] ", KBCOD('k','l'), KB_EMPTY       },
+{ KB_AR, "[right]", KBCOD('k','r'), KB_EMPTY       },
 
 /* limited customizing possible (labels only) */
-{ KB_SP, "Space  ", KBCTL(    'S'), KB_EMPTY       },
-{ KB_TA, "^I,Tab ", KBCTL(    'I'), KB_EMPTY       },
+{ KB_SP, "[space]", KBCTL(    'S'), KB_EMPTY       },
+{ KB_TA, "^I|Tab ", KBCTL(    'I'), KB_EMPTY       },
 
 /* full customizing supported with vhset */
 { KB_NL, "Enter  ", KBCTL(    'M'), KBCTL(    'J') },
-{ KB_DE, "^H,<-- ", KBCOD('d','e'), KBCTL(    'H') },
+{ KB_DE, "^H|<-- ", KBCOD('d','e'), KBCTL(    'H') },
                                                    
-{ KB_HE, "^G,F1  ", KBCOD('k','1'), KBCTL(    'G') },
-{ KB_EX, "^X,F2  ", KBCOD('k','2'), KBCTL(    'X') },
+{ KB_HE, "^G|F1  ", KBCOD('k','1'), KBCTL(    'G') },
+{ KB_EX, "^X|F2  ", KBCOD('k','2'), KBCTL(    'X') },
 { KB_CA, "^C     ", KBCTL(    'C'), KB_EMPTY       },
 { KB_RE, "^L     ", KBCTL(    'L'), KB_EMPTY       },
 { KB_PR, "^\\     ", KBCTL(    '\\'), KB_EMPTY     },
                                                    
-{ KB_KI, "^O,Ins ", KBCOD('k','I'), KBCTL(    'O') },
+{ KB_KI, "^O|Ins ", KBCOD('k','I'), KBCTL(    'O') },
 { KB_KD, "Delete ", KBCOD('k','D'), KB_EMPTY       },
-{ KB_KH, "^A,Home", KBCOD('k','h'), KBCTL(    'A') },
-{ KB_KE, "^E,End ", KBCOD('@','7'), KBCTL(    'E') },
-{ KB_PU, "^B,PgUp", KBCOD('k','P'), KBCTL(    'B') },
-{ KB_PD, "^F,PgDn", KBCOD('k','N'), KBCTL(    'F') },
+{ KB_KH, "^A|Home", KBCOD('k','h'), KBCTL(    'A') },
+{ KB_KE, "^E|End ", KBCOD('@','7'), KBCTL(    'E') },
+{ KB_PU, "^B|PgUp", KBCOD('k','P'), KBCTL(    'B') },
+{ KB_PD, "^F|PgDn", KBCOD('k','N'), KBCTL(    'F') },
 
 /* extended set with limited support, not supported by vhset yet */
 { KBUSR('0'), "       ", KBCOD('f','0'), KBUSR('0'), KB_EMPTY },

@@ -426,11 +426,15 @@ kbcod cod;		/* kbcod() pressed */
 	else if (!ISCTL(cod)) {
 		/* printable, including ' ' */
 		if (edinsm) {
+			/*Ins*/
 			for (j = size; --j > i_chged;)
 				wc_s[j] = wc_s[j - 1]; /*Ins*/
 			i_end += (i_end < (size - 1) ? 1 : 0);
-		/*} else {
-			i_end = i_chged;*/ /*Ovr*/
+		} else {
+			/*Ovr*/
+			i_end = i_chged; /* only one symbol changed */
+			if (wcwidth(wc_s[i_chged]) != wcwidth(cod))
+				i_end += vsize; /* update up to end of field */
 		}
 		wc_s[i_chged] = cod;
 		i += 1;
