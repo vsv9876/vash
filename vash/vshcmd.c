@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <sys/wait.h>
 #include <string.h>
 #include <stdio.h>
 #include "line.h"
@@ -266,20 +267,34 @@ std_shell:
 			justrun = 0;
 			scrldo();
 			if(syscod) {
+				msgat = ERR;
+#if 0
 				codexit = cod1(syscod); /*TODO cleanup trick, replace with stdlib.h and sys/wait.h stuff */
 				codsig  = cod0(syscod);
-				msgat = ERR;
 				if (codsig) {
 					sprintf(tmpstr, "[ exit= %d, signal= %d ]", codexit, codsig);
 				} else {
 					sprintf(tmpstr, "[ exit= %d ]", codexit);
 				}
 				/*w_str(tmpstr); cp_cret();*/
+#else
+				if (WIFEXITED(syscod)) {
+					sprintf(tmpstr, "[ exit code= %d ]", WEXITSTATUS(syscod));
+				} else if (WIFSIGNALED(syscod)) {
+                    sprintf(tmpstr, "[ killed by signal= %d ]", WTERMSIG(syscod));
+#if VASH_NO_SUPPORT_JobControl
+				} else if (WIFSTOPPED(syscod)) {
+                    sprintf(tmpstr, "[ stopped by signal %d ]", WSTOPSIG(syscod));
+                } else if (WIFCONTINUED(syscod)) {
+                    sprintf(tmpstr, "[ continued ]");
+#endif
+                }
+#endif
 			}
 			else {
 				if (okwait == 1) {
-#if 1
-					msgat = HDR;
+#if 0
+					msgat = VEXT|VAR/*ATT*//*VEXT|MSE*//*HDR*/;
 					sprintf(tmpstr, "[ ok ]");
 #else
 					at_set(msgat = (CMD|INP));
@@ -320,12 +335,12 @@ std_shell:
 					at_set(atrib = HDR);
 					if (trapcod) {
 					  
-					  at_set(TXT); w_str(" -- please, type a command or click ");
+					  at_set(MSE); w_str(" -- please, type a command or click ");
 					  w_lh_str(":SP");
-					  at_set(TXT); w_str(" --      help: ");
+					  at_set(MSE); w_str(" --              help: ");
 					  w_lh_str(":HE");
-					  at_set(TXT);
-					  er_eol(TXT);
+					  /*at_set(TXT);*/
+					  er_eol(MSE);
 					}
 					er_eop(CMD);
 					cp_cret(); /*w_str("\r");*/

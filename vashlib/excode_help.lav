@@ -1,5 +1,5 @@
 ---LINES
-ok	= gh - - - - "[ ok ]"
+ok	= gv - - - - "[ ok ]"
 err	= ge - - - - "[ exit= 1 ]"
 
 
@@ -12,6 +12,7 @@ err	= ge - - - - "[ exit= 1 ]"
   when command is done, You get an indicator in one of form:
 
   .ok...       -- on success
+
   .err........ -- if a command terminated with error or on a signal
 
   Warning about defencive trap:

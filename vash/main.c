@@ -87,7 +87,7 @@ void sigwinch(signo)
 	if (0 != gtty_sz()) {
 		return;
 	}
-	bell(); /*TODO: remove if DEBUG done */
+	/*bell(); /* removed when DEBUG done */
 
 	/* TODO make better - this is restriction for classic 24 lines */
 	lfmain.maxli  =  24;
