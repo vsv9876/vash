@@ -44,20 +44,20 @@
 :U2
 	rwx +   _menu2 compr.menu
 	rwx -   _err please, mark files using spacebar
-	r-x *   +Cant
+	r-x *   +Cantw
 
 :U4
 :4
     rwx -   +touch
     rwx +   +touchf
-    * *     +Cant
+    * *     +Cantw
 +touch
     ?w? ?   touch #@
 
 +touchf
     ??? ?   touch ##
 
-+Cant
++Cantw
     * * *   _err Can't write this directory
 
 :@
@@ -70,7 +70,7 @@
 :5
     rwx -   +tardir
     rwx +   +tarfiles
-    r-x *   +Cant
+    r-x *   +Cantw
 
 
 +tardir
@@ -86,7 +86,7 @@
 :6
     rwx -   +cpiodir
     rwx +   +cpiofiles
-    r-x *   +Cant
+    r-x *   +Cantw
 
 +cpiodir
 
@@ -101,7 +101,7 @@
 :U7
 :7
 	rwx ?   mkdir .
-	* *     +Cant
+	* *     +Cantw
 :KI
 	* * _cmdset misc.rc
 

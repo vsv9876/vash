@@ -18,8 +18,8 @@ extern  int		f_mark(); /* пометка пунктов меню (имен фа�
 
 extern  char  *nmsubs();
 
-#define DEBUG_OFF
-#ifdef DEBUG
+#define DEBUG_KSHOW
+#ifdef DEBUG_KSHOW
 extern  int     kshow();
 #endif
 
@@ -43,7 +43,7 @@ FUNTAB funtab[] = {
 	{ "rescan",     rescan },
 	{ "f_ls",		f_ls },
 	{ "mark",		f_mark },
-#ifdef DEBUG
+#ifdef DEBUG_KSHOW
 	{ "kshow",      kshow },
 #endif
 	{ (char *)0,    0 },

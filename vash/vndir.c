@@ -671,8 +671,8 @@ size_t cwd_fmt(char *ctmps, char *cpath, int room)
 
 /*
  * current working directory show (and other related info)
- * if xtermf, use xterm escapes '\E]0;'....'^G'
- * if panelf is in use
+ * if vashflag.xtermf, use xterm escapes '\E]0;'....'^G'
+ * if vashflag.panelf is in use
  */
 cwdshow()
 {
@@ -695,7 +695,7 @@ cwdshow()
 
 	mailf2 = 1;
 
-	if (panelf) {
+	if (vashflag.panelf) {
 		if (clm._y0 > y0_top) {
 			showli = y0_top-1;
 			cp_set(y0_top-1, 0, TXT);
@@ -737,7 +737,7 @@ cwdshow()
 
 	binpwd(cwdpath);
 /*	sprintf(tmpstr, "[ %s ]", cwdpath); */
-	if (xtermf) {
+	if (vashflag.xtermf) {
 		w_raw("\033]0;");
 		w_str(lbl_tmpstr);
 
@@ -746,7 +746,7 @@ cwdshow()
 
 		w_raw("\007"); /* terminate escape sequence for xterm window title */
 	}
-	if (whodirf) {
+	if (vashflag.whodirf) {
 		cp_set(showli, 0, HDR);
 		w_str(lbl_tmpstr);
 

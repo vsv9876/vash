@@ -25,16 +25,18 @@ int     y0_top = 0;   /* Начало свитка на экране */
 /*
  * flags:
  */
-int     scrolf = 1;     /* флаг: продвигать рулон, а не гасить экран */
-int     oneitm = 0;     /* флаг: разрешено указать только один пункт меню */
-int     panelf = 1;     /* флаг: показывать панель подсказки */
-int     whodirf = 1;    /* show whodir panel on screen */
-int     xtermf = 0;     /* show whodir panel on window title using xterm escape sequence */
-int     histf  = 0;     /* флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
-int		histsn = 0;		/* флаг: синхронизировать историю после каждой команды */
-int     clockf = 1;     /* флаг: показывать часы */
-int     cmailf = 1;     /* флаг: проверять почту */
-int     loginf = 0;     /* флаг: главная оболочка, ppid() == 1 */
+/*int     scrolf = 1;     /* флаг: продвигать рулон, а не гасить экран */
+/*int     oneitm = 0;     /* флаг: разрешено указать только один пункт меню */
+/*int     panelf = 1;     /* флаг: показывать панель подсказки */
+/*int     whodirf = 1;    /* show whodir panel on screen */
+/*int     xtermf = 0;     /* show whodir panel on window title using xterm escape sequence */
+/*int     histf  = 0;     /* флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
+/*int		histsn = 0;		/* флаг: синхронизировать историю после каждой команды */
+/*int     vashflag.clockf = 1;     /* флаг: показывать часы */
+/*int     cmailf = 1;     /* флаг: проверять почту */
+/*int     loginf = 0;     /* флаг: главная оболочка, ppid() == 1 -- never supported */
+
+VASHFLAG vashflag = { { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1 } };
 
 char   *envshell;		/* env SHELL= */
 char   *homedir;        /* домашний каталог */
@@ -65,7 +67,7 @@ int ok;
 #ifdef RETRO
 	putchar('\n');
 #endif
-	if (ok == 0 && histf && homedir != (char *)0 && histsn == 0) {
+	if (ok == 0 && vashflag.histf && homedir != (char *)0 && vashflag.histsn == 0) {
 		cmdphist();
 	}
 	unlink(tmpflnm);
@@ -194,12 +196,16 @@ char **argv;
 	/*
 	 * environment setup parsed before command line args
 	 */
+	vashflag.exittrap = 0;
 	if ((envsup = getenv("VASH")) != (char *) 0) {
 		char linenoa[4];
 		char *p;
 
 		/* reset defaults in case environment setup is in use */
-		scrolf = histf = histsn = panelf = whodirf = xtermf = clockf = cmailf = 0;
+		vashflag.scrolf =
+				vashflag.histf = vashflag.histsn = vashflag.panelf =
+						vashflag.whodirf = vashflag.xtermf = vashflag.clockf = vashflag.cmailf =
+								vashflag.exittrap = 0;
 		/*** yy_max = 10; */
 
 		while (c = *envsup++) {
@@ -217,28 +223,31 @@ char **argv;
 					clm._yy_max = lframe->maxli - 4;
 				break;
 			case 'p':
-				panelf++;
+				vashflag.panelf++;
 				break;
 			case 'x':
-				xtermf++;
+				vashflag.xtermf++;
 				break;
 			case 'w':
-				whodirf++;
+				vashflag.whodirf++;
 				break;
 			case 's':
-				scrolf++;
+				vashflag.scrolf++;
 				break;
 			case 'h':
-				histf++;
+				vashflag.histf++;
 				break;
 			case 'S':
-				histsn++;
+				vashflag.histsn++;
 				break;
 			case 'c':
-				clockf++;
+				vashflag.clockf++;
 				break;
 			case 'm':
-				cmailf++;
+				vashflag.cmailf++;
+				break;
+			case 'T':
+				vashflag.exittrap++;
 				break;
 			}
 		}
@@ -270,28 +279,31 @@ char **argv;
 				clm._xx1 = 1;
 				continue;
 			case 'p':
-				panelf = 0;
+				vashflag.panelf = 0;
 				continue;
 			case 'x':
-				xtermf = 0;
+				vashflag.xtermf = 0;
 				continue;
 			case 'w':
-				whodirf = 0;
+				vashflag.whodirf = 0;
 				continue;
 			case 's':
-				scrolf = 0;
+				vashflag.scrolf = 0;
 				continue;
 			case 'h':
-				histf = 0;
+				vashflag.histf = 0;
 				continue;
 			case 'S':
-				histsn = 0;
+				vashflag.histsn = 0;
 				continue;
 			case 'c':
-				clockf = 0;
+				vashflag.clockf = 0;
 				continue;
 			case 'm':
-				cmailf = 0;
+				vashflag.cmailf = 0;
+				continue;
+			case 'T':
+				vashflag.exittrap = 0;
 				continue;
 
 			case '-':
@@ -314,7 +326,7 @@ args_done:
    	}
 
    	if ((homedir=getenv("HOME")) == (char *)0) {
-	       histf = 0;
+   		vashflag.histf = 0;
    	}
 
     if (homedir != (char *)0) {

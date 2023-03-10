@@ -85,16 +85,33 @@ extern LINEMENU clm;    /* ТЕКУЩЕЕ МЕНЮ (current lines menu) */
 
 /*extern  char   *yesno[];*/
 
-extern int     scrolf;
-extern int     oneitm;
-extern int     panelf;
-extern int     whodirf;
-extern int     xtermf;
-extern int     histf;
-extern int     histsn;
-extern int     clockf;
-extern int     cmailf;
-extern int     loginf;
+/*extern int     scrolf;*/
+/*extern int     oneitm;*/
+/*extern int     panelf;*/
+/*extern int     whodirf;*/
+/*extern int     xtermf;*/
+/*extern int     histf;*/
+/*extern int     histsn;*/
+/*extern int     clockf;*/
+/*extern int     cmailf;*/
+/*extern int     loginf;*/
+
+/* flags */
+typedef struct {
+int		scrolf;			/* = 1; /* флаг: продвигать рулон, а не гасить экран */
+int		oneitm;			/* = 0; /* флаг: разрешено указать только один пункт меню */
+int		panelf; 		/* = 1; /* флаг: показывать панель подсказки */
+int		whodirf;		/* = 1; /* show whodir panel on screen */
+int		xtermf;			/* = 0; /* show whodir panel on window title using xterm escape sequence */
+int		histf;			/* = 0; /* флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
+int		histsn;			/* = 0;	/* флаг: синхронизировать историю после каждой команды */
+int		clockf;			/* = 1; /* флаг: показывать часы */
+int		cmailf;			/* = 1; /* флаг: проверять почту */
+int		loginf;			/* = 0; /* флаг: главная оболочка, ppid() == 1 */
+int		exittrap;		/* trap on exit of command: 0 - modern, 1 - vash canonical */
+} VASHFLAG;
+
+extern VASHFLAG vashflag; /* defined in main.c */
 
 extern char   *envshell;
 extern char   *homedir;

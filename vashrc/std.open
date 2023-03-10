@@ -1,8 +1,8 @@
 #
-#@ std.open
+#>>> std.open
 #
 
-###-4open
+#-4open
 
 :NL
 #:[;]
@@ -32,7 +32,7 @@
 	r?? [DT] *.cpio.gz      gzip -d < #@ | cpio -idm
 #    r?? [DT] *.deb          sudo dpkg -i #@
 	r?? [DT] *.deb          dpkg-deb -x #@ /tmp/#@.d
-	r?? [DT] *.src.rpm      _msg did You mean 'rpmbuild bb #@ ?'
+	r?? [DT] *.src.rpm      _msg did You mean 'rpmbuild -rebuild #@ ?'
 	r?? [DT] *.rpm          sudo rpm -qp #@ --
 	r?? D *.[zCp]           gzip -d #@
 	r?? D *.[Z]             uncompress #@
@@ -53,13 +53,12 @@
 	r?? T *.xpm         :sxpm #@ &
 	r?? T *.c           make #*.o
 	r?? T *.pl          make #*.pl
-	r?? T .ashhist      _msg #@ Is not ash's program script
-	r?? T .ash*         _cmdset #@
-#        ??x [TO] *          ./#@
+	r?? T .vashhist     _msg #@ Is not ash's program script
+	r?? T .vash*        _cmdset #@
+	r?? T *.rc          _cmdset #@
 # a.out ОС XENIX в SYSV выглядит как неопознанные данные...
 	??x [TOD] *     ./#@
 	--x [-] *       ./#@
-#       r?x d *		:cd #@
 #	r?? M *         mailx -f #@
 	r?? M *         mutt -f #@
 #        r?? D *.bat     vpix z:#@
@@ -68,3 +67,5 @@
 	r?? D *.bat     dos #@
 	r?? D *.com     dos #@
 	r?? D *.exe     dos #@
+
+#<<< std.open

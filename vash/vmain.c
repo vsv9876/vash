@@ -56,7 +56,7 @@ kbcod cod;
 	register char **pp;
 
 	if (cod == ' '
-	|| (oneitm && cod == KB_NL)
+	|| (vashflag.oneitm && cod == KB_NL)
 	|| (cod == '<')
 	|| (cod == '>')) {
 		pp = (char **)line->varl;
@@ -287,7 +287,7 @@ char *helpl;
 		/* нет сообщений и требуется нарисовать панель */
 		if ( !ok_msg() ) {
 			if ( keyreq ) {
-				keyshow(panelf);
+				keyshow(vashflag.panelf);
 				keyreq = 0;
 			}
 		}

@@ -28,9 +28,9 @@
 #VASH=l10pshcm
 #VASH=
 
-# library stuff of vash: 
+# library stuff of vash:
 #VASH_EXDIR=/usr/lib/vash
-#debug: 
+#debug:
 #VASH_EXDIR=$HOME/proj-ws/remix/vashlib/LIB
 #VASH_PATH=/home/user/.vash:/usr/lib/vash
 
@@ -70,7 +70,6 @@ if [ x${PAGER} = x ]; then
     #PAGER=/usr/local/bin/m $ script obsoleted
     PAGER=less
     export PAGER
-    
     LESS=-qmeXR
     export LESS
 fi
@@ -92,8 +91,9 @@ fi
 PS1='v> '; export PS1
 
 if [ x${VASH} = x ]; then
-    VASH=l10shwS
-    
+    #VASH=l10shwST
+    VASH=l8shwS
+
     # decoration on xterm window
     onxterm=0
     if [ x$DISPLAY != x ]; then
@@ -117,7 +117,7 @@ if [ x${VASH} = x ]; then
     console|linux|pc*|vs100*|AT386)
     	VASH=c$VASH
     esac
-    
+
     export VASH
 fi
 

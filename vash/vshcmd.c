@@ -163,7 +163,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		case KB_AU:
 			/* пред. команда */
 			/* синхронизировать историю, если в буфере набираемой команды пусто */
-			if (histsn && cmd0[0] == 0) cmdghist();
+			if (vashflag.histsn && cmd0[0] == 0) cmdghist();
 			if (!cmdprv(cmd0))
 				bell();
 
@@ -203,14 +203,14 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			/* сохранить команду, если ее редактировали */
 			if (cmd0cmp(cmd, cmd0, /*strlen*//*u8slen*/wcslen(cmd0)) != 0) {
 			/*if (strncmp(cmd, cmd0, strlenu8slenwcslen(cmd0)) != 0) {*/
-				if (histsn) {
+				if (vashflag.histsn) {
 					cmdghist();
 				}
 
 				wcsu8s(tmpstr, cmd0);
 				cmdput(tmpstr/*cmd0*/);
 
-				if (histsn) {
+				if (vashflag.histsn) {
 					cmdphist();
 				}
 				/* заставить при повт.запуске снова сохранять: */
@@ -279,9 +279,9 @@ std_shell:
 				/*w_str(tmpstr); cp_cret();*/
 #else
 				if (WIFEXITED(syscod)) {
-					sprintf(tmpstr, "[ exit code= %d ]", WEXITSTATUS(syscod));
+					sprintf(tmpstr, "[ exit= %d ]", WEXITSTATUS(syscod));
 				} else if (WIFSIGNALED(syscod)) {
-                    sprintf(tmpstr, "[ killed by signal= %d ]", WTERMSIG(syscod));
+                    sprintf(tmpstr, "[ signal= %d ]", WTERMSIG(syscod));
 #if VASH_NO_SUPPORT_JobControl
 				} else if (WIFSTOPPED(syscod)) {
                     sprintf(tmpstr, "[ stopped by signal %d ]", WSTOPSIG(syscod));
@@ -293,14 +293,14 @@ std_shell:
 			}
 			else {
 				if (okwait == 1) {
-#if 0
-					msgat = VEXT|VAR/*ATT*//*VEXT|MSE*//*HDR*/;
-					sprintf(tmpstr, "[ ok ]");
-#else
-					at_set(msgat = (CMD|INP));
-					sprintf(tmpstr, pmtsh);
-					/*w_str(tmpstr); cp_cret();*/
-#endif
+					if (vashflag.exittrap) {
+						msgat = VEXT|VAR/*ATT*//*VEXT|MSE*//*HDR*/;
+						sprintf(tmpstr, "[ ok ]");
+					} else {
+						at_set(msgat = (CMD | INP));
+						sprintf(tmpstr, pmtsh);
+						/*w_str(tmpstr); cp_cret();*/
+					}
 				}
 			}
 			cp_cret();
@@ -326,21 +326,43 @@ std_shell:
 						trapcod = 0;
 						break;
 					default:
-						if (cod == KB_NL || cod < ' ' || ISCTL(cod)) {
-							trapcod = 1;
+						if (vashflag.exittrap) {
+							if (cod == KB_NL || cod < ' ' || ISCTL(cod)) {
+								trapcod = 1;
+							}
+						} else {
+							if (/*cod == KB_NL || */cod < ' ' || ISCTL(cod)) {
+								trapcod = 1;
+							}
 						}
 						break;
 					}
-
-					at_set(atrib = HDR);
+					if ( ! vashflag.exittrap && cod == KB_NL) {
+						/*trapcod = 1;*/
+						syscod = 0; /* show exitcode only once */
+						at_set(CMD); er_eol(CMD);
+						w_str("\n");
+						at_set(msgat = (CMD|INP));
+						sprintf(tmpstr, pmtsh);
+					}
+#if 0
+					if (vashflag.exittrap) {
+						at_set(atrib = HDR);
+					}
+#endif
 					if (trapcod) {
-					  
-					  at_set(MSE); w_str(" -- please, type a command or click ");
-					  w_lh_str(":SP");
-					  at_set(MSE); w_str(" --              help: ");
-					  w_lh_str(":HE");
-					  /*at_set(TXT);*/
-					  er_eol(MSE);
+						at_set(MSE);
+						/*w_str(" please, type a command or click ");*/
+						w_str(" allowed: command or click ");
+						w_lh_str(":SP");
+						at_set(MSE);
+						w_str(" or ");
+						w_lh_str(":CA");
+						at_set(MSE);
+						w_str("               help: ");
+						w_lh_str(":HE");
+						/*at_set(TXT);*/
+						er_eol(MSE);
 					}
 					er_eop(CMD);
 					cp_cret(); /*w_str("\r");*/
@@ -354,7 +376,9 @@ std_shell:
 			cp_cret(); er_eop(TXT);
 			/* проверка завершения команды sh */
 			er_eol(CMD); fflush(vttout);
+
 			scrlnl();
+
 			showtime( 1 );          /* часы включить */
 
 			switch (cod) {

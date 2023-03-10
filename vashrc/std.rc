@@ -3,7 +3,7 @@
 # NOTE:shebang used only for auto syntax colorize by text editors
 #
 # Visual Assistant Shell (vash)
-# 1990-2020 (C) Sergey Vovk
+# 1990-2023 (C) Sergey Vovk
 #
 # MIT license
 #
@@ -38,9 +38,11 @@
     * * _cmdset std.rc
 
 # exit with no comfirmation
-:^D
-    * * ;exit
+#:^D
 :EX
+#    * * ;exit
+    * * exit
+
 :0
     * * exit
 

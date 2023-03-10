@@ -25,7 +25,7 @@
 #endif /* TINYSMALL */
 
 extern char *homedir;
-extern int histsn;
+/*extern int histsn;*/
 
 static  char    cmdbuf[CMDB+1];   /* БУФЕР КОМАНД */
 static  char   *cmdptr[CMDP+1];   /* КОМАНДЫ */
@@ -188,7 +188,7 @@ u8char_t *newcmd;
 #if 0
 	/* сначала синхронизация истории в файл? */
 	/* при каждом изменении истории команд!!! */
-	if (histsn == 1) cmdphist();
+	if (vashflag.histsn == 1) cmdphist();
 #endif
 	return(-1);
 }
@@ -242,9 +242,9 @@ wchar_t *cmd;
  *
  * NOTE:
  * assistant shell's history is not a full log of invoked commands like shell .history,
- * but a common cache shared by another vash session (in concurrent way if histsn != 0)
+ * but a common cache shared by another vash session (in concurrent way if vashflag.histsn != 0)
  *
- * this two routines called from main() on vash start and exit regardless of histsn value
+ * this two routines called from main() on vash start and exit regardless of vashflag.histsn value
  */
 
 /* history cache file*/
@@ -256,7 +256,7 @@ char *hfile = "/.ashhist";
  * read history file, in case:
  *  1) first time
  *  2) file modified since last reading
- * write history file (after every command, if histsn!=0)
+ * write history file (after every command, if vashflag.histsn!=0)
  * saving internal mark about st_mtime preventing useless read
  */
 
@@ -265,7 +265,7 @@ static time_t hflast = (time_t)0; /* zero for fisrt time comparizon */
 /*
  * get history from file into cmdb[] buffer
  *
- * if histsn==0 (syncronize history is disabled),
+ * if vashflag.histsn==0 (syncronize history is disabled),
  * do it once when program started
  *
  * returns 1, if get commands from history file
@@ -290,7 +290,7 @@ cmdghist()
 		return(0);
 	hftime = hfstat.st_mtime;
 
-	if (histsn == 0) {
+	if (vashflag.histsn == 0) {
 		if (hflast != 0) return(1);
 	}
 /*	if (hflast != 0 && hflast == hftime) return(1);*/
@@ -403,7 +403,7 @@ kbcod cod;
 			w_page(clm._vf, 0);
 */
 			/* синхронизировать историю при удалении каждой команды */
-			if (histsn) {
+			if (vashflag.histsn) {
 				cmdphist();
 			} /*else {
 				cp_set(-1, -14, ATT|INP);
@@ -542,7 +542,7 @@ wchar_t  *cmd0;
 	ret = 0;
 
 	/* сначала синхронизация истории из файла? */
-	if (histsn) {
+	if (vashflag.histsn) {
 		cmdghist();
 	}
 

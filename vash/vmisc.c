@@ -60,7 +60,7 @@ showtime(on)
 {
 	nxtjflag = on;
 #ifdef RETRO
-	if ( !on && clockf) {
+	if ( !on && vashflag.clockf) {
 		cp_set(1, lframe->maxco - 8, TXT);
 		fprintf(vttout, "%8.8s", "");
 	}
@@ -77,7 +77,7 @@ showclck()
 	struct tm *localtime();
 	char tmps[12] = "";
 
-	if (clockf) {
+	if (vashflag.clockf) {
 
 		time(&curtime);
 		if (curtime != prevtime) {
@@ -125,7 +125,7 @@ chckmail()
     char *mailbox;
     kbcod cod;
 
-    if (cmailf) {
+    if (vashflag.cmailf) {
 	if (!mailf2) return;
 
 	if ((mailbox = getenv("MAIL")) == (char *)0)
@@ -204,7 +204,7 @@ scrlnl()
 {
 	register int i;
 
-	if (scrolf) {
+	if (vashflag.scrolf) {
 		io_set(IO_TTYPE);
 		for (i = clm._y0; i < lframe->maxli; i++) {
 			putc('\n', stdout);
