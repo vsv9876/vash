@@ -348,27 +348,27 @@ char *str;      /* строка для ввода */
 int   size;     /* размер строки для ввода */
 {
 	kbcod cod;
-	LINE  pattl;
+	LINE  pmtline;
 	int   savedf;
 
-	pattl.size = size;
-	pattl.colu = strlen(pmtstr) + 1; /*3;*/
-	pattl.line = lframe->maxli - 1;
-	pattl.flag = 0;
-	pattl.attr = LVAR|INP;
+	pmtline.size = size;
+	pmtline.colu = strlen(pmtstr) + 1; /*3;*/
+	pmtline.line = lframe->maxli - 1;
+	pmtline.flag = 0;
+	pmtline.attr = LVAR|INP|PMT;
 	/*NOSTRICT*/
-	pattl.cvts = (char *)0;
+	pmtline.cvts = (char *)0;
 	/*NOSTRICT*/
-	pattl.cvtf = (void *)0;  /* тип указатель на функцию, возвр. int */
+	pmtline.cvtf = (void *)0;  /* тип указатель на функцию, возвр. int */
 	/*NOSTRICT*/
-	pattl.test = (void *)0;  /* тип указатель на функцию, возвр. int */
-	pattl.varl = str;
+	pmtline.test = (void *)0;  /* тип указатель на функцию, возвр. int */
+	pmtline.varl = str;
 
 	for ( ;; ) {
 		w_msg(TXT, pmtstr);
 		savedf = edinff;
 		/*edinff = 0;     /* не показывать состояние редактора */
-		cod = r_line(&pattl, 0);
+		cod = r_line(&pmtline, 0);
 		edinff = savedf;
 		switch (cod) {
 		default:
@@ -378,11 +378,6 @@ int   size;     /* размер строки для ввода */
 		case KB_EX:
 			return(cod);
 			break;
-/*
-		case KB_CA:
-			return(0);
-			break;
-*/
 		}
 	}
 }

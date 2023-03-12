@@ -7,7 +7,13 @@
   e2k: не открывается из профиля простой файл -f (обычно там команда)
     -- DOC/MAN
   + - man page vash.1 (en/ru)
-    ------------------------------------------------------------------------------
+! TAB expansion не работает для команд вида ../<TAB>
+
+!! # vgs
+File descriptor 3 (/dev/tty) leaked on vgs invocation. Parent PID 11891: vash
+File descriptor 4 (/tmp/ashQGy1TN) leaked on vgs invocation. Parent PID 11891: vash
+
+------------------------------------------------------------------------------
     
     -- LINLIB, VHSET, 
 
@@ -15,12 +21,18 @@
     +- поддержка панелей - спец.версии cp_set,at_set,w_panel
     
  + -- редактор строки должен уметь редактировать "бесконечные" строки в ограниченном окне линии -
+    +- UTF-8: implement wcwidth() into editors r_line(),e_str()
+
+    +- флаги управления режимами переделать на структуру или массив
  
  +  -- ANSI Color SGR 8/16
     ++ навести порядок vhset с нулевой страницей настройки (основные клавиши) -
 	    // 4 кнопки стрелок переопределять _никогда_ не требуется
     ++ синонимы клавишных команд (сейчас спрятаны)
     ++ новые страницы справки HELP PAGES rewrite/reduce
+   +- color16 support (see MEMO in WISHES)
+   	-- add rendering for 90-97 and 100-107 SGR codes
+   	-- add 2 rows of flags in visual attributes page in vhset 
 
     + line.h: INP(LPA) -
 	пересмотреть концепцию второго ряда логических атрибутов (для ввода) -
@@ -32,7 +44,10 @@
 
     -- VASH:
   + trap like on <Enter> for all Ctrl-* including Ctrl-C
- 
+  *>  - refactoring: convert single flags into array or structure
+  *>  - history, history search:
+	+- simple pattern via menu (highlight, select) 
+
   +  - оптимизация файлов настройки (директива include?)
  ++ VAPATH,VEXDIR like PATH
 

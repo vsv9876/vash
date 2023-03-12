@@ -1,26 +1,22 @@
 ---LINES
 ---SCREEN
-=video attributes setup
+=video attributes help
 
-  Settings mode (color,monochrome,...) may be changed pressing .'0 .'1 .'2
-
-  .:SP... or key .:DE... changes an attribute value in set "w" or "r"
-
-  .'w or .'o selects /set "w"/		.:KI... switches keyboard input
-  .'r or .'i selects /set "r"/		 between /set "w"/ or /set "r"/
-
-* /set "w"/ (write, output) is used when line is shown
-* /set "r"/ (read, input) is used when line is pointed by cursor (active)
-
-." logical type of *lines* : "....................
-    CMD - initial text mode (restored on exit)
-    TXT - comment and labels before active lines
-    HDR - header
-    VAR - editable text or number (variables)
-    ALT - selector or alterator
-    MSE - menu selection point
-    ERR - error message text
-    ATT - warning or attention message
-
+  /set "w"/ (write, output) is used when lines is shown
+  /set "r"/ (read, input) is used when line is pointed by cursor (is active)
+                            
+  change an value:          
+               .:SP...      
+               .:DE...      ." logical type of lines : "................  
+  change focus of input:      CMD - initial text mode (restored on exit)  
+  switch w/r : .:KI....       TXT - text                                  
+     set "w" : .'w or .'o     HDR - header                              
+     set "r" : .'r or .'i     VAR - variable                              
+                              ALT - alteratorction point                  
+  change settings mode:       MSE - menu selection point                  
+          .'0 .'1 .'2 .'3     ERR - error message                       
+                              ATT - attention (warning message)         
+                           
+                           
 ---END
 * line is a thing which links data and representation in variety of aspects

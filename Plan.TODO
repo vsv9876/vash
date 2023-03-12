@@ -1,16 +1,10 @@
 
 BUGS/FIX
 
-! TAB expansion не работает для команд вида ../<TAB>
-
 !! - не сбрасываются переназначения > < при перечитывании основного меню,
   сейчас только после выполнения команды!!
 
 ! -- лишнее перечитывание главного меню, например std_help.rc (но третий раз не перечитывает) 
-
-!! # vgs
-File descriptor 3 (/dev/tty) leaked on vgs invocation. Parent PID 11891: vash
-File descriptor 4 (/tmp/ashQGy1TN) leaked on vgs invocation. Parent PID 11891: vash
 
 DOC/MAN
     ------------------------------------------------------------------------------
@@ -21,39 +15,42 @@ LINLIB, VHSET,
 
     -- статусная строка (трей приложения)
 	
-    -- UTF-8: implement wcwidth() into editors r_line(),e_str()
-
     -- r_key(): correct input for non-unicode 8-bit encodings
+    
+    -- support for ^U ^W - erase all, erase word
+    
+  -- support for wsobj_t in r_line/w_line
  
-    -- флаги управления режимами переделать на структуру или массив
     
  >>-- BUG: строка strobj_t обрезается на старте редактирования команды
    -- редактор "бесконечныx" строк в ограниченном окне -
             //- r_line(), line.h, vcc/vlbp -- интегрировать
-	    //+ e_str/w_str: контроль границ буфера строки (4K bytes) -- реализован
-
-   -- color16 support (see MEMO in WISHES)
-   	-- add rendering for 90-97 and 100-107 SGR codes
-   	-- add 2 rows of flags in visual attributes page in vhset 
+	    //+ e_str/w_str: контроль границ буфера строки (4K> bytes) -- реализован
 
 LBP+VCC/VLBP
 
-    -- добавить атрибуты LBP до полного набора (для раскраски страниц help минимум)
+    -- добавить атрибуты LBP до полного набора атрибутов (для раскраски страниц help минимум)
    >-- filler character must be [~_#], not limited by [.]
+   >-- wcwidth > 1 support for ---SCREEN section
 
     ------------------------------------------------------------------------------
 
 VASH:
-*>  - refactoring: convert single flags into array or structure
     - setup flag: mask ExCI for ;: variants of execution
     - setup flag: sh -c only 
     
     -- list main menu with PgUp/PgDown/Home/End
 
+    -- substitution #@ on manual editing cmd
+    
 *>  - history, history search:
-	-- simple pattern via menu and ^R (highlight, select) 
+	-- simple pattern via ^R (highlight, select) 
 	-- rename .ashhist to .history.vash
 		-- store format 'timestamp,usageCount,protected,cmd'
 
- *  -+?- export vash flags changed in setup, on execve() with VASH= environment
+*  -+?- export vash flags changed in setup, on execve() with VASH= environment
 
+* completion support
+    -- man
+    -- make
+    
