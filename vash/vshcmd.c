@@ -351,18 +351,19 @@ std_shell:
 					}
 #endif
 					if (trapcod) {
-						at_set(MSE);
-						/*w_str(" please, type a command or click ");*/
-						w_str(" allowed: command or click ");
-						w_lh_str(":SP");
-						at_set(MSE);
-						w_str(" or ");
-						w_lh_str(":CA");
-						at_set(MSE);
-						w_str("               help: ");
-						w_lh_str(":HE");
-						/*at_set(TXT);*/
-						er_eol(MSE);
+						if (vashflag.novice) {
+							at_set(MSE);
+							w_str(" main view: click ");
+							w_lh_str(":SP");
+							at_set(MSE);
+							w_str(" or ");
+							w_lh_str(":CA");
+							at_set(MSE);
+							w_str("               help: ");
+							w_lh_str(":HE");
+							/*at_set(TXT);*/
+							er_eol(MSE);
+						}
 					}
 					er_eop(CMD);
 					cp_cret(); /*w_str("\r");*/
