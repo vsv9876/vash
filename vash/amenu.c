@@ -115,12 +115,17 @@ kbcod cod;
 			clm._itmofs -= clm._ofsy;   break;
 		case KB_AR:
 			clm._itmofs += clm._ofsx;
-if (clm._xx > 1 && clm._itmofs >= (((clm._itmmax / clm._ofsy) - (clm._ofsx / clm._ofsy)) * clm._ofsy))
-	clm._itmofs = ((clm._itmmax / clm._ofsy) - (clm._ofsx / clm._ofsy)) * clm._ofsy;
+			if (clm._xx > 1
+					&& clm._itmofs
+							>= (((clm._itmmax / clm._ofsy)
+									- (clm._ofsx / clm._ofsy)) * clm._ofsy))
+				clm._itmofs = ((clm._itmmax / clm._ofsy)
+						- (clm._ofsx / clm._ofsy)) * clm._ofsy;
 			break;
 		case KB_AD:
 		case ' ':
-			clm._itmofs += clm._ofsy;   break;
+			clm._itmofs += clm._ofsy;
+			break;
 		}
 		clm._itm = itmr;     /* ВОССТАНОВИТЬ ВНЕШ. */
 		clritm();

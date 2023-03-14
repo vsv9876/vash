@@ -313,10 +313,8 @@ char *helpl;
 			itmshow(); w_page(clm._vf, 0);
 			keyreq = 1;
 			break;
-		case KB_AD:
-		case KB_AR:
-		case KB_AL:
-		case KB_AU:
+		case KB_KH: case KB_KE: case KB_PU: case KB_PD:
+		case KB_AD: case KB_AR: case KB_AL: case KB_AU:
 			i = itmadj(cod);
 			break;
 			/* не встроенная команда, надо интерпретировать */

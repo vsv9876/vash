@@ -358,9 +358,11 @@ int    *posp;                /* cursor position during edit process */
 
 	/* navigate to next read position on the page */
 	switch( cod ) {
+	case KB_PU :
 	case KB_KH :
 		lni = fnd_home(lni, page);
 		break;
+	case KB_PD :
 	case KB_KE :
 		lni = fnd_end(lni, page);
 		break;

@@ -322,8 +322,11 @@ std_shell:
 					case KB_AL:
 					case KB_AR:
 					case KB_CA:
-					/*case KB_EX:*/
 						trapcod = 0;
+						break;
+					case KB_EX:
+						scrlnl();
+						onexit(0); exit(0);
 						break;
 					default:
 						if (vashflag.exittrap) {
@@ -339,9 +342,13 @@ std_shell:
 					}
 					if ( ! vashflag.exittrap && cod == KB_NL) {
 						/*trapcod = 1;*/
-						syscod = 0; /* show exitcode only once */
+						if (syscod) {
+							w_str("\r");
+							syscod = 0; /* show exitcode only once */
+						} else {
+							w_str("\n");
+						}
 						at_set(CMD); er_eol(CMD);
-						w_str("\n");
 						at_set(msgat = (CMD|INP));
 						sprintf(tmpstr, pmtsh);
 					}
@@ -410,10 +417,15 @@ std_shell:
 
 		case KB_CA:
 		case KB_EX:
+			if ( ! cmd0[0] ) {
+				if (cmdrun)
+					scrlst();
+				onexit(0); exit(0);
+			}
 			w_msg(TXT, " ");
 			w_msg(TXT, "");
 			if (cmdrun) {
-				scrlst(); return(1);
+				scrlnl(); return(1);
 			}
 			return(0);      /* ничего не сделано */
 			/*break;*/
