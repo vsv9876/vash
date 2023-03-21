@@ -76,6 +76,7 @@ int v;
 	for (i = 0; wc_iv[i] != v; i++);
 	return(i);
 }
+#define WSHOW_INFO_CO (WSHOW_CO - 10)
 
 static edinfo( infflg )
 register int infflg;
@@ -89,7 +90,7 @@ register int infflg;
 	cp_set(lframe->maxli - INF_LI, lframe->maxco - 8, TXT);
 	er_eol(TXT);
 */
-	cp_set(WSHOW_LI, WSHOW_CO, WSHOW_AT); /*er_eol(WSHOW_AT);*/
+	cp_set(WSHOW_LI, WSHOW_INFO_CO, WSHOW_AT); /*er_eol(WSHOW_AT);*/
 	if ( infflg ) {
 		s = inf_new;
 		if (Nshift == 0) { s[0] = ' ';
@@ -114,8 +115,9 @@ register int infflg;
 			w_str(inf_new);
 		}
 	} else {
-		cp_set(WSHOW_LI, WSHOW_CO, TXT);
-		er_eol(TXT);
+		cp_set(WSHOW_LI, WSHOW_INFO_CO, TXT);
+		/*er_eol(TXT);*/
+		w_str("      ");
 	}
 #ifndef CP_SAV
 	cp_fet();
