@@ -341,9 +341,10 @@ std_shell:
 						break;
 					}
 					if ( ! vashflag.exittrap && cod == KB_NL) {
+						er_eol(CMD);
 						/*trapcod = 1;*/
 						if (syscod) {
-							w_str("\r");
+							cp_cret()/*w_str("\r")*/;
 							syscod = 0; /* show exitcode only once */
 						} else {
 							w_str("\n");
