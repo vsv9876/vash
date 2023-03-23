@@ -491,7 +491,7 @@ char *fname;
 		case S_IFLNK:   ftype = '@'; break;
 #endif
 #if defined(S_IFIFO)
-		case S_IFIFO:   ftype = '='; break;
+		case S_IFIFO:   ftype = '|'/*'='*/; break;
 #endif
 		case S_IFCHR:   ftype = '"'; break;
 		case S_IFBLK:   ftype = ':'; break;
@@ -501,6 +501,9 @@ char *fname;
 				ftype = '*';
 			else    ftype = ' ';
 			break;
+#if defined(S_IFSOCK)
+		case S_IFSOCK:  ftype = '='; break;
+#endif
 		default:        ftype = '?'; break;
 		}
 	} else {
