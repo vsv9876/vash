@@ -136,7 +136,7 @@ char *str;
 	}
 	else if ( *mod == 'r' && cod == ' ' ) {
 		cp_set(line->line, line->colu, ATT|INP);
-		w_strn("<?>", line->size);
+		w_strn(">>>", line->size);
 
 		w_msg(ATT|VEXT, "Please, press key to be assigned...");
 		tmpcod = r_key();

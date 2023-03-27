@@ -24,6 +24,7 @@ c       = ia    -       onoff   cvt_a   -       cF
 m       = ia    -       onoff   cvt_a   -       mF
 x       = ia    -       onoff   cvt_a   -       xF
 XT      = ia    -       onoff   cvt_a   -       xT
+N       = ia    -       onoff   cvt_a   -       NF
 
 ---#u8nopa  = ia    -       onoff   cvt_a   -       u8nopa
 u8      = ia    -       onoff   cvt_a   -       u8nopa
@@ -52,10 +53,10 @@ C       = ipv    -      "%1d"  -       -       SGR
 
 +max .ym. lines      .h. h,history   .s. s,scroll        .F1 anyway sh -c
 +                    .S. S,sync      .p. p,panel/keybar  .u8 only ASCII KBD
-+    .lli:lmaxli     .m. m,mail_biff .w. w,title         .XT exit trap mode      
-+    .bli:baseli     .c. c,clock     .x. x,xterm title
++    .lli:lmaxli     .m. m,mail_biff .w. w,title         .XT trap on exit
++    .bli:baseli     .c. c,clock     .x. x,xterm title   .N. help msg on trap
                                                                
- ."debug of profiles                                        ".      maxli: .li  
+ ."debug of profiles".                                              maxli: .li  
 +--  .fs......................................................      maxco: .co 
 +-@  .rs......................................................     y0_top: .yt
 +-i  .is......................................................         y0: .y0

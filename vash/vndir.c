@@ -1,4 +1,5 @@
 #include <stdlib.h>
+/*#define _GNU_SOURCE 1*/
 #include <string.h>
 #include <stdio.h>
 #include <ediag.h>
@@ -38,12 +39,12 @@
 #include "assist.h"
 #include "astat.h"
 
+/*#define w_emsg w_amsg*/
+
 #ifdef RETRO
 extern  char  Crepf[];
 extern  char  Cfill[];
 #endif
-
-#define ITMCNM 255      /* must be in "assist.h" */
 
 /*NOXSTR*/
 char    itmcnm[ITMCNM+1] =      /* Current item's name (saved) */
@@ -154,6 +155,9 @@ char *fname;            /* имя файла из меню */
 	    switch(mode & S_IFMT) {
 #if defined(S_IFLNK)
 	    case S_IFLNK:   ftype = 'l'; break;
+#endif
+#if defined(S_IFSOCK)
+		case S_IFSOCK:  ftype = 's'; break;
 #endif
 #if defined(S_IFIFO)
 	    case S_IFIFO:   ftype = 'p'; break;
@@ -268,7 +272,23 @@ register char **p2;
 	return(strcmp( (*p1)+2, (*p2)+2));
 }
 
-vls()
+int
+vscomp(p1, p2)
+register char **p1;
+register char **p2;
+{
+	/* version comparison */
+	return(strverscmp( (*p1)+2, (*p2)+2));
+}
+
+/* common flags like for ls() */
+static int     Lflag;  /* ФЛАГ: НЕ РАЗЛИЧАТЬ СИМВ. ССЫЛКИ */
+static int     Fflag;  /* ФЛАГ: ПОКАЗЫВАТЬ ТИП ФАЙЛА */
+static int     aflag;  /* флаг: показывать все файлы */
+static int     vflag;  /* флаг: сортировать по версиям */
+static int     fflag;  /* флаг: не сортировать */
+
+int vls()
 /*
  * ВСТРОЕННАЯ КОМАНДА ls.
  * посчитать пункты, определить макс. длину пункта
@@ -282,11 +302,11 @@ vls()
 #endif
     register char *itmbp;
     short len;
-    int     aflag;  /* флаг: показывать все файлы */
+    /*int     aflag;*/  /* флаг: показывать все файлы */
     char    *fname;
 
-    aflag = 0;
-    if (index(Cfill, 'a')) aflag = 1;
+    /*aflag = 0;
+    if (index(Cfill, 'a')) aflag = 1;*/
 
     len = clm._itmlen = clm._itmmax = 0;
     clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
@@ -307,8 +327,7 @@ vls()
 			continue;
 
 		if (&clm._itmbuf[clm._itmbsz] <= &itmbp[len]) {
-			w_emsg(ediag("No mem for all menu items",
-				     "Нет места для всех пунктов меню"));
+			w_emsg("No mem for all menu items");
 			break;
 		}
 		fname = dp->d_name;
@@ -332,7 +351,7 @@ vls()
         closedir(dirp);
     }
     else {
-	return(1); /* ERROR filling main menu */
+    	return(1); /* ERROR filling main menu */
     }
     *itmbp++ = '\0';
     if (clm._itmmax == 0) {
@@ -344,17 +363,23 @@ vls()
     clm._itmlen++;
 /*  w_str("sort..."); fflush(vttout);
  */
-    qsort(clm._itms, clm._itmmax, sizeof(char *), scomp);
+    if ( ! fflag ) {
+    	if (vflag)
+        	qsort(clm._itms, clm._itmmax, sizeof(char *), vscomp);
+    	else
+    		qsort(clm._itms, clm._itmmax, sizeof(char *), scomp);
+    }
 /*  w_str("done"); fflush(vttout);
  */
     return(0);  /* OK */
 }
 
-vcat()
 /*
  * встроенная команда (аналог cat), понимает vapath
  * сделана копипастой из vls()
  */
+int vcat(file)
+char *file;
 {
 	FILE *fp;
 	int ch;
@@ -363,7 +388,7 @@ vcat()
     size_t len;
 
     unsigned char    *fname; /* item name, from main menu */
-    char	*file; /* name of file to be read */
+    /*char	*file;*/ /* name of file to be read */
     char    *s;
     char   itmname[4*STRBUF]; /**/
     char  *ip;
@@ -375,12 +400,12 @@ vcat()
     *itmbp++ = ' '; /* 1st placeholder */
 
 
-    file = &Cfill[1];
+    /*file = &Cfill[1];*/
     while(*file != '\0' && *file == ' ') {/*найти имя файла в Cfill после ключа '_'*/
     	file++;
     }
     s = file;
-    while(*s != '\0' && *s > ' ') {/*trip string tailing garbage */
+    while(*s != '\0' && *s > ' ') {/*strip a string tailing garbage */
     	s++;
     }
     *s = '\0';
@@ -440,19 +465,9 @@ char *fname;
  * returns one symbol (sorry, cast to char/wchar)
  */
 {
-    int     Lflag;  /* ФЛАГ: НЕ РАЗЛИЧАТЬ СИМВ. ССЫЛКИ */
-    int     Fflag;  /* ФЛАГ: ПОКАЗЫВАТЬ ТИП ФАЙЛА */
-    int     aflag;  /* флаг: показывать все файлы */
     struct  stat sb;
     char    ftype;  /* СИМВОЛ ТИПА ФАЙЛА */
     int     ok;
-
-    Lflag = Fflag = aflag = 0;
-    if (index(Cfill, 'F')) Fflag = 1;
-#if defined(S_IFLNK)
-    if (index(Cfill, 'L')) Lflag = 1;
-#endif
-    if (index(Cfill, 'a')) aflag = 1;
 
 	/* определить тип файла */
 #if defined(S_IFLNK)
@@ -474,12 +489,10 @@ char *fname;
 				if (!Lflag) {
 #if defined (S_IFLNK)
 					if (lstat(fname, &sb) < 0) {
-						   w_emsg("Can't stat:");
-						   w_str(fname);
+						   w_emsg("lstat() error on: "); w_str(fname);
 					}
 #else
-					w_emsg("Can't stat:");
-					w_str(fname);
+					w_emsg("stat() error on: "); w_str(fname);
 #endif
 				}
 			}
@@ -524,12 +537,12 @@ vlstag() {
 
 	/*hint: do it Crepf[] points to directory, so items are files */
 	if (Crepf[0] != '\0') {
-		for(i=0; i<clm._itmmax; i++) {
+		for (i = 0; i < clm._itmmax; i++) {
 			fname = &clm._itms[i][2]; /* file name there */
 
 			s = clm._itms[i];
 			/*type of file symbol placed there*/
-			s[1] = (char)vlstype(fname);
+			s[1] = (char) vlstype(fname);
 		}
 	}
 }
@@ -778,6 +791,10 @@ cwdshow()
  * Заполнить главное меню.
  * Команда для заполнения указана в Cfill,
  * если нач. с ':', значит встроенная команда ls.
+ * ПЕРЕСМОТРЕНО в 2023:
+ * если нач. с ':' или '-', то выполняется мвркировка типа файла
+ * если после ':' есть только флаги, выполняется встроенная команда ls
+ *
  * Если реперный файл не указан, внешняя команда заполнения
  * выполняется всегда.
  *
@@ -790,9 +807,12 @@ int newflag;    /* если 0, то только обновить каталог
 	struct  stat newstat;
 	FILE *fpls;
 	int samedir;    /* ФЛАГ: ТОТ ЖЕ КАТАЛОГ */
-	char tmpbuf[120]; /* for substitution in Cfill */
+	char *p;		/**/
+	int  fpopen = 1; /* extra command required flag */
+	char tmpbuf[ITMCNM+2]; /* for substitution in Cfill */
 
-	if (Crepf[0] == '\0' && Cfill[0] != ':' && Cfill[0] != '_') {
+	/*samedir = 1;*/
+	if (Crepf[0] == '\0' /*&& Cfill[0] != ':' && Cfill[0] != '-'*/) {
 		samedir = 0;
 		/*
 		 * надо отключить оптимизацию
@@ -802,10 +822,10 @@ int newflag;    /* если 0, то только обновить каталог
 	}
 	else {
 		stat(Crepf, &newstat);
-		/* надо бы добавить проверку на отсутствие ошибок stat... */
+		/* надо бы добавить проверку на отсутствие ошибок stat()... */
 
 		samedir = (cwdstat.st_dev   == newstat.st_dev
-			&& cwdstat.st_ino   == newstat.st_ino);
+				&& cwdstat.st_ino   == newstat.st_ino);
 
 		if (newflag == 0)
 			if (cwdstat.st_mtime == newstat.st_mtime && samedir) {
@@ -838,53 +858,72 @@ int newflag;    /* если 0, то только обновить каталог
 	if (fil_first) {
 		fil_first = 0;
 	} else {
-		w_msg(TXT, Cfill); fflush(vttout);
+		w_msg(TXT, Cfill); w_str(" -- "); fflush(vttout);
 	}
 
-	if (Cfill[0] == ':') { /* ВСТРОЕННАЯ КОМАНДА */
-	    if ( vls() ) {        /* ВСТРОЕННАЯ КОМАНДА */
-			w_emsg("vls() failed - cannot read '.'");
+	/* флаги ls (для встроенной и для внешней команды) */
+    Lflag = Fflag = aflag = vflag = fflag = 0;
+
+    p = Cfill;
+    if(*p == '<') { /* список в файле по пути vapath */
+		if ( vcat(&p[1]) ) { /* возвращает 0, если все хорошо */
+			w_emsg(&p[1]); w_str(": vcat() failed");
 			return(0);
+		}
+		fpopen = 0;
+	}
+	else if (*p == ':' || *p == '-') {
+	    for (p = &Cfill[1]; *p != '\0' && *p != ' '; p++) {
+	    	switch(*p) {
+	    	case 'F': Fflag = 1; break;
+#if defined(S_IFLNK)
+	    	case 'L': Lflag = 1; break;
+#endif
+	    	case 'a': aflag = 1; break;
+	    	case 'v': vflag = 1; break;
+	    	case 'f': fflag = 1; break;
+	    	default:
+	    		w_emsg("Cfill: flag unsupported: '");
+	    		w_chr(*p); w_chr('\'');
+	    		return(0);
+	    		break;
+	    	}
+	    	continue;
+	    }
+	    if (NULL == strchr(Cfill, ' ')) {
+	    	fpopen = 0;
+	    	if ( vls() ) {        /* ВСТРОЕННАЯ КОМАНДА */
+	    		w_emsg(Cfill); w_str(" -- vls() failed");
+	    		return(0);
+	    	}
+	    } else {
+	    	p = strchr(Cfill, ' ');
+	    	p++;
 	    }
 	}
-/*
-	else if(Cfill[0] == '_') { целый набор встроенных команд
-		if ( vcat() ) {  возвращает 0, если все хорошо
-			w_emsg("vcat() failed");
-			return(0);
-		}
-	}
-*/
-	else if(Cfill[0] == '<') { /* список в файле по пути vapath */
-		if ( vcat() ) { /* возвращает 0, если все хорошо */
-			w_emsg("vcat() failed");
-			return(0);
-		}
-	}
-	else {
-		/*TODO substitution */
-		cmdsub(tmpbuf, Cfill, 0, 0);
+    if (fpopen) {
+    	/*TODO substitution */
+		cmdsub(tmpbuf, p, 0, 0);
 		/*NOSTRICT*/
-		if (Cfill[0] == '\0'
-		||  (fpls = popen(tmpbuf, "r")) == NULL) {
-			cp_set(-1, 0, ERR);
-			io_set(IO_TTYPE);
-			fprintf(vttout, "\n"); fflush(vttout);
-			fprintf(stderr,
-	"\nFill vf failed ('%s')\n", tmpbuf);/*Cfill);*/
-			perror(Cfill);
-			fatal();
+		if (/*Cfill[0] == '\0' ||*/ (fpls = popen(tmpbuf, "r")) == NULL) {
+			w_emsg(p); w_str(" -- command failed: ");
+			w_str(tmpbuf);
+			return(0);
+		}
+		if (Cfill[0] == '_') {
+			/*TODO: читать заголовок из команды (1st string)*/
 		}
 		vfread(fpls);   /* ВНЕШНЯЯ КОМАНДА */
 		pclose(fpls);
 	}
 	w_emsg("");
 
-	vlstag();
+	vlstag();		/* маркировать файлы подобно ls -F */
 
 	itmini();       /* ПОСЧИТАТЬ ГАБАРИТЫ МЕНЮ */
 	itmrestor();
-	pre_vf();       /* СОЗДАТЬ СТРАНИЦУ LINLIB ДЛЯ МЕНЮ */
+	pre_vf();       /* create main view page in initial state
+					СОЗДАТЬ СТРАНИЦУ LINLIB ДЛЯ МЕНЮ */
 	return(1);
 }
 
@@ -917,14 +956,11 @@ char *cdarg;
 	dcanon(nwdpath);        /* canonicalize new path */
 
 	if (access(nwdpath, R_OK|X_OK)) {
-		w_emsg("directory unaccessible:");
-		w_str(nwdpath);
+		w_emsg("access error: "); w_str(nwdpath);
 		return(-1);
 	}
 	if (chdir(nwdpath) < 0) {
-		w_emsg(
-		"Can't chdir to ");
-		w_str(nwdpath);
+		w_emsg("Can't chdir() to "); w_str(nwdpath);
 		return(-1);
 	}
 	strcpy(lwdpath, cwdpath);

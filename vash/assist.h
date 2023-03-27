@@ -15,12 +15,14 @@
 #define ITMMAX  400     /* Макс. количество пунктов меню */
 #define ITMLEN  16      /* Длина строки пункта меню */
 #define ITMBUF  2048    /* Размер буфера текста меню по умолчанию */
+#define ITMCNM 255      /* must be in "assist.h" */
 
 #else
 	/* normal 64/32-bit commputers */
 #define ITMMAX  120000     /* Макс. количество пунктов меню */
 #define ITMLEN  MAXLICO /*16      /* Длина строки пункта меню */
 #define ITMBUF  MAXLICO * ITMMAX /* 16384   /* Размер буфера текста меню по умолчанию */
+#define ITMCNM 2048      /* must be in "assist.h" */
 
 #endif
 /*#define BEGLI 11        /* ПЕРВАЯ СТРОКА МЕНЮ НА ЭКРАНЕ (???) */

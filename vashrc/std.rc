@@ -24,8 +24,8 @@
 -9setup
 -0exit
 
--f:Fa
-#-fF=a ls -a
+-f:Fv
+#-f:F 2>/dev/null ls -vd .. *
 -i.
 -o.
 -@

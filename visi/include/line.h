@@ -334,7 +334,7 @@ extern  int     w_line(), w_page();
 /* lin(4) - функции уровня пользователя */
 extern  int     cvt_a(), cvt_s(), cvt_sp(), cvt_lh(), get_lh(), w_lh_str(), cvt_hl(), tst_m();
 
-extern  int     w_msg(), w_emsg(), w_help(), u_page(), d_page();
+extern  int     w_msg(), w_emsg(), w_amsg(), w_help(), u_page(), d_page();
 extern  LINE	*b_page();
 extern FILE     *dafopen();
 
