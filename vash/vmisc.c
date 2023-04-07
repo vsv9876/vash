@@ -205,6 +205,7 @@ scrlnl()
 	register int i;
 
 	if (vashflag.scrolf) {
+		/*at_set(CMD); */er_eop(CMD);
 		io_set(IO_TTYPE);
 		for (i = clm._y0; i < lframe->maxli; i++) {
 			putc('\n', stdout);

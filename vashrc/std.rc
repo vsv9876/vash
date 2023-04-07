@@ -33,9 +33,12 @@
 @std.mark
 @std.cmd
 
-# read a profile (ex this one), for debug
-:KI
+# read a profile (ex this one)
+:[~]
     * * _cmdset std.rc
+
+:[`]
+    * * _cmdset ls-av
 
 # exit with no comfirmation
 #:^D

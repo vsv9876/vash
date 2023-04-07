@@ -242,7 +242,7 @@ char **argv;
 		}
 	}
 
-	Cfill = malloc(4096); /* TODO constant in assist.h */
+	Cfill = malloc(CFILL_MAX);
 	if (Cfill != NULL) {
 		*Cfill = ':';
 		*Cfill = '\0';

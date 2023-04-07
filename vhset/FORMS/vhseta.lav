@@ -2,21 +2,19 @@
 ---SCREEN
 =video attributes help
 
-  /set "w"/ (write, output) is used when lines is shown
-  /set "r"/ (read, input) is used when line is pointed by cursor (is active)
-                            
-  change an value:          
-               .:SP...      
-               .:DE...      ." logical type of lines : "................  
-  change focus of input:      CMD - initial text mode (restored on exit)  
-  switch w/r : .:KI....       TXT - text                                  
-     set "w" : .'w or .'o     HDR - header                              
-     set "r" : .'r or .'i     VAR - variable                              
-                              ALT - alteratorction point                  
-  change settings mode:       MSE - menu selection point                  
-          .'0 .'1 .'2 .'3     ERR - error message                       
-                              ATT - attention (warning message)         
-                           
-                           
+  change an value:              ." logical type of lines : "................
+               .:SP...            CMD - initial text mode (restored on exit)
+               .:DE...            TXT - text                                
+                                  HDR - header                              
+  change focus of input:          VAR - variable                            
+  switch w/r : .:KI....           ALT - alterator
+     set "w" : .'w or .'o         MSE - menu selection point                
+     set "r" : .'r or .'i         ERR - error message                       
+                                  ATT - attention (warning message)         
+  change setting s mode:          
+          .'0 .'1 .'2 .'3         /set "w"/
+                                            is used when write lines
+                                  /set "r"/ 
+                                            is applied on active line 
 ---END
 * line is a thing which links data and representation in variety of aspects

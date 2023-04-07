@@ -24,6 +24,7 @@ PROFILES        = \
 		rpm \
 		ps \
 		ll \
+		ls-av \
 		menu \
 		misc \
 		compr

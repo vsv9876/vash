@@ -382,7 +382,7 @@ std_shell:
 				cp_cret(); /*w_str("\r");*/
 				at_set(CMD);
 			}
-			cp_cret(); er_eop(TXT);
+			cp_cret(); /*er_eop(TXT);*/
 			/* проверка завершения команды sh */
 			er_eol(CMD); fflush(vttout);
 
@@ -416,13 +416,15 @@ std_shell:
 				/*break;*/
 			}       /* финал проверки завершения команды sh */
 
-		case KB_CA:
+		/*case KB_CA:*/
 		case KB_EX:
 			if ( ! cmd0[0] ) {
 				if (cmdrun)
 					scrlst();
 				onexit(0); exit(0);
 			}
+			/*NO BREAK*/
+		case KB_CA:
 			w_msg(TXT, " ");
 			w_msg(TXT, "");
 			if (cmdrun) {

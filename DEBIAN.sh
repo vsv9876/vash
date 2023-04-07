@@ -5,16 +5,23 @@
 # only fakeroot and dpkg requred
 
 BLDCFG=BLD.cfg
-
+BUILD=`pwd`/BLD
 arch=`dpkg --print-architecture`
 
 make distclean
 ./configure
 make
-make DESTDIR=`pwd`/BLD install
+make DESTDIR=${BUILD} install
 
 # install configs
-cp -rp etc `pwd`/BLD
+cp -rp etc ${BUILD}
+
+# install docs and manuals
+mkdir -p 	 ${BUILD}/usr/share/doc/vash
+cp -rp ./LICENSE ${BUILD}/usr/share/doc/vash
+mkdir -p 	${BUILD}/usr/share/man/man1
+cp -rp ./vash.1 ${BUILD}/usr/share/man/man1
+gzip 		${BUILD}/usr/share/man/man1/*
 
 #cp -rp DEBIAN/ BLD
 set -x

@@ -101,6 +101,7 @@ char *cmdlbl;   /* вывеска для показа вместо выполн�
 	/* первоначальный показ на экране */
 	cp_set(clm._y0, 0, TXT);
 	er_eop(TXT);
+	cwdshow();
 	itmshow();
 	w_page(clm._vf, 0);
 
