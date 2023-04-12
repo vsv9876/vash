@@ -1,0 +1,8 @@
+#!/usr/bin/vash
+#
+# long listing as main menu
+#
+
+@std.rc
+-1!ls-av
+-f:Fav
