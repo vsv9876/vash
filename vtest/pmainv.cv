@@ -19,11 +19,14 @@ static char fmti[10] = "%d";
 
 ---PAGE linem
 ---LINES
-m_exit  = ipm      -   -    mkexit  tst_m    " quit "
+m_exit      = ipm      -   -    mkexit  tst_m    " quit "
 ---#e_tst1  = ipm      -   "7"  e_tst   m_test   " edit1 "
 ---#e_tst2  = ipm      -   "18" e_tst   m_test   " edit2 "
 e_tst1      = ipm      -   dim1 e_tst   m_test   " edit1 "
 e_tst2      = ipm      -   dim2 e_tst   m_test   " edit2 "
+
+o_tst1      = iv      -   -    -       -   &wcso
+
 d1      = ipv   -   -           -       -   dim1
 d2      = ipv   -   -           -       -   dim2
 
@@ -63,6 +66,7 @@ s_vi	= ipv   -   fmti        -       -   &vi
  str_raw           .s_raw.               .'?/     show str object
  str_var           .s_var..              .'|\     dump str with byte hex
  str_tst           .s_tst...             
+                   .o_tst1.........     
        width1= .d1 .e_tst1.......        .'"'     e_str(3)
        width2= .d2 .e_tst2.......        .':;     e_str(5)
                    .m_exit.......

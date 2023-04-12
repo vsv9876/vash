@@ -15,14 +15,14 @@ m_k  = ipm      n   -   pag_k   tst_m   " Keys & codes setup "
 m_a  = ipm      n   -   pag_a   tst_m   " Video setup "
 m_qu = ipm      n   -   mkquit  tst_m   " Quit (discard changes) "
 m_ex = ipm      n   -   mkexit  tst_m   " Exit (save settings) "
-lh   = gv        -   -   -       -       namelh
+lh   = g        -   -   -       -       namelh
 sp   = gv       -   -   -       -       "spacebar"
 
 ---SCREEN
 =VHSET - video-display hardware setup
 
  profile:
- .lh..........................................................................
+    .lh......................................................................
 
 =
 ---#  LINLIB V3.4

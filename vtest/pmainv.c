@@ -238,26 +238,11 @@ int vmain()
 			}
 			break;
 */
-		case '"':
-		case '\'':
-			cod = e_tst(3);
-			break;
-		case ':':
-		case ';':
-			cod = e_tst(5);
-			break;
-		case '|':
-		case '\\':
-			sout();
-			break;
-		case '+':
-		case '=':
-			sout2();
-			break;
-		case '?':
-		case '/':
-			sout3();
-			break;
+		case '"': case '\'': cod = e_tst(3); break;
+		case ':': case ';':  cod = e_tst(5); break;
+		case '|': case '\\': sout(); break;
+		case '+': case '=':  sout2(); break;
+		case '?': case '/':  sout3(); break;
 		case KB_HE:
 			w_help("no_help.lb"); w_page(linem);
 			break;

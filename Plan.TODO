@@ -41,7 +41,7 @@ VASH:
     
     -- list main menu with PgUp/PgDown/Home/End
 
-    -- substitution #@ on manual editing cmd
+    -- substitution #@ on editing cmd manually
     
 *>  - history, history search:
 	-- simple pattern via ^R (highlight, select) 

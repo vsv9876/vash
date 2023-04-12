@@ -106,7 +106,7 @@ char *str;
 	v = *spp;
 	lsize = line->size; /* - 1; /* magic symbol plased at index 1, after PMT placeholder */
 	if (line->attr & PMT) lsize -= 1; /* PMT causes a placeholder for marker '#'*/
-	rsize = strlen(v);
+	rsize = /*strlen(v)*/u8slen(v);
 	if (rsize >= lsize) {
 		rsize = lsize;
 	}
@@ -119,8 +119,9 @@ char *str;
 		if(*mod == 'w') {
 			*s++ = *v++; /* PMT itself */
 			v++;
-			strncpy(s, v, rsize); /* string - file name */
+			/*strncpy*/u8snu8s(s, v, rsize); /* string - file name */
 			v = *spp;
+			rsize = strlen(v);
 			if (v[1] != ' ') {
 				s[rsize-2] = v[1];
 				s[rsize-1] = '\0';

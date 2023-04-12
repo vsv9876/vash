@@ -218,6 +218,7 @@ register LINE    *line; /* УКАЗАТЕЛЬ НА ЛИНИЮ */
 	int     onexit;         /* ФЛАГ: КОНЕЦ РАБОТЫ */
 	int     base;           /* НАЧАЛО ПОЛЕЗНОЙ ИНФОРМАЦИИ: СМЕЩЕНИЕ ОТ ПОДСКАЗКИ */
 
+	wcsobj_t *objptr;		/* editing object */
  /*register*/
 	int  i;
 	wchar_t *editptr;         /* начало строки для редактора, после промптера */
@@ -242,6 +243,7 @@ register LINE    *line; /* УКАЗАТЕЛЬ НА ЛИНИЮ */
 inp_retry:
 out_string:
 	cvt_ret = tsterror = 0;
+    objptr = /*(wcsobj_t *)*/line->varl;
 	wcsptr = wcsbuf;
 	editptr = wcsbuf;
 	base = 0;
@@ -349,7 +351,12 @@ string_simple:
 	else {
 		/* универсальные, показать */
 		cp_set(line->line, line->colu, attr);
-		w_wcstr(wcsbuf);
+		if (line->cvtf == NULL
+				&& objptr
+				&& objptr->wco_sig == WCO_SIG) {
+			w_wcstrv(objptr->wcs, size);
+		} else
+			w_wcstr(wcsbuf);
 		/* w_wcstrv(wcsbuf, size); *//*wrong!! may contain a prompter char */
 	}
 	if(onexit || posp == (int *)(-1)) return(cod);    /* КОНЕЦ ДЛЯ ВЫЗОВА ЧЕРЕЗ w_line */
@@ -404,7 +411,10 @@ edit_retry:
 	cp_set(line->line, base + line->colu, attr);
 
 	/*==== РЕДАКТОР, ХРАНИТЬ КОД */
-	cod = e_str(editptr, size,
+	if (objptr->wco_sig == WCO_SIG) {
+		cod = e_str(objptr, size, 0, posp);
+	} else
+		cod = e_str(editptr, size,
 		     /*==== ТЕСТ ДЛЯ РЕДАКТОРА ? */
 		    ((attr & EDT) ? line->test : 0), posp);
 	/*после редактора вернуть все в UTF-8*/
@@ -431,8 +441,12 @@ inp_format:
 	} else if(line->cvts) {
 		cvt_ret = cvts_in(line, &u8buf[0]);
 	} else {
+		if (objptr->wco_sig == WCO_SIG) {
+			;
+		} else {
 		/*просто строка - вернуть содержимое после редактирования*/
 		strcpy(line->varl, u8buf);
+		}
 #ifdef DEBUG_R_LINE
 		sout(-9, "4) line->varl", line->varl);
 #endif
