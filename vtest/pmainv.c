@@ -9,9 +9,9 @@
  *      $Log$
  */
 
-#include <wchar.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <wchar.h>
 #include "line.h"
 #include "line0.h"
 
@@ -24,33 +24,20 @@ static float  vf = 3.14;
 static int	  vi = 54321;
 static short  vh = 123;
 static long   vl = 99999999;
-/*
- * static wchar_t wcs[30] = L"абвгдежзиклмн xyz xyz123  ";
- * static wcsobj_t wcso = {
-//		/*0123456789-123456789-123456789-123456789-1 real string in object shorter then declared there */
-/*
- *		-1, 30, L"АБВгдежзик!1.\377.5...9#123456789-123"
- * };
- */
-/*chinesse support not ready yet...*/
-/*static wcsobj_t wcso = const_wcsobj( 30, L"АБВгдёЪЩ 中文素养 ..9~123456789~123" );*/
-static /*const*/ wcsobj_t wcso = const_wcsobj( 30,
-		L"1234567中文素养АБВгдё7890abcdefghij1234567" );
-	    /*0123456789-123456789-123456789-123456789-123456789-*/
-/*static wcsobj_t wcso = const_wcsobj( 30, L"АБВгдёЪЩ..~1...5...9~123456789~123" );*/
 
- /*0123456789-123456789-123456789-123456789-1 */
-/*static wchar_t wcs = wcso.wcs;*/
+/* wide unicode char support */
+static /*const*/ wcsobj_t wcso =
+    const_wcsobj( 30, L"1234567中文素养АБВгдё7890abcdefghij1234567" );
+
+volatile static /*const*/ u8sobj_t u8so =
+    const_u8sobj( 22, "-123456789-123456789-" );
+u8sobj_t *u8optr = &u8so;
+
+/*0123456789-123456789-123456789-123456789-1 */
+
 static int dummy0=-1,dummy1=-1,dummy2=-1,dummy3=-1;
 static /*const*/ char u8s[STRSIZE] = "а国际站бвгдежзиклмн...  ";
-/*static const char u8s[STRSIZE] = "абвгдежзиклмн...  ";*/
-/*
-//static u8sobj_t u8o = const_u8sobj(
-//		STRSIZE,
-// "абвгдежзиклмн....   0               x   01234567zzz"
-///*0123456789-123456789-123456789-123456789-123456789-*/
-/*		);
-*/
+
 static  u8char_t tmps[4 * STRSIZE] = "";
 
 static  int ex_flg = 0;     /* exit flag */

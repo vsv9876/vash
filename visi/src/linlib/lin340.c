@@ -28,7 +28,7 @@
  * ПРЕДВАРИТЕЛЬНЫЙ ВЫПУСК.
  * 
  */
-
+#include <stdlib.h>
 #define _XOPEN_SOURCE
 #include <stdio.h>
 
@@ -198,54 +198,67 @@ register LINE *line;
 	r_line(line, (int *)(-1)); /* preset to call in write mode (only output, no input) */
 }
 
-kbcod
-r_line(line, posp)
-/*-------------------------------------------------*/
-/* ВЫВОД/ВВОД ЛИНИИ, ВЕРНУТЬ КОД ПОСЛЕДНЕЙ КЛАВИШИ */
-/*-------------------------------------------------*/
-register LINE    *line; /* УКАЗАТЕЛЬ НА ЛИНИЮ */
-	 int     *posp; /* ПОЗИЦИЯ, С КОТОРОЙ НАЧАТЬ РЕДАКТИРОВАТЬ */
+/*
+ * ВЫВОД/ВВОД ЛИНИИ, ВЕРНУТЬ КОД ПОСЛЕДНЕЙ КЛАВИШИ
+ */
+kbcod r_line(line, posp)
+register LINE    *line;
+	 int     *posp; /* position of editing */
 {
 	kbcod   cod;
 	short   attr;
-	int     cvt_ret;        /* код возврата из sscanf: OK если = 0 */
-	int     tsterror;       /* ФЛАГ ОШИБКИ ТЕСТА */
-	int     midcnt;         /* СЧЕТЧИК ДЛЯ ВЫРАВНИВАНИЯ ПО ЦЕНТРУ */
-	int     filch;          /* ЗНАК ДЛЯ ЗАПОЛНЕНИЯ */
-	int     slen;           /* ДЛИНА СТРОКИ ПЕРЕД ВЫРАВНИВАНИЕМ */
-	int     size;           /* РАЗМЕР ПОЛЯ */
-	int     fmtlock;        /* ФЛАГ: ФОРМАТ ЗАБЛОКИРОВАН */
-	int     onexit;         /* ФЛАГ: КОНЕЦ РАБОТЫ */
-	int     base;           /* НАЧАЛО ПОЛЕЗНОЙ ИНФОРМАЦИИ: СМЕЩЕНИЕ ОТ ПОДСКАЗКИ */
+	int     cvt_ret;        /* exit code from sscanf: OK if = 0 */
+	int     tsterror;       /* testing error flag */
+	int     midcnt;         /* counter for middle alinment */
+	int     filch;          /* fill character */
+	int     slen;           /* string length before alignment */
+	int     size;           /* screen size of shown part of line */
+	int     fmtlock;        /* flag: formatting locked */
+	int     onexit;         /* fkag: on exit from this function */
+	int     base;           /* begin of content, offset from the prompter */
 
-	wcsobj_t *objptr;		/* editing object */
- /*register*/
+	wcsobj_t *wcoptr = NULL;		/* tmp editing object wchar_t converted from u8sobj_t */
+	wcsobj_t *objptr = NULL;		/* editing object wchar_t */
+	u8sobj_t *u8optr;		/* editing object UTF-8 encoded */
+	/*u8sobj_t **u8op;*/
+
 	int  i;
-	wchar_t *editptr;         /* начало строки для редактора, после промптера */
- /*register*/
-	wchar_t *wcsptr;
-	wchar_t  wcsbuf[STRBUF + 1];  /* рабочая строка во внутренней кодировке */
 
-	char    u8buf[(4*STRBUF) + 4]; /*промежуточная строка в кодировке UTF-8*/
-	int		u8size;			     /* размер в символах в промежуточной строке*/
+	wchar_t *wcsptr = NULL;			/* editing start after prompter */
+	wchar_t  wcsbuf[STRBUF + 1];  /* internal buffer in internal encoding WCS-4 */
+
+	char    u8buf[(4*STRBUF) + 4];  /* intermediate string UTF-8 encoded */
+	int		u8size;                 /* intermediate string size*/
 
  	int		vlen;		/* visible size in column occupied on screen */
  	int		v;
  	int		v_cw;
 
  	attr = line->attr;
+	fmtlock = (attr & FLO) == FLO ? 1 : 0;
 
-	/* ВЫЗОВ ЧЕРЕЗ w_line() ? */
+	/* calling via w_line() ? */
 	if(onexit = ((posp == (int *)(-1)) ? 1 : 0))
 		attr &= ~INP;  /* НЕТ, вызов r_line */
 	cod = 0;
 
+	/* init object pointers if required */
+	if ( ! (line->cvts) && ! (line->cvtf) && ! (line->test) ) {
+		if (line->flag & U8SOBJ) {
+			u8optr = *(u8sobj_t **)(line->varl);
+		} else {
+			if (!(line->flag & SUST)
+					&& line->varl
+					&& ((wcsobj_t *)(line->varl))->wco_sig == WCO_SIG)
+				objptr = (wcsobj_t *)(line->varl);
+		}
+	}
+
 inp_retry:
 out_string:
 	cvt_ret = tsterror = 0;
-    objptr = /*(wcsobj_t *)*/line->varl;
 	wcsptr = wcsbuf;
-	editptr = wcsbuf;
+	/*editptr = wcsbuf;*/
 	base = 0;
 	size = line->size;
 	slen = -1;
@@ -268,26 +281,26 @@ out_string:
 		}
 	}
 #endif
-	/*==== ПОДСКАЗКА */
+	/*==== prompter */
 	if(attr & PMT) {
-		editptr++; base++; size--;
+		/*editptr++;*/ base++; size--;
 		if(attr & INP)  *wcsptr++ = lpainp[i].lpa_p;
 		else            *wcsptr++ = lpaout[i].lpa_p;
 	}
-	/*==== ФОРМАТ НА ВЫВОД */
-	if( !(fmtlock = ((attr & FLO) == FLO))) { /*=== ЕСЛИ НЕ БЛОКИРОВАН */
-		if(line->cvtf) {                /* ЧЕРЕЗ ФУНКЦИЮ */
+	/*==== output format on write */
+	if (line->flag & U8SOBJ) {
+		/* note: only visible first part need to be shown */
+ 		u8size = u8snwcs(wcsptr, u8optr->u8s, /*size*/u8o_size(u8optr));
+	} else if( !fmtlock) { /* if no format lock raised */
+		if(line->cvtf) { /* function raised */
 			(*(line->cvtf))(line, cod, "w", u8buf);
 			u8size = u8swcs(wcsptr, u8buf);
 		}
-		else if(line->cvts) {           /* В СТИЛЕ printf */
+		else if(line->cvts) { /* fprintf style */
 			cvts_out(line, u8buf);
 			u8size = u8swcs(wcsptr, u8buf);
 		}
-		else {                          /* ПРОСТО СТРОКА */
-			/* editptr = line->varl; /*varl показывает на UTF-8, а нужно wchar_t*/
-			/*u8size = u8wcs(wcsptr, line->varl);/* ниже, string_simple: */
-			editptr = wcsptr;
+		else { /* simple string as is */
 			goto string_simple;
 		}
 	} else {
@@ -311,7 +324,7 @@ string_simple:
 	slen = wcslen(wcsptr);
 	vlen = vsize(wcsptr);
 
-	/*==== ВЫРАВНИВАНИЕ */
+	/*==== align on middle */
 	if(attr & MID) {
 		if((midcnt = ((size - /*slen*/vlen)/2)) > 0) {
 			slen += midcnt;
@@ -321,7 +334,7 @@ string_simple:
 				wcsptr[i--] = filch;
 		}
 	}
-	/*==== ЗАПОЛНЕНИЕ */
+	/*==== padding fillment */
 	if(attr & PAD) {
 		for(i = slen; i < size - (vlen-slen);)
 			wcsptr[i++] = filch;
@@ -342,27 +355,28 @@ string_simple:
 	/*==== КУРСОР ПЕРЕД ВВОДОМ ПЕРВОЙ КЛАВИШИ */
 	cp_set(line->line, line->colu, attr);
 #else
-	/*==== КУРСОР, ВИДЕО (НЕ ЗАБЫТЬ ПОДСКАЗКУ) */
+	/*==== cursor + video + prompter */
 
-	/*==== ПОКАЗАТЬ либо читать быстро читаемые или нередактируемые */
+	/*==== display (write or read) lines which FAST READ of NOT EDIT */
 	if ( (posp != (int *)(-1)) && (attr & (LFASTR|NED)) == (LFASTR|NED) ) {
 		;/* w_wchr(*wcsbuf);    /* только для r_line */
 	}
 	else {
-		/* универсальные, показать */
+		/* display common part */
 		cp_set(line->line, line->colu, attr);
-		if (line->cvtf == NULL
-				&& objptr
-				&& objptr->wco_sig == WCO_SIG) {
-			w_wcstrv(objptr->wcs, size);
-		} else
-			w_wcstr(wcsbuf);
-		/* w_wcstrv(wcsbuf, size); *//*wrong!! may contain a prompter char */
+		if (objptr) {
+			if (attr & PMT)
+				w_wchr(wcsbuf[0]);
+			w_wcstrv(objptr->wcs, size); /* only first size will be shown */
+		} else {
+			w_wcstr(wcsbuf); /* may contain a prompter char */
+		}
 	}
-	if(onexit || posp == (int *)(-1)) return(cod);    /* КОНЕЦ ДЛЯ ВЫЗОВА ЧЕРЕЗ w_line */
+	if(onexit || posp == (int *)(-1))
+		return(cod);    /* end for calling via w_line */
 
-	/*==== КУРСОР ПЕРЕД ВВОДОМ ПЕРВОЙ КЛАВИШИ */
-	/* хинт для полей-переключателей */
+	/*==== cursor before 1st input key */
+	/* hint for selector lines */
 	if ((attr & LTYPE) == ALT &&
 			(wcsptr[0]=='[' || wcsptr[0]=='(' || wcsptr[1]==' ')) {
 		cp_set(line->line, 1 + line->colu, attr);
@@ -371,25 +385,24 @@ string_simple:
 	}
 #endif
 
-	/*==== ЧИТАТЬ КОД ПЕРВОЙ КЛАВИШИ */
+	/*==== 1st code reading */
 	switch(cod = r_cod(0)) {
 	case KB_DE:
-			*editptr = '\0';
+			*wcsptr/**editptr*/ = '\0';
 	case  ' ':
 			if(posp != (int *)(-1) && posp)
 				*posp=0;
 			break;
 	default:
-		/* ЕСТЬ ТОНКОСТЬ ДЛЯ ПОЛЕЙ С РЕДАКТИРОВАНИЕМ:
-		 * ФОРМАТ НА ВВОДЕ НУЖЕН ТОЛЬКО
-		 * ПОСЛЕ РЕДАКТОРА СТРОКИ И КОДА KB_NL;
+		/* note:
+		 * formatting on input required
+		 * after calling editor and after KB_NL only;
 		 */
 		if((attr & NED) == 0) {
 			if(allcod && ISCTL(cod) == 0) { /*&& cod1(cod) == 0) {*/
-				unr_c(cod);     /* "ПРОЧИТАТЬ" НАЗАД */
-				*editptr = L'\0';    /* ОЧИСТИТЬ СТРОКУ */
+				unr_c(cod);     /* unread a code back */
+				*wcsptr/**editptr*/ = L'\0';    /* clean string */
 			} else
-	/*                if(cod1(cod) != 0)    *******/
 				goto inp_test;
 		} else {
 			if (cod == KB_NL) {
@@ -405,48 +418,59 @@ string_simple:
 	}
 
 edit_retry:
-	/*==== НЕ РЕДАКТИРОВАТЬ ? */
-	if(attr & NED) goto inp_format;
+	/*==== no edit flag raised? */
+	if(attr & NED)
+		goto inp_format;
 
 	cp_set(line->line, base + line->colu, attr);
 
-	/*==== РЕДАКТОР, ХРАНИТЬ КОД */
-	if (objptr->wco_sig == WCO_SIG) {
-		cod = e_str(objptr, size, 0, posp);
-	} else
-		cod = e_str(editptr, size,
-		     /*==== ТЕСТ ДЛЯ РЕДАКТОРА ? */
-		    ((attr & EDT) ? line->test : 0), posp);
-	/*после редактора вернуть все в UTF-8*/
-#ifdef DEBUG_R_LINE
-	sout(-3, "1) e_str; editptr", (char *)editptr);
-	sout(-4, "2) u8buf; wcstombs", u8buf);
-#endif
-	u8size = wcstombs(u8buf, editptr, /*size*/MAXLICO*4); /*like u8wcs, may be better limit*/
-#ifdef DEBUG_R_LINE
-	sout(-5, "3) e-str; u8buf", u8buf);
-#endif
 	/*
-	 * ЕСТЬ ТОНКОСТИ С ФОРМАТОМ ПОСЛЕ РЕДАКТОРА:
-	 *    НАДО РЕАГИРОВАТЬ ТОЛЬКО НА KB_NL
+	 * caling editor there
 	 */
-	if(cod != KB_NL) goto inp_test;
+	if(line->flag & U8SOBJ) {
+		/* init an editing object from u8sobj_t */
+		wcoptr = alloca(sizeof(wcsobj_t)
+				+ (u8o_size(u8optr) * sizeof(wchar_t) /* WCO_SIZE_MAX*/));
+		u8owco(wcoptr, u8optr);
+		cod = e_str(wcoptr, size, 0, posp);
+	} else if (objptr && objptr->wco_sig == WCO_SIG) {
+		cod = e_str(objptr, size, 0, posp);
+	} else {
+		cod = e_str(wcsptr/*editptr*/, size,
+				((attr & EDT) ? line->test : 0), posp);
+		/* finally back to UTF-8 encoding */
+#ifdef DEBUG_R_LINE
+		sout(-3, "1) e_str; editptr", (char *)editptr);
+		sout(-4, "2) u8buf; wcstombs", u8buf);
+#endif
+		u8size = wcstombs(u8buf, wcsptr/*editptr*/, /*size*/MAXLICO * 4); /*like u8wcs, may be better limit*/
+#ifdef DEBUG_R_LINE
+		sout(-5, "3) e-str; u8buf", u8buf);
+#endif
+	}
+
+	if(cod != KB_NL)
+		goto inp_test;
 
 inp_format:
-	/*==== ФОРМАТ НА ВВОДЕ */
-	if(fmtlock) goto inp_test;  /* М.БЫТЬ БЛОКИРОВАН... */
+	/*==== format on input */
+	if (fmtlock)
+		goto inp_test;
 
-	if(line->cvtf) {
+	if (u8optr && (line->flag & U8SOBJ)) {
+		/*cvt_ret = wcou8o(u8optr, wcsptr);*/
+		cvt_ret = wcsnu8s(u8optr->u8s, wcoptr->wcs, /*size*/
+					u8o_size(u8optr)) ? 1 : 0;
+    }
+	else if (objptr && objptr->wco_sig == WCO_SIG) {
+		cvt_ret = 1;
+	} else if (line->cvtf/* && !(line->flag & U8SOBJ)*/) {
 		cvt_ret = (*line->cvtf)(line, cod, "r", /*editptr*/&u8buf[0]);
 	} else if(line->cvts) {
 		cvt_ret = cvts_in(line, &u8buf[0]);
 	} else {
-		if (objptr->wco_sig == WCO_SIG) {
-			;
-		} else {
-		/*просто строка - вернуть содержимое после редактирования*/
+		/* simple string: back content after editing */
 		strcpy(line->varl, u8buf);
-		}
 #ifdef DEBUG_R_LINE
 		sout(-9, "4) line->varl", line->varl);
 #endif
@@ -458,19 +482,19 @@ inp_format:
 	if(cvt_ret == 0)
 		    bell();
 	/*TODO: else { COMMIT editing result back to line->varl }*/
-	/*==== ОШИБКА ФОРМАТА ? */
-	if(cvt_ret == 0 && onexit == 0 ) goto edit_retry;
+	/*==== formatting error? */
+	if(cvt_ret == 0 && onexit == 0 )
+		goto edit_retry;
 
 inp_test:
-	/*==== ТЕСТ ПОСЛЕ РЕДАКТОРА ? */
 	if(fmtlock || !(attr & EDT) ) {
 		tsterror = !(line->test ? (*line->test)(line, cod) : TRUE);
 	}
-	/*==== ЕСТЬ ОШИБКА ? */
-	if(tsterror)           goto inp_retry;
+	if(tsterror)
+		goto inp_retry;
 
-	switch(cod) {
-	case KB_AU:      /* ПОСЛЕ ЭТИХ КОДОВ ПЕРЕХОД К ДР. ПОЛЯМ */
+	switch (cod) {
+	case KB_AU: /* navigation codes, including KB_NL */
 	case KB_AD:
 	case KB_AL:
 	case KB_AR:
@@ -480,10 +504,11 @@ inp_test:
 	case KB_KE:
 	case KB_PU:
 	case KB_PD:
-	      break;
-	default :       return(cod);
+		break;
+	default:
+		return (cod);
 	}
 
-	onexit = 1; attr &= ~INP;       /* АТРИБУТ ДЛЯ ПОКАЗА */
+	onexit = 1; attr &= ~INP;       /* attribute on writeout to display */
 	goto    out_string;
 }

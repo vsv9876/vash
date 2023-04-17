@@ -9,7 +9,8 @@ buildd  = c    buildd
 
 hl      = gc    -       -       cvt_hl  -       "-"
 coprts  = c     coprts
-fs      = ipv   -       -       cvt_sp  -       f
+fs	    = ipv   -       -       cvt_sp  -       f
+fo	    = ipv   o       -       -       -       f_o
 is      = ipv   -       -       cvt_s   -       i
 os      = ipv   -       -       cvt_s   -       o
 rs      = ipv   -       -       cvt_s   -       r
@@ -57,10 +58,10 @@ C       = ipv    -      "%1d"  -       -       SGR
 +    .bli:baseli     .c. c,clock     .x. x,xterm title   .N. help msg on trap
                                                                
  ."debug of profiles".                                              maxli: .li  
-+--  .fs......................................................      maxco: .co 
++--  .fo......................................................      maxco: .co 
 +-@  .rs......................................................     y0_top: .yt
 +-i  .is......................................................         y0: .y0
-+                                                                 
++s
 +    .C - color mode                                      
 
 ---#+ -o: .os........................................................          

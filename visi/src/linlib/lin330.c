@@ -457,7 +457,6 @@ kbcod cod;		/* kbcod() pressed */
 /*
  * Редактор строки без предварительного показа старого содержимого (e_str() wrapper)
  */
-#if 1
 kbcod re_str(wcso, vsize, ctst, ofsp)
 wcsobj_t   *wcso;   /* wchar_t editing object or simple string */
 int     vsize;      /* visible size - размер поля редактирования */
@@ -479,7 +478,7 @@ int    *ofsp;       /* указатель на величину смещения
 
 	return cod;
 }
-#else
+#if 0
 /* вариант с конвертацией u8sobj_t -> wcsobj_t и обратно */
 kbcod re_str(u8o, vsize, ctst, ofsp)
 u8sobj_t   *u8o;      /* UTF-8 encoded -- editing object or simple string */

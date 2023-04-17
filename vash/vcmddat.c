@@ -8,7 +8,8 @@
 #define WSMAX 300
 
 /*char    Cfill[STRBUF] = "";*/
-char    *Cfill;			/*fill main view command*/
+u8sobj_t *Cfill_o;			/*fill main view command*/
+char     *Cfill;			/*fill main view command*/
 char    Crepf[STRBUF] = "";	/*reference file*/
 char    Csubs[STRBUF] = "";	/*substitution rule*/
 char    Coutf[STRBUF] = ""; /*not used anymore*/

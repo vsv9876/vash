@@ -23,8 +23,7 @@ static  int  pos = 0;           /* i     e_str    позиция в строке
 static  int old_pos = 0;		/* позиция курсора до попытки окончить ввод (completion),
 								если изменилась, выполнена вставка в буфер команды */
 /* command buffer is a string object, it is not a simple char-type string */
-/* static  u8char_t cmdbuf[4 + 4*STRBUF] = "   ";    /* size for u8sobj_t cmdo -- below */
-volatile static  wchar_t cmdbuf[2 + STRBUF];/* = L"   ";    /* size for wcsobj_t cmdo -- below */
+volatile static  wchar_t cmdbuf[2 + STRBUF];  /* size for wcsobj_t cmdo -- below */
 
 static  wcsobj_t *cmdo = (wcsobj_t *)cmdbuf;
 static  wchar_t *cmd0 = /*cmdo->wcs;*/ &cmdbuf[2];

@@ -75,8 +75,7 @@ extern char *strncp(char *, char *, size_t);
 /* требуется для разных констант, RT11 более не поддерживается */
 #define DEMOS2
 
-/* конец настраиваемых параметров */
-/*-------------------------------*/
+/*---- конец настраиваемых параметров */
 
 /* стандартный вывод и ввод для экрана */
 #if defined(FILE)
@@ -181,6 +180,7 @@ typedef struct  {
 #define FLO    06000    /* вызов форм. преобр. и редактор блокировать */
 #define VEXT   01000    /* видео атрибут для вида "как на вводе", но при выводе  */
 #define LFASTR  0400    /* r_line перерисовывает только первый символ поля */
+/*define U8SOBJ 0 /* no room for... */
 
 /* маска индекса таблицы видеоатрибутов и подсказок: */
 #define VIDEO  0177
@@ -197,6 +197,7 @@ typedef struct  {
 /*----------------------*/
 /* биты флагов задержек */
 /*----------------------*/
+#define U8SOBJ  0200    /* line->varl points to u8sobj_t -- no room in line-flag */
 #define SUST    0100    /* элемент таблицы: базу искать по флагу */
 	/* нет перехода: */
 #define SUSNL   0003    /* к следующему полю по <CR><LF>   */
@@ -292,6 +293,8 @@ typedef struct {
 	u8char_t u8s[];		/* string container */
 } u8sobj_t;
 #define const_u8sobj(z,s) { U8O_SIG,(z/256),(z%256),s }
+extern u8sobj_t * u8o_init();
+extern int cvt_u8o();
 
 extern int wco_size(), wcsobj();
 extern int u8o_size(), u8sobj();
@@ -304,6 +307,7 @@ extern int u8vsize(char *);
 extern  int mb_cur_max;
 extern  int u8nopass;
 extern  int u8slen(), u8swcs(), u8snwcs();
+extern  int u8snu8s();
 extern u8char_t *u8pxx();
 
 extern 	int w_wchr(), w_wcstrn(), w_wcstrv(), w_wcstr();

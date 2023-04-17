@@ -44,8 +44,8 @@ kbcod cod;
 	return(TRUE);
 }
 
-IN_PORTS inport[] = {
-	/*NOSTRICT*/
+const IN_PORTS inport[] = {
+	/*NO STRICT*/
 	{ "cvt_sp",     cvt_sp  },
 	{ "cvt_s",      cvt_s  },
 	{ "cvt_hl",     cvt_hl  },
@@ -57,6 +57,7 @@ IN_PORTS inport[] = {
 	{ "vexdir",     &vexdir },
 	{ "vpath",      &vapath },
 	{ "vashrc",     &vashrc },
+	{ "f_o",        &Cfill_o },
 	{ "f",          &Cfill },
 	{ "i",          Crepf },
 	{ "o",          Coutf },

@@ -49,8 +49,7 @@ FUNTAB funtab[] = {
 	{ (char *)0,    0 },
 };
 
-/*extern  char    Cfill[];*/
-extern  char    *Cfill;
+/*extern  char    *Cfill;*/
 extern  char    Crepf[];
 extern  char    Coutf[];
 extern  char    Csubs[];

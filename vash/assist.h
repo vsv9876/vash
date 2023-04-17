@@ -15,15 +15,15 @@
 #define ITMMAX  400     /* Макс. количество пунктов меню */
 #define ITMLEN  16      /* Длина строки пункта меню */
 #define ITMBUF  2048    /* Размер буфера текста меню по умолчанию */
-#define ITMCNM 255      /* must be in "assist.h" */
+#define ITMCNM 255
 #define CFILL_MAX 256
 #else
 	/* normal 64/32-bit commputers */
 #define ITMMAX  120000     /* Макс. количество пунктов меню */
 #define ITMLEN  MAXLICO /*16      /* Длина строки пункта меню */
 #define ITMBUF  MAXLICO * ITMMAX /* 16384   /* Размер буфера текста меню по умолчанию */
-#define ITMCNM 2048      /* must be in "assist.h" */
-#define CFILL_MAX 2048
+#define ITMCNM 1024
+#define CFILL_MAX 1024
 #endif
 /*#define BEGLI 11        /* ПЕРВАЯ СТРОКА МЕНЮ НА ЭКРАНЕ (???) */
 
@@ -139,7 +139,9 @@ extern int sl_find();
 
 extern int cvt_vf(), cvt_s();
 
+extern  u8sobj_t *Cfill_o;
 extern  char *Cfill;
+/*extern  char *Cfill;*/
 extern  char Crepf[];
 extern  char Coutf[];
 extern  char Csubs[];

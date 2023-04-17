@@ -174,6 +174,19 @@ wcsobj_t *wco;
 	return( wco->wco_size);
 }
 
+/* get memory for UTF-8 string object */
+u8sobj_t *u8o_init(size)
+int size;
+{
+	u8sobj_t *ptr;
+
+	ptr = (u8sobj_t *)malloc(size + sizeof(u8sobj_t));
+	ptr->u8o_sig   = (u8char_t)U8O_SIG;
+	ptr->u8o_sizeh = (u8char_t)(size/256);
+	ptr->u8o_sizel = (u8char_t)(size%256);
+	ptr->u8s[0] = '\0';
+	return ptr;
+}
 
 /* p++ -- указатель на следующий UTF-8 символ в строке, вернуть NULL если указывает на '\0' */
 u8char_t *u8pxx(p, wc)

@@ -41,11 +41,6 @@
 
 /*#define w_emsg w_amsg*/
 
-#ifdef RETRO
-extern  char  Crepf[];
-extern  char  Cfill[];
-#endif
-
 /*NOXSTR*/
 char    itmcnm[ITMCNM+1] =      /* Current item's name (saved) */
 			"..";

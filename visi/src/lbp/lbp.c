@@ -297,6 +297,10 @@ bld_flg()
 		case 't' :
 			flg |= SUST;
 			break;
+		case 'O' :
+		case 'o' :
+			flg |= U8SOBJ;
+			break;
 		default :
 		    printf("%s: %3d: unknown suspend type: '%c'\n",
 		    i_fnam, s_count, c );
