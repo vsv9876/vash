@@ -748,13 +748,17 @@ int co;
 	register wchar_t *s;
 	register wchar_t *os;    /* УКАЗАТЕЛЬ ДЛЯ КОПИРОВАНИЯ */
 	         wchar_t *fbeg;  /* СИМВОЛ В ПОЗИЦИИ НАЧАЛА ПОЛЯ */
+	         wchar_t wcwth;	 /* wchar width of current symbol*/
 	static   wchar_t  stro[MAX_BUF_CO/*80*/];  /* ЗДЕСЬ НАКОПИТЬ СТРОКУ СОДЕРЖИМОГО ПОЛЯ */
 			 linptr_t spcnt; /* СЧЕТЧИК ПРОБЕЛОВ В КОНЦЕ КОММЕНТАРИЯ */
 			 int  fldsiz;    /* РАЗМЕР ПОЛЯ */
+			 int  vdsize;	 /* visible (on screen) field size minus characters size */
 			 int  li_lbp, co_lbp;    /* КООРДИНАТЫ ПОЛЯ ДЛЯ lbp */
+			 int  co_beg;	 /* saved index of field position for padding at the end */
 			 int  typ;               /* ТИП ПОЛЯ (c,h,k,?) */
 
-	spcnt = fldsiz = 0;
+	co_beg = co;
+	spcnt = fldsiz = vdsize = 0;
 	os = &stro[0];
 	fbeg = s = &scrp[(MAX_BUF_CO/*80*/ * li) + co]; /*индекс в координатах экрана*/
 	li_lbp = li; co_lbp = co;       /* СОХРАНИТЬ КООРДИНАТЫ */
@@ -767,19 +771,23 @@ int co;
 		if (fldsiz == 1) {       /* МОЖЕТ, ЭТО БЫЛО НЕ ИМЯ ПОЛЯ ?: */
 			if(fbeg[1] == L'"') {         /* ЗАГОЛОВОК ? */
 				fldsiz = 2; s = &fbeg[2]; typ = 'h';
-				while(co++<MAX_BUF_CO/*80*/) {
+				while(co++ < MAX_BUF_CO/*80*/) {
 					fldsiz++;
 					if (*s == '"' && s[1] == markl) {
 						s++; break;
 					}
 					else {
+						wcwth = wcwidth(*s);
+						while(wcwth > 1) {
+							vdsize++; wcwth--;
+						}
 						*os++ = *s++;
 					}
 				}
 			} else
 			if(fbeg[1] == L'\'') {  /*имя кнопки*/
 				if (fbeg[1] == L'\'') {
-					typ = 'k'; /* без расшифровки*/
+					typ = 'k'; /* имя кнопки без расшифровки*/
 				}
 				s++;
 				*os = fbeg[1]; /* в качестве индикатора ошибки - на экране будет только символ кавычки */
@@ -825,8 +833,14 @@ ediag("Screen scan err:line %d, col %d\n", "Ош. сканирования: ст
 /***
 		*os++ = *s++; co++;
 ***/
+		fldsiz = 0;
 		while((co++)<MAX_BUF_CO/*80*/ ) {
+			wcwth = wcwidth(*s);
 			*os++ = *s++; fldsiz++;
+			while(wcwth > 1) {
+				vdsize++; co++;
+				wcwth--;
+			}
 			if(*s==' ') {
 				if(s[1]   == markl)    break;
 				if((spcnt++) >=3)    break;
@@ -848,9 +862,20 @@ fill_end:
 	/* ЗАПИСАТЬ СТРОКУ ИНИЦИАЛИЗАЦИИ СТРУКТУРЫ LINE */
 	mk_vcc
 #endif
-	(fldsiz, li_lbp, co_lbp, stro, typ);
+	(fldsiz + vdsize, li_lbp, co_lbp, stro, typ);
+
 	/* УБРАТЬ ИЗ БУФЕРА ОБРАЗА ЭКРАНА ВСЕ СЛЕДЫ */
-	for(s=fbeg; fldsiz > 0; fldsiz--) *s++ = ' ';
+	for(s=fbeg; fldsiz > 0; fldsiz--) {
+		*s++ = ' ';
+	}
+	/* insert spaces in place of visually wide characters */
+	s = &scrp[(MAX_BUF_CO/*80*/ * li)];
+	for (co = MAX_BUF_CO; co > co_beg + fldsiz; co--) {
+		if (co > fldsiz + vdsize)
+			s[co] = s[co - vdsize];
+		else
+			s[co] = L' ';
+	}
 }
 
 scan_s()
@@ -928,25 +953,28 @@ fil_sc()
 	/* НУЖНО ВСЕГО ЛИШЬ ЗАМЕНИТЬ ПРОБЕЛАМИ
 	 * ТАБУЛЯЦИИ И ПУСТЫЕ КОНЦЫ СТРОК.
 	 * и сконвертировать в строку wchar_t
+	 *
+	 * note: remember wcwth !!!
 	 */
-	int i;
-	wchar_t *s;
+	int i, wi;
+	wchar_t *wcp;
 	wchar_t *scr;
 	wchar_t *savescr;
 	static wchar_t wclbpo[LBPOSIZE];
 	int    len;
 	int   c;
+	int   wcwth;
 
 	/*s = lbpo; /* lbpo все еще в utf-8 */
 	/*fprintf(stderr, "lbpo:='%s'\n", lbpo); fflush(stderr);*/
 	len = u8snwcs(wclbpo, lbpo, LBPOSIZE);
-	s = wclbpo;
+	wcp = wclbpo;
 
 	savescr = scr = &scrp[ MAX_BUF_CO * cur_li ];
-	for(i=0; i<MAX_BUF_CO; i++) *scr++ = L' ';
+	for(i = 0; i < MAX_BUF_CO; i++) *scr++ = L' ';
 	scr = savescr;
-	for(i=0;  i<MAX_BUF_CO ; i++) {
-		c = (int)*s++;
+	for(wi = i = 0;  wi < MAX_BUF_CO ; wi, i++) {
+		c = (wchar_t)*wcp++;
 		switch(c) {
 		case L'\t' :     i +=(7 - (i%8));   break;
 		case L'\0' :

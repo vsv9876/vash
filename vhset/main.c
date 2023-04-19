@@ -242,7 +242,7 @@ main()
 	lfmain.maxli  =  24;
 	/* lfmain.baseli = -24; */
 	lfmain.baseli = hwframe.maxli - lfmain.maxli;
-	//lfmain.baseco = 0;
+	/*lfmain.baseco = 0;*/
 	/* correct below maxsize */
 	if (lfmain.baseli < 0) {
 		lfmain.maxli = hwframe.maxli;

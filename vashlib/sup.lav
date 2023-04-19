@@ -52,17 +52,17 @@ C       = ipv    -      "%1d"  -       -       SGR
 ---SCREEN
 ."vash setup parameters"......................... help: .:HE....  exit: .:EX....
 
-+max .ym. lines      .h. h,history   .s. s,scroll        .F1 anyway sh -c
-+                    .S. S,sync      .p. p,panel/keybar  .u8 only ASCII KBD
-+    .lli:lmaxli     .m. m,mail_biff .w. w,title         .XT trap on exit
-+    .bli:baseli     .c. c,clock     .x. x,xterm title   .N. help msg on trap
-                                                               
- ."debug of profiles".                                              maxli: .li  
-+--  .fo......................................................      maxco: .co 
-+-@  .rs......................................................     y0_top: .yt
-+-i  .is......................................................         y0: .y0
-+s
-+    .C - color mode                                      
++   .h. h,history   .s. s,scroll        .F1 anyway sh -c        .ym.:linesmax    
++   .S. S,sync      .p. p,panel/keybar  .u8 only ASCII KBD                       
++   .m. m,mail_biff .w. w,title         .XT trap on exit        .lli:lmaxli      
++   .c. c,clock     .x. x,xterm title   .N. help msg on trap    .bli:baseli      
++                                                                                
++."debug of profiles"..................                         .li:maxli        
++-- .fo................................                         .co:maxco        
++-@ .rs................................                         .yt:y0_top       
++-i .is................................                         .y0:y0           
++
++                                                               .C - color mode
 
 ---#+ -o: .os........................................................          
 vashrc: .vashrc.................................................................

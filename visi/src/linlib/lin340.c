@@ -328,17 +328,20 @@ string_simple:
 	if(attr & MID) {
 		if((midcnt = ((size - /*slen*/vlen)/2)) > 0) {
 			slen += midcnt;
+			vlen += midcnt;
 			for(i = slen; i >= midcnt; i--)
 				wcsptr[i] = wcsptr[i - midcnt];
 			while(i >= 0)
 				wcsptr[i--] = filch;
 		}
 	}
-	/*==== padding fillment */
+	/*==== padding fill */
 	if(attr & PAD) {
-		for(i = slen; i < size - (vlen-slen);)
+		for(i = slen; vlen < size;) {
 			wcsptr[i++] = filch;
-		wcsptr[size] = 0;
+			vlen++;
+		}
+		wcsptr[i] = 0;
 	}
 
 #ifdef RETRO_R_LINE

@@ -19,38 +19,43 @@ LINLIB, VHSET,
     
     -- support for ^U ^W - erase all, erase word
     
-  -- support for wsobj_t in r_line/w_line
++   ++ support for wsobj_t in r_line/w_line
  
     
- >>-- BUG: строка strobj_t обрезается на старте редактирования команды
-   -- редактор "бесконечныx" строк в ограниченном окне -
-            //- r_line(), line.h, vcc/vlbp -- интегрировать
-	    //+ e_str/w_str: контроль границ буфера строки (4K> bytes) -- реализован
++ ++ редактор "бесконечныx" строк в ограниченном окне -
+    //- r_line(), line.h, vcc/vlbp -- интегрировать
+    //+ e_str/w_str: контроль границ буфера строки (4K> bytes) -- реализован
 
 LBP+VCC/VLBP
 
-    -- добавить атрибуты LBP до полного набора атрибутов (для раскраски страниц help минимум)
-   >-- filler character must be [~_#], not limited by [.]
-   >-- wcwidth > 1 support for ---SCREEN section
++   ++ wcwidth > 1 support for ---SCREEN section
+    -- filler character must be [~_#], not limited by [.]
+    -- добавить атрибуты lbp,vlbp для раскраски страниц help
 
     ------------------------------------------------------------------------------
 
 VASH:
+	- деэкранирование cmd перед внутренними командами (cd,vhset,stty)
+	- дополнение cmd с экранированием, из профилей
     - setup flag: mask ExCI for ;: variants of execution
     - setup flag: sh -c only 
     
     -- list main menu with PgUp/PgDown/Home/End
 
     -- substitution #@ on editing cmd manually
+
+
     
-*>  - history, history search:
-	-- simple pattern via ^R (highlight, select) 
++>  - history, history search:
+	++ simple pattern
+	--	search via ^R (highlight, select) 
 	-- rename .ashhist to .history.vash
 		-- store format 'timestamp,usageCount,protected,cmd'
-
-*  -+?- export vash flags changed in setup, on execve() with VASH= environment
 
 * completion support
     -- man
     -- make
+
+*  --- export vash flags changed in setup, on execve() with VASH= environment
+
     
