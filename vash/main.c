@@ -242,13 +242,13 @@ char **argv;
 		}
 	}
 
-	Cfill_o = u8o_init(CFILL_MAX); /*malloc*/
+	/*Cfill_o = */u8o_init(Cfill_o, CFILL_MAX); /*malloc*/
 	if (Cfill_o == NULL) {
 		printf(stderr, "Can't get extra memory");
 		exit (1);
-	} else {
-		Cfill = Cfill_o->u8s;
-	}
+	} else
+		Cfill = ((u8sobj_t *)Cfill_o)->u8s;
+
 
    	for (argc--, argv++; argc > 0; argc--, argv++) {
 		if (*argv[0] == '-') {

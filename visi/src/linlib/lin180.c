@@ -165,22 +165,23 @@ wcsobj_t *so;
 int u8o_size(u8o)
 u8sobj_t *u8o;
 {
-	 return ((256*(u8o->u8o_sizeh))+(u8o->u8o_sizel));
+	 return ((256 * (u8o->u8o_sizeh)) + (u8o->u8o_sizel));
 }
 
 int wco_size(wco)
 wcsobj_t *wco;
 {
-	return( wco->wco_size);
+	return(wco->wco_size);
 }
 
-/* get memory for UTF-8 string object */
-u8sobj_t *u8o_init(size)
+/* initialize pre-allocated memory for UTF-8 string object */
+/* */
+u8sobj_t *u8o_init(ptr, size)
+u8sobj_t *ptr;
 int size;
 {
-	u8sobj_t *ptr;
 
-	ptr = (u8sobj_t *)malloc(size + sizeof(u8sobj_t));
+	/*ptr = (u8sobj_t *)malloc(size + sizeof(u8sobj_t));*/
 	ptr->u8o_sig   = (u8char_t)U8O_SIG;
 	ptr->u8o_sizeh = (u8char_t)(size/256);
 	ptr->u8o_sizel = (u8char_t)(size%256);

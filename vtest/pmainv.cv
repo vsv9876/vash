@@ -25,10 +25,11 @@ m_exit      = ipm      -   -    mkexit  tst_m    " quit "
 e_tst1      = ipm      -   dim1 e_tst   m_test   " edit1 "
 e_tst2      = ipm      -   dim2 e_tst   m_test   " edit2 "
 
-o_tst1      = iv       -   -    -       -        &wcso
-o_u8        = iv       o   -    -       -        &u8optr
-op_tst1     = ipv      -   -    -       -        &wcso
-op_u8       = ipv      o   -    -       -        &u8optr
+---# wcso, u8so; wcoptr, u8optr 
+o_tst1      = iv       w   -    -       -        &wcso
+o_u8        = iv       o   -    -       -        &u8so
+op_tst1     = ipv      w   -    -       -        &wcso
+op_u8       = ipv      o   -    -       -        &u8so
 
 d1      = ipv   -   -           -       -   dim1
 d2      = ipv   -   -           -       -   dim2

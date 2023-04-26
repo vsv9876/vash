@@ -49,8 +49,8 @@ int     itmci = -1;             /* Current item's index */
 
 struct  stat cwdstat;
 
-char    cwdpath[STRBUF];   /* CURRENT working directory full name */
-char    lwdpath[STRBUF];   /* LAST working directory full name */
+char    cwdpath[U8_STRBUF];   /* CURRENT working directory full name */
+char    lwdpath[U8_STRBUF];   /* LAST working directory full name */
 
 int rescan()
 {
@@ -385,7 +385,7 @@ char *file;
     unsigned char    *fname; /* item name, from main menu */
     /*char	*file;*/ /* name of file to be read */
     char    *s;
-    char   itmname[4*STRBUF]; /**/
+    char   itmname[U8_STRBUF]; /**/
     char  *ip;
 
     /*if (index(Cfill, 'a')) aflag = 1;*/
@@ -559,7 +559,7 @@ char *cwd;
 			fprintf(stderr, "Can't exec /bin/pwd\n");
 			fatal();
 		}
-		fgets(cwdpath, STRBUF-1, wdf); /* TODO WTF */
+		fgets(cwdpath, U8_STRBUF-1, wdf); /* TODO WTF */
 		for (s=cwdpath; *s != '\n'; s++) ; *s = '\0';
 		pclose(wdf);
 	}
@@ -585,8 +585,8 @@ size_t cwd_fmt(char *ctmps, char *cpath, int room)
 		strcpy(ctmps, cpath);
 		return (v_size);
 	} else {
-		w_path = calloc(STRBUF, sizeof(wchar_t));
-		w_tmps = calloc(STRBUF, sizeof(wchar_t));
+		w_path = calloc(U8_STRBUF, sizeof(wchar_t));
+		w_tmps = calloc(U8_STRBUF, sizeof(wchar_t));
 		/*count elements, convert cpath*/
 		nlast = 0;
 		ws = w_path;
@@ -676,7 +676,7 @@ size_t cwd_fmt(char *ctmps, char *cpath, int room)
 		}
 	}
 	w_tmps[i++] = L'\0';
-	wcstombs(ctmps, w_tmps, STRBUF);
+	wcstombs(ctmps, w_tmps, U8_STRBUF);
 	return (vsize(w_tmps));
 }
 
@@ -687,8 +687,8 @@ size_t cwd_fmt(char *ctmps, char *cpath, int room)
  */
 cwdshow()
 {
-	char cwd_tmpstr[STRBUF]; /* cwdpath fraction to be shown */
-	char lbl_tmpstr[STRBUF];
+	char cwd_tmpstr[U8_STRBUF]; /* cwdpath fraction to be shown */
+	char lbl_tmpstr[U8_STRBUF];
 	register int x;
 	int cwd_x;			/* visible width of cwd_tmpstr */
 	int cwd_room;		/* space to display cwd_tmpstr */

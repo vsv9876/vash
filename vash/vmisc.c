@@ -343,6 +343,52 @@ register char *str;
  * Ввод строки с промптером, в последней строке экрана.
  */
 kbcod
+pmtrobj(pmtstr, obj, size)
+char *pmtstr;   /* строка подсказки */
+u8sobj_t *obj;      /* строковый объект для ввода */
+int   size;     /* размер поля для ввода */
+{
+	kbcod cod;
+	LINE  line;
+	int   savedf;
+	wcsobj_t *wobj;
+
+	wobj = (wcsobj_t*)obj;
+	if(wobj->wco_sig == WCO_SIG)
+		line.flag = WCSOBJ;
+	else if(obj->u8o_sig == U8O_SIG)
+		line.flag = U8SOBJ;
+	else
+		return (0);
+
+	line.size = size;
+	line.colu = strlen(pmtstr) + 1; /*3;*/
+	line.line = lframe->maxli - 1;
+	line.attr = LVAR|INP|PMT;
+	line.cvts = (char *)0;
+	line.cvtf = (void *)0;
+	line.test = (void *)0;
+	line.varl = (char*)obj;
+
+	for ( ;; ) {
+		w_msg(TXT, pmtstr);
+		/*savedf = edinff;*/
+		/*edinff = 0;     /* не показывать состояние редактора */
+		cod = r_line(&line, 0);
+		/*edinff = savedf;*/
+		switch (cod) {
+		default:
+			continue;
+		case KB_NL:
+		case KB_CA:
+		case KB_EX:
+			return(cod);
+			break;
+		}
+	}
+}
+
+kbcod
 pmtrstr(pmtstr, str, size)
 char *pmtstr;   /* строка подсказки */
 char *str;      /* строка для ввода */
@@ -352,10 +398,14 @@ int   size;     /* размер строки для ввода */
 	LINE  pmtline;
 	int   savedf;
 
+	if(str[0] == U8O_SIG)
+		pmtline.flag = U8SOBJ;
+	else
+		pmtline.flag = 0;
+
 	pmtline.size = size;
 	pmtline.colu = strlen(pmtstr) + 1; /*3;*/
 	pmtline.line = lframe->maxli - 1;
-	pmtline.flag = 0;
 	pmtline.attr = LVAR|INP|PMT;
 	/*NOSTRICT*/
 	pmtline.cvts = (char *)0;

@@ -133,7 +133,6 @@ typedef short  bool;     /* короткий формат для целых чи
 #define ISCTL( c )      (((c)&KBPRE) != 0 ? 1 : 0)
 #endif /*KBCOD_INT32*/
 
-#define STRBUF (MAXLICO+2) /*82 /* размер строки ввода TODO 4096 */
 #ifndef FALSE           /* определение м.быть в др. месте */
 #define TRUE    1
 #define FALSE   0
@@ -197,17 +196,20 @@ typedef struct  {
 /*----------------------*/
 /* биты флагов задержек */
 /*----------------------*/
-#define U8SOBJ  0200    /* line->varl points to u8sobj_t -- no room in line-flag */
-#define SUST    0100    /* элемент таблицы: базу искать по флагу */
 	/* нет перехода: */
-#define SUSNL   0003    /* к следующему полю по <CR><LF>   */
-#define SUSAR   0034    /* по стрелкам                     */
-#define SUSUD   0014    /* вверх и вниз                    */
-#define SUSLR   0060    /* вправо и влево                  */
-#define SUSU    0004    /* вверх                           */
-#define SUSD    0010    /* вниз                            */
-#define SUSL    0020    /* влево                           */
-#define SUSR    0040    /* вправо                          */
+#define SUSNL   0001    /* к следующему полю по <CR><LF>   */
+/*#define SUSAR   0034    /* по стрелкам                     */
+/*#define SUSUD   0014    /* вверх и вниз                    */
+/*#define SUSLR   0060    /* вправо и влево                  */
+#define SUSU    0002    /* вверх                           */
+#define SUSD    0004    /* вниз                            */
+#define SUSL    0010    /* влево                           */
+#define SUSR    0020    /* вправо                          */
+	/* base of table signature */
+#define SUST    0040    /* элемент таблицы: базу искать по флагу */
+	/* oversize string object signature (no room in line-flag) */
+#define U8SOBJ  0100    /* line->varl points to u8sobj_t */
+#define WCSOBJ  0200    /* line->varl points to wcsobj_t */
 
 /*-----------------------------------*/
 /* стандартные однокнопочные команды */
@@ -285,7 +287,9 @@ typedef struct {
 
 typedef unsigned char u8char_t;
 
-#define U8O_SIG (0xFF)
+/* DLE Data Link Escape - any which not used in 1st position of text */
+#define U8O_SIG (0x10)
+
 typedef struct {
 	u8char_t u8o_sig;	/* allways (u8char_t)0xFF */
 	u8char_t u8o_sizeh;	/* size of string container */
@@ -348,7 +352,11 @@ extern FILE     *dafopen();
 /*
  * limit screen by linlib+termcap limits
  */
-#define MAXLICO 256
+#define MAXLICO 512		/* 255 max ? */
+#define STRBUF (MAXLICO + 2) /*82 /* wcschar_t размер строки ввода */
+#define U8_STRBUF (4*STRBUF)       /* UTF-8 размер строки */
+#define STR_OVRSZ 2048	/* applicable for wcsobj_t */
+
 /* internal function, called from hw_set only */
 extern int	gtty_sz();
 extern int tty_li, tty_co;

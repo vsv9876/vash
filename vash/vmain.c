@@ -103,8 +103,8 @@ kbcod cod;
 /*NOXSTR*/
 static  char pattfs[42] = "*";  /* строка для шаблона пометки */
 /*YESXSTR*/
-
-static  int ed_ls(fill)
+#if 0
+static  int ed_ls_NOT_USED(fill)
 /*
  * тотальная пометка
  */
@@ -116,10 +116,10 @@ char *fill;
 	register LINE *line;
 	extern kbcod pmtrstr(); /* ввод строки с промптером */
 	char prompts[100];
-	char newCfill[STRBUF];
+	char newCfill[U8_STRBUF];
 	int maxlen;
 
-	maxlen = (STRBUF > lframe->maxco ? lframe->maxco : STRBUF) - 1;
+	maxlen = (MAXLICO > lframe->maxco ? lframe->maxco : MAXLICO) - 1;
 	/* если строка fill пустая, редактировать Cfill, иначе просто скопировать fill */
 	if (fill != (char *)0 && fill[0] != '\0') {
 		strcpy(Cfill, fill);
@@ -140,6 +140,34 @@ char *fill;
 	}
 	return(1);
 /*	else w_emsg("");*/
+}
+#endif
+
+static  int ed_ls(fill)
+/*
+ * тотальная пометка
+ */
+char *fill;
+{
+	kbcod cod;
+
+	extern kbcod pmtrstr(); /* ввод строки с промптером */
+	char prompts[10];
+	int maxlen;
+
+	maxlen = (MAXLICO > lframe->maxco ? lframe->maxco : MAXLICO) - 1;
+
+	sprintf(prompts, "-- ");
+	cod = pmtrobj(prompts, Cfill_o, lframe->maxco - strlen(prompts) - 2);
+	switch(cod) {
+	case KB_CA:
+	case KB_EX:
+		w_emsg("");
+		return 0;
+	case KB_NL:
+		return(1);
+	}
+	return(1);
 }
 
 int f_ls(cmd)
@@ -241,7 +269,8 @@ char *cmd;
 	switch (cod) {
 	case ' ':
 	case 'x':
-		cod = ' '; /*NO BREAK*/
+		cod = ' ';
+		/*NO BREAK*/
 	case '>':
 	case '<':
 		t_file(&clm._vf[clm._itm - clm._itmofs], cod);

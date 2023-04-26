@@ -6,7 +6,7 @@
 #include "assist.h"
 #include "slist.h"
 
-/*#define DEBUGS 1 /*debug TAB completion printout*/
+#define DEBUGS 1 /*debug TAB completion printout*/
 
 /*#define BUFSMAX 4000*/
 #define BUFSMAX 4*STRBUF
@@ -509,7 +509,7 @@ int  *curpos; /* текущая позиция курсора в буфере */
 int maxpos; /* максимальное значение позиции в буфере строки */
 {
 #ifdef DEBUGS
-    static char debugs[STRBUF];			/* completion string */
+    static char debugs[U8_STRBUF];			/* completion string */
 #endif
 /*	char s_ins[STRBUF] = "";		/* suggestion string to be inserted */
     wchar_t s_dir[STRBUF];      /* база (например, путь до каталога) */

@@ -26,10 +26,11 @@ static short  vh = 123;
 static long   vl = 99999999;
 
 /* wide unicode char support */
-static /*const*/ wcsobj_t wcso =
+volatile static wcsobj_t wcso =
     const_wcsobj( 30, L"1234567中文素养АБВгдё7890abcdefghij1234567" );
+wcsobj_t *wcoptr = &wcso;
 
-volatile static /*const*/ u8sobj_t u8so =
+volatile static u8sobj_t u8so =
     const_u8sobj( 22, "-123456789-123456789-" );
 u8sobj_t *u8optr = &u8so;
 

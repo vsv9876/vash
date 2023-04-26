@@ -69,7 +69,7 @@ char *from;
 int cmddel(cmd0)
 /*wchar_t*/u8char_t *cmd0;
 {
-	u8char_t cmd[4 * STRBUF];
+	u8char_t cmd[U8_STRBUF];
 
 	register int i;
 	int savenext;      /* индекс указателя следующей команды */
@@ -162,7 +162,7 @@ u8char_t *newcmd;
 	int reqsize;
 	char *p;
 #if 0
-	u8char_t cmd[4 * STRBUF];
+	u8char_t cmd[U8_STRBUF];
 	wcsu8s(cmd, newcmd);
 #else
 	u8char_t *cmd;
@@ -199,7 +199,7 @@ u8char_t *newcmd;
 int cmdprv(cmd)
 wchar_t *cmd;
 {
-	wchar_t tmp[4 * STRBUF];
+	wchar_t tmp[STRBUF];
 	if (cmdpi >= cmdplast)
 		cmdpi = cmdplast/* - 1*/;
 	if (cmdpi > 0)
@@ -278,7 +278,7 @@ cmdghist()
 	struct stat	hfstat;
 	time_t      hftime;
 	char filename[200];
-	char cmdbuftmp[140]; /* one command from file, without trailing '\n' */
+	char cmdbuftmp[U8_STRBUF/*140*/]; /* one command from file, without trailing '\n' */
 	int c;
 	register char *p;
 	register int i;
@@ -519,7 +519,7 @@ wchar_t  *cmd0;
 
 	int cmp_sz;
 	int i;
-	u8char_t u8cmp[4+STRBUF];
+	u8char_t u8cmp[U8_STRBUF];
 	u8char_t **cmds;
 	u8char_t **pcmd;
 	u8char_t  *p;

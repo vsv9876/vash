@@ -196,7 +196,9 @@ vmain()
 
 		switch(cod) {
 		case '0' :
-			pag_mk(); /* basic keys setup, now hidden from menu */
+			/* basic keys setup, now hidden from menu */
+			pag_mk();
+			/*NO BREAK*/
 		case '?' :
 		case ' ' :
 		case KB_NL:

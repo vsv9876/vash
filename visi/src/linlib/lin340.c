@@ -219,8 +219,7 @@ register LINE    *line;
 
 	wcsobj_t *wcoptr = NULL;		/* tmp editing object wchar_t converted from u8sobj_t */
 	wcsobj_t *objptr = NULL;		/* editing object wchar_t */
-	u8sobj_t *u8optr;		/* editing object UTF-8 encoded */
-	/*u8sobj_t **u8op;*/
+	u8sobj_t *u8optr = NULL;		/* editing object UTF-8 encoded */
 
 	int  i;
 
@@ -243,17 +242,13 @@ register LINE    *line;
 	cod = 0;
 
 	/* init object pointers if required */
-	if ( ! (line->cvts) && ! (line->cvtf) && ! (line->test) ) {
-		if (line->flag & U8SOBJ) {
-			u8optr = *(u8sobj_t **)(line->varl);
-		} else {
-			if (!(line->flag & SUST)
-					&& line->varl
-					&& ((wcsobj_t *)(line->varl))->wco_sig == WCO_SIG)
-				objptr = (wcsobj_t *)(line->varl);
-		}
+	if (line->flag & U8SOBJ)
+		u8optr = (u8sobj_t*)(line->varl);
+	else if (line->flag & WCSOBJ)
+		objptr = (wcsobj_t*)(line->varl);
+	else {
+		;/* TODO: optimized alloca sizes for buffers there */
 	}
-
 inp_retry:
 out_string:
 	cvt_ret = tsterror = 0;
@@ -392,6 +387,7 @@ string_simple:
 	switch(cod = r_cod(0)) {
 	case KB_DE:
 			*wcsptr/**editptr*/ = '\0';
+			/*NO BREAK*/
 	case  ' ':
 			if(posp != (int *)(-1) && posp)
 				*posp=0;

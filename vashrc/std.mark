@@ -17,8 +17,8 @@
 # :SP does not work due to bug in vash code
 :SP
 :KI
-# workaround for SP also working an '#' (MONEY)
-:[ #]
+# workaround for SP
+:[ ]
 	* ?	_mark x#
 #
 # edit fill command, the same as -- tail calling vash

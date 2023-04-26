@@ -18,13 +18,6 @@ extern int sgrmode;
 /*char   *onoff[] = { "[ ]", "[X]", 0 };*/
 char   *onoff[] = { "[ ]", "[*]", 0 };
 
-#ifdef RETRO
-extern  char    Cfill[];
-extern  char    Crepf[];
-extern  char    Coutf[];
-extern  char    Csubs[];
-#endif
-
 /*ARGSUSED*/
 int
 t_ymax(line, cod)
@@ -32,7 +25,7 @@ register LINE *line;
 kbcod cod;
 {
 	int *var;
-	char *s = calloc(sizeof(char), STRBUF);
+	char *s = calloc(sizeof(char), U8_STRBUF);
 
 	var = (int *)line->varl;
 	if (*var < 2 || *var > (lframe->maxli - 4)) {

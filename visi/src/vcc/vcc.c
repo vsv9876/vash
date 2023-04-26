@@ -409,6 +409,8 @@ register char *lbps;
 		case  'n': strcpy(os, "SUSNL"); os += 5; break;
 		case  'O':
 		case  'o': strcpy(os, "U8SOBJ"); os += 6; break;
+		case  'W':
+		case  'w': strcpy(os, "WCSOBJ"); os += 6; break;
 
 		case  '*':
 		case  '-': *os++ = '0'; break;

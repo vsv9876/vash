@@ -75,7 +75,7 @@ char *cmd;
 wchar_t *cmd0;
 size_t size;
 {
-	u8char_t new[4 * STRBUF];
+	u8char_t new[U8_STRBUF];
 	wcsu8s(new, cmd0);
 	return strncmp(cmd, new, size);
 }
@@ -99,7 +99,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	int trapcod;		/* flag: trap, no return from code exit indicator */
 	int msgat;			/*exit code message attribute*/
 
-	u8char_t *u8cmd0[4 * STRBUF];	/* command to be executed */
+	u8char_t *u8cmd0[U8_STRBUF + 4];	/* command to be executed */
 
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
@@ -180,7 +180,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			if ((sgglist = sl_init()) != NULL) {
 				old_pos = pos;
 
-				if ((slsize = try_compl(&cmd0[0], &pos,STRBUF/*lframe->maxco - 2*/)) < 0)
+				if ((slsize = try_compl(&cmd0[0], &pos, STRBUF/*lframe->maxco - 2*/)) < 0)
 					bell();
 
 				if (pos == old_pos && sgglist->sl_size > 0) {
