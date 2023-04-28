@@ -239,7 +239,7 @@ int  execapnd;
 				if(clm._itms[j][0] == MONEY) {
 				   /* вставить очередное имя */
 				   nm_ptr = nmsubs(&clm._itms[j][2], Csubs);
-				   if (sh_cpy(out_str, nm_ptr)) execmode = execmode & (~ASH_NOSH);
+				   if (sh_esc(out_str, nm_ptr)) execmode = execmode & (~ASH_NOSH);
 				   sprintf(&cmd2[i], "%s ", out_str);
 
 				   while(cmd2[++i]) ;

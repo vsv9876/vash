@@ -945,7 +945,7 @@ char *cdarg;
 		while (*p++);
 	}
 #endif
-	sh_unesc(tmppath, nwdpath); /*sh_cpy() reverse*/
+	sh_unesc(tmppath, nwdpath); /*sh_esc() reverse*/
 	strcpy(nwdpath, tmppath);
 
 	dcanon(nwdpath);        /* canonicalize new path */

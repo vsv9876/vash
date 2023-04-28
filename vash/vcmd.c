@@ -177,12 +177,12 @@ register char *cmd;     /* встроенная функция */
 extern char* vexdir;
 extern char* vapath;
 
-int cmdsub(ptmp_sh, p, i, sh_esc)
+int cmdsub(ptmp_sh, p, i, need_sh_esc)
 /*возвращает то же, что и nmsubs - необходимость обработки экранированных символов /bin/sh*/
 register char *p;       /* откуда копировать */
 register char *ptmp_sh;    /* куда копировать */
 register int  i;        /* копия itm */
-int sh_esc;			/*требуется экранирование для /bin/sh*/
+int need_sh_esc;			/*требуется экранирование для /bin/sh*/
 {
     extern char *getenv();
     register char *s;
@@ -249,8 +249,8 @@ int sh_esc;			/*требуется экранирование для /bin/sh*/
 	    case 'b':   /* строка пользователя */
 #endif
 	    }
-	    if (sh_esc) {
-	    	sh_req += sh_cpy(ptmp_sh, ptmp);
+	    if (need_sh_esc) {
+	    	sh_req += sh_esc(ptmp_sh, ptmp);
 	    } else {
 	    	strcpy(ptmp_sh, ptmp);
 	    }

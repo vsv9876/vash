@@ -13,15 +13,14 @@
 
 extern char *getenv();
 /* suggestion mode */
-static enum sugg_mode { path_cmd, command, cd_dir, file_dir, flag, flaglong } ;
-static char *s_debug[] = { "path_cmd", "command", "dir_cd", "file_dir", "flag", "flaglong", (char *)0 };
+static enum sugg_mode { path_cmd, command, cd_dir, file_dir, flag1, flag2 } ;
+static char *s_debug[] = { "path_cmd", "command", "cd_dir", "file_dir", "flag1", "flag2", (char *)0 };
 enum sugg_mode s_mode;
 
 SLIST_HEAD *sgglist;
 static hlp_onscreen = 0;
 
 static char tstats[6];  /* type+mode from stat() filled in cmpl_stat */
-
 
 /*#define wchar wchar_t*/
 
@@ -33,11 +32,12 @@ wchar_t *s_ins;
 {
     struct stat statbuf;
     extern char *rwxmode();
-    char tmps[STRBUF * 4];
+    char *tmps;
     char  ftype;	/* file (or dir) type */
     u_short mode;
     char *s;
 
+    tmps = alloca(U8_STRBUF);
 /*
 	if (
 			(s_mode == path_cmd ||
@@ -220,6 +220,7 @@ int hlp_compl()
 	}
 	old_n = n;
 
+
 	sprintf(tmps, "   <%s> [%-d/%-d] ", s_debug[s_mode], n, sl_size);
 	cp_set(-2, 0, TXT|INP); /*er_eop();*/
 	w_str(tmps);
@@ -232,7 +233,7 @@ int hlp_compl()
 	hlp_onscreen = 1;
 	return 1;
 }
-
+#if 0
 int hlp_compl_notused()
 {
 	SLIST *slist;
@@ -252,9 +253,11 @@ int hlp_compl_notused()
 		cp_set(cur_li, cur_co, TXT); w_chr('-'); er_eol(TXT);
 	}
 	cur_li = clm._y0;
+
 	cp_set(/*cur_li*/ -2, cur_co, TXT|INP); /*er_eop();*/
 	sprintf(tmps, " <%s> [%d] ", s_debug[s_mode], slistn);
 	w_str(tmps);
+
 	/* cur_co += strlen(tmps) + 1;*/
 	for (n = slistn; n > 0 && slist != NULL && cur_li < lframe->maxli - 2 ; n--) {
 		s = sl_sstr(slist);
@@ -271,8 +274,12 @@ int hlp_compl_notused()
 	hlp_onscreen = 1;
 	return 1; /**/
 }
+#endif
 
-/* returns elements count or -1 if error; fill sugg.string if found exact one candidat */
+/* returns elements count or -1 if error;
+ * fill sugg.string if found exact one candidat
+ * NOTE: patterns stored without escapes
+ */
 int sh_sugg(dirp, patt, from/*, insp*/)
 wchar_t *dirp;
 wchar_t *patt;
@@ -291,13 +298,13 @@ char *from;	/* shell command to get context of suggestion */
 	count = 0;
 	pattsz = wcslen(patt); /*тут нужен именно strlen*/
 
-	if ((inss = malloc((size_t)sizeof(wchar_t) * (size_t)STRBUF)) == NULL) {
+	if ((inss = malloc(U8_STRBUF)) == NULL) {
 		ok = -2; goto ret;
 	}
 
 	pipe0 = popen(from, "r");
 	if (pipe0 != NULL) {
-		if ((filestr = malloc((size_t)(STRBUF))) == NULL) {
+		if ((filestr = malloc((U8_STRBUF))) == NULL) {
 			ok = -2; goto ret; /*in hope this never happen*/
 		}
 		while ( NULL != (s = fgets((s = filestr), BUFSMAX, pipe0))) {
@@ -391,7 +398,8 @@ wchar_t *s_base;
 }
 
 /*
- * deduplicate array of pointers to string, if content equal, leave 1st one then squieeze;
+ * deduplicate array of pointers to string:
+ *   if content equal, leave 1st one then squeeze;
  * return number of elements in array when squeeze done
  */
 int sdedup(pathp, maxnpath)
@@ -485,6 +493,9 @@ wchar_t *basep; /*pointer to base */
 				res = sh_sugg(dirp, basep, tmps);
 			}
 		}
+	} else if (s_mode == flag1 || s_mode == flag2) {
+		/*TODO*/
+		/* найти ключи в выдаче man argv0 */
 	}
 ret:
 /*	if(sgglist != NULL) sgglist = sl_free(sgglist);*/
@@ -512,19 +523,25 @@ int maxpos; /* максимальное значение позиции в бу�
     static char debugs[U8_STRBUF];			/* completion string */
 #endif
 /*	char s_ins[STRBUF] = "";		/* suggestion string to be inserted */
+    wchar_t s_argv0[STRBUF];	/* собственно имя команды */
+    wchar_t *av0;
     wchar_t s_dir[STRBUF];      /* база (например, путь до каталога) */
 	wchar_t s_base[STRBUF];     /* хвост (например, префикс имени в каталоге) */
     int argc, x_in, x_out, ins_len /*, dir_len, base_len;*/;
     int base_x, dir_x, dir_end;
-    char contxt, conold;   /* cmd scaner context: 's'eparator, 'a'rg, 'n'ull, 'i'ni */
+    char contxt, conold;   /* cmd scaner context: 's'eparator,
+    												'a'rg, 'n'ull, //'i'ni */
+    int escaped;		/* символ экранирован */
     /*enum sugg_mode s_mode;*/
     int ok;
     char *s;
     int   c;
     wchar_t *s_ins; /* the suggestion word to be inserted */
+    wchar_t *s_ins_esc;
     /*char *stats;*/
     size_t pattsz;
 
+    s_ins_esc = alloca(U8_STRBUF);
     s_dir[0] = s_base[0] = '\0';
     dir_x = dir_end = base_x = 0;
     /* учесть нули за концом команды и поставить курсор перед ними */
@@ -534,19 +551,39 @@ int maxpos; /* максимальное значение позиции в бу�
      * хак: после '|', '&', ';' попытаться трактовать как команду,
      * сбрасывая сканер до argc=0 при обнаружении этих символов
      */
-    for (x_in = 0; x_in < *curpos && x_in < maxpos; x_in++) {
+		av0 = &s_argv0[0];
+		*av0 = L'\0';
+   for (x_in = 0; x_in < *curpos && x_in < maxpos; x_in++) {
     	/* determine current context */
-    	/* skip leading spaces and separators between args */
-    	if (cmd0[x_in] == ' ') /* || cmd[x_in] == '\0') */ {
-    		contxt = 's'; /* TODO '\ ' which is not separator */
-    	} else if (cmd0[x_in] == ';'
-    			|| cmd0[x_in] == '|'
-				|| cmd0[x_in] == '&'
-				   ) {
-    		contxt = 'n'; conold = 's'; argc = 0;
-    	} else {
-    		contxt = 'a';
-    	}
+		if (cmd0[x_in] == L'\\' && !escaped) {
+			escaped = 1;
+			continue;
+		}
+		if (escaped) {
+			conold = contxt;
+		}
+		/* skip leading spaces and separators between args */
+		if (cmd0[x_in] == L' ') {
+			if (escaped) {
+				contxt = 'a'; /* part of argument */
+				escaped = 0;
+			} else {
+				contxt = 's'; /* definitely separator */
+			}
+		} else if (!escaped && (
+				cmd0[x_in] == L';' ||
+				cmd0[x_in] == L'|' ||
+				cmd0[x_in] == L'&')) {
+			contxt = 'n';
+			conold = 's';
+			argc = 0;
+			av0 = &s_argv0[0];
+			*av0 = L'\0';
+			escaped = 0;
+		} else {
+			contxt = 'a';
+			escaped = 0;
+		}
 		if (conold != contxt) {
 			/* context changed just now */
 			if (contxt == 's') {
@@ -563,6 +600,11 @@ int maxpos; /* максимальное значение позиции в бу�
 		if (contxt == 's')
 			goto the_moon;
 		if (contxt == 'a') {
+			if (argc == 0) {
+				*av0 = cmd0[x_in];
+				av0++;
+				*av0 = L'\0';
+			}
 			if (cmd0[x_in] == '/') {
 				base_x = 0;
 				s_dir[dir_x++] = cmd0[x_in];
@@ -575,7 +617,8 @@ int maxpos; /* максимальное значение позиции в бу�
 			/* terminate resulting substrings */
 			s_dir[dir_x] = s_base[base_x] = '\0';
 		}
-		the_moon: conold = contxt; /* remember current context for next hope */
+the_moon:
+		conold = contxt; /* remember current context for next hope */
     }
     if (dir_end != 0) s_dir[dir_end] = '\0'; /* terminate if differ */
 
@@ -598,9 +641,9 @@ int maxpos; /* максимальное значение позиции в бу�
 		} else {
 			if (s_dir[0] == '-') {
 				if (s_dir[1] == '-')
-					s_mode = flaglong;
+					s_mode = flag2;
 				else
-					s_mode = flag;
+					s_mode = flag1;
 			}
 		}
     }
@@ -613,7 +656,7 @@ int maxpos; /* максимальное значение позиции в бу�
     /* найти и выполнить подстановку, если однозначно;
      * иначе сигнал (или TODO: показать список)
      */
-    s_ins = "";
+    s_ins = L"";
     if (contxt == 'a' || (contxt == 's' && argc == 0)) {
     	if ((ok = do_compl(/*s_mode,*/ /*s_ins,*/ s_dir, s_base)) < 0) {
     		bell();
@@ -632,7 +675,8 @@ int maxpos; /* максимальное значение позиции в бу�
 				bell(); /*TODO visual menu of suggestions there */
 			}
 		}
-    	ins_len = wcslen(s_ins);
+    	sh_wcesc(s_ins_esc, s_ins, 0); /* */
+    	ins_len = wcslen(s_ins_esc);
 		/*
 		 * insert a completion just found into cmd buffer
 		 */
@@ -648,7 +692,7 @@ int maxpos; /* максимальное значение позиции в бу�
     			} else if (s_mode == path_cmd) {
     				c = ' ';
     			}
-				s_ins[ins_len] = c; ins_len += 1; s_ins[ins_len] = '\0';
+				s_ins_esc[ins_len] = c; ins_len += 1; s_ins_esc[ins_len] = '\0';
 
     		}
     		/* растолкать место для вставки */
@@ -658,16 +702,16 @@ int maxpos; /* максимальное значение позиции в бу�
 			/* insert into command editor buffer */
 			/*u8swcs(wcstmp, s_ins);*/
 			for(x_out=0, x_in=*curpos; x_out < ins_len; x_out++, x_in++)
-				cmd0[x_in] = s_ins[x_out];
+				cmd0[x_in] = s_ins_esc[x_out];
 
 			*curpos += ins_len;
     	}
     }
 
 #ifdef DEBUGS
-	sprintf(debugs, "ok=%d'%c%c #%d %d/%d dir=%s' base=%s' <%s> ins=%s'  %4s~",
-			ok, conold, contxt, argc, *curpos, maxpos, s_dir, s_base, s_debug[s_mode], s_ins, tstats);
-      /*cp_sav();*/ cp_set(/*y0-1*/ -2, 0, ATT); w_str(debugs); er_eol(); /*cp_fet();*/
+	sprintf(debugs, "av0'%ls' #%d ok=%d'%c%c #%d %d/%d dir'%ls' base'%ls' <%s> ins'%ls'  %4s~",
+			&s_argv0[0], escaped, ok, conold, contxt, argc, *curpos, maxpos, s_dir, s_base, s_debug[s_mode], s_ins_esc, tstats);
+    cp_set( clm._y0-1 /*-2*/, 0, ATT); w_str(debugs); er_eol(); /*cp_fet();*/
 #endif
 
   	return ok;

@@ -476,6 +476,56 @@ int sufmode;            /* режим суффикса */
 	}
 }
 
+const static wchar_t wc_esc_sh[] = L"|\\' \t\r`~!@#\";$%()[]{}^&*?<>";
+int sh_wcesc(outs, inps, mode_quote)
+register wchar_t *outs;
+register wchar_t *inps;
+int mode_quote; /* 0 - простое экранирование каждого символа, 1 - кавычки вокруг строки */
+{
+	int in_quote = 0; /* режим квотирования, если ноль то strcpy */
+	wchar_t c;
+	wchar_t *inps_keep;
+
+	inps_keep = inps;
+
+	while (*inps != '\0') {
+		c = *inps++;
+		if (wcschr(wc_esc_sh, c)) {
+			in_quote = 1;
+		} else {
+			in_quote = 0;
+		}
+		if (mode_quote == 0) {
+			if (in_quote) {
+				*outs++ = '\\';
+			}
+			*outs++ = c;
+		}
+	}
+
+	if (mode_quote) {
+		inps = inps_keep;
+		if (in_quote == 0) {
+			strcpy(outs, inps);
+			return 0;
+		} else {
+			*outs++ = '\'';
+			while (*inps != '\0') {
+				if (*inps == '\'' /*|| *inps == '$'*/) {
+					*outs++ = '\'';
+					*outs++ = '\\';
+					*outs++ = *inps++;
+					*outs++ = '\'';
+				} else {
+					*outs++ = *inps++;
+				}
+			}
+			*outs++ = '\'';
+		}
+	}
+	*outs++ = '\0'; /* string termination after copy */
+	return 1;
+}
 /*
  * TODO: закончить эксперимент с экранированием имен файлов c метасимволами (пока в этом файле...)
  * три варианта экранирования метасимволов sh:
@@ -491,7 +541,7 @@ int sufmode;            /* режим суффикса */
  *
  * фозвращает 0, если имя было без метасимволов, 1 если пришлось экранировать
  */
-int sh_cpy(outs, inps)
+int sh_esc(outs, inps)
 register char *outs;
 register char *inps;
 {
@@ -631,7 +681,7 @@ char *s;        /* формат для подстановки */
 
 no_subs:
 		strcpy(out_str, inps);
-		/*sh_cpy(out_str, inps);*/
+		/*sh_esc(out_str, inps);*/
 	}
 	return(out_str);
 }
