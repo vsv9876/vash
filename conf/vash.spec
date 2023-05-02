@@ -1,6 +1,6 @@
 Name:           vash
 Version:        2.0.22
-Release:        1%{dist}
+Release:        2%{dist}
 Summary:        Visual Assistant Shell (vash)
 
 License:        MIT and BSD
@@ -12,8 +12,8 @@ BuildRequires:  ncurses-devel
 Requires:       ncurses
 
 %description
-Visual Assistant Shell, interactive supershell over sh/bash
-features visual assistance for command line parameters, command string editing, parameterized command history, hotkey scripting, etc.
+Visual Assistant Shell, interactive supershell over sh/bash.
+Features visual assistance for typing command line parameters, editing a command string, parameterized command history, hotkey scripting, etc.
 
 %define debug_package %{nil}
 

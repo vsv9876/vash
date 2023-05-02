@@ -20,7 +20,10 @@ File descriptor 4 (/tmp/ashQGy1TN) leaked on vgs invocation. Parent PID 11891: v
     +- ограничение вывода на экран по maxli,maxco: cp_set,w_chr
     +- поддержка панелей - спец.версии cp_set,at_set,w_panel
     
- + -- редактор строки должен уметь редактировать "бесконечные" строки в ограниченном окне линии -
+    + редактор "бесконечныx" строк в ограниченном окне -
+    //- r_line(), line.h, vcc/vlbp -- интегрировать
+    //+ e_str/w_str: контроль границ буфера строки (4K> bytes) -- реализован
+    ++ support for wsobj_t in r_line/w_line
     +- UTF-8: implement wcwidth() into editors r_line(),e_str()
 
     +- флаги управления режимами переделать на структуру или массив
@@ -51,4 +54,6 @@ File descriptor 4 (/tmp/ashQGy1TN) leaked on vgs invocation. Parent PID 11891: v
   +  - оптимизация файлов настройки (директива include?)
  ++ VAPATH,VEXDIR like PATH
 
+* completion support
+    + man
 ********************************************************************

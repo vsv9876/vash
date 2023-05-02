@@ -6,7 +6,7 @@
 #include "assist.h"
 #include "slist.h"
 
-#define DEBUGS 1 /*debug TAB completion printout*/
+/*#define DEBUGS 1 /*debug TAB completion printout*/
 
 /*#define BUFSMAX 4000*/
 #define BUFSMAX 4*STRBUF
@@ -92,7 +92,10 @@ wchar_t *s_base;
 wchar_t *s_ins;
 {
 
-	if (s_mode == path_cmd) return 1;
+	if (s_mode == flag1 || s_mode == flag2)
+		return 1;
+	if (s_mode == path_cmd)
+		return 1;
 	if(cmpl_stat(s_dir, s_base, s_ins) == NULL) {
 		return 0;
 	}
@@ -430,10 +433,11 @@ int maxnpath;
  * заполняет список подходящих вариантов.
  * возвращает количество найденных вариантов,
  */
-int do_compl(/*s_mode, *//*insp,*/ dirp, basep)
+int do_compl(/*s_mode, *//*insp,*/ dirp, basep, av0)
 /*char *insp; /* pointer to suggestion string to be inserted */
 wchar_t *dirp; /* pointer to dir */
 wchar_t *basep; /*pointer to base */
+wchar_t *av0;	/* name of command, argv0 */
 {
 	int res = 0;  /*	result: count of suggestions variants, -1 if impossible on errors */
 	wchar_t *dir;
@@ -494,8 +498,12 @@ wchar_t *basep; /*pointer to base */
 			}
 		}
 	} else if (s_mode == flag1 || s_mode == flag2) {
-		/*TODO*/
 		/* найти ключи в выдаче man argv0 */
+		sprintf(bufs, "man %ls | egrep \"^[ \\t]+-([^ ])+\" |"
+				" sed 's/ /\\n/g' | grep -e '^%ls' |"
+				" sed 's/=.*//' | sort -u 2>/dev/null ",
+				av0, basep);
+		res = sh_sugg(dirp, basep, bufs);
 	}
 ret:
 /*	if(sgglist != NULL) sgglist = sl_free(sgglist);*/
@@ -551,9 +559,9 @@ int maxpos; /* максимальное значение позиции в бу�
      * хак: после '|', '&', ';' попытаться трактовать как команду,
      * сбрасывая сканер до argc=0 при обнаружении этих символов
      */
-		av0 = &s_argv0[0];
-		*av0 = L'\0';
-   for (x_in = 0; x_in < *curpos && x_in < maxpos; x_in++) {
+	av0 = &s_argv0[0];
+	*av0 = L'\0';
+	for (x_in = 0; x_in < *curpos && x_in < maxpos; x_in++) {
     	/* determine current context */
 		if (cmd0[x_in] == L'\\' && !escaped) {
 			escaped = 1;
@@ -566,7 +574,7 @@ int maxpos; /* максимальное значение позиции в бу�
 		if (cmd0[x_in] == L' ') {
 			if (escaped) {
 				contxt = 'a'; /* part of argument */
-				escaped = 0;
+				//escaped = 1;/*!!!0;*/
 			} else {
 				contxt = 's'; /* definitely separator */
 			}
@@ -582,7 +590,7 @@ int maxpos; /* максимальное значение позиции в бу�
 			escaped = 0;
 		} else {
 			contxt = 'a';
-			escaped = 0;
+			/*escaped = 0;*/
 		}
 		if (conold != contxt) {
 			/* context changed just now */
@@ -648,7 +656,7 @@ the_moon:
 		}
     }
 
-    x_in = wcslen(cmd0);
+    /*x_in = wcslen(cmd0);*/
     if (x_in < *curpos) *curpos = x_in; /* вернуть курсор к концу набираемой строки */
 
     ok = -2;
@@ -658,8 +666,8 @@ the_moon:
      */
     s_ins = L"";
     if (contxt == 'a' || (contxt == 's' && argc == 0)) {
-    	if ((ok = do_compl(/*s_mode,*/ /*s_ins,*/ s_dir, s_base)) < 0) {
-    		bell();
+    	if ((ok = do_compl(s_dir, s_base, &s_argv0[0]/*av0*/)) < 0) {
+    		;/*bell();*/
     	} else if (ok == 1) {
 			if (sgglist->sl_size == 1) {
 				s_ins = sl_sstr(sgglist->sl_last);
@@ -672,7 +680,7 @@ the_moon:
 			s_ins = sgg_ext(s_base);
 			ins_len = wcslen(s_ins);
 			if (ins_len == 0) {
-				bell(); /*TODO visual menu of suggestions there */
+				;/*bell();*/ /*TODO visual menu of suggestions there */
 			}
 		}
     	sh_wcesc(s_ins_esc, s_ins, 0); /* */

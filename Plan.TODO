@@ -13,24 +13,17 @@ LINLIB, VHSET,
 
   -- r_page() navigation with PgUp/PgDn/Home/End
 
-    -- статусная строка (трей приложения)
-	
     -- r_key(): correct input for non-unicode 8-bit encodings
     
     -- support for ^U ^W - erase all, erase word
     
-+   ++ support for wsobj_t in r_line/w_line
- 
-    
-+ ++ редактор "бесконечныx" строк в ограниченном окне -
-    //- r_line(), line.h, vcc/vlbp -- интегрировать
-    //+ e_str/w_str: контроль границ буфера строки (4K> bytes) -- реализован
+    -- статусная строка (трей приложения)
 
 LBP+VCC/VLBP
 
-+   ++ wcwidth > 1 support for ---SCREEN section
     -- filler character must be [~_#], not limited by [.]
     -- добавить атрибуты lbp,vlbp для раскраски страниц help
+    ++ wcwidth > 1 support for ---SCREEN section
 
     ------------------------------------------------------------------------------
 
@@ -53,7 +46,6 @@ VASH:
 		-- store format 'timestamp,usageCount,protected,cmd'
 
 * completion support
-    -- man
     -- make
 
 *  --- export vash flags changed in setup, on execve() with VASH= environment
