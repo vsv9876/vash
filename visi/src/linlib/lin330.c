@@ -397,8 +397,10 @@ kbcod cod;		/* kbcod() pressed */
 
 	vshift = v_shift(size, vsize, i);
 
-	if(edinsm)
+	if(edinsm) {
 		i_end = fnd_lend(wc_s, i, size);
+		i_end = i_end < i ? i : i_end;
+	}
 
 	i_chged = i;
 	if (cod == KB_KD) {
@@ -764,10 +766,11 @@ ret:
 	if(ofsp != NULL)
 		*ofsp = i;
 
-	/* ПОДЧИСТИТЬ ПРОБЕЛЫ В КОНЦЕ СТРОКИ */
-	for (i = size; --i >= 0 && (wc_s[i] == L' ');)
-		;
-	wc_s[++i] = L'\0';
+	/* ПОДЧИСТИТЬ ПРОБЕЛЫ от конца до позиции курсора и не дальше */
+	for (k = size - 1; k >= i/*0*/ && (wc_s[k] == L' ');) {
+		wc_s[k] = L'\0';
+		k--;
+	}
 	edinfo(0);
 	/*free(wc_iv);*/
 	return(cod);

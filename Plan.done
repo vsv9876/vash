@@ -1,18 +1,4 @@
 
-    -- BUGS/FIX
-! -- лишняя терминация бесконечных строк внутри r_line/w_line
-  	-- обрезание команды из истории при взятии в буфер редактирования по кнопке Enter
-  	* терминация была внутри cvt_sp()
-
-  e2k: не открывается из профиля простой файл -f (обычно там команда)
-    -- DOC/MAN
-  + - man page vash.1 (en/ru)
-! TAB expansion не работает для команд вида ../<TAB>
-
-!! # vgs
-File descriptor 3 (/dev/tty) leaked on vgs invocation. Parent PID 11891: vash
-File descriptor 4 (/tmp/ashQGy1TN) leaked on vgs invocation. Parent PID 11891: vash
-
 ------------------------------------------------------------------------------
     
     -- LINLIB, VHSET, 

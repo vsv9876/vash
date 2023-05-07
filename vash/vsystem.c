@@ -347,14 +347,13 @@ char *cmdlbl;   /* строка для индикации, как правило
 				}
 				continue;
 			}
-			/*NOBREAK*/
+			/*NO BREAK*/
 		/* разделители процессов как метасимволы sh */
 		case '|': case ';':
 		case '(': case ')':
 		case '{': case '}':
 			execapnd = 0;
-			/* проваливаемся... */
-			/*NOBREAK*/
+			/*NO BREAK*/
 		/* другие метасимволы sh */
 		case '[': case ']':
 		case '<': case '>':

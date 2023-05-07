@@ -81,6 +81,27 @@ size_t size;
 }
 
 /*
+ * trim a just typed command from unescaped spaces
+ */
+void wcuntrim(cmd, curpos)
+wcsobj_t *cmd;
+int *curpos;
+{
+	int x, len;
+	wchar_t *wcs;
+	if (cmd->wco_sig == WCO_SIG)
+		wcs = cmd->wcs;
+	else
+		wcs = (wchar_t *)cmd;
+	len = wcslen(wcs);
+    for (x = len - 1; x >= 0 && wcs[x] == L' '; x--) {
+    	if (x > 0 && wcs[x - 1] == L'\\')
+    		continue;
+    	wcs[x] = L'\0';
+    }
+}
+
+/*
  * выполнить команду /bin/sh
  */
 vshcmd(cmd, cmdlbl)
@@ -134,12 +155,16 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		case KB_AU:
 		case KB_AD:
 			pos = /*strlen*//*u8slen*/wcslen(cmd0);     /* курсор в конец */
+			/*NO BREAK*/
 		default:
 			w_cmd(cmd0);
 		}
 		/*cod = re_str((char *)&cmdbuf[0], cmdsize, 0, &pos);*/
 		showtime(0);
+
 		cod = re_str(cmdo, cmdsize, 0, &pos);
+	    wcuntrim(cmdo, &pos);
+
 		showtime(1);
 	    }
 		switch(cod) {

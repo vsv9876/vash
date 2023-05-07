@@ -499,10 +499,11 @@ wchar_t *av0;	/* name of command, argv0 */
 		}
 	} else if (s_mode == flag1 || s_mode == flag2) {
 		/* найти ключи в выдаче man argv0 */
-		sprintf(bufs, "man %ls | egrep \"^[ \\t]+-([^ ])+\" |"
-				" sed 's/ /\\n/g' | grep -e '^%ls' |"
-				" sed 's/=.*//' | sort -u 2>/dev/null ",
-				av0, basep);
+		sprintf(bufs,
+				"man %ls | sed -e 's/ /\\n/g' -e 's/|/\\n/g' |"
+				"grep -e '^%ls' | sed -e 's/^-$//' -e 's/[.]$//' -e 's/[*,)}]$//g' |"
+				"sed 's/=.*//' | sort -u | less",
+					av0, basep);
 		res = sh_sugg(dirp, basep, bufs);
 	}
 ret:
@@ -537,8 +538,8 @@ int maxpos; /* максимальное значение позиции в бу�
 	wchar_t s_base[STRBUF];     /* хвост (например, префикс имени в каталоге) */
     int argc, x_in, x_out, ins_len /*, dir_len, base_len;*/;
     int base_x, dir_x, dir_end;
-    char contxt, conold;   /* cmd scaner context: 's'eparator,
-    												'a'rg, 'n'ull, //'i'ni */
+    /* cmd scaner context: 's'eparator, 'a'rg, 'n'ull, //'i'ni */
+    char contxt, conold;
     int escaped;		/* символ экранирован */
     /*enum sugg_mode s_mode;*/
     int ok;
@@ -572,11 +573,12 @@ int maxpos; /* максимальное значение позиции в бу�
 		}
 		/* skip leading spaces and separators between args */
 		if (cmd0[x_in] == L' ') {
-			if (escaped) {
-				contxt = 'a'; /* part of argument */
-				//escaped = 1;/*!!!0;*/
-			} else {
+			if (!escaped) {
 				contxt = 's'; /* definitely separator */
+				/*escaped = 1;*/
+			} else {
+				contxt = 'a'; /* part of argument */
+				escaped = 0;
 			}
 		} else if (!escaped && (
 				cmd0[x_in] == L';' ||
@@ -590,7 +592,7 @@ int maxpos; /* максимальное значение позиции в бу�
 			escaped = 0;
 		} else {
 			contxt = 'a';
-			/*escaped = 0;*/
+			escaped = 0;
 		}
 		if (conold != contxt) {
 			/* context changed just now */
@@ -717,8 +719,9 @@ the_moon:
     }
 
 #ifdef DEBUGS
-	sprintf(debugs, "av0'%ls' #%d ok=%d'%c%c #%d %d/%d dir'%ls' base'%ls' <%s> ins'%ls'  %4s~",
-			&s_argv0[0], escaped, ok, conold, contxt, argc, *curpos, maxpos, s_dir, s_base, s_debug[s_mode], s_ins_esc, tstats);
+	sprintf(debugs, "av0'%ls' \\%d ok=%d'%c%c #%d %d/%d dir'%ls' base'%ls' <%s> ins'%ls'  %4s~",
+			&s_argv0[0], escaped, ok, conold, contxt, argc,
+			*curpos, maxpos, s_dir, s_base, s_debug[s_mode], s_ins_esc, tstats);
     cp_set( clm._y0-1 /*-2*/, 0, ATT); w_str(debugs); er_eol(); /*cp_fet();*/
 #endif
 
