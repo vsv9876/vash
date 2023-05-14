@@ -12,7 +12,7 @@
 #
 #-frpm -qa --qf '%11{installtime} %-30{name}\n'|sort -nr| colrm 1 12
 -frpm -qa --qf '%11{installtime} %-30{name} %-50{nevra} %20{distribution}\n'|sort -nr| colrm 1 12
--i/var/lib/rpm/rpmdb.sqlite-shm
+-i/var/lib/rpm/rpmdb.sqlite
 -o/dev/null
 -@2
 #------------------------------------------

@@ -1,5 +1,13 @@
-Visual Assistant Shell (vash)
 
-DOC
+	|	|	|	|	|	|	|	|	|	
+                ASCII		KOI8		UTF8		WCS
 
-to be continued...
+кодировка       7		8		8-32            32
+
+хранение        char            char            char            wchr_t
+
+презентация     1cell		1cell		?               wcwidth()
+на экране
+
+копирование     strcpy()        strcpy()        strcpy()        wcscpy()
+

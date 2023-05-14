@@ -336,7 +336,8 @@ char *cmdlbl;   /* строка для индикации, как правило
 
 	for (; *p; p++) {
 		switch(*p) {
-		default: break;
+		default:
+			break;
 		case '&':
 			if (p[1] == '\0') {
 				/* фоновый запуск, подчистить пробелы */

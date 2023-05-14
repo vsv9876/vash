@@ -747,6 +747,7 @@ cwdshow()
 	lblen += /*strlen*/u8vsize(mode_tmpstr);
 
 	binpwd(cwdpath);
+
 /*	sprintf(tmpstr, "[ %s ]", cwdpath); */
 	if (vashflag.xtermf) {
 		w_raw("\033]0;");
