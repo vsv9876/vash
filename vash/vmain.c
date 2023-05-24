@@ -360,6 +360,7 @@ char *helpl;
 					cp_fet();
 					scrlnl(); /* новый y0... */
 				}
+				er_eop(TXT);
 				cwdshow();      /* вывески */
 				itmshow();      /* положение окна */
 				/*hlp_clr();		/* TODO check if right place?*/

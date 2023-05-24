@@ -42,29 +42,27 @@ y0      = gc     -       "%3d"   -       -       y0
 yt      = gc     -       "%3d"   -       -       y0_top
 li      = gc     -       "%3d"   -       -       maxli
 co      = gc     -       "%3d"   -       -       maxco
-bli	 = vip   -      "%3d"  -       -       baseli
-lli      = vip   -      "%3d"  -       -       lmaxli
+bli     = vip    -      "%3d"  -       -       baseli
+lli     = vip    -      "%3d"  -       -       lmaxli
 C       = ipv    -      "%1d"  -       -       SGR
-
-
 
 
 ---SCREEN
 ."vash setup parameters"......................... help: .:HE....  exit: .:EX....
 
-+   .h. h,history   .s. s,scroll        .F1 anyway sh -c        .ym.:linesmax    
-+   .S. S,sync      .p. p,panel/keybar  .u8 only ASCII KBD                       
-+   .m. m,mail_biff .w. w,title         .XT trap on exit        .lli:lmaxli      
-+   .c. c,clock     .x. x,xterm title   .N. help msg on trap    .bli:baseli      
-+                                                                                
-+."debug of profiles"..................                         .li:maxli        
-+-- .fo................................                         .co:maxco        
-+-@ .rs................................                         .yt:y0_top       
-+-i .is................................                         .y0:y0           
-+
-+                                                               .C - color mode
-
++   .h. h,history   .s. s,scroll        .F1 anyway sh -c         
++   .S. S,sync      .p. p,panel/keybar  .u8 only ASCII KBD       
++   .m. m,mail_biff .w. w,title         .XT trap on exit         
++   .c. c,clock     .x. x,xterm title   .N. help msg on trap     
+                                                                       
++."debug of profiles"..................     .yt:y0_top      .ym.:linesmax
++-- .fo................................     .y0:y0          
++-@ .rs................................     .li:maxli       .lli:lmaxli  
++-i .is................................     .co:maxco       .bli:baseli  
 ---#+ -o: .os........................................................          
++                                                           
++                                                           .C - color mode
+
 vashrc: .vashrc.................................................................
 vapath: .vpath..................................................................
 vexdir: .vexdir.................................................................

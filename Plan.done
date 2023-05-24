@@ -12,6 +12,8 @@
     ++ support for wsobj_t in r_line/w_line
     +- UTF-8: implement wcwidth() into editors r_line(),e_str()
 
+    ++ wcwidth > 1 support for ---SCREEN section
+
     +- флаги управления режимами переделать на структуру или массив
  
  +  -- ANSI Color SGR 8/16

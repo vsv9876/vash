@@ -37,7 +37,6 @@ Please, see \fIargs\fR description in section
 .B OPTIONS ANS SETUP
 below.
 
-
 .\"  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SH "DESCRIPTION"
 .PP
@@ -65,7 +64,13 @@ and
 .PP
 Preferrable way to start \fBvash\fR is calling script named
 \'\fBv\fR\' which simply prepares environment before running \fBvash\fR.
-
+.PP
+.B Vash
+equipped with online
+.B help
+pages, see details in section
+.B Help View
+below.
 .PP
 .B Vash
 does not work on dumb or printing (hardcopy) terminals and
@@ -74,19 +79,17 @@ in batch environments because requires
 with
 .I direct cursor
 positioning capability.
-Full functionality can be provided only on videoterminals
+Full functionality can be provided on videoterminals
 like
 .I DEC VT100
 or modern terminal emulators like
-.I xterm, konsole, gnome-terminal
-\.
+.I xterm, konsole, gnome-terminal\fR.
 
 .\"  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 .SH "RELEASE NOTES"
 .PP
 This manual page is incomplete, still in progress. Please,
-refer to online pages and keep quiet.
+refer to online pages, comments in config files and keep quiet.
 
 .\"  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SH "OVERVIEW"
@@ -102,7 +105,7 @@ Then operator have to press a key to do an action on object\.
 Most popular actions has labels shown in bottom of the screen.
 Action may be done on single object pointed by cursor or on a group of objects
 marked from 
-.I selection.
+.I selection\fR.
 .SS profiles
 Actions are programmed in \fIprofiles\fR\. Default profile is about files in
 current directory. They can be viewed, edited, copied, removed and so on\.
@@ -122,7 +125,7 @@ beginning of unix command.
 Every other keys may be used as 
 .I shortcuts
 to run particular shell command, or to start command editing from
-template. For example, run 'ls -l' by pressing letter 'L'\.
+template. For example, run 'ls -l' by pressing letter 'L'\fR.
 This shortens needs of keyboard input.
 .PP
 More complicated tools such a
@@ -137,30 +140,33 @@ are explained in section
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SH "RUNNING VASH"
 .PP
-.SS general rule
+.SS general rule:
 .B vash
 covers command string interface but not hides it from user.
 .PP
 .SS Command string interface
 is the main target of assistance provided by
 .B vash\. 
+.br
 Most popular unix commands can be executed with a single-key
 commands of 
 .B vash\.
+.br
 In more complicated cases
 .B vash
 helps to compose command string with
 .I command editor
 and other
 .I tools.
-.SS ""
+.PP ""
 In most of cases actual command string will be shown before execution by vash.
+This will done by command editor.
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SS Screen and Keyboard Modes
 .PP
 .B Vash
 provides own dialogue
-only on a part of a terminal screen.
+only on a part of a terminal screen which disappears from it during command execution.
 The rest of the screen leaves for 
 command output listing.
 
@@ -226,18 +232,15 @@ was started with default profile
 .B std.rc,
 then list of files from current directory will be shown on a main view.
 Other profiles intended to work with process numbers, etc.
-
 .PP
 Object for single-key operation is pointed by cursor moving
 with arrow keys and other navigation keys.
-
 .PP
 Most popular operations on objects
 are assigned to
 .I keys with digits
 on main keyboard (\fB0...9\fR). Actions assigned to these keys are labeled
 below of \fIlist of objects\fR.
-
 .PP
 .I Labels, 
 .I key assignments 
@@ -257,15 +260,13 @@ Usual content of this banner is
 and
 .I full path of current directory\.
 .br
-It is default setup which can be changed via environment and config file.
-
+It is default setup which can be changed via environment and with config
+files.
 .TP
 NOTE
 banner above main menu and labels below may be hided by \fIsetup\fR of
-.BR vash .
-
+.B vash\fR.
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 .SS Help View
 \fBVash\fR provides
 online help pages by pressing \fIhelp key\fR\,
@@ -275,11 +276,9 @@ press of
 .I help key
 gets description and terminal-dependend assignments
 of keys which common for all contexts.
-
 .PP
 Return to previouse context from \fIhelp page\fR
 can be done by pressing any other key then \fIhelp key\fR.
-
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SS Command String Editor
 Pressing lowercase letter key from \fIMain View\fR switches context
@@ -290,16 +289,15 @@ or
 .B '/'
 as 1st symbol.
 .PP
-Other printable keys, both with digit or uppercase letter,
-can be assigned to command or command template in profile file.
+Other printable keys, such a digit or uppercase letter,
+can be assigned to command or template of command, in profile file.
 .PP
 Template of command contains places for substitution by an object or
 group of objects. Substitution will be done just before execution.
 .PP
 Key \fICancel\fR switches  context between \fIcommand editor\fR and \fIMain View\fR.
 By default \fBCtrl-C\fR assigned for this action.
-Content for both view remain untouched.
-
+Content for both view remain untouched on switch time.
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SS Object Selection and Command Parameters
 .PP
@@ -317,9 +315,8 @@ Parameters for substitution allowed both in command editing mode and in profiles
 all objects separated with spaces; at least one object must be selected
 .TP
 .B #,
-objects, separated by comma; use curly braces around assumed
+objects, separated by comma; assumed use of curly braces around
 .RE
-
 .PP
 Parameters for substitution only allowed in
 .I vash profiles:
@@ -329,11 +326,9 @@ Parameters for substitution only allowed in
 an object pointed by cursor;
 .TP
 .B #*
-part of object name before suffix
-.RE
-
-.PP
-There are other form for parameters of substitution.
+part of object name before suffix.
+.br
+There are other form of substitution.
 Please, see \fIstd.SYNTAX\fR file for full explanation.
 .PP
 \fBHow to use substitution tool\fR:
@@ -354,11 +349,9 @@ then press \fBEnter\fR - the command started will be
     $ ls -ld .bash_profile Download
 
 .EE
-
 .SS stdin/stdout redirection
 Selection may be done pressing '>' or '<' near files in main \fBview\fR.
 Selection will be cleared after command execution preventing unwanted behaviour.
-
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .RE
 .SS History
@@ -371,13 +364,17 @@ Only unique templates which was edited manually are stored,
 last used will be placed at the tail of list, cleaning from duplicates.
 Command templates executed on hot-keys without editing are not stored.
 .PP
-Switching to \fBhistory view\fR context can be done pressing \fIhelp key\fR from
-.I command string
-editing context.
+Switching to
+.B history view
+context can be done pressing \fIhelp key\fR from
+.B command string editing
+context.
 A history menu will appear on the screen. This menu is like the object menu
 on main view - it can be navigated, history entry can be pointed by cursor.
 .PP
-Command from history may be taken to \fIcommand string editor\fR by one of two ways:
+Command from history may be taken to
+.B command string editor
+by one of two ways:
 .RS 4
 .IP * 4
 pressing key \fIEnter\fR replaces content of command editor;
@@ -385,7 +382,6 @@ pressing key \fIEnter\fR replaces content of command editor;
 Pressing \fIspace bar\fR or '\fI;\fR' appends
 to command already typed in command editor;
 .RE
-
 .PP
 Command from history can replace \fIfill main view\fR command.
 Default setup for this action is key '\fB=\fR'.
@@ -393,7 +389,6 @@ Context will switched to main view immediately,
 bypassing command editor.
 .br
 NOTE: \fIrescan\fR of main view will done on next press of key '='.
-
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SS Exit Code Indicator
 When running command done, operator have to
@@ -408,15 +403,15 @@ Command editing may be continued from different points.
 Pressing \fIleft arrow\fR key puts cursor on that position in command string
 which was before key \fIEnter\fR was pressed.
 Other arrow keys puts cursor at the end.
-
 .PP
 Preventing mistakes during mixing tty and screen modes,
 pressing key \fIEnter\fR does nothing at this point.
 Only warning message displayed.
-Operator have to press a key \fIspace bar\fR in case returning to \fImain view\fR.
+.PP
+Anyway, operator have to press a key \fIspace bar\fR to return \fImain view\fR.
 
 .SS Menu
-TODO
+TODO ...
 
 
 
@@ -440,24 +435,25 @@ not in 1st position.
 .B -
 setup parameter, defines variouse constants and parameters
 .TP
+
 .B @
 include nested section from file specified as argument
 .TP
 .B :
 entry with key_code to \fIkey action program\fR, multiple
 heads allowed following each other.
-.br
 Key_code specified in one of form:
-.RS 12
+.RS 8
+.TP
 .B :L
 any printable ASCII code, for example 'L';
-.br
+.TP
 .B :[a-z./]
 matching pattern for one printable code;
-.br
+.TP
 .B :^C
 non-printable ASCII code, not assigned for common keys, see \fBvash\fR(1);
-.br
+.TP
 .B :HE
 common key of predefined keyboard actions, without prefix 'KB_',
 for example \fBhelp key\fR 'KB_HE'
@@ -473,30 +469,36 @@ statement with white space symbol in 1st position defines
 an action with condition check, like \fBif-then\fR.
 .RE
 .SS conditions checked
-On a \fIkey action program\fR, matching is about permissions of current
-directory if applicable, and object selection availability.
-.SS ""
-On a labeled program condition is file permission if applicable, and
-object name pattern.
+.TP
+On a \fIkey action program\fR, an check will done for two patterns:
+.br
+permissions of current directory: rwx;
+.br
+object selection number, one symbol: '-' or '+';
+.TP
+On a labeled program condition checked is:
+.br 
+file permission if applicable;
+.br
+object name pattern;
 .SS actions programmed
 An action may be command with optional parameters (template) or label of
 another program, or internal function.
 .SS internal functions
 designated with names which has underline symbol in 1st position.
 Some of them may have parameters.
-
 .PP
 some commands is internal and never passed to execution by external shell.
-.SS "cd КАТАЛОГ"
-Перейти в каталог (после cd допустим всего один пробел)
+.SS "cd directory"
+change current directory and optionally refresh main view. Only one space symbol allowed before directory name.
 .SS exit
-Закончить работу, выйти и сохранить историю команд
+Finish a vash session, exit and save history of command
 .SS profile sections
 Profile consists of a configuration statements and split to several
 files. Separate sections can be included with
 special statement into other section.
 .PP
-Search every section for inclusion via \fBVASH_PATH\fR will done separately each other. Every section may be replaced with user content;
+Search every included file via \fBVASH_PATH\fR will done separately from each other. Every section may be replaced with user content;
 .SS profile search path
 user can replace sections with own content and place them in front of
 default library sections. In this case environment variable \fBVASH_PATH\fR
@@ -558,8 +560,8 @@ title on \fBx\fRterm window if supported by X window manager
 contains flags similar to startup options.
 If this variable is not set, then default values are used.
 .br
-Using this variable reset defaults, so using letter means corresponding
-feature is set. Flags on command string has an advantage.
+Using this variable reset defaults first, so using letter means corresponding
+feature is set. Omitted letters means feature not set. Flags on command string has an advantage.
 .PP
 Additionally, flag '\fBl\fR' followed by number
 means how many lines will be occupied
@@ -620,5 +622,4 @@ Native 64-bit support added since 2019.
 Probably, 16-bit version may be still compiled, not sure.
 .PP
 \fITermcap\fR-based code was modified to use \fIterminfo\fR.
-Starting in 2020, UTF-8 support still in progress, but it doesn't
-interfere with most of sysadmin's work.
+Starting in 2020, UTF-8 support was implemented, but only for restricted set of languages including european and chinessy. Interface of vash itself remains english only.
