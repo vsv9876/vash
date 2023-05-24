@@ -500,9 +500,10 @@ wchar_t *av0;	/* name of command, argv0 */
 	} else if (s_mode == flag1 || s_mode == flag2) {
 		/* найти ключи в выдаче man argv0 */
 		sprintf(bufs,
-				"man %ls | sed -e 's/ /\\n/g' -e 's/|/\\n/g' |"
-				"grep -e '^%ls' | sed -e 's/^-$//' -e 's/[.]$//' -e 's/[*,)}]$//g' |"
-				"sed 's/=.*//' | sort -u | less",
+				"man %ls 2> /dev/null | sed -e 's/ /\\n/g' -e 's/|/\\n/g' |"
+				"grep -e '^%ls' | sed -e 's/^-$//' -e 's/[.]$//' |"
+				"sed -e 's/[*,)}]$//g' -e 's/=.*/=/' -e 's/\\[=.*//' |"
+				"sort -u ", /* | less */
 					av0, basep);
 		res = sh_sugg(dirp, basep, bufs);
 	}
