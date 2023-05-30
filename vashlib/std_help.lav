@@ -21,27 +21,27 @@ CMD     = ghx - - - -  "[A-Z0-9]"
 
 ---SCREEN
 =vash workflow                                      
-+                                                                              
-+.mainvk.................................    exit:                     help:  
-+.'lowercase or .'. or .'/ :                 .:EX...                   .:HE...
-+    - type a command from scratch    {1}    .mainv...........................
-+.'uppercase or .'digit or .'other :          ^    ^  .:CA  .cmd...   .CMD....
-+    - edit a command from template   {2}     :    :   :        :      :    : 
-+    - execute predefined command     {3}     :    :   :       {1}    {2}  {3}
-+         - switch to editor  .:CA            :    :   :        :      :    : 
-+                                             :   .cmded................... : 
-+.cmdedk.................................     :      ^   ^  .:HE... .:NL... : 
-+   - run a command, sync history .:NL...     :      :   :     :       :    : 
-+   - switch to history view      .:HE...     :      : .:NL... :       :    : 
-+                                             :      : ."history".     :    : 
-+.histk..................................     :      :                 :    : 
++                                            for more details see 'man vash'       
++.mainvk.................................                                     
++.'lowercase or .'. or .'/ :                 exit:                     help:  
++    - type a command from scratch    {1}    .:EX...                   .:HE...
++.'other :                                   .mainv...........................
++    - edit a command from template   {2}     ^    ^  .:CA  .cmd...   .CMD....
++    - execute predefined command     {3}     :    :   :        :      :    : 
++ .:CA - switch to editor                     :    :   :       {1}    {2}  {3}
++                                             :    :   :        :      :    : 
++.cmdedk.................................     :   .cmded................... : 
++   - run a command, sync history .:NL...     :      ^   ^  .:HE... .:NL... : 
++   - switch to history view      .:HE...     :      :   :     :       :    : 
++                                             :      : .:NL... :       :    : 
++.histk..................................     :      : ."history".     :    : 
 +   - take a command to editor:   .:NL...     :      :                 :    : 
-+   - return to editor untouched: .:CA       .:SP... :  .:NL...<-      :    : 
-+                                            .exit.............        :    : 
-+.exitk..................................                  ^           :    : 
-+  - return to main view:   .:CA, .:SP...                .runcmd..............
-+  - defencive trap for mistakes: .:NL... 
-
++   - return to editor untouched: .:CA        :      :                 :    : 
++                                            .:SP... :  .:NL...<-      :    : 
++.exitk..................................    .exit.............        :    : 
++  - return to main view:   .:CA, .:SP...                  ^           :    : 
++  - defencive trap for mistakes: .:NL...                  :           :    : 
+                                                         .runcmd..............
 ---END                                 
 +                                     .m. see 'man vash' for details
 ..!<- .:NL...

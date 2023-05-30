@@ -143,9 +143,9 @@ char *fill;
 }
 #endif
 
-static  int ed_ls(fill)
+int f_ls(fill)
 /*
- * тотальная пометка
+ * edit fill command
  */
 char *fill;
 {
@@ -168,13 +168,6 @@ char *fill;
 		return(1);
 	}
 	return(1);
-}
-
-int f_ls(cmd)
-char *cmd;
-{
-	int ret;
-	return ed_ls(cmd);
 }
 
 static  int tutsel(cod)
@@ -284,6 +277,50 @@ char *cmd;
 		w_emsg("invalid arg for _mark");
 	}
 	return (0);
+}
+
+int itmsel()
+{
+}
+
+static char pattpos[20] = "";
+/* position cursor on first letter given in dialog */
+int itmpos(cmd)
+char *cmd;
+{
+	register char *p;
+	extern kbcod pmtrstr(); /* ввод строки с промптером */
+	int i, ilast;
+
+
+	switch(pmtrstr(" position on: ", pattpos, 16)) {
+	case KB_CA:
+	case KB_EX:
+		w_emsg("");
+		return 0;
+		break;
+	case KB_NL:
+		ilast = clm._itm;
+		for (i = 0; i < clm._itmmax; i++) {
+			p = clm._itms[i];
+			/* Проверять по шаблону... */
+			if (strncmp(pattpos, &p[2], strlen(pattpos)) == 0) {
+				clm._itm = i;
+				break;
+			}
+		}
+		if (i >= clm._itmmax) {
+			w_emsg("no such items - ");
+			w_str(pattpos);
+			return -1;
+		}
+		if (ilast != clm._itm) {
+			itmadj(0);
+			w_emsg("");
+		}
+		break;
+	}
+	return 0;
 }
 
 extern  int     y0_top;         /* defined in main.c */

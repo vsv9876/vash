@@ -40,26 +40,23 @@ extern  char *UP;
 extern  char *BC;
 SCRN scrn = { 0 };
 
+/* defined in lin210.c */
 extern  LPA lpaout[];
 extern  LPA lpainp[];
+extern  int sgrmode;
 
 #define AW_INIT_STATE (A_SO|A_US|A_MD)
-
-/* СТАРОЕ СЛОВО АТРИБУТОВ: */
-static    int awstate = AW_INIT_STATE;  /* ДЛЯ НАЧАЛА ВСЕ ВКЛЮЧЕНО */
 #define NOCOLOR (char *)0
+
+/* old attributes and color sgr */
+static    int awstate = AW_INIT_STATE;
 static  char *acstate = NOCOLOR;
 static    int aixstate = 0;
-extern  int sgrmode;
 
 #define COLOR_ANSI
 #ifdef COLOR_ANSI
 
-/* ANSI COLOR out/input, SGR sequence, indexed by LPA (0, TXT, HDR, ... )*/
-/* storage for SGR - this is a text for sprintf "\033[%sm", */
-/*/*/
-
-w_sgr(sgr)
+static w_sgr(sgr)
 char *sgr;
 {
 	static char s_csi[40] = "";
@@ -71,7 +68,8 @@ char *sgr;
 		return;
 	}
 	if (sgr == NOCOLOR || *sgr == '\0') {
-		sgr = lpaout[0].lpa_sgr;  /* CMD == clean all colors by LINLIB concept */
+		/* 0: CMD == clean all colors by LINLIB concept */
+		sgr = lpaout[0].lpa_sgr;  
 		acstate = NOCOLOR;
 		return;
 	}
@@ -93,7 +91,7 @@ int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	int   aw_old;   /* СЛОВО СТАРЫХ АТРИБУТОВ */
 	char *ac_old;
 	int aw;        	/* НОВЫЕ АТРИБУТЫ */
-	char *ac;	/* color to be set */
+	char *ac;	/* color sgr to be set */
 	int  ax;	/* индекс для поиска по таблицам атрибутов */
 
 	/* dumb mode, without attributes at all - in some cases its wrong - vt52+ has so/se attribute */
@@ -101,9 +99,9 @@ int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 
 	aw = (aw_new & VIDEOM); /* disable garbage from old code */
 
-	aw_old = awstate;
 	ac =
 	ac_old = acstate;
+	aw_old = awstate;
 	if (sgrmode > 1) {
 		ac = NOCOLOR;
 	}
@@ -119,7 +117,7 @@ int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	}
 	/* оптимизация повторной выдачи*/
 	if(ac == ac_old && aw == aw_old) {
-		 /* биты атрибутов и раскраска не менялись */
+		/* биты атрибутов и раскраска не менялись */
 		return;
 	}
 	/*aixstate = ax;
@@ -139,7 +137,7 @@ int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	}
 
 	/* включить атрибуты, сначала b/w mono */
-	if(aw != 0 && sgrmode & 01) { /* all odd modes */
+	if(aw != 0 && (sgrmode & 01)) { /* all odd modes */
 		if(aw & A_ZH) w_raw(t_zh);
 		if(aw & A_SO) w_raw(t_so);
 		if(aw & A_US) w_raw(t_us);
@@ -183,16 +181,18 @@ register int awi;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	/* СНАЧАЛА ВСЕ ВЫКЛЮЧИТЬ */
 	if(awold & A_SO) w_raw(t_se);
 	if(awold & A_US) w_raw(t_ue);
-	if(awold & (A_MD|A_MR|A_MB|A_MK)) w_raw(t_me);
+	if(awold & (A_MD|A_MR|A_MB|/*A_MK*/A_MH)) w_raw(t_me);
 
 	if(awi != 0) {
 		/* ТЕПЕРЬ ВКЛЮЧИТЬ */
+		if(aw & A_ZH) w_raw(t_zh);
 		if(aw & A_SO) w_raw(t_so);
 		if(aw & A_US) w_raw(t_us);
 		if(aw & A_MD) w_raw(t_md);
 		if(aw & A_MR) w_raw(t_mr);
 		if(aw & A_MB) w_raw(t_mb);
-		if(aw & A_MK) w_raw(t_mk);
+		/*if(aw & A_MK) w_raw(t_mk);*/
+		if(aw & A_MH) w_raw(t_mh);
 	}
 }
 #endif
@@ -263,7 +263,7 @@ int li, co, at;
 /*-----------------------------------------------------*/
 /* СОХРАНИТЬ/ВОССТАНОВИТЬ ПОЛОЖЕНИЕ И АТРИБУТЫ КУРСОРА */
 /*-----------------------------------------------------*/
-static int s_colu, s_line, s_attr, s_colr;
+static int s_colu, s_line, s_attr/*, s_colr*/;
 cp_sav()
 {
 	s_colu = scrn.sc_co;

@@ -106,6 +106,10 @@ kbcod cod;
 	if (i >= 0 && i < clm._xx * clm._yy) ;      /* ОКНО НЕ НАДО ДВИГАТЬ */
 	else {
 		switch (cod) {
+		case 0:
+			i = (clm._itm / clm._ofsx) * clm._ofsx;
+			clm._itmofs = i;
+			break;
 		case KB_AL:
 			clm._itmofs -= clm._ofsx;
 			if (clm._itmofs < 0)

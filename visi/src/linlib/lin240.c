@@ -169,10 +169,10 @@ cont1:
 		/* logical code */
 		else if(*s == ':') {
 			s++;
-			/* new format, 1st field is to key for insert into runtime table
+			/* new format,
 			 * example: ':HE:F2    :k2:^G' */
 			/* fields number 1st, 2nd and 3rd cannot be empty,
-			 * 4th may be omitted (filled with spaces), but colon ':' */
+			 * 4th may be omitted (filled with spaces), but colon ':' must be present */
 			c1 = *s++;
 			c2 = *s++;
 			t_cod = KBCOD(c1, c2);
@@ -257,7 +257,7 @@ cont1:
 					for(os = lpap->lpa_sgr; *s != '\0' && *s != '\n' && *s != '\t'; *os++,*s++) {
 						*os = *s;
 					}
-					*os = '\0'; *s++; /* skip <TAB> before next GSR*/
+					*os = '\0'; s++; /* skip <TAB> before next GSR*/
 				}
 			}
 

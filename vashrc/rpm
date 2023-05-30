@@ -1,10 +1,10 @@
 #!/usr/bin/vash
 #
-# NOTE: experimental script, to be developed
-#-----------------------------------------
-#
-# rpm database management
+# RPM database management
 # Sat Oct 31 18:31:00 MSK 2020
+#
+# status:
+# release, tested on Fedora 33,34,35,36,37
 #
 #-----------------------------------------
 #
@@ -29,12 +29,7 @@
 -9SETUP
 -0quit
 #------------------------------------------
-:+
-	* ? _mark +
-:-
-	* ? _mark -
-:[*_]
-	* ? _f_ls
+@std.mark
 
 #------------------------------------------
 
@@ -93,23 +88,10 @@
 :EX
 :U0
 :0
-       * *     exit
-:^D
-	* *	:exit
-# TODO: arg of _cmdset must be parameterized
-#:[Z]
-#       * *     _cmdset .ashrpm
-:[=]
-	* *	_rescan
+	* *     exit
 
-:^[ZB]
-# suspend process, back to parent shell
-       * *     _sus
 #------------------------------------------
-:[ -~]
-	* * _msg key is not assigned to any command
-:??*
-	* * _msg key unrecognized
-:*
-	* * _msg please, switch keyboard to ASCII input mode
+
+@std.final
+
 #------------------------------------------

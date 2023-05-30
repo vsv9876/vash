@@ -152,31 +152,31 @@ KBL kbl[KBLSIZE] = {
 { KB_KP, "^K     ", KBCTL(    'K'), KB_EMPTY }, /* kbl[0] */
 
 /* default values, cannot be redefined vith vhset */
-{ KB_AU, "|up|   ", KBCOD('k','u'), KB_EMPTY       },
-{ KB_AD, "|down| ", KBCOD('k','d'), KB_EMPTY       },
-{ KB_AL, "|left| ", KBCOD('k','l'), KB_EMPTY       },
-{ KB_AR, "|right|", KBCOD('k','r'), KB_EMPTY       },
+{ KB_AU, "up     ", KBCOD('k','u'), KB_EMPTY       },
+{ KB_AD, "down   ", KBCOD('k','d'), KB_EMPTY       },
+{ KB_AL, "left   ", KBCOD('k','l'), KB_EMPTY       },
+{ KB_AR, "right  ", KBCOD('k','r'), KB_EMPTY       },
 
 /* limited customizing possible (labels only) */
-{ KB_SP, "|space|", KBCTL(    'S'), KB_EMPTY       },
-{ KB_TA, "^I:Tab ", KBCTL(    'I'), KB_EMPTY       },
+{ KB_SP, "space  ", KBCTL(    'S'), KB_EMPTY       },
+{ KB_TA, "^I|Tab ", KBCTL(    'I'), KB_EMPTY       },
 
 /* full customizing supported with vhset */
-{ KB_NL, "|Enter|", KBCTL(    'M'), KBCTL(    'J') },
-{ KB_DE, "^H:<-- ", KBCOD('d','e'), KBCTL(    'H') },
+{ KB_NL, "Enter  ", KBCTL(    'M'), KBCTL(    'J') },
+{ KB_DE, "^H|<-- ", KBCOD('d','e'), KBCTL(    'H') },
                                                    
-{ KB_HE, "^?:F1  ", KBCOD('k','1'), KBCTL(    '_') },
-{ KB_EX, "^D:F2  ", KBCOD('k','2'), KBCTL(    'D') },
+{ KB_HE, "^?|F1  ", KBCOD('k','1'), KBCTL(    '_') },
+{ KB_EX, "^D|F2  ", KBCOD('k','2'), KBCTL(    'D') },
 { KB_CA, "^C     ", KBCTL(    'C'), KB_EMPTY       },
 { KB_RE, "^L     ", KBCTL(    'L'), KB_EMPTY       },
 { KB_PR, "^\\     ", KBCTL(    '\\'), KB_EMPTY     },
                                                    
-{ KB_KI, "^O:Ins ", KBCOD('k','I'), KBCTL(    'O') },
-{ KB_KD, "|Del|  ", KBCOD('k','D'), KB_EMPTY       },
-{ KB_KH, "^A:Home", KBCOD('k','h'), KBCTL(    'A') },
-{ KB_KE, "^E:End ", KBCOD('@','7'), KBCTL(    'E') },
-{ KB_PU, "^B:PgUp", KBCOD('k','P'), KBCTL(    'B') },
-{ KB_PD, "^F:PgDn", KBCOD('k','N'), KBCTL(    'F') },
+{ KB_KI, "^O|Ins ", KBCOD('k','I'), KBCTL(    'O') },
+{ KB_KD, "^X|Del ", KBCOD('k','D'), KBCTL(    'X') },
+{ KB_KH, "^A|Home", KBCOD('k','h'), KBCTL(    'A') },
+{ KB_KE, "^E|End ", KBCOD('@','7'), KBCTL(    'E') },
+{ KB_PU, "^B|PgUp", KBCOD('k','P'), KBCTL(    'B') },
+{ KB_PD, "^F|PgDn", KBCOD('k','N'), KBCTL(    'F') },
 
 /* extended set with limited support, not supported by vhset yet */
 { KBUSR('0'), "       ", KBCOD('f','0'), KBUSR('0'), KB_EMPTY },
@@ -214,7 +214,7 @@ LPA lpaout[LPASIZE] = {
 	{       '_',    A_MR|A_ZH,  "90;107" },              /* HDR  2*/
 	{       ' ',    A_MD,       ""      },              /* VAR  3*/
 	{       ' ',    A_MD,       ""      },              /* ALT  4*/
-	{       '*',    0,          "32"    },              /* MSE  5*/
+	{       '*',    A_MD,       ""      },              /* MSE  5*/
 	{       ' ',    A_MR,       "31;107"},              /* ERR  6*/
 	{       ' ',    A_MR,       ""      },              /* ATT  7*/
 };
@@ -222,9 +222,9 @@ LPA lpaout[LPASIZE] = {
 LPA lpainp[LPASIZE] = {
 	{       ' ',    0,          "95;49" },              /* CMD  0*/
 	{       '|',    0,          "33"    },              /* TXT  1*/
-	{       ' ',    A_MH,       ""      },              /* HDR  2*/
+	{       ' ',    A_MH,       "92"    },              /* HDR  2*/
 	{       '"',    A_MR,       "36"    },              /* VAR  3*/
-	{      '\'',    0,          "36"    },              /* ALT  4*/
+	{      '\'',    A_MR,       "32"    },              /* ALT  4*/
 	{       '>',    A_MR,       "32"    },              /* MSE  5*/
 	{       ' ',    A_MR|A_MB,  "31;107" },              /* ERR  6*/
 	{       '!',    0,          "31;47" },              /* ATT  7*/

@@ -7,17 +7,18 @@
 :+
         * ?     _mark +
 :-
-#        * +     _mark -
+###     * +     _mark -
         * *     _mark -
 :>
 	* ?	_mark >#
 :<
 	* ?	_mark <#
-
-# :SP does not work due to bug in vash code
-:SP
+:TA
+:^
+	* ?	_itmpos
+#
+### :SP does not work as key recognizer, use [ ]
 :KI
-# workaround for SP
 :[ ]
 	* ?	_mark x#
 #

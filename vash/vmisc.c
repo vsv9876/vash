@@ -406,7 +406,7 @@ int   size;     /* размер строки для ввода */
 	pmtline.size = size;
 	pmtline.colu = strlen(pmtstr) + 1; /*3;*/
 	pmtline.line = lframe->maxli - 1;
-	pmtline.attr = LVAR|INP|PMT;
+	pmtline.attr = LVAR|INP /* | PMT*/;
 	/*NOSTRICT*/
 	pmtline.cvts = (char *)0;
 	/*NOSTRICT*/

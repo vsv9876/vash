@@ -43,6 +43,8 @@ FUNTAB funtab[] = {
 	{ "rescan",     rescan },
 	{ "f_ls",		f_ls },
 	{ "mark",		f_mark },
+	{ "itmpos",		itmpos },
+	{ "itmsel",		itmsel },
 #ifdef DEBUG_KSHOW
 	{ "kshow",      kshow },
 #endif

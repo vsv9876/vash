@@ -130,8 +130,10 @@ extern LFRAME  lfmain;
 extern int    vashelp(), scrldo(), scrlarea();
 
 extern int cmdhreset();
-extern int cmdphist(),visini(), cmdset(), fil_vf(), scrlst(), scrlnl(), cmdsub(), fatal(), clritm();
-extern int itmshow(), cmdghist(), u_menu(), itmadj(), itmini(), pre_vf(), patcmp();
+extern int cmdphist(),visini(), cmdset();
+extern int fil_vf(), scrlst(), scrlnl(), cmdsub(), fatal(), clritm();
+extern int itmshow(), cmdghist(), u_menu();
+extern int itmadj(), itmini(), itmfnd(), itmpos(), itmsel(), pre_vf(), patcmp();
 extern int vincmd(), vexcmd(), fnsplit(), vcmd(), cwdshow();
 extern int patcmp(), ok_msg();
 extern int gidchk(), filetype(), prefix();
