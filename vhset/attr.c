@@ -259,6 +259,8 @@ int *bribgp;
 
 	*fgp = '\0';
 	*bgp = '\0';
+	*brifgp = 0;
+	*bribgp = 0;
 
 	while (*s != '\0') {
 		c = *s;
@@ -330,8 +332,10 @@ char   *str;
 {
 	char    outstr[20];      /* строка для формирования вывода */
 	int     lpax;			/* index for lpa[] */
-	char    fbx;			/* row on screen page: 'fg' or 'bg' 1st char significant only, see attr.cv */
-	register LINE *line4;   /* pointer to base LINE in 5th row */
+	/* row on screen page: 'fg' or 'bg' 1st char significant only, see attr.cv */
+	char    fbx;
+
+	register LINE *line4;   /* pointer to base LINE in 4th row */
 	int vai;				/*video attribute index on sample row*/
 	char *Rsgr;
 	char *Wsgr;
@@ -339,7 +343,7 @@ char   *str;
 	char Rfg, Rbg, Wfg, Wbg;
 	int  Rbrifg, Rbribg, Wbrifg, Wbribg;
 
-	Rbrifg = Rbrifg = Wbrifg = Wbrifg = 0;
+	/*Rbrifg = Rbribg = Wbrifg = Wbribg = 0;*/
 
 	fbx = line->cvts[0];	/* 1st symbol in field is significant only */
 	lpax = (int)line->varl; /* lpa*[] index*/
@@ -354,7 +358,7 @@ char   *str;
 	sgr_decode(Wsgr, &Wfg, &Wbg, &Wbrifg, &Wbribg);
 
 	if(*mod == 'w') {
-		if (sgrmode >= 2) {
+		if (sgrmode > 1) {
 			if (lpa_pi) {
 				strcpy(outstr, "  .");
 			} else {
@@ -372,7 +376,7 @@ char   *str;
 			strcpy(outstr, "   ");
 		}
 	}
-	if (*mod == 'r' && sgrmode >= 2) {
+	if (*mod == 'r' && sgrmode > 1) {
 		if (cod == ' ' || cod == KB_DE) {
 			line4 = getl4(line);
 			/* do toggle modification */
@@ -395,7 +399,7 @@ char   *str;
 			}
 			/* actualize new view of page */
 			w_line(line4);
-			if (lpax == TXT && sgrmode > 1)/* && cod == ' ')*/
+			if (lpax == TXT && sgrmode > 1 && lpa_pi == 0)/* && cod == ' ')*/
 				repage();
 			else
 				reline(lpax);
@@ -418,7 +422,7 @@ char   *str;
 	char    fbx;			/* row on screen page: 'fg' or 'bg' 1st char significant only, see attr.cv */
 	int		gv;
 	int		i;
-	register LINE *line4;   /* указатель на базовую линию в 5-й строке */
+	register LINE *line4;   /* указатель на базовую линию в 4-й строке */
 	register LPA *lpap;
 
 	char *Wsgr;
@@ -440,7 +444,7 @@ char   *str;
 	Rsgr = &lpainp[lpax].lpa_sgr[0];
 	sgr_decode(Rsgr, &Rfg, &Rbg, &Rbrifg, &Rbribg);
 
-	if(*mod == 'r' && sgrmode >= 2) {
+	if(*mod == 'r' && sgrmode > 1) {
 		if(cod == ' ' || cod == KB_DE) {
 			line4 = getl4(line);
 
@@ -507,14 +511,21 @@ char   *str;
 			}
 
 			/* hint in case of TXT attribute - affected all screen view */
-			if (lpax == 1)
+#if 0
+			if (lpax == 1/*TXT*/)
 				sgrtst(line, KB_NL); /*cod);*//*may be better to refresh all the page*/
 			else
 				w_line(line4);
+#endif
+			/*w_line(line4);*/
+			if (lpax == TXT && sgrmode > 1 && lpa_pi == 0)/* && cod == ' ')*/
+				repage();
+			else
+				reline(lpax);
 		}
 	}
 	if(*mod == 'w') {
-		if (sgrmode >= 2) {
+		if (sgrmode > 1) {
 			strcpy(outstr, "- -");
 
 			if (fbx == 'f') {
@@ -675,7 +686,7 @@ char   *str;
 				else           { (*ap) = (*ap) | ( va); }
 
 				w_line(line4);
-				if (i == TXT && sgrmode > 1)/* && cod == ' ')*/
+				if (i == TXT && sgrmode > 1 && lpa_pi == 0)/* && cod == ' ')*/
 					repage();
 				else
 					reline(i);

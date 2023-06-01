@@ -82,7 +82,7 @@
        
 :L
     * -   :ps -fll -p #@
-    * +   :ps -fll -q #, | #m
+    * +   ;ps -fll -q #, | #m
 
 :=
     * * _rescan

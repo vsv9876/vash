@@ -404,7 +404,7 @@ kbcod cod;		/* kbcod() pressed */
 
 	i_chged = i;
 	if (cod == KB_KD) {
-		for (j = i; j < (size - 1); j++) {
+		for (j = i; j < size; j++) {
 			c = wc_s[j] = wc_s[j + 1];
 			if (j == (size - 1))
 				c = wc_s[j] = L' ';

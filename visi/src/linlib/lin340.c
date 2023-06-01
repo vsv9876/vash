@@ -464,9 +464,9 @@ inp_format:
 	else if (objptr && objptr->wco_sig == WCO_SIG) {
 		cvt_ret = 1;
 	} else if (line->cvtf/* && !(line->flag & U8SOBJ)*/) {
-		cvt_ret = (*line->cvtf)(line, cod, "r", /*editptr*/&u8buf[0]);
+		cvt_ret = (*line->cvtf)(line, cod, "r", /*editptr*/u8buf);
 	} else if(line->cvts) {
-		cvt_ret = cvts_in(line, &u8buf[0]);
+		cvt_ret = cvts_in(line, u8buf);
 	} else {
 		/* simple string: back content after editing */
 		strcpy(line->varl, u8buf);
