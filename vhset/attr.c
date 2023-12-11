@@ -772,7 +772,9 @@ char   *str;
 	}
 	return(TRUE);
 }
-
+/*
+ * defined for attr.i
+ */
 extern  int     cvt_hl();
 extern  int     cvt_s();
 extern  int     sgrtst();

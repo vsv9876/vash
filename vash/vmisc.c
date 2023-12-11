@@ -279,6 +279,39 @@ itmshow()
 	}
 }
 
+
+/*
+ * wrapper for patcmp which by default return true if matches only part of string;
+ * pattern prepend with '^' or ended with '$' if not contains '*' in such positions
+ */
+int wldcmp(wldpat, str)
+register char *wldpat;
+register char *str;
+{
+	char bufpat[STRBUF];
+	register char *pat;
+	pat = bufpat;
+
+	if (*wldpat == '^')
+		wldpat++;
+	else if (*wldpat == '*')
+		/*wldpat++*/;
+	else
+		*pat++ = "*";
+	do {
+		*pat++ = *wldpat++;
+	} while (*wldpat != 0);
+	pat--;
+	if (*pat != '$') {
+		*pat++ = '\0';
+	} else if (*pat == '*')
+		;
+	*pat = '\0';
+
+
+	return patcmp(bufpat, str);
+}
+
 /*
  * Сравнить шаблон вида "*.c", "???*", "*.[ch]" и т.п.
  * со строкой символов.

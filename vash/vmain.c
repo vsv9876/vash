@@ -304,7 +304,9 @@ char *cmd;
 		for (i = 0; i < clm._itmmax; i++) {
 			p = clm._itms[i];
 			/* Проверять по шаблону... */
-			if (strncmp(pattpos, &p[2], strlen(pattpos)) == 0) {
+			/*if (strncmp(pattpos, &p[2], strlen(pattpos)) == 0)*/
+			if (/*wldcmp*/patcmp(pattpos, &p[2]) != 0)
+			{
 				clm._itm = i;
 				break;
 			}
