@@ -412,6 +412,7 @@ int   size;     /* размер поля для ввода */
 		switch (cod) {
 		default:
 			continue;
+		case KB_TA:
 		case KB_NL:
 		case KB_CA:
 		case KB_EX:
@@ -419,6 +420,7 @@ int   size;     /* размер поля для ввода */
 			break;
 		}
 	}
+	return(cod);
 }
 
 kbcod
@@ -457,6 +459,7 @@ int   size;     /* размер строки для ввода */
 		switch (cod) {
 		default:
 			continue;
+		case KB_TA:
 		case KB_NL:
 		case KB_CA:
 		case KB_EX:

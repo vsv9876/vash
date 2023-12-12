@@ -279,40 +279,64 @@ char *cmd;
 	return (0);
 }
 
-int itmsel()
+static char pattpos[20] = "";
+static matched, ispatt;
+/*void*/int itmsel(i)
+register int i; /* search start position */
 {
+	register char *p;
+	for (/*i = 0*/; i < clm._itmmax; i++) {
+		p = clm._itms[i];
+		/* Проверять по совпадению или образцу */
+		matched = 0;
+		if (ispatt == 0 && strncmp(pattpos, &p[2], strlen(pattpos)) == 0)
+			matched++;
+		if (ispatt != 0 && /*wldcmp*/patcmp(pattpos, &p[2]) != 0)
+			matched++;
+		if (matched) {
+			clm._itm = i;
+			break;
+		}
+	}
+	return(i);
 }
 
-static char pattpos[20] = "";
 /* position cursor on first letter given in dialog */
 int itmpos(cmd)
 char *cmd;
 {
-	register char *p;
 	extern kbcod pmtrstr(); /* ввод строки с промптером */
+	kbcod cod;
 	int i, ilast;
 
+	cod = pmtrstr(" position on: ", pattpos, 16);
+	if (strchr(pattpos, '*') || strchr(pattpos, '?'))
+		ispatt++;
 
-	switch(pmtrstr(" position on: ", pattpos, 16)) {
+	switch(cod) {
 	case KB_CA:
 	case KB_EX:
 		w_emsg("");
 		return 0;
 		break;
+	case KB_TA:
+		ilast = clm._itm;
+		i = itmsel(ilast + 1);
+		if (i >= clm._itmmax) {
+			w_emsg("no more items: ");
+			w_str(pattpos);
+			return -1;
+		}
+		if (ilast != clm._itm) {
+			itmadj(0);
+			w_emsg("");
+		}
+		break;
 	case KB_NL:
 		ilast = clm._itm;
-		for (i = 0; i < clm._itmmax; i++) {
-			p = clm._itms[i];
-			/* Проверять по шаблону... */
-			/*if (strncmp(pattpos, &p[2], strlen(pattpos)) == 0)*/
-			if (/*wldcmp*/patcmp(pattpos, &p[2]) != 0)
-			{
-				clm._itm = i;
-				break;
-			}
-		}
+		i = itmsel(0);
 		if (i >= clm._itmmax) {
-			w_emsg("no such items - ");
+			w_emsg("no such item: ");
 			w_str(pattpos);
 			return -1;
 		}

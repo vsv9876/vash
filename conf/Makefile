@@ -120,10 +120,10 @@ CC          = gcc $(DEBUG) -fno-builtin-function \
 			-Wno-int-to-pointer-cast -Wno-pointer-to-int-cast \
 			-Wno-implicit-int \
 			-Wno-implicit-function-declaration \
-			-Wwrite-strings
+			-Wwrite-strings -static
 #
 #LINKER      = gcc -m32 $(DEBUG) -fno-builtin-function -static
-LINKER      = gcc $(DEBUG) -fno-builtin-function
+LINKER      = gcc $(DEBUG) -fno-builtin-function -static
 #
 #CC          = gcc34 -m32 -fno-builtin-function
 #LINKER      = gcc34 -m32 -fno-builtin-function -static
