@@ -29,38 +29,20 @@ CMD     = ghx - - - -  "[A-Z0-9]"
 +    - edit a command from template   {2}     ^    ^  .:CA  .cmd...   .CMD....
 +    - execute predefined command     {3}     :    :   :        :      :    : 
 + .:CA - switch to editor                     :    :   :       {1}    {2}  {3}
-+                                             :    :   :        :      :    : 
++                                             :   .:CA :        :      :    : 
 +.cmdedk.................................     :   .cmded................... : 
-+   - run a command, sync history .:NL...     :      ^   ^  .:HE... .:NL... : 
-+   - switch to history view      .:HE...     :      :   :     :       :    : 
++  .:NL...  - run a command, sync history     :      ^   ^  .:HE... .:NL... : 
++  .:HE...  - switch to history view          :      :   :     :       :    : 
 +                                             :      : .:NL... :       :    : 
 +.histk..................................     :      : ."history".     :    : 
-+   - take a command to editor:   .:NL...     :      :                 :    : 
-+   - return to editor untouched: .:CA        :      :                 :    : 
-+                                            .:SP... :  .:NL...<-      :    : 
-+.exitk..................................    .exit.............        :    : 
-+  - return to main view:   .:CA, .:SP...                  ^           :    : 
-+  - defencive trap for mistakes: .:NL...                  :           :    : 
-                                                         .runcmd..............
----END                                 
++  .:NL...  - take a command to editor        :      :                 :    : 
++  .:CA     - return to editor untouched      :      :                 :    : 
++                                             :     {1}  .runcmd..............
++.exitk..................................    .:CA    :        :
++  .:CA, .:SP... - return to main view       .:SP... .cmd...  :              
++  type a command - return to editor         .exit............. <-- .:NL...
+                                                            
+---END                                                        
++  .:NL...  - defencive trap for mistakes   
 +                                     .m. see 'man vash' for details
-..!<- .:NL...
 
- exit:                     help:
- .:EX...                   .:HE...
- .mainv...........................
-  ^    ^  .:CA  .cmd...   .CMD....
-  :    :   :        :      :    : 
-  :    :   :       {1}    {2}  {3}
-  :   .:CA :        :      :    : 
-  :   .cmded................... : 
-  :     ^    ^  .:HE... .:NL... : 
-  :     :    :     :       :    : 
-  :   .m:   .:CA   :       :    : 
-  :     :   .:NL...:       :    : 
- .:CA   :  ."history".     :    : 
- .:SP...:                  :    : 
- .exit.............        :    : 
-      .:NL... -> ^         :    : 
-                 :         :    : 
-             .runcmd..............

@@ -117,7 +117,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	int okwait;             /* флаг: после wait() ожидать подтверждения пробелом, если OK */
 	int slsize;				/* количество возможных окончаний */
 
-	int trapcod;		/* flag: trap, no return from code exit indicator */
+	int trapcod;		/* flag: trap active, no return from exit indicator */
 	int msgat;			/*exit code message attribute*/
 
 	u8char_t *u8cmd0[U8_STRBUF + 4];	/* command to be executed */
@@ -318,16 +318,16 @@ std_shell:
 			else {
 				if (okwait == 1) {
 					if (vashflag.exittrap) {
-						msgat = VEXT|VAR/*ATT*//*VEXT|MSE*//*HDR*/;
+						msgat = ATT/*VEXT|MSE*//*HDR*/;
 						sprintf(tmpstr, "[ ok ]");
 					} else {
-						at_set(msgat = (CMD | INP));
+						msgat = CMD|INP;
 						sprintf(tmpstr, pmtsh);
 						/*w_str(tmpstr); cp_cret();*/
 					}
 				}
 			}
-			cp_cret();
+			/*cp_cret();*/
 			/*at_set(CMD|INP); w_str(pmtsh);*/
 			at_set(msgat); w_str(tmpstr); /*cp_sav();*/
 			at_set(CMD);
@@ -364,6 +364,9 @@ std_shell:
 						}
 						break;
 					}
+					/*sprintf(tmpstr, pmtsh);*/
+					/*at_set(msgat = (CMD|INP));*/
+					at_set(msgat);
 					if ( ! vashflag.exittrap && cod == KB_NL) {
 						er_eol(CMD);
 						/*trapcod = 1;*/
@@ -384,17 +387,17 @@ std_shell:
 #endif
 					if (trapcod) {
 						if (vashflag.novice) {
-							at_set(MSE);
+							at_set(TXT);
 							w_str(" main view: click ");
 							w_lh_str(":SP");
-							at_set(MSE);
+							at_set(TXT);
 							w_str(" or ");
 							w_lh_str(":CA");
-							at_set(MSE);
+							at_set(TXT);
 							w_str("               help: ");
 							w_lh_str(":HE");
 							/*at_set(TXT);*/
-							er_eol(MSE);
+							er_eol(TXT);
 						}
 					}
 					er_eop(CMD);
@@ -425,6 +428,10 @@ std_shell:
 			/* возврат в меню имен файлов */
 			case ' ':
 			case KB_CA:
+#if 0
+						if (vashflag.exittrap && cod == ' ')
+							continue;
+#endif
 						return(1);
 			case KB_EX:
 						return(0);

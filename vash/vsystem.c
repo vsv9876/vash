@@ -301,7 +301,7 @@ int  execapnd;
 	}
 
 	/*moved from vsystem*/
-	fprintf(stdout, " "); fflush(stdout);
+	/*fprintf(stdout, " ");*/ fflush(stdout);
 	if (syscod != 0)
 		ttysane = IO_TTYSANE;
 	io_set(IO_VIDEO | ttysane);
