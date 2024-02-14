@@ -23,10 +23,11 @@ Features visual assistance for typing command line parameters, editing a command
 %setup -q
 
 %build
-#%configure
+#%%configure
 #make cfg
-./configure
-#%make_build
+#./configure
+#%%make_build
+make config
 make
 
 %install
