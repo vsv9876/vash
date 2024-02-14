@@ -1,21 +1,108 @@
-#!/bin/bash
+:
+#!/bin/sh
 
-#echo Warning! there no automatic configuration prepared,
-#echo please, use 'make cfg' instead
+#echo Warning!
+# this is NO automatically prepared script by autoconf tool
+#
 BLDCONF=./BLD.cfg
 
 mypwd=`pwd`
 mydir=`basename $mypwd`
 VERSN="$mydir"
 
+#mandatory
+confdir="./conf"
+
+#defaults
+DEBUG=
+DEBUG_1='-g -O0'
+#TERMLIB=-ltermcap
+#TERMLIB=-lncurses
+TERMLIB=-ltinfo
+
+# depends on machine, defined in ./conf/*
+CFLAGS_VISI=
+CFLAGS_ASH=
+CC=
+LINKER=
+
+usage () {
+	cat << EOF
+
+  usage:
+	$0 \\
+		[{-t|--termlib}=termlib]
+		[{-d|--debug}[=debug_opts]] \\
+		[{-S|--static} \\
+		[{-m|--machine}=arch] \\
+		[{-s|--system}=kernel]
+
+where
+	--termlib={termcap|ncurses|tinfo|unsup}
+	-m and -s recognized automatically from uname
+	
+
+
+EOF
+exit 1
+}
+SYSTEM=`uname -s`
+MACHINE=`uname -m`
+
+for opt in "$@"
+do
+case $opt in
+-*=*)	val=`echo $opt|sed 's/-.*=//'`
+	;;
+--*|-[A-Za-z]) val= ;;
+*)	usage
+	;;
+esac
+case $opt in
+-t=*|--termlib=*)	if [ "$val" != unsup ]; then
+ 			    TERMLIB=$val
+			else
+			    TERMLIB= # defined in ./conf/*
+			fi
+			;;
+-S|--static)		STATIC=static
+			;;
+-d=*|--debug=*)	        val=`echo $opt|sed 's/-.*=//'`
+			DEBUG="$val"
+			;;
+-d|--debug)		DEBUG="$DEBUG_1"
+			;;        
+-m=*|--machine=*)       MACHINE=$val
+			;;
+-s=*|--system=*)        SYSTEM=$val
+			;;
+*) usage		;;
+esac
+done
+
+finalize () {
+
+echo $1
+VARIANT=$1
+
 # > $BLDCONF	echo '#' `date`
 # >
  > $BLDCONF	echo ''
+ >> $BLDCONF	echo 'MAKECONF  = '`pwd`/conf/$VARIANT
+# >> $BLDCONF	echo ''
  >> $BLDCONF	echo 'TOPDIR    = '`pwd`
 # >> $BLDCONF	echo ''
  >> $BLDCONF	echo 'DEST      = /usr'
 # >> $BLDCONF	echo ''
  >> $BLDCONF	echo 'VERSN     = "'$VERSN'"'
+# >> $BLDCONF	echo ''
+if [ -n "$DEBUG" ]; then
+ >> $BLDCONF	echo 'DEBUG     = "'$DEBUG'"'
+else
+ >> $BLDCONF	echo 'DEBUG     ='
+fi
+# >> $BLDCONF	echo ''
+ >> $BLDCONF	echo 'TERMLIB   = "'$TERMLIB'"'
 # >> $BLDCONF	echo ''
  workdir="$mypwd/visi/bin"
  grep -e "$workdir:" <<EOF >/dev/null
@@ -27,5 +114,28 @@ EOF
  >> $BLDCONF	echo 'PATH      = '$PATH
  >> $BLDCONF	echo ''
 #make cfg
+ >> $BLDCONF    echo 'include $(MAKECONF)'
+
+ exit 0
+}
+
+#check recognising prepared config, only depending from system-machine-static
+
+V=$SYSTEM-$MACHINE 
+if [ -n "$STATIC" ]; then
+    test -f $confdir/$V-$STATIC && finalize $V-$STATIC
+fi
+test -f $confdir/$V && finalize $V
+V=$SYSTEM
+if [ -n "$STATIC" ]; then
+    test -f $confdir/$V-$STATIC && finalize $V-$STATIC
+fi
+test -f $confdir/$V || (
+    # last resort...
+    echo 'no config found: "'$confdir/$V
+    exit 4
+)
+
+finalize $SYSTEM
 
 exit 0

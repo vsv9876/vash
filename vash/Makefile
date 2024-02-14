@@ -23,7 +23,8 @@ SHELL         = /bin/sh
 #       обработка при помощи xstr
 #       (см. правила .c.o:  .cv.o)
 
-include		../conf/Makefile
+#include		../conf/Makefile
+include		../BLD.cfg
 
 VISI          = ../visi
 VBIN          = $(VISI)/bin

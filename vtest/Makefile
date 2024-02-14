@@ -1,7 +1,7 @@
 
 SHELL         = /bin/sh
 
-include		../conf/Makefile
+#include		../conf/Makefile
 include		../BLD.cfg
 
 ##

@@ -14,7 +14,8 @@ SHELL         = /bin/sh
 
 DEST = /usr/local
 
-include		../conf/Makefile
+#include		../conf/Makefile
+include		../BLD.cfg
 
 VISI          = ../visi
 VBIN          = $(VISI)/bin

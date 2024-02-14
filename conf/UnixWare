@@ -1,0 +1,10 @@
+# uw
+# UnixWare 2.0.x, 1.1.x (tested)
+# probably Solaris 2.x with WorkShop C (not tested)
+#
+CFLAGS_VISI = -DUSE_TERMIOS
+CFLAGS_ASH  = -DJCLsuspend -DSYSV -DSVR4 -DMGROUPS
+ASHLIB      = SVR4
+CC	     = cc -O
+LINKER      = cc
+

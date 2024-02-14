@@ -1,0 +1,9 @@
+# isc
+# Interactive UNIX 3.0
+#
+CFLAGS_VISI = -DUSE_TERMIO
+CFLAGS_ASH  = -DJCLsuspend -DSYSV
+ASHLIB      = ISC
+CC          = cc -O
+LINKER      = cc
+

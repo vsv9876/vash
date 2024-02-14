@@ -1,0 +1,23 @@
+
+# sgi
+# IRIX 6.2, 6.x with IDO installed
+#
+CFLAGS_VISI = -DUSE_TERMIOS -DLCASE=XCASE
+CFLAGS_ASH  = -DJCLsuspend -DSYSV -DSVR4 -DMGROUPS
+ASHLIB      = SVR4
+#TERMLIB     = -ltermcap #not shure...
+#TERMLIB    = -lcurses
+#TERMLIB    = -ltinfo
+
+# binaries portable to all IRIX 6.2 and later, probably to IRIX 5.3
+CC	     = cc -O -32 -cckr
+LINKER      = cc -32 -cckr
+#
+# binaries portable to all modern platforms, based on IRIX 6.2 and later only
+#CC	     = cc -O3 -n32 -cckr -mips3
+#LINKER      = cc -n32 -cckr -mips3
+#
+# binaries only for true 64 bit platforms, such as origin200
+#CC	    = cc -O3 -64 -cckr
+#LINKER      = cc -64 -cckr
+

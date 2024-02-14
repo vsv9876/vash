@@ -17,7 +17,7 @@ DEST  = /usr
 #TOPDIR = /tmp
 TOPDIR = .
 
-MAKECONF   = ./conf/Makefile
+#MAKECONF   = ./conf/Makefile
 BLDCFG	= BLD.cfg
 
 BLD	= $(TOPDIR)/BLD
@@ -26,7 +26,7 @@ DESTDIR	= $(TOPDIR)/BLD
 VERSN	= "1."
 
 include $(BLDCFG)
-include $(MAKECONF)
+#include $(MAKECONF)
 
 ###include ./Make.conf
 #include $(MAKECONF)

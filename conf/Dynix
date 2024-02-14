@@ -1,0 +1,9 @@
+# dynix
+# Dynix/PTX 1.4.0
+# NOTES: not tested yet
+#
+CFLAGS_VISI = -DUSE_TERMIO
+CFLAGS_ASH  = -DJCLsuspend -DSYSV
+ASHLIB      = ISC
+CC          = cc -O -Wc,-bcs
+LINKER      = cc -Wc,-bcs

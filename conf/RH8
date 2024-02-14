@@ -1,0 +1,23 @@
+
+CFLAGS_VISI = -DUSE_TERMIOS
+#CFLAGS_VISI = -DUSE_TERMIOS -DNOUSE_STRCHR -DNOUSE_STRCP
+CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX
+ASHLIB      = SVR4
+TERMLIB     = -ltermcap
+# try for old age distros:
+#TERMLIB     = -ltinfo
+
+#tested RH 8.0:
+CC          = gcc -fwritable-strings
+LINKER      = gcc -traditional
+#############
+#CC	    = kgcc -fwritable-strings -static
+#LINKER      = kgcc
+#tested RH 7.0:
+#CC	    = kgcc -fwritable-strings
+#LINKER      = kgcc
+#
+#LINKER      = ld -Bstatic /usr/lib/crt1.o -lc
+#CC	= pcc -mi386 -static -k -O0 -t
+#LINKER	= pcc -static
+

@@ -1,0 +1,14 @@
+
+# FreeBSD
+# FreeBSD, BSDI, or any *BSD
+#CFLAGS_VISI = -DUSE_TERMIOS_386BSD -DNOUSE_STRCHR
+CFLAGS_VISI = -DUSE_TERMIOS_386BSD
+#CFLAGS_ASH    = -DJCLsuspend -DFbsd -DBSDmagic
+#CFLAGS_ASH    = -DJCLsuspend -DFbsd -DBSDpagesize -DBSDmagic
+CFLAGS_ASH    = -DJCLsuspend -DFbsd -DBSDpagesize -DBSDmagic -DMGROUPS
+ASHLIB      = BSD
+
+TERMLIB     = -ltermcap
+
+CC          = gcc -traditional
+LINKER      = gcc -traditional

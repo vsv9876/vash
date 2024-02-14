@@ -1,0 +1,9 @@
+# sunos
+# SunOS 4.1.x
+#
+CFLAGS_VISI = -DUSE_TERMIOS
+CFLAGS_ASH  = -DJCLsuspend -DBSDmagic -DMGROUPS
+ASHLIB      = BSD
+CC          = cc -O
+LINKER      = cc
+
