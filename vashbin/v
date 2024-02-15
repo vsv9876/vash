@@ -1,7 +1,10 @@
 #!/bin/sh
 #
-# Visual Assistant for shell startup;
-# Version for GNU/Linux (like SVR4.x)
+# Visual Assistant shell
+#
+# startup script
+# Version for GNU/Linux
+# installed as /usr/bin/v
 
 # set -x;# debug this script, if uncomment
 #-------
@@ -13,8 +16,8 @@
 #export LC_COLLATE=$LC_CTYPE
 
 #-------
-# Please, for full description of environ-based setup parameters
-# refer to man vash.1
+# Please, refer to man vash.1
+# for full description of environ-based setup parameters
 # also available via online setup page (on key 9 or F9)
 #
 # there some example:
@@ -31,13 +34,20 @@
 # library stuff of vash:
 #VASH_EXDIR=/usr/lib/vash
 #debug:
-#VASH_EXDIR=$HOME/proj-ws/remix/vashlib/LIB
-#VASH_PATH=/home/user/.vash:/usr/lib/vash
+# make sure '~/bin' in PATH;
+# ln -s `pwd`/vashbin/v.debug.sh ~/bin/vd;
+# vd;
+#
+# usefull environment for debug:
+# VTTOUT_SLEEP=800      interval between printing characters, in msec
+# VASH_DEBUG=1		extra prompt before attaching gdb or eclipse,
+# 			prints PID of vash process
 
 #-------
 # setup generic usage look:
 # VASH_LABEL:
 #   label for identification - tty, whoami, hostname
+#
 # hint, since vash-1.26.4:
 # if last symbol in VASH_LABEL is ':' (colon),
 # vash will append current working directory
@@ -59,7 +69,7 @@ if [ x"${VASH_LABEL}" = x ]; then
     export VASH_LABEL
 fi
 
-# variables, supported via program files, like .ashstd:
+# variables, supported via rc(config) files, like .vashstd:
 # substituted in .ashstd:
 # #e - EDITOR, #m - PAGER
 if [ x${EDITOR} = x ]; then
@@ -67,16 +77,15 @@ if [ x${EDITOR} = x ]; then
 fi
 
 if [ x${PAGER} = x ]; then
-    #PAGER=/usr/local/bin/m $ script obsoleted
     PAGER=less
     export PAGER
     LESS=-qmeXR
     export LESS
 fi
-# make ~/.bashrc aliases workable
-# (in extern shell only via setup mode
-#  or string terminated with ';')
-
+# ~/.bashrc aliases
+# (only working if 'sh -c <command>'
+#  eg commands ends with ';')
+#
 # make sure your .bashrc contains option: 
 #	shopt -s expand_aliases
 # https://emacs.stackexchange.com/questions/3447/cannot-set-terminal-process-group-error-when-running-bash-script
@@ -88,13 +97,13 @@ fi
 
 #stty kill '^u'
 
-PS1='v> '; export PS1
+PS1='vash % '; export PS1
 
 if [ x${VASH} = x ]; then
     #VASH=l10shwST
     VASH=l8shwS
 
-    # decoration on xterm window
+    # X11 window manager decoration on xterm window
     onxterm=0
     if [ x$DISPLAY != x ]; then
         onxterm=1
@@ -105,13 +114,12 @@ if [ x${VASH} = x ]; then
     screen*|tmux*)
         onxterm=0;;
     esac
+    VASH=p$VASH
     if [ 1 -eq $onxterm ]; then
-    	# X11 window decoration on xterm 
     	# now compiled into vash binary:
     	VASH=px$VASH
-    else
-        VASH=p$VASH
     fi
+
     # append clock on hardware console screen
     case $TERM in
     console|linux|pc*|vs100*|AT386)

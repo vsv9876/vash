@@ -1,6 +1,9 @@
 #!/bin/sh
 
 # vash -- Visual Assistant Shell
+
+# name of this script as regular file
+cmd=v.debug.sh
 #
 # recognize src directory:
 #vashdir="$HOME/proj-ws/vash-2."
@@ -8,22 +11,28 @@ dn=`dirname $0`
 l=`ls -ld $0`
 case $l in
 l*)	;;
-*)	echo $0 not a symlink; exit 1 ;;
+*)	echo $0 is not a symlink to $cmd
+        exit 1 ;;
 esac
 d=`echo $l|sed 's%^.*->%%'`
 d=`echo $d`
 case $d in
-/*) 	ddd=$d;;
-../*)	ddd=`dirname $dn/$d`;
+    /*) 	ddd=$d;;
+    ../*)	ddd=`dirname $dn/$d`;
 esac
 ddd=`dirname $ddd`
 #ddd=`dirname $ddd`
-s=`grep TOPDIR $ddd/BLD.cfg`
-IFS== read k v<< EOF
-$s
+if [ -s $ddd/BLD.cfg ]; then
+    s=`grep TOPDIR $ddd/BLD.cfg`
+    IFS== read k v<< EOF
+    $s
 EOF
-vashdir=`echo $v`
-##exit 2
+    vashdir=`echo $v`
+    ##exit 2
+else
+    vashdir=$ddd
+fi
+
 # where 'make install' done
 BLD=$vashdir/BLD
 #bintest=vash/vash
@@ -52,9 +61,9 @@ if [ -x $bintest ]; then
     echo ' ***'
     exec $BLD/usr/bin/v
 fi
-echo '   *** no subdirectory found:'
+echo '   *** no build directory found:'
 echo '          "'$BLD'"'
 echo ''
-echo '   *** please, "cd '$vashdir' && make clean install"'
+echo '   *** please, "cd '$vashdir' && make config clean install"'
 exit 1
 #exec /usr/bin/v "$@"

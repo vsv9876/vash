@@ -1,125 +1,132 @@
 #!/bin/sh
 #
-# Assistant for sh startup
-# Version for SVR4.x
-#------------------------------
-# First Bourne' shell started,
-# then exec setup environ, then exec ash
-#------------------------------
+# Visual Assistant shell
 #
-# DEBUG switch: uncomment next line.
-# set -x
+# startup script
+# Version for GNU/Linux
 
-# hardcoded in termcap/termnew as default
-#TERMCAP=/usr/local/etc/termcap
-#export TERMCAP
-
-# hack to proper working old 8-byte encoding
+# set -x;# debug this script, if uncomment
+#-------
+# compatible locale setup for old 8-byte cyrillic encoding,
+# only 2 categories needed: CTYPE and COLLATE
 #export LC_ALL=
 #export LANG=en_US.ISO8859-1
 #export LC_CTYPE=ru_RU.KOI8-R
 #export LC_COLLATE=$LC_CTYPE
 
-#echo '
-#	To use on-line help type ? or HELP metakey
-#'
-
+#-------
+# Please, refer to man vash.1
+# for full description of environ-based setup parameters
+# also available via online setup page (on key 9 or F9)
 #
-#---------------------------------------------
-# environ-passed setup (VASH):
+# there some example:
 #
-# h     history will be stored
-# lNN   lines for filename menu (from 2 to 20), default 10
+# h     history will be saved in file
+# S     history will be synced, or saved on exit if not specified
 # p     key help panel bar on
-# s     scroll cmd script but no clear screen
-# c     clock show,  uprigh corner of screen
-# m     check mailbox (Biff)
+# lNN   lines for filename menu from "2" to "maxlines-2",
+#       default 10 if not specified
 #
-# example for assist environ-passed setup:
-
 #VASH=l10pshcm
-VASH=
+#VASH=
 
-#---------------------------------------------
-# label for identification machine name, /dev/tty???,
-# and other likely info.
-# VASH_LABEL
+# library stuff of vash:
+#VASH_EXDIR=/usr/lib/vash
+#debug:
+# make sure '~/bin' in PATH;
+# ln -s `pwd`/vashbin/v.debug.sh ~/bin/vd;
+# vd;
 #
-case l"$LOGNAME" in
-l)      case u"$USER" in
-	u)      user=''
-		;;
-	u*)     user="$USER"
-		;;
-	esac
-	;;
-l*)     user="$LOGNAME"
-	;;
-esac
+# usefull environment for debug:
+# VTTOUT_SLEEP=800      interval between printing characters, in msec
+# VASH_DEBUG=1		extra prompt before attaching gdb or eclipse,
+# 			prints PID of vash process
 
-ttyfull=`tty`
-#tty=`basename $ttyfull`
-tty=`echo $ttyfull|sed -e 's-/dev/--'`
-uname=`uname -n || hostname | sed -e 's/\..$*//' 2>/dev/null`
-#VASH_LABEL=' '"$user@$uname $tty"' '
+#-------
+# setup generic usage look:
+# VASH_LABEL:
+#   label for identification - tty, whoami, hostname
 #
-# 
-# hint: if last sybol in VASH_LABEL is ':' (colon), vash append current working directory
-# since vash-1.26.4
-VASH_LABEL="$tty $user@$uname:"
-#"$user"' '
+# hint, since vash-1.26.4:
+# if last symbol in VASH_LABEL is ':' (colon),
+# vash will append current working directory
 
-#case $PATH in
-#*/usr/local/bin*)     ;;
-#*)
-#	PATH=$PATH:/usr/local/bin
-#esac
+if [ x"${VASH_LABEL}" = x ]; then
+    case l"$LOGNAME" in
+    l)  case u"$USER" in
+    	u)      user='' ;;
+    	u*)     user="$USER" ;;
+    	esac
+    	;;
+    l*)     user="$LOGNAME"
+    	;;
+    esac
+    ttyfull=`tty`
+    tty=`echo $ttyfull|sed -e 's-/dev/--'`
+    uname=`uname -n || hostname | sed -e 's/\..$*//' 2>/dev/null`
+    VASH_LABEL="$tty $user@$uname:"
+    export VASH_LABEL
+fi
 
-# .ashstd: #e - EDITOR, #m - PAGER
-#EDITOR=re
-#PAGER=/usr/local/bin/m
-PAGER=less
+# variables, supported via rc(config) files, like .vashstd:
+# substituted in .ashstd:
+# #e - EDITOR, #m - PAGER
+if [ x${EDITOR} = x ]; then
+    EDITOR=vi; export EDITOR
+fi
 
-export VASH_LABEL PATH
-#export EDITOR PAGER
-export PAGER
+if [ x${PAGER} = x ]; then
+    PAGER=less
+    export PAGER
+    LESS=-qmeXR
+    export LESS
+fi
+# ~/.bashrc aliases
+# (only working if 'sh -c <command>'
+#  eg commands ends with ';')
+#
+# make sure your .bashrc contains option: 
+#	shopt -s expand_aliases
+# https://emacs.stackexchange.com/questions/3447/cannot-set-terminal-process-group-error-when-running-bash-script
+
+if [ x"$SHELL" != x -a x`basename $SHELL` = xbash ]; then
+	BASH_ENV="$HOME/.bashrc"
+	export BASH_ENV
+fi
 
 #stty kill '^u'
 
-PS1='vash> '; export PS1
+PS1='vash % '; export PS1
 
-VASH=l10sh
+if [ x${VASH} = x ]; then
+    #VASH=l10shwST
+    VASH=l8shwS
 
-# decoration on xterm window
-onxterm=0
-case $TERM in
-xterm*|vs100*|iris-*)
-    onxterm=1;;
-esac
-if [ x$DISPLAY != x ]; then
-    onxterm=1
-fi
-if [ 1 -eq $onxterm ]; then
-	# reset PS1 
-	# now compiled into vash binary:
-	#echo ']0;'"$VASH_LABEL"''
-	#eval `/usr/bin/X11/resize -u`
-	#eval `/usr/bin/resize -u`
-	#export TERMCAP
-	VASH=px$VASH
-else
+    # X11 window manager decoration on xterm window
+    onxterm=0
+    if [ x$DISPLAY != x ]; then
+        onxterm=1
+    fi
+    case $TERM in
+    xterm*|vs100*|iris-*)
+        onxterm=1;;
+    screen*|tmux*)
+        onxterm=0;;
+    esac
     VASH=p$VASH
-fi
-# append clock on hardware console screen
-case $TERM in
-linux|pc*|vs100*|AT386)
-	VASH=cw$VASH
-esac
+    if [ 1 -eq $onxterm ]; then
+    	# now compiled into vash binary:
+    	VASH=px$VASH
+    fi
 
-export VASH
-VASH_VEXDIR=$HOME/proj-ws/remix/vashlib/LIB
-export VASH_VEXDIR
-env|grep VASH
+    # append clock on hardware console screen
+    case $TERM in
+    console|linux|pc*|vs100*|AT386)
+    	VASH=c$VASH
+    esac
+
+    export VASH
+fi
 
 #exec vash "$@"
 gdb vash "$@"
