@@ -94,15 +94,15 @@ VARIANT=$1
 # >> $BLDCONF	echo ''
  >> $BLDCONF	echo 'DEST      = /usr'
 # >> $BLDCONF	echo ''
- >> $BLDCONF	echo 'VERSN     = "'$VERSN'"'
+ >> $BLDCONF	echo 'VERSN     = '$VERSN''
 # >> $BLDCONF	echo ''
 if [ -n "$DEBUG" ]; then
- >> $BLDCONF	echo 'DEBUG     = "'$DEBUG'"'
+ >> $BLDCONF	echo 'DEBUG     = '$DEBUG''
 else
  >> $BLDCONF	echo 'DEBUG     ='
 fi
 # >> $BLDCONF	echo ''
- >> $BLDCONF	echo 'TERMLIB   = "'$TERMLIB'"'
+ >> $BLDCONF	echo 'TERMLIB   = '$TERMLIB''
 # >> $BLDCONF	echo ''
  workdir="$mypwd/visi/bin"
  grep -e "$workdir:" <<EOF >/dev/null

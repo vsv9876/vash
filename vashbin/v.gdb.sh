@@ -4,6 +4,7 @@
 #
 # startup script
 # Version for GNU/Linux
+# not installed by default
 
 # set -x;# debug this script, if uncomment
 #-------
@@ -116,7 +117,7 @@ if [ x${VASH} = x ]; then
     VASH=p$VASH
     if [ 1 -eq $onxterm ]; then
     	# now compiled into vash binary:
-    	VASH=px$VASH
+    	VASH=x$VASH
     fi
 
     # append clock on hardware console screen

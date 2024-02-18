@@ -1,4 +1,10 @@
 #!/bin/sh
+#
+# Visual Assistant shell
+#
+# startup script
+# Version for GNU/Linux
+# not installed by default
 
 # vash -- Visual Assistant Shell
 

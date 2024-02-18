@@ -20,8 +20,10 @@ int pmtshsz;            /* размер подсказки */
 
 static  int  cmdsize = 0;       /* vsize e_str -- depends of screen width */
 static  int  pos = 0;           /* i     e_str    позиция в строке */
-static  int old_pos = 0;		/* позиция курсора до попытки окончить ввод (completion),
-								если изменилась, выполнена вставка в буфер команды */
+static  int old_pos = 0;	/* позиция курсора до попытки окончить ввод
+				(completion),
+			если изменилась, выполнена вставка в буфер команды */
+
 /* command buffer is a string object, it is not a simple char-type string */
 volatile static  wchar_t cmdbuf[2 + STRBUF];  /* size for wcsobj_t cmdo -- below */
 
@@ -318,7 +320,7 @@ std_shell:
 			else {
 				if (okwait == 1) {
 					if (vashflag.exittrap) {
-						msgat = ATT/*VEXT|MSE*//*HDR*/;
+						msgat = HDR/*ATT/*VEXT|MSE*//*HDR*/;
 						sprintf(tmpstr, "[ ok ]");
 					} else {
 						msgat = CMD|INP;
