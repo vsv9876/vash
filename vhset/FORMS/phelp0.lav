@@ -1,7 +1,9 @@
 ---LINES
-var     = ipvx  -       -       -       -         "3.141593"
-alt1    = ipax  -       -       -       -         "YES"
-a2      = iax   -       -       -       -         "[x]"
+var     = pvi   -       -       -       -         "3.141593"
+vari    = pvix  -       -       -       -         "3.141593"
+varc    = pvix  -       -       -       -         "        " 
+alt1    = paix  -       -       -       -         "YES"
+a2      = aix   -       -       -       -         "[x]"
 mse     = ipmx  -       -       -       -         " Quit "
 VAR     = gv - - - - " VAR "
 ALT     = ga - - - - " ALT "
@@ -12,18 +14,18 @@ page_n  = g  - - - - " page navigation: "
 specia  = g  - - - - " special: "
 
 ---SCREEN                                                          
-=LINLIB generic keyboard command/actions
+=LINLIB generic keyboard commands/actions
                                                                               
-+.common...............              .MSE.   .mse..... -select menu item:     
-+   .:HE... get help                                        .:NL... or .:SP...
-+   .:RE... refresh page                                                      
-+   .:EX... exit/close page          .ALT.   .a2       -alter or toggle:      
-+   .:CA... cancel                                       forward:      .:SP...
-+   .:TA... next line                                    backward:     .:DE...
-+                                                                             
-+.page_n...............              .VAR.   .var..... -switch to edit:       
-+   .:KH... jump to 1st line                             keep content: .:SP...
-+   .:KE... jump to last line                            clear field:  .:DE...
++.common...............             .VAR. - editing            .var.....      
++   .:HE... get help                    .:SP... keep content   .vari....         
++   .:RE... refresh page                .:DE... clear field    .varc....        
++   .:EX... exit/close page                                                      
++   .:CA... cancel                  .ALT. - alter or toggle    .a2            
++   .:TA... next line                   .:SP... forward item                      
++                                       .:DE... backward item                     
++.page_n...............                                                          
++   .:KH... jump to 1st line        .MSE. - select menu item:  .mse.....      
++   .:KE... jump to last line           .:SP... or .:NL...            
 +   .:PD... next page/part                                                        
 +   .:PU... prev page/part      ."in edit mode"................. ."with prefix".  
 +                               .:DE... erase left from cursor               
@@ -35,26 +37,7 @@ specia  = g  - - - - " special: "
 +                               
 =LINLIB (c) 1986-1990,2020 vsv&team
 ---END                          
+
 +."common"..........            .MSE.   .mse..... -------select menu item:
 +."page navigation".            .VAR.   .var..... --------switch to edit: 
 +."special".........                erase below cursor:  .:KD...  .:PR .:DE...
-
-.common...............        
-   .:HE... get help           
-   .:RE... refresh page        
-   .:EX... exit/close page       
-   .:CA... cancel                 
-   .:TA... next line            
-                                 
-.page_n...............           
-   .:KH... jump to 1st line        
-   .:KE... jump to last line       
-   .:PD... next page/part          
-   .:PU... prev page/part         
-                                  
-.specia...............             
-   .:NL... next line,            
-           commit,complete          
-   .:PR... option prefix
-   
-   
