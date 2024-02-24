@@ -8,24 +8,27 @@ mse     = ipmx  -       -       -       -         " Quit "
 VAR     = gv - - - - " VAR "
 ALT     = ga - - - - " ALT "
 MSE     = gm - - - - " MSE "
+VARi    = gvx - - - - " VAR "
+ALTi    = gax - - - - " ALT "
+MSEi    = gmx - - - - " MSE "
 
-common  = g  - - - - " common: "
-page_n  = g  - - - - " page navigation: "
-specia  = g  - - - - " special: "
+common  = gc  - - - - " common: "
+page_n  = gc  - - - - " page navigation: "
+specia  = gc  - - - - " special: "
 
 ---SCREEN                                                          
 =LINLIB generic keyboard commands/actions
                                                                               
-+.common...............             .VAR. - editing            .var.....      
-+   .:HE... get help                    .:SP... keep content   .vari....         
-+   .:RE... refresh page                .:DE... clear field    .varc....        
-+   .:EX... exit/close page                                                      
-+   .:CA... cancel                  .ALT. - alter or toggle    .a2            
-+   .:TA... next line                   .:SP... forward item                      
-+                                       .:DE... backward item                     
-+.page_n...............                                                          
-+   .:KH... jump to 1st line        .MSE. - select menu item:  .mse.....      
-+   .:KE... jump to last line           .:SP... or .:NL...            
++.common...............              editing start:             .VAR.  .VARi
++   .:HE... get help                    .:SP... keep content          
++   .:RE... refresh page                .:DE... clear field          
++   .:EX... exit/close page                                                    
++   .:CA... cancel                   altering:                  .ALT.  .ALTi
++   .:TA... next line                   .:SP... forward item           
++                                       .:DE... backward item          
++.page_n...............                                               
++   .:KH... jump to 1st line         menu selection:            .MSE.  .MSEi
++   .:KE... jump to last line           .:SP... or .:NL...     
 +   .:PD... next page/part                                                        
 +   .:PU... prev page/part      ."in edit mode"................. ."with prefix".  
 +                               .:DE... erase left from cursor               
@@ -41,3 +44,14 @@ specia  = g  - - - - " special: "
 +."common"..........            .MSE.   .mse..... -------select menu item:
 +."page navigation".            .VAR.   .var..... --------switch to edit: 
 +."special".........                erase below cursor:  .:KD...  .:PR .:DE...
+
+ .VAR. - editing            .var.....  
+     .:SP... keep content   .vari....  
+     .:DE... clear field    .varc....  
+                                       
+ .ALT. - alter or toggle    .a2        
+     .:SP... forward item              
+     .:DE... backward item             
+                                       
+ .MSE. - select menu item:  .mse.....  
+     .:SP... or .:NL...            
