@@ -2,7 +2,7 @@
 #!/bin/sh
 
 #echo Warning!
-# this is NO automatically prepared script by autoconf tool
+# this is NOT an automatically prepared script by autoconf tool
 #
 BLDCONF=./BLD.cfg
 
