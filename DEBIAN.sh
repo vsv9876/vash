@@ -8,9 +8,12 @@ BLDCFG=BLD.cfg
 BUILD=`pwd`/BLD
 arch=`dpkg --print-architecture`
 
-make distclean
-./configure
+#make distclean
+#./configure
 make
+if [ $? -ne 0 ]; then
+    echo STOP...; exit 1
+fi
 make DESTDIR=${BUILD} install
 
 # install configs
@@ -25,17 +28,21 @@ gzip 		${BUILD}/usr/share/man/man1/*
 
 #cp -rp DEBIAN/ BLD
 set -x
-VERSNSH=`grep VERSN < $BLDCFG | sed -e 's/ //g' -e 's/-/ /'`
-eval $VERSNSH
+#VERSNSH=`cat $BLDCFG| grep ^VERSN | sed -e 's/ //g' -e 's/-/ /'`
+#eval $VERSNSH
+VERSN=`cat ./VERSION | sed -e 's/ //g' -e 's/-/ /'`
 echo $VERSN
 read pkg ver <<EOF
 $VERSN
 EOF
 
 mkdir BLD/DEBIAN
-cat DEBIAN/control |\
-	sed -e 's/Architecture:.*$/Architecture: '"$arch/" \
-    -e 's/Version:.*$/Version: '"$ver/"	> BLD/DEBIAN/control
+cat DEBIAN/control \
+    | sed -e 's/Architecture:.*$/Architecture: '${arch}/ \
+    | sed -e 's/Version:.*$/Version: '${ver}/ \
+    > BLD/DEBIAN/control
 
 fakeroot dpkg -b BLD
-mv BLD.deb ../vash_${ver}_${arch}.deb
+
+mv BLD.deb ../${pkg}_${ver}_${arch}.deb
+

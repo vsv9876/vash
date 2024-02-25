@@ -8,7 +8,8 @@ BLDCONF=./BLD.cfg
 
 mypwd=`pwd`
 mydir=`basename $mypwd`
-VERSN="$mydir"
+#VERSN="$mydir"
+VERSN=`cat ./VERSION`
 
 #mandatory
 confdir="./conf"

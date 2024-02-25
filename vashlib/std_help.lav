@@ -26,23 +26,23 @@ CMD     = ghx - - - -  "[A-Z0-9]"
 ---SCREEN
 =vash workflow                                      
 +                                      please, see 'man vash' for more details       
-+.mainvk.................................                                     
++.mainvk...............................                                       
 + .:CA - switch to editor                                                       
 + .'uppercase                               help:                       exit:   
-+    - execute predefined command   .a.     .:HE...                     .:EX... 
-+    - edit a command from template .b.     .mainv............................. 
++   execute predefined command   .a.        .:HE...                     .:EX... 
++   edit a command from template .b.        .mainv............................. 
 + .'lowercase                               .CMD.... .cmd...       <-- .:CA ^ 
-+    - type a command from scratch  .c.      :   :    :                  :  :   
++   type a command from scratch  .c.         :   :    :                  :  :   
 +                                            :   :    :                  :  :   
-+.cmdedk.................................    :   :   .c.  ."history"...  :  :   
-+  .:HE... - switch to history view          :  .b.   :    :   .:NL...   :  :   
-+  .:NL... - run a command, sync history    .a.  :    :    :       :     :  :   
++.cmdedk...............................      :   :   .c.  ."history"...  :  :   
++  .:HE... switch to history view            :  .b.   :    :   .:NL...   :  :   
++  .:NL... run a command, sync history      .a.  :    :    :       :     :  :   
 +                                            :   :    :   .:HE..   :   .:CA :   
-+.histk..................................    : .cmded...................... :   
-+  .:CA    - return to editor untouched      :    .:NL...         ^         :   
-+  .:NL... - take a command to editor        :        :           :         :  
++.histk................................      : .cmded...................... :   
++  .:CA    return to editor untouched        :    .:NL...         ^         :   
++  .:NL... take a command to editor          :        :           :         :  
 +                                            :        :          .c.        :   
-+.exitk..................................   .runcmd..........     :       .:CA      
++.exitk................................     .runcmd..........     :       .:CA      
 +  .:SP...| .:CA - return to main view         -->          :   .cmd... .:SP...       
 +  .'lovercase - return to editor                           .exit.............     
                                                                                 
