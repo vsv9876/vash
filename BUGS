@@ -1,0 +1,6 @@
+debian standard terminfo search path:
+	/etc/terminfo:/lib/terminfo:/usr/share/terminfo
+fedora standard terminfo search path:
+	/etc/terminfo:/usr/share/terminfo
+so, default environment in debian for static binaries built under fedora
+is wrong, but ok otherwise
