@@ -3,7 +3,7 @@ Version:        2.0.23
 Release:        static
 Summary:        Visual Assistant Shell (vash)
 
-License:        MIT and GPL
+License:        GPL and MIT
 #URL:            file:///home/vsv/proj-ws/
 Source0:        %{name}-%{version}.tar.gz
 

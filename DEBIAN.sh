@@ -7,6 +7,7 @@
 BLDCFG=BLD.cfg
 BUILD=`pwd`/BLD
 arch=`dpkg --print-architecture`
+pkg=vash
 
 #make distclean
 #./configure
@@ -31,10 +32,10 @@ set -x
 #VERSNSH=`cat $BLDCFG| grep ^VERSN | sed -e 's/ //g' -e 's/-/ /'`
 #eval $VERSNSH
 VERSN=`cat ./VERSION | sed -e 's/ //g' -e 's/-/ /'`
-echo $VERSN
-read pkg ver <<EOF
-$VERSN
-EOF
+ver=`echo $VERSN`
+#read pkg ver <<EOF
+#$VERSN
+#EOF
 
 mkdir BLD/DEBIAN
 cat DEBIAN/control \
@@ -45,4 +46,3 @@ cat DEBIAN/control \
 fakeroot dpkg -b BLD
 
 mv BLD.deb ../${pkg}_${ver}_${arch}.deb
-
