@@ -1,49 +1,103 @@
-Как скомпилировать из исходных текстов visi+vash
+COMPILE
+    Visual Assistant Shell
 
-тексты написаны на раннем диалекте языка C, который описан в книге Кернигана и Ричи. Из-за обложки первого издания по-английски книга известна под названием
-"большой голубой си". В некоторых вариантах компилятора этот диалект называется K&R, от первых букв фамилий авторов книги. В настоящее этот диалект практически не используется, и даже есть тенденция к удалению его поддержки из современных компиляторов.
+Notes:
+    ./COMPILE.ru is obsolete
+  build requires standard library, reuired function
+  can be found in one of:
+    termcap
+    tinfo
+    ncurses
+  make sure development version installed;
+  static versions required for static linkage only
 
-Изначально и инструментальная система, и собственно assistant shell (ash)
-были созданы для 16-ти разрядных архитектур -
-компьютеры DEC PDP11, операционные системы RT11 (РАФОС) и
-Demos2 (советский unix имени KIAE и ИПК Минавтопрома, ради развития и распространения которого
-был создан кооператив Демос в 1980е годы, еще в СССР).
+Compile vash-2.0.24 and later
 
-Заметных проблем при переносе на 32-битные архитектуры не было, но для
-64-битных систем пришлось использовать 32-битные режимы совместимости.
-Причина - активное использование (на уровне концепции)
-арифметики над указателями с преобразованием к типу int, без использования условной типизации.
+1.
+unpack tarball and change directory on it:
 
-В частности, арифметика над указателями используется для динамически подгружаемых
-модулей диалогового интерфейса (так называмые страницы) и
-их динамического связывания с внутренними структурами данных приложения -
-подобно ld, но на уровне инструментальной библиотеки периода исполнения (runtime).
-Это решение и есть наследие 16-разрядной архитектуры, без которого
-было попросту невозможно сделать полноценное интерактивное приложение.
-Страницы диалога обычно занимали целиком экран и подгружались в режиме оверлеев, а приложение имело иногда несколько десятков отдельных страниц диалога.
+        tar xzf ./vash-*.tar.gz
+        cd vash-*
 
-Статическая линковка.
-Для упрощения использования готовых бинарных сборок Assistant Shell
-применяется статическая линковка, без использования динамических библиотек, это дает возможность собирать
-один дистрибутив для разных версий linux. 
+2.
+run ./configure script or run 'make config':
 
-Для сборки нужно установить пакеты libgcc-static. Для сборки на 64-битных версиях linux требуется
-дополнительно установить библиотеки для сборки 32-битных приложений,
-в частности, glibc.i686 и glibc-devel.i686.
+        ./configure
+    or
+        make config
+  
+3. 
+check BLD.conf:
 
-Termcap и статическая линковка.
-В комплекте дистрибутива есть какой-то вариант одной из ранних версий библиотеки libtermcap,
-включая базу терминалов termcap, поскольку 
-в современных версиях linux эти библиотеки изъяты, и отсутствуют в стандартной поставке.
-Если выбрать этот вариант при сборке, то придется устанавливать и базу терминалов termcap.
+        vi ./BLD.conf
+  
+4.
+compile binaries:
 
-Альтернатива - использовать библиотеки terminfo+ncurses в режиме совместимости
-с API termcap, но с использованием базы описаний терминалов terminfo.
-Однако, например в Fedora25 и CentOS 7.3 (по данным на начало 2017 года), отсутствует
-статическая версия библиотеки совместимости, это делает невозможной комбинацию ключей ld ... -ltermcap -static.
-Стандартная динамическая линковка ld ... -ltermcap успешно работает, но бинарный пакет приходится собирать под
-конкретную версию ОС, из-за различий в версиях этих библиотек.
+        make clean install
 
-TODO:
-termcap/terminfo, courses?
-Архитектура библиотеки Linlib не предполагает никакой буферизации образа экрана, в отличие от courses.
+5.
+Build and install on a your system binary packages (optional).
+
+5a.
+build RPM. rpmbuild package installed and working.
+NOTE:
+In Fedora resulting package will be in ~/rpmbuild/SRPMS
+
+      ./MK-srpm.sh
+  
+then find resulting package and run:
+  
+      rpmbuild --rebuild ~/rpmbuild/SRPMS/vash-*.src.rpm
+  
+in Fedora installable package will be in ~/rpmbuild/RPMS/*/vash-*.rpm
+
+5b.
+build DEB. Is is required dpkg and chroot packages installed.
+Run script, installable package will be in parent directory:
+   
+      ./DEBIAN.sh
+
+6.
+use vash compiled locally or running for debug.
+Requires ~/bin in your PATH:
+
+      ln -s `pwd`/bin/v.debug.sh ~/bin/vd
+      vd
+
+
+HISTORICAL NOTE
+
+Screen  mode  interface  of  vash  was implemented with a termcap-based
+linlib library. This library was thoughts inspired by some project from
+CERN then used for real-time applications in 1980x.  Later, library was
+extended with some tools and named visi.
+
+Initially vash was wrote on 16-bit environment  on  DEC  PDP-11/23  and
+VT100  hardware,  using classic K&R dialect of C language.  Only ASCII-
+based 8-bit encodings were supported.
+
+1st stricted release was about 1990  year  under  name  ash,  assistant
+shell.  Further development was episodical.  In 1991-1993 years ash was
+ported  to  i386  platforms  ISC  UNIX and FreeBSD, then UnixWare. Some
+enhancements was added with port to SPARK Solaris in 1995 and DEC OSF-1
+Unix in 1996. Porting to SGI IRIX was done in 1997.
+
+1st port to linux-based systems was done in 2004 since Fedora Core 2.
+
+In modern  time  project  development  was  reactivated  not  observing
+comparable tools, then prepared to wide publication under free license.
+
+Finally, name vash was assigned to this program avoiding confusion with
+/bin/ash, again shell.
+
+Most  of  previouse versions was for 32-bit architectures and supported
+only 8-bit encoding charsets.  Native 64-bit support added since  2019.
+Probably, 16-bit version may be still compiled, not sure.
+
+Termcap-based  code  was  modified  to use terminfo.  Starting in 2020,
+UTF-8 support was implemented but only for restricted set of  languages
+including european and chinessy.
+
+Interface of vash itself remains english only.
+

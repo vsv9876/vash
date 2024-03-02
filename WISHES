@@ -1,50 +1,39 @@
-DOC/MAN
 
-  > - man page vhset.1 (en)
-    - man linlib (en)
+LINLIB
+- man linlib (en) + actualize russian versions
 
-LINLIB, VHSET, 
+- revive linlib/visi library as a separate project
 
-    - наследование от stty cooked: intr, erase, werase, kill, eof
-    - ^Z для SYSV (ISC) lin132/lin140 must be redefined, also Del/BS, Ctl-W, Ctl-U
+- inheritance from stty cooked:
+   intr, erase, werase, kill, eof, tstop
 
-    -- навести порядок с инициализацией vexdir - см. пример vtest/pmain.c
-    
-LBP+VCC/VLBP
-
-    -+ line.h: INP(LPA) -
-	пересмотреть концепцию второго ряда логических атрибутов (для ввода) -
-	// (реально нужны только VAR,MSE и для красоты ALT отличается от VAR)
-	// остальные LPA можно использовать для сообщений, и индикаторов,
-	// но сейчас они странно называются и это источник путаницы;
-
+VISI (LBP,VCC,VLBP)
+- filler character must be [~_#], not limited by [.]
 
 VASH
-     - history:
+- strip from escapes before internal commands
+- substitution some metasymbols before internal commands
 
-    -? special case for cd command history
-    - separate shorthand cache and log(conduit) files
-    - compatible with .bash_history (timestamp)
+- export vash flags changed in setup,
+  on execve() with VASH= environment
 
- -+ rescan dir: keep cursor near last known item,
-         -- keep last item name regarding -@ parameter - after rescan
-	 // it's required more sofisticated comparizon (ex., after 'rm -f ##')
+- history:
+-- separate shorthand cache and log(conduit) files;
+-- compatible with .bash_history (timestamp)
 
-    -- VASH_LABEL fill from header (1st line) of commands like ps, df
+-+ rescan dir: keep cursor position near last known item,
+-- keep last item name regarding -@
+   parameter (item name fragment) after new rescan
+// it's required more sofisticated comparizon
+// (ex., after 'rm -f ##')
 
-    -? add flag to argv "jump to directory"
-    - extended file attributes (<rwx> unsufficient) permissions check 
-    - work with very big directories and inode numbers
-      (without static constant allocation for main meny storage, with malloc+realloc)
+-- VASH_LABEL fill from header (1st line) of commands like ps, df, 
+ then mark as read-only
+ 
+-- extended file attributes permissions check (<rwx> unsufficient) 
 
-    - cmd menu: TAB completion must show next frame of candidates
-    -- main menu: filter on command '_', without fresh read
-    -- main menu: mode stat on objects driven by flags (now :Fa)
-    -- main menu: render view more compact (find max wifth on every column)
-    
- *  - f2:menu - rework to support std-profiles
+-- work with very big directories and inode numbers
+   (realloc vs constant static allocation)
 
-    - Часы - убрать секунды (или сделать опцию)
-      -- WTF: #define CP_SAV
-
-
+-- more compact rendering of main menu - maximum width of item
+   must be recalculated on every column (now common for all columns -- since 'comint'-compatible)

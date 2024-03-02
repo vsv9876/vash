@@ -34,7 +34,7 @@ VISILIB = $(DESTDIR)$(DEST)/lib/visi
 
 VHSET	= ./vhset
 VASH	= ./vash
-VASHLIB	= ./vashlib
+VASHLIB	= ./lib
 
 all:	setup compile
 
@@ -100,37 +100,37 @@ visi_lib: setup
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
 
-compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h vashlib #/LIB-$(ASHLIB)
+compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib #/LIB-$(ASHLIB)
 	cd $(VHSET); $(MAKE) all "DEST=$(DEST)"
 	cd $(VASH);   $(MAKE) all "DEST=$(DEST)" "CFLAGS_ASH=$(CFLAGS_ASH)" \
 		"VERSN=$(VERSN)"
-	cd vashlib;               $(MAKE) "DEST=$(DEST)" all
-#	cd vashlib/LIB;           $(MAKE) "DEST=$(DEST)" all
-#	cd vashlib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
+	cd lib;               $(MAKE) "DEST=$(DEST)" all
+#	cd lib/LIB;           $(MAKE) "DEST=$(DEST)" all
+#	cd lib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
 
 #install:   $(DESTDIR) $(DEST) termcap $(VISILIB)
 install: setup compile $(DESTDIR) $(DEST) $(VISILIB)
 	cd $(VHSET);	$(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd $(VASH);	$(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd vashrc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd vashbin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd vashlib;    	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
-#	cd vashlib/LIB;	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
-#	cd vashlib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd rc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd bin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd lib;    	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
+#	cd lib/LIB;	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
+#	cd lib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cp -rp termcap/. $(VISILIB)
 #	cd visilib;			$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 
-# vashrc contains nothing to be clean
+# rc contains nothing to be clean
 clean:
 	cd $(VISI)/bin; rm -f *
 	cd $(VISI)/lib; rm -f *
 	cd $(VISI)/src; $(MAKE) clean
 	cd $(VHSET); $(MAKE) clean
 	cd $(VASH); $(MAKE) clean
-	cd vashlib; $(MAKE) clean
+	cd lib; $(MAKE) clean
 	cd vtest; $(MAKE) clean
-#	cd vashlib/LIB; $(MAKE) clean
-#	cd vashlib/LIB-$(ASHLIB); $(MAKE) clean
+#	cd lib/LIB; $(MAKE) clean
+#	cd lib/LIB-$(ASHLIB); $(MAKE) clean
 
 distclean:	clean
 	find . -type f -a '(' \

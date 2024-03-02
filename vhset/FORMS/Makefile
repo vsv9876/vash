@@ -82,5 +82,5 @@ $(DESTLIB):
 $(DESTLIB)/$(LIBRARY):
 		mkdir -p $(DESTLIB)/$(LIBRARY)
 ###
-phelp0.lav:	../../vashlib/phelp0.lav
-	cp -av ../../vashlib/phelp0.lav .
+phelp0.lav:	../../lib/phelp0.lav
+	cp -av ../../lib/phelp0.lav .

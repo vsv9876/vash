@@ -1,6 +1,12 @@
-debian standard terminfo search path:
+
+* extra reading main menu, for eample std_help.rc
+  (but 3rd does not...)
+
+* Build portable binaries
+
+  debian standard terminfo search path:
 	/etc/terminfo:/lib/terminfo:/usr/share/terminfo
-fedora standard terminfo search path:
+  fedora standard terminfo search path:
 	/etc/terminfo:/usr/share/terminfo
-so, default environment in debian for static binaries built under fedora
-is wrong, but ok otherwise
+  so, default environment in debian for static binaries built under fedora
+  is wrong (but is perfect otherwise!!)

@@ -498,7 +498,8 @@ Profile consists of a configuration statements and split to several
 files. Separate sections can be included with
 special statement into other section.
 .PP
-Search every included file via \fBVASH_PATH\fR will done separately from each other. Every section may be replaced with user content;
+Search every included file via \fBVASH_PATH\fR will done separately
+from each other. Every section may be replaced with user content;
 .SS profile search path
 user can replace sections with own content and place them in front of
 default library sections. In this case environment variable \fBVASH_PATH\fR
@@ -560,14 +561,15 @@ title on \fBx\fRterm window if supported by X window manager
 contains flags similar to startup options.
 If this variable is not set, then default values are used.
 .br
-Using this variable reset defaults first, so using letter means corresponding
-feature is set. Omitted letters means feature not set. Flags on command string has an advantage.
+Using this variable reset defaults first,
+so using letter means corresponding feature is set.
+Omitted letters means feature not set.
+Flags on command string has an advantage.
 .PP
 Additionally, flag '\fBl\fR' followed by number
 means how many lines will be occupied
 by \fBvash\fR for menu on main view. Note: 4 lines from total size
-reserved for banner strings.
-
+reserved for banners strings.
 .br
 Example:
 .EX
@@ -580,7 +582,14 @@ modem 2400 bps).
 .IP
 
 .SS VASH_LABEL
-TODO
+This environment variable usually is prepared by starting script \fBv\fR and
+contains the same as prompter \fBPS1\fR of most of shell.
+It can be changed  on you taste.
+.br
+.TP
+\fIhint:\fR
+if last symbol of this string is ':' (colon), it will be dinamically
+replaced reflecting current directory.
 
 .SS VASH_PATH
 Contains column-separated list of directories where profile files resides, including sections. Actual value may be checked on \fIsetup page\fR.
@@ -591,20 +600,26 @@ Contains column-separated list of directories where profile files resides, inclu
 .nh
 
 .SH AUTHOR
-.PP
 Sergey Vovk,
+previously known as 
 .br
-previously known as <vsv@st.simbirsk.su>, <vsv@relcom.eu.net>, <vsv@macomnet.ru>
+<vsv@st.simbirsk.su> 1990-1994
+.br
+<vsv@relcom.eu.net>  1995-1997
+.br
+<vsv@macomnet.ru>    1997-2006 
 .SH HISTORICAL NOTE
-Screen mode interface of \fBvash\fR implemented with a \fItermcap\fR-based \fIlinlib\fR library. This library thoughts inspired by some project from CERN,
-and used for real-time applications in 1980x.
+Screen mode interface of \fBvash\fR was implemented with a \fItermcap\fR-based \fIlinlib\fR library. This library was thoughts inspired by some project from CERN
+then used for real-time applications in 1980x.
 Later, library was extended with some tools and named \fIvisi\fR.
 .PP
-Initially \fBvash\fR was wrote on 16-bit environment on DEC PDP-11/23
-and VT100 hardware, using classic K&R dialect of C language.
+Initially \fBvash\fR was wrote on 16-bit environment on
+DEC PDP-11/23 and VT100 hardware,
+using classic K&R dialect of C language.
 Only ASCII-based 8-bit encodings were supported.
 .PP
-1st stricted release was about 1990 year under name \fIash\fR, assistant shell. 
+1st stricted release was about 1990 year under
+name \fIash\fR, assistant shell. 
 Further development was episodical.
 In 1991-1993 years ash was ported to i386 platforms ISC UNIX and FreeBSD,
 then UnixWare. Some enhancements was added with port to SPARK Solaris in 1995 and DEC OSF-1 Unix in 1996. Porting to SGI IRIX was done in 1997.
@@ -612,14 +627,18 @@ then UnixWare. Some enhancements was added with port to SPARK Solaris in 1995 an
 1st port to linux-based systems was done in 2004 since Fedora Core 2.
 .PP
 In modern time project development was reactivated not observing comparable
-tools, and prepared to wide publication under free license.
-Finally, name \fIvash\fR was assigned to this program avoiding confusion
-with /bin/ash, \fIagain shell\fR.
+tools, then prepared to wide publication under free license.
 .PP
-Most previouse versions was for 32-bit architectures and
+Finally, name \fIvash\fR was assigned to this program avoiding confusion with /bin/ash, \fIagain shell\fR.
+.PP
+Most of previouse versions was for 32-bit architectures and
 supported only 8-bit encoding charsets.
 Native 64-bit support added since 2019.
 Probably, 16-bit version may be still compiled, not sure.
 .PP
 \fITermcap\fR-based code was modified to use \fIterminfo\fR.
-Starting in 2020, UTF-8 support was implemented, but only for restricted set of languages including european and chinessy. Interface of vash itself remains english only.
+Starting in 2020, UTF-8 support was implemented 
+but only for restricted set of languages 
+including european and chinessy. 
+.PP
+Interface of vash itself remains english only.

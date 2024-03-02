@@ -11,3 +11,31 @@ File LICENSE applied. Please, keep copyright notice above.
 
 Source of this project will be found on http://github.net/... (not yet)
 
+Files and directory of distibution:
+
+README	this text
+LICENSE	GPL or MIT or etc license text
+COMPILE instructions how to build binaries including historical notes
+VERSION	version of distibution
+WISHES	ideas of future enhancements
+PLAN	fixes plan (not in order)
+BUGS	fixes required
+
+MK-srpm.sh, DEBIAN, DEBIAN.sh	- scripts to build packages
+
+configure	script for configuring compiling
+conf/		cpecs and configuration variants
+Makefile	main makefile
+
+bin/		scripts to be installed with binaries
+etc/		samples of terminal configs from vhset
+lib/		help pages sources
+misc/		miscellaneous staff
+rc/		rc files and profiles
+vash/		vash sources
+vash.1		manual sources
+vhset/		vhset utility sources
+vhset.1		vhset manual
+visi/		embedded VISI project with obsoleted manuals in russian
+vtest/		test program for debug VISI itself
+
