@@ -13,13 +13,13 @@ Source of this project will be found on http://github.net/... (not yet)
 
 Files and directory of distibution:
 
-README	this text
-LICENSE	GPL or MIT or etc license text
-COMPILE instructions how to build binaries including historical notes
-VERSION	version of distibution
-WISHES	ideas of future enhancements
-PLAN	fixes plan (not in order)
-BUGS	fixes required
+README		this text
+LICENSE		GPL or MIT or etc license text
+COMPILE		instructions how to build binaries including historical notes
+VERSION		version of distibution
+WISHES		ideas of future enhancements
+PLAN		fixes plan (not in order)
+BUGS		fixes required
 
 MK-srpm.sh, DEBIAN, DEBIAN.sh	- scripts to build packages
 

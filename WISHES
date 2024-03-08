@@ -4,6 +4,8 @@ LINLIB
 
 - revive linlib/visi library as a separate project
 
+- back return cursor moving on r_page() to simple wrap columns and rows
+
 - inheritance from stty cooked:
    intr, erase, werase, kill, eof, tstop
 
@@ -37,3 +39,7 @@ VASH
 
 -- more compact rendering of main menu - maximum width of item
    must be recalculated on every column (now common for all columns -- since 'comint'-compatible)
+
+-- navigating of main menu: add functions __next, __prev, __pgup, etc...
+   and make links with them via rc files
+

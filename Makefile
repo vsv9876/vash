@@ -27,6 +27,7 @@ BLD	= $(TOPDIR)/BLD
 DESTDIR	= $(TOPDIR)/BLD
 VERSN	= "1."
 
+
 include $(BLDCFG)
 
 VISI  = visi
@@ -35,6 +36,16 @@ VISILIB = $(DESTDIR)$(DEST)/lib/visi
 VHSET	= ./vhset
 VASH	= ./vash
 VASHLIB	= ./lib
+
+VASH_DOC = $(DESTDIR)$(DEST)/share/doc/$(VASH)
+
+DOC_FILES = \
+	LICENSE \
+	COMPILE \
+	README \
+	WISHES \
+	PLAN \
+
 
 all:	setup compile
 
@@ -109,12 +120,12 @@ compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib #/LIB-$(ASHLIB)
 #	cd lib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
 
 #install:   $(DESTDIR) $(DEST) termcap $(VISILIB)
-install: setup compile $(DESTDIR) $(DEST) $(VISILIB)
+install: setup compile $(DESTDIR) $(DEST) $(VISILIB) docinstall
 	cd $(VHSET);	$(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd $(VASH);	$(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd rc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd bin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd lib;    	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
+	cd lib;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cd lib/LIB;	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
 #	cd lib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cp -rp termcap/. $(VISILIB)
@@ -145,6 +156,9 @@ distclean:	clean
 	rm -f  $(BLDCFG) 
 #	touch $(BLDCFG)
 
+docinstall: $(VASH_DOC)
+	cp $(DOC_FILES) $(VASH_DOC)
+
 $(DEST):
 	mkdir -p $(DEST)
 
@@ -153,3 +167,6 @@ $(DESTDIR):
 
 $(VISILIB):
 	mkdir -p $(VISILIB)
+
+$(VASH_DOC):
+	mkdir -p $(VASH_DOC)

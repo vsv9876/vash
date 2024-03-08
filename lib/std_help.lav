@@ -1,18 +1,18 @@
 ---LINES
 
-mainv   = gh  - - - - "main view"
-mainvk  = gc  - - - - "main view keys:"
+mainv   = h  "main view"
+mainvk  = c  "main view keys:"
 
-cmded   = gh  - - - - "command editor"
-cmdedk  = gc  - - - - "command editor keys:"
+cmded   = h  "command editor"
+cmdedk  = c  "command editor keys:"
 
-exit    = gh  - - - - "exit trap"
-exitk   = gc  - - - - "keys of trap on exit:"
+exit    = h  "exit trap"
+exitk   = c  "keys of trap on exit:"
 
-hist    = gh  - - - - "history view"
-histk   = gc  - - - - "history view keys:"
+hist    = h  "history view"
+histk   = c  "history view keys:"
 
-runcmd  = gh  - - - - "run a command"
+runcmd  = h  "run a command"
 
 ---# m       = gm  - - - - " *)"
 m       = g  - - - - " *)"
@@ -20,30 +20,30 @@ a       = cx "{1}"
 b       = cx "{2}"
 c       = cx "{3}"
 
-cmd     = ghx - - - -  "[a-z./]"
-CMD     = ghx - - - -  "[A-Z0-9]"
+cmd     = hx "[a-z./]"
+CMD     = hx "[A-Z0-9]"
 
 ---SCREEN
-=vash workflow                                      
+=vash workflow -- context switching                                      
 +                                      please, see 'man vash' for more details       
 +.mainvk...............................                                       
-+ .:CA - switch to editor                                                       
-+ .'uppercase                               help:                       exit:   
-+   execute predefined command   .a.        .:HE...                     .:EX... 
-+   edit a command from template .b.        .mainv............................. 
-+ .'lowercase                               .CMD.... .cmd...       <-- .:CA ^ 
-+   type a command from scratch  .c.         :   :    :                  :  :   
-+                                            :   :    :                  :  :   
-+.cmdedk...............................      :   :   .c.  ."history"...  :  :   
-+ .:HE... switch to history view             :  .b.   :   :     .:NL...  :  :   
-+ .:NL... run a command, sync history       .a.  :    :   :          :   :  :   
-+                                            :   :    :  .:HE...     : .:CA :   
++ .:CA switch between editor and main       .:HE... - help      
++ .'uppercase                               .:EX... - exit,return     
++   execute predefined command   .a.        .:CA    - cancel                
++   edit a command from template .b.        
++ .'lowercase                               .mainv.............................
++   type a command from scratch  .c.        .CMD.... .cmd...           .:CA ^   
++                                            :   :   :                   :  :   
++.cmdedk...............................     .a.  :   :  ."history"...    :  :   
++ .:HE... switch to history view             :  .b.  :  .:NL...    :     :  :   
++ .:NL... run a command, sync history        :   :  .c.  :         :     :  :   
++                                            :   :   :   :     .:HE... .:CA :   
 +.histk................................      : .cmded...................... :   
 + .:CA    return to editor untouched         :   .:NL...          ^         :   
 + .:NL... take a command to editor           :     :              :         :  
-+                                            :     :             .c.        :   
-+.exitk................................     .runcmd..........     :       .:CA      
-+ .:SP...| .:CA return to main view            -->          :   .cmd... .:SP...       
++                                           .runcmd..........    .c.        :   
++.exitk................................        -->          :     :       .:CA      
++ .:SP...| .:CA return to main view                         :   .cmd... .:SP...       
 + .'lovercase  return to editor                             .exit.............     
                                                                                 
 ---END                                                                         

@@ -165,7 +165,7 @@ KBL kbl[KBLSIZE] = {
 { KB_NL, "Enter  ", KBCTL(    'M'), KBCTL(    'J') },
 { KB_DE, "^H|<-- ", KBCOD('d','e'), KBCTL(    'H') },
                                                    
-{ KB_HE, "^?|F1  ", KBCOD('k','1'), KBCTL(    '_') },
+{ KB_HE, "^G|F1  ", KBCOD('k','1'), KBCTL(    'G') },
 { KB_EX, "^D|F2  ", KBCOD('k','2'), KBCTL(    'D') },
 { KB_CA, "^C     ", KBCTL(    'C'), KB_EMPTY       },
 { KB_RE, "^L     ", KBCTL(    'L'), KB_EMPTY       },

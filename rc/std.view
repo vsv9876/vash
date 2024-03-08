@@ -28,7 +28,8 @@
 	r?? [DT] *.[zCp]     gzip -d < #@
 	r?? [DT] *.[Z]       zcat < #@
 	r?? [DT] *.bz2       bzip2 -cd < #@
-	r?? [DT] *.gz        gzip -d < #@
+	r?? [DT] *.gz        gzip -d < #@ | #m
+	r?? [DT] *.gz-*      gzip -d < #@ | #m
 	r?? [DT] *.src.rpm   ;rpm -qivp ./#@ | #m
 	r?? [DT] *.rpm       ;rpm -qivp ./#@ | #m
 	r?? [DT] *.deb       ;dpkg --info ./#@ | #m
