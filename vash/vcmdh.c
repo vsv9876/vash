@@ -653,7 +653,7 @@ rebuild_help_menu:
 
 	w_cmd(cmd0);
 	if (clm._itms == cmdpsel) {
-		at_set(ATT);
+		at_set(CMD|VEXT/*ATT*/);
 	} else {
 		at_set(CMD);
 	}
