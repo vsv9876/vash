@@ -1,15 +1,15 @@
 ---LINES
 
-mainv   = hnx "main view"
+mainv   = h "main view"
 mainvk  = c   "main view keys:"
 
-cmded   = hnx "command editor"
+cmded   = h "command editor"
 cmdedk  = c   "command editor keys:"
 
-exit    = hnx "exit trap"
+exit    = h "exit trap"
 exitk   = c   "keys of trap on exit:"
 
-hist    = hnx   "history view"
+hist    = h   "history view"
 histk   = c   "history view keys:"
 
 runcmd  = hnx "run a command"
