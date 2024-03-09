@@ -2,71 +2,55 @@ COMPILE
     Visual Assistant Shell
 
 Notes:
-    ./COMPILE.ru is obsolete
-  build requires standard library, reuired function
-  can be found in one of:
-    termcap
-    tinfo
-    ncurses
-  make sure development version installed;
-  static versions required for static linkage only
+  *)  ./COMPILE.ru is obsolete
+  *) build requires standard libraries, plus low-level terminal support
+     functions which can be found in one of:
+	termcap, tinfo, ncurses
+  *) make sure '-devel' version installed, also '-static'
+     only if static linkage required (option)
 
 Compile vash-2.0.24 and later
 
 1.
 unpack tarball and change directory on it:
-
         tar xzf ./vash-*.tar.gz
         cd vash-*
-
 2.
 run ./configure script or run 'make config':
-
         ./configure
     or
         make config
-  
 3. 
 check BLD.conf:
-
         vi ./BLD.conf
-  
 4.
 compile binaries:
-
         make clean install
-
 5.
 Build and install on a your system binary packages (optional).
+ 5a. RPM build
+ Make sure rpmbuild package installed and working.
+ NOTE: In Fedora resulting package will be in ~/rpmbuild/SRPMS
+	./MK-srpm.sh
 
-5a.
-build RPM. rpmbuild package installed and working.
-NOTE:
-In Fedora resulting package will be in ~/rpmbuild/SRPMS
+ then find resulting package and run:
+	rpmbuild --rebuild ~/rpmbuild/SRPMS/vash-*.src.rpm
 
-      ./MK-srpm.sh
-  
-then find resulting package and run:
-  
-      rpmbuild --rebuild ~/rpmbuild/SRPMS/vash-*.src.rpm
-  
-in Fedora installable package will be in ~/rpmbuild/RPMS/*/vash-*.rpm
+ in Fedora installable package will be in
+	~/rpmbuild/RPMS/*/vash-*.rpm
 
-5b.
-build DEB. Is is required dpkg and chroot packages installed.
-Run script, installable package will be in parent directory:
-   
+ 5b. DEB build
+ Is is required dpkg and chroot packages installed.
+ Run script, installable package will be in parent directory:
       ./DEBIAN.sh
 
-6.
-use vash compiled locally or running for debug.
+How to use vash compiled locally or running for debug.
 Requires ~/bin in your PATH:
-
       ln -s `pwd`/bin/v.debug.sh ~/bin/vd
       vd
 
 
-HISTORICAL NOTE
+HISTORICAL NOTEs...
 
 Screen  mode  interface  of  vash  was implemented with a termcap-based
 linlib library. This library was thoughts inspired by some project from
@@ -81,7 +65,7 @@ based 8-bit encodings were supported.
 shell.  Further development was episodical.  In 1991-1993 years ash was
 ported  to  i386  platforms  ISC  UNIX and FreeBSD, then UnixWare. Some
 enhancements was added with port to SPARK Solaris in 1995 and DEC OSF-1
-Unix in 1996. Porting to SGI IRIX was done in 1997.
+Unix in 1996. Porting to SGI IRIX was done in that time.
 
 1st port to linux-based systems was done in 2004 since Fedora Core 2.
 
@@ -91,13 +75,21 @@ comparable tools, then prepared to wide publication under free license.
 Finally, name vash was assigned to this program avoiding confusion with
 /bin/ash, again shell.
 
-Most  of  previouse versions was for 32-bit architectures and supported
-only 8-bit encoding charsets.  Native 64-bit support added since  2019.
-Probably, 16-bit version may be still compiled, not sure.
+Most  of  previouse versions was adopted for 32-bit architectures and supported
+only 8-bit encoding charsets.  Native 64-bit support added since 2019.
+Probably, 16-bit version may be still compiled, I'm not sure.
 
 Termcap-based  code  was  modified  to use terminfo.  Starting in 2020,
-UTF-8 support was implemented but only for restricted set of  languages
+UTF-8 support was implemented but only tested for restricted set of  languages
 including european and chinessy.
 
-Interface of vash itself remains english only.
+Interface of vash itself remains english only. I have no plans to implement
+international support like translate 'file not found' to russian, etc.
+This makes little sense because the typical user of this program is
+already proficient in the language due to the profession of
+unix system administrator.
+On the other hand, unicode support has already caused the code to swell
+and become more complex compared to the compact and clear source implementation
+for the 1990 8-bit encodings.
 
+2024-03-09 -- vsv

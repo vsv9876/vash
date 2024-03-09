@@ -443,6 +443,8 @@ register char *lbps;
 		case  'e': strcpy(os, "ERR"); os += 4; break;
 		case  'X':
 		case  'x': strcpy(os, "VEXT"); os += 4; break;
+		case  'N':
+		case  'n': strcpy(os, "ATT"); os += 4; break;
 		case  'M':
 		case  'm': strcpy(os, "LMSE"); os += 4; break;
 		case  '1':

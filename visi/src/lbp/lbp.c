@@ -188,6 +188,10 @@ FILE   *i_fp;
 		case 'e' :
 		    line->attr |= ERR;
 		    break;
+		case 'N' :                  /* МЕНЮ */
+		case 'n' :
+		    line->attr |= ATT;
+		    break;
 		case 'X' :                  /* МЕНЮ */
 		case 'x' :
 		    line->attr |= VEXT;
