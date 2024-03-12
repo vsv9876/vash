@@ -5,9 +5,9 @@ varc    = pvix  -       -       -       -         "        "
 alt1    = paix  -       -       -       -         "YES"
 a2      = aix   -       -       -       -         "[x]"
 mse     = ipmx  -       -       -       -         " Quit "
-VAR     = gv - - - - " VAR "
-ALT     = ga - - - - " ALT "
-MSE     = gm - - - - " MSE "
+VAR     = gv  - - - - " VAR "
+ALT     = ga  - - - - " ALT "
+MSE     = gm  - - - - " MSE "
 VARi    = gvx - - - - " VAR "
 ALTi    = gax - - - - " ALT "
 MSEi    = gmx - - - - " MSE "
@@ -17,41 +17,74 @@ page_n  = gc  - - - - " page navigation: "
 specia  = gc  - - - - " special: "
 
 ---SCREEN                                                          
-=LINLIB generic keyboard commands/actions
+=generic keyboard actions (commands)
                                                                               
-+.common...............              editing start:             .VAR.  .VARi
-+   .:HE... get help                    .:SP... keep content          
-+   .:RE... refresh page                .:DE... clear field          
-+   .:EX... exit/close page                                                    
-+   .:CA... cancel                   altering:                  .ALT.  .ALTi
-+   .:TA... next line                   .:SP... forward item           
-+                                       .:DE... backward item          
-+.page_n...............                                               
-+   .:KH... jump to 1st line         menu selection:            .MSE.  .MSEi
-+   .:KE... jump to last line           .:SP... or .:NL...     
-+   .:PD... next page/part                                                        
-+   .:PU... prev page/part      ."in edit mode"................. ."with prefix".  
-+                               .:DE... erase left from cursor               
-+.specia...............         .:KD... erase below cursor       .:PR .:DE...	   
-+   .:NL... next line,                         erase up to end   .:PR .:SP...    
-+           commit,complete     .:KH... jump to 1st symbol       .:PR .:AL...    
-+   .:PR... option prefix       .:KE... jump to end of text      .:PR .:AR...    
-+                               .:KI... toggle Ins/Ovr mode      .:PR .:PR...    
-+                               
-=LINLIB (c) 1986-1990,2020 vsv&team
++ .VAR. line editing start:                        .page_n...............      
++     .:SP... keep content    .VARi                   .:TA... next line         
++     .:DE... clear field                             .:KH... jump to 1st line  
++                                                     .:KE... jump to last line 
++ .ALT. line altering:                                .:PD... next page/part   
++     .:SP... forward item    .ALTi                   .:PU... prev page/part   
++     .:DE... backward item                                                     
++                                                   .common...............     
++ .MSE. item selection:                               .:HE... get help        
++     .:SP... or .:NL...      .MSEi                   .:EX... exit/close page  
++                                                     .:NL... commit,complete    
++ ."in edit mode"................. ."with prefix".    .:CA... cancel             
++ .:DE... erase left from cursor                      .:RE... refresh page     
++ .:KD... erase below cursor       .:PR .:DE...                                  
++                erase up to end   .:PR .:SP...     .specia...............      
++ .:KH... jump to 1st symbol       .:PR .:AL...       .:KP... keypad on/off    
++ .:KE... jump to end of text      .:PR .:AR...       .:PR... prefix         
++ .:KI... toggle Ins/Ovr mode      .:PR .:PR...       
+                                                    
+=LINLIB (c) 1986-1990, 2020-2024 vsv&team
 ---END                          
 
 +."common"..........            .MSE.   .mse..... -------select menu item:
 +."page navigation".            .VAR.   .var..... --------switch to edit: 
 +."special".........                erase below cursor:  .:KD...  .:PR .:DE...
 
- .VAR. - editing            .var.....  
-     .:SP... keep content   .vari....  
-     .:DE... clear field    .varc....  
-                                       
- .ALT. - alter or toggle    .a2        
-     .:SP... forward item              
-     .:DE... backward item             
-                                       
- .MSE. - select menu item:  .mse.....  
-     .:SP... or .:NL...            
+.specia...............        
+   .:NL... next line,commit   
+   .:PR... option prefix      
+
++ line editing start:                              .page_n...............      
++     .:SP... keep content  .VAR. .VARi               .:TA... next line         
++     .:DE... clear field                             .:KH... jump to 1st line  
++                                                     .:KE... jump to last line 
++ line altering:                                      .:PD... next page/part   
++     .:SP... forward item  .ALT. .ALTi               .:PU... prev page/part   
++     .:DE... backward item                                                     
++                                                   .common...............     
++ item selection:                                      .:HE... get help        
++     .:SP... or .:NL...    .MSE. .MSEi                .:EX... exit/close page  
++                                                      .:NL... commit,complete 
++ ."in edit mode"................. ."with prefix".     .:CA... cancel           
++ .:DE... erase left from cursor                       .:RE... refresh page     
++ .:KD... erase below cursor       .:PR .:DE...                                 
++                erase up to end   .:PR .:SP...          
++ .:KH... jump to 1st symbol       .:PR .:AL...      .specia...............        
++ .:KE... jump to end of text      .:PR .:AR...         .:KP... keypad on/off   
++ .:KI... toggle Ins/Ovr mode      .:PR .:PR...         .:PR... prefix      
+                                                    
+                                                    
++                               line editing start:       
++.common...............             .:SP... keep content  .VAR. .VARi
++   .:HE... get help                .:DE... clear field        
++   .:RE... refresh page                                                
++   .:EX... exit/close page     line altering:            
++   .:CA... cancel                  .:SP... forward item  .ALT. .ALTi
++   .:TA... next line               .:DE... backward item       
++   .:NL... commit,complete                              
++   .:PR... prefix              item selection:           
++                                   .:SP... or .:NL...    .MSE. .MSEi
++                                                                               
++.page_n...............         ."in edit mode"................. ."with prefix".
++   .:KH... jump to 1st line    .:DE... erase left from cursor               
++   .:KE... jump to last line   .:KD... erase below cursor       .:PR .:DE...   
++   .:PD... next page/part                     erase up to end   .:PR .:SP...   
++   .:PU... prev page/part      .:KH... jump to 1st symbol       .:PR .:AL...   
++                               .:KE... jump to end of text      .:PR .:AR...   
++                               .:KI... toggle Ins/Ovr mode      .:PR .:PR...   
++                               
