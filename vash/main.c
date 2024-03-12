@@ -238,6 +238,9 @@ char **argv;
 			case 'N':
 				vashflag.novice++;
 				break;
+			case 'A':
+				vashflag.shanyway++;
+				break;
 			}
 		}
 	}
@@ -292,6 +295,9 @@ char **argv;
 				continue;
 			case 'T':
 				vashflag.exittrap = 0;
+				continue;
+			case 'A':
+				vashflag.shanyway = 1;
 				continue;
 
 			case '-':

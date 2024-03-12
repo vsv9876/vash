@@ -239,7 +239,9 @@ int  execapnd;
 				if(clm._itms[j][0] == MONEY) {
 				   /* вставить очередное имя */
 				   nm_ptr = nmsubs(&clm._itms[j][2], Csubs);
-				   if (sh_esc(out_str, nm_ptr)) execmode = execmode & (~ASH_NOSH);
+				   if (sh_esc(out_str, nm_ptr)) {
+					   execmode = execmode & (~ASH_NOSH);
+				   }
 				   sprintf(&cmd2[i], "%s ", out_str);
 
 				   while(cmd2[++i]) ;
@@ -373,11 +375,15 @@ char *cmdlbl;   /* строка для индикации, как правило
 			break;
 		}
 	}
-	if (mark_i >= 0 || mark_o >= 0)
-		execargv = 0;
-	if (execargv)
-		execapnd = 0;
-	execmode |= (execargv ? ASH_NOSH : 0);
+	if (vashflag.shanyway) {
+		execargv = 0; execapnd = 0;
+	} else {
+		if (mark_i >= 0 || mark_o >= 0)
+			execargv = 0;
+		if (execargv)
+			execapnd = 0;
+		execmode |= (execargv ? ASH_NOSH : 0);
+	}
 	shstart();
 	syscod = shexec(cmdp, cmdlbl, execmode, execapnd);
 #if 0
