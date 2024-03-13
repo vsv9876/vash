@@ -28,11 +28,12 @@ int i;
 LINE *phelp;
 {
 	char tmps[48];
+	char *msgs[3] = { "", "context help", " linlib core " };
 	/*w_msg(INP|MSE, "Help");*/
-	sprintf(tmps, " help #%d '%s' ", i, phelp);
+	/*sprintf(tmps, " help #%d '%s' ", i, phelp);*/
+	sprintf(tmps, " %s '%s' ", msgs[i], phelp);
 	w_msg(HDR, tmps);
-	er_eol(TXT);
-
+	/*er_eol(TXT);*/
 }
 
 
@@ -58,9 +59,11 @@ char    *page;
 				w_page(phelp);
 				d_page(phelp);
 				hlppmt(i, pages[i]);
-				at_set(TXT);
-				w_str("-- get next: ");
-				w_lh_str(":HE");
+				if (i == 1) {
+					at_set(TXT);
+					w_str("-- get next help page: ");
+					w_lh_str(":HE");
+				}
 				fflush(vttout);
 			} else {
 				hlppmt(i, pages[i]);

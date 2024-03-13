@@ -1,21 +1,24 @@
 - make clean rules with vexdir initialization
    see example in vtest/pmain.c
 
-- incorporate canonical PgUP,PgDOWN,Home,End in vash's u_page()
-
 - complete an full utf8 support on '_sh #k' key processing
 
 - r_key(): complete implementing for non-unicode 8-bit encodings
+
+- incorporate canonical PgUP,PgDOWN,Home,End in vash's u_page()
 
 - complete documenting and make code cleanup of wsobj_t (4k string)
 
 - complete support for marker 'x' in VISI visual attributes
   (lbp, vcc, vlbp)
 
-- manual vhset.1 to be completed
+- write vhset.1 manual
 
 - implement substitution '#@' into command editor
 
 - export vash flags changed in setup, 
   on execve() with VASH= environment
+
 -- redesign parameters invocation, like vash +hS -w -l=max
+
+* C89/ANSI C total rewrite instead K&R C...
