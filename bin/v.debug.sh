@@ -62,10 +62,10 @@ if [ -x $bintest ]; then
     VASH_LABEL='debug:'
     export VASH_LABEL
     echo ' ***'
-    echo " *** Warning: this is DEBUG environment "
+    echo " *** Warning: DEBUG environment activated"
     echo " *** for $vashdir ***"
     echo ' ***'
-    exec $BLD/usr/bin/v
+    exec $BLD/usr/bin/v "$@"
 fi
 echo '   *** no build directory found:'
 echo '          "'$BLD'"'
