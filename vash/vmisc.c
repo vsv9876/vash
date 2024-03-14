@@ -373,6 +373,38 @@ register char *str;
 }
 
 /*
+ * common part of pmtrobj() and pmtrstr(), below...
+ */
+static
+kbcod
+r_pmt(pmtstr, line, savedf)
+char *pmtstr;
+LINE *line;
+int savedf;
+{
+	kbcod cod;
+
+	for ( ;; ) {
+		w_msg(TXT, pmtstr);
+		savedf = edinff;
+		/*edinff = 0;     /* не показывать состояние редактора */
+		cod = r_line(line, 0);
+		edinff = savedf;
+		switch (cod) {
+		default:
+			continue;
+		case KB_TA:
+		case KB_NL:
+		case KB_CA:
+		case KB_EX:
+			return(cod);
+			break;
+		}
+	}
+	return(cod);
+}
+
+/*
  * Ввод строки с промптером, в последней строке экрана.
  */
 kbcod
@@ -401,25 +433,9 @@ int   size;     /* размер поля для ввода */
 	line.cvts = (char *)0;
 	line.cvtf = (void *)0;
 	line.test = (void *)0;
-	line.varl = (char*)obj;
+	line.varl = (char*)wobj;
 
-	for ( ;; ) {
-		w_msg(TXT, pmtstr);
-		/*savedf = edinff;*/
-		/*edinff = 0;     /* не показывать состояние редактора */
-		cod = r_line(&line, 0);
-		/*edinff = savedf;*/
-		switch (cod) {
-		default:
-			continue;
-		case KB_TA:
-		case KB_NL:
-		case KB_CA:
-		case KB_EX:
-			return(cod);
-			break;
-		}
-	}
+	cod = r_pmt(pmtstr, &line, savedf);
 	return(cod);
 }
 
@@ -450,23 +466,9 @@ int   size;     /* размер строки для ввода */
 	pmtline.test = (void *)0;  /* тип указатель на функцию, возвр. int */
 	pmtline.varl = str;
 
-	for ( ;; ) {
-		w_msg(TXT, pmtstr);
-		savedf = edinff;
-		/*edinff = 0;     /* не показывать состояние редактора */
-		cod = r_line(&pmtline, 0);
-		edinff = savedf;
-		switch (cod) {
-		default:
-			continue;
-		case KB_TA:
-		case KB_NL:
-		case KB_CA:
-		case KB_EX:
-			return(cod);
-			break;
-		}
-	}
+	cod = r_pmt(pmtstr, &pmtline, savedf);
+	return(cod);
+
 }
 
 /*
