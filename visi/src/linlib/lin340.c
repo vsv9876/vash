@@ -223,6 +223,7 @@ register LINE    *line;
 
 	int  i;
 
+	int		clrwcs = 0;			/* flag: clear before editing (wcsptr[0] = 0) */
 	wchar_t *wcsptr = NULL;			/* editing start after prompter */
 	wchar_t  wcsbuf[STRBUF + 1];  /* internal buffer in internal encoding WCS-4 */
 
@@ -386,7 +387,10 @@ string_simple:
 	/*==== 1st code reading */
 	switch(cod = r_cod(0)) {
 	case KB_DE:
+		    clrwcs = 1;
+#if 0
 			*wcsptr/**editptr*/ = '\0';
+#endif
 			/*NO BREAK*/
 	case  ' ':
 			if(posp != (int *)(-1) && posp)
@@ -400,6 +404,7 @@ string_simple:
 		if((attr & NED) == 0) {
 			if(allcod && ISCTL(cod) == 0) { /*&& cod1(cod) == 0) {*/
 				unr_c(cod);     /* unread a code back */
+				clrwcs = 1;
 				*wcsptr/**editptr*/ = L'\0';    /* clean string */
 			} else
 				goto inp_test;
@@ -426,15 +431,21 @@ edit_retry:
 	/*
 	 * caling editor there
 	 */
-	if(line->flag & U8SOBJ) {
+	if (line->flag & U8SOBJ) {
 		/* init an editing object from u8sobj_t */
 		wcoptr = alloca(sizeof(wcsobj_t)
 				+ (u8o_size(u8optr) * sizeof(wchar_t) /* WCO_SIZE_MAX*/));
 		u8owco(wcoptr, u8optr);
+		if (clrwcs)
+			wcoptr->wcs[0] = 0;
 		cod = e_str(wcoptr, size, 0, posp);
 	} else if (objptr && objptr->wco_sig == WCO_SIG) {
+		if (clrwcs)
+			objptr->wcs[0] = 0;
 		cod = e_str(objptr, size, 0, posp);
 	} else {
+		if (clrwcs)
+			wcsptr[0] = 0;
 		cod = e_str(wcsptr/*editptr*/, size,
 				((attr & EDT) ? line->test : 0), posp);
 		/* finally back to UTF-8 encoding */
@@ -447,8 +458,9 @@ edit_retry:
 		sout(-5, "3) e-str; u8buf", u8buf);
 #endif
 	}
+	clrwcs = 0;
 
-	if(cod != KB_NL)
+	if (cod != KB_NL)
 		goto inp_test;
 
 inp_format:

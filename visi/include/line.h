@@ -130,7 +130,11 @@ typedef short  bool;     /* короткий формат для целых чи
 #define KBUSR( c )      (KBPRE|tocod0('U')|tocod1(c))
 #define KBCTL( c )      (KBPRE|tocod0('^')|tocod1(c))
 /* check if kbcod is linlib control code */
+#if 0
 #define ISCTL( c )      (((c)&KBPRE) != 0 ? 1 : 0)
+#else
+#define ISCTL( c )      (((c) & KBPRE) == KBPRE)
+#endif
 #endif /*KBCOD_INT32*/
 
 #ifndef FALSE           /* определение м.быть в др. месте */

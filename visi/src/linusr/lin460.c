@@ -41,8 +41,11 @@ w_msg(vamode, str)
 int     vamode;        /* видеоатрибут */
 char    *str ;         /* текст сообщения об ошибке */
 {
-	if (msgflg) {                   /* если строка на экране занята */
-		msgflg = 0;             /* погасить ее */
+	int va;	/* attribute of message */
+
+	va = TXT;
+	if (msgflg) {       /* если строка на экране занята */
+		msgflg = 0;     /* погасить ее */
 		cp_set(-1, 0, TXT);
 		er_eol(TXT);
 	}
@@ -52,7 +55,8 @@ char    *str ;         /* текст сообщения об ошибке */
 		switch (vamode & VIDEO) {
 		case ERR:
 			/*bell();*/
-			w_str("Error:");
+			/*va = ERR;*/
+			w_str("err:");
 			break;
 		case ATT:
 			w_str(">>>");
@@ -60,12 +64,12 @@ char    *str ;         /* текст сообщения об ошибке */
 		case TXT:
 			break;
 		default:
-			w_str(" * ");
+			w_str("*");
 			break;
 		}
-		at_set(TXT); w_chr(' ');
+		at_set(va); w_chr(' ');
 		w_str(str);
-		at_set(TXT); er_eol(TXT);
+		at_set(va); er_eol(va);
 	}
 }
 

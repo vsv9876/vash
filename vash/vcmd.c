@@ -90,10 +90,30 @@ LINE    *mainl; /* указатель на страницу меню */
 	char   *cmd;
 
 	/* получить строку с кодом клавиши, найти совпадение. */
-	/* TODO: Unicod parser for encoded keys */
-	lastkey[0] = cod0(cod);
-	lastkey[1] = cod1(cod);
+	/* it was simple at 8-bit encodings epoch...*/
+	if (mb_cur_max == 1) {
+		lastkey[0] = cod0(cod);
+		lastkey[1] = cod1(cod);
+	} else {
+		if (ISCTL(cod)) {
+			lastkey[0] = cod0(cod);
+			lastkey[1] = cod1(cod);
+		} else if (cod <= 0177) {
+			lastkey[0] = cod0(cod);
+			lastkey[1] = 0;
+		} else {
+			/*
+			 * workaround: any printable non-ascii but single-byte code;
+			 * normal solution may be to use wchar_t for patcmp()
+			 * and lastkey[] and so on;
+			 * anyway rc files are encoded ASCII-only
+			 */
+			lastkey[0] = 0243;
+			lastkey[1] = 0;
+		}
+	}
 	lastkey[2] = 0;
+
 	for (ktp=kt1; ; ktp++) {
 		if (ktp->kt_key == (char *)0)
 			return(-1);     /* ничего не найдено */

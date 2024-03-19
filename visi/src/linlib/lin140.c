@@ -218,7 +218,7 @@ ret_c:
  * сборка в codepoint (символ UTF-8) выполняется на уровень выше, в вызывающей функции */
 ttyinp()
 {
-	char         cc;
+	char         cc[8];
 	register int c;
 
 	next_j();       /* один раз перед вводом каждого символа */
@@ -235,20 +235,11 @@ ttyinp()
 			cyrkbd();
 			fflush(vttout);
 		}
-		if (read(vtti, &cc, 1) < 0) exit(2);
-		c = cc;
-		goto ret_c;     /* вернуть код */
-	} else {
-
-		if (read(vtti, &cc, 1) < 0) exit(1);
-		c = cc;
-		goto ret_c;
-ret_c:
-		c &= 0377;
-		if(c > 0177)    cyrflg = 1;
-		else            cyrflg = 0;
-		return( c );
 	}
+	if (read(vtti, cc, 1) < 0)
+		exit(1);
+	c = cc[0] & 0377;
+	return (c);
 }
 #endif
 

@@ -544,7 +544,7 @@ kbcod e_str(wcsobj, vsize, ctst, ofsp)
 /*-----------------*/
 register wcsobj_t    *wcsobj;  /* container for wide char string to be edited */
 int     vsize;           /* size of field visible -- РАЗМЕР ПОЛЯ РЕДАКТИРОВАНИЯ */
-kbcod   (*ctst)();      /* test&check for input a printable codes -- ТЕСТ ДЛЯ ВВОДА ПЕЧАТАЕМЫХ КОДОВ */
+kbcod   (*ctst)();      /* test&check for input a code which to be printed */
 int     *ofsp;          /* index pointer for editing position (cursor position) -- УКАЗАТЕЛЬ НА ВЕЛИЧИНУ СМЕЩЕНИЯ ОТ НАЧ. ПОЛЯ */
 {
 	/* НАЧАЛО ПОЛЯ И VIDEO ЗАДАЮТСЯ ЧЕРЕЗ cp_set();
@@ -555,9 +555,9 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 	wchar_t tmps[8];
 	register
 	wchar_t    *wc_s;  /* wide char string to be edited -- СТРОКА ДЛЯ РЕДАКТИРОВАНИЯ*/
-	wchar_t c;
-	kbcod   cod;
-	kbcod   ok;
+	wchar_t     c;
+	kbcod       cod;
+	kbcod       ok;
 	/*int     i_prev;			/* internal cursor position on previous cycle */
 	register int i;			/* internal cursor position */
 	register int j;

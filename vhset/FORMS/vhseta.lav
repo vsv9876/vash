@@ -2,7 +2,7 @@
 ---SCREEN
 =video attributes help
 
-  change an value:              ." logical type of lines : "................
+  change an value:              ." logical type of lines: ".................
                .:SP...            CMD - initial text mode (restored on exit)
                .:DE...            TXT - text                                
                                   HDR - header                              

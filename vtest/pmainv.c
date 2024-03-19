@@ -63,8 +63,11 @@ kbcod cod;
 	if (cod == L'\0') {
 		at_set(ERR);
 		sprintf(sbuf, "cod=0");
-	} else if (cod < 0x80) {
+	} else if (cod <= 0177) {
 		sprintf(sbuf, "ASCII(7bit) 0x%2.2x '%c'", cod, cod);
+	} else if (cod <= 0377 && mb_cur_max == 1) {
+		at_set(ALT|INP);
+		sprintf(sbuf, "legacy(8bit) 0x%2.2x '%c'", cod, cod);
 	} else if (cod >= 0x80 && cod <= 0x10ffff) {
 		at_set(MSE|INP);
 		sprintf(sbuf, "UTF-8 0x%x '%lc'", cod, cod);
