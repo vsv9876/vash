@@ -5,9 +5,9 @@ varc    = pvix  -       -       -       -         "        "
 alt1    = paix  -       -       -       -         "YES"
 a2      = aix   -       -       -       -         "[x]"
 mse     = ipmx  -       -       -       -         " Quit "
-VAR     = gv  - - - - " VAR "
-ALT     = ga  - - - - " ALT "
-MSE     = gm  - - - - " MSE "
+VAR     = v   - - - - " VAR "
+ALT     = a   - - - - " ALT "
+MSE     = m   - - - - " MSE "
 VARi    = gvx - - - - " VAR "
 ALTi    = gax - - - - " ALT "
 MSEi    = gmx - - - - " MSE "                       
@@ -19,14 +19,14 @@ specia  = h  " special: "
 ---SCREEN                                                                                     
 ."actions on active lines"......................... .common....................                                                  
                                                                                 *
-+ start edit a line -              .VAR. .VARi        .:HE... help              *   
-+              - untouched: .:SP...                   .:EX... exit/close page   *
-+           - clear before: .:DE...                   .:NL... commit,complete   *
-+ alter a line (toggle) -          .ALT. .ALTi        .:CA... cancel            *
-+                - forward: .:SP...                   .:RE... refresh page      *
-+               - backward: .:DE...                                             *
-+ select menu item:                .MSE. .MSEi      .page_n.................... *
-+                .:NL... or .:SP...                   .:TA... next line         *  
++ start edit .VAR.    - untouched: .:SP... .VARi      .:HE... help              *   
++                  - clear before: .:DE...            .:EX... exit/close page   *
++                                                     .:NL... commit,complete   *
++ alter .ALT. (toggle)  - forward: .:SP... .ALTi      .:CA... cancel            *
++                      - backward: .:DE...            .:RE... refresh page      *
++                                                                               *
++ select .MSE. item -   .:NL... or .:SP... .MSEi    .page_n.................... *
++                                                     .:TA... next line         *  
 +                                                     .:KH... jump to 1st line  *
 ."in edit mode"................... ."with prefix".    .:KE... jump to last line *
 + .:DE... erase left from cursor                      .:PD... next page/part    *

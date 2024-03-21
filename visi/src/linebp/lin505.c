@@ -27,8 +27,8 @@ static hlppmt(i, phelp)
 int i;
 LINE *phelp;
 {
-	char tmps[48];
-	sprintf(tmps, "%s -- page %d of 2 ", phelp, i);
+	char tmps[80];
+	sprintf(tmps, "%s (page %d of 2); to get another press ", phelp, i);
 	w_msg(HDR, tmps);
 	er_eol(TXT);
 }
@@ -57,6 +57,7 @@ char    *page;
 				d_page(phelp);
 				hlppmt(i, pages[i]);
 				at_set(TXT);
+				w_str("");
 				w_lh_str(":HE");
 				fflush(vttout);
 			} else {

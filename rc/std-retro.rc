@@ -14,12 +14,12 @@
 # syntax description and comments moved to ./std.SYNTAX
 
 #-1!sh
--2
--3?
+-2menu
+-3?????
 -4edit
 -5cp
 -6mv
--7
+-7other
 -8rm
 -9setup
 -0exit
