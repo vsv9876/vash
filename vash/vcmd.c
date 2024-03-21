@@ -60,7 +60,7 @@ extern  PATCMD  pc[];
 extern  KEYTAB  kt2[];
 extern  KEYTAB  kt1[];
 
-static  char    lastkey[4];     /* код последней нажатой клавиши */
+static u8char_t lastkey[4];     /* код последней нажатой клавиши */
 /*
  * Интерпретировать клавишную команду
  *
@@ -90,27 +90,22 @@ LINE    *mainl; /* указатель на страницу меню */
 	char   *cmd;
 
 	/* получить строку с кодом клавиши, найти совпадение. */
-	/* it was simple at 8-bit encodings epoch...*/
-	if (mb_cur_max == 1) {
+	/* it was much simple at 8-bit encodings epoch...*/
+	if (ISCTL(cod)) {
 		lastkey[0] = cod0(cod);
 		lastkey[1] = cod1(cod);
+	} else if (cod < 0200) {
+		lastkey[0] = cod0(cod);
+		lastkey[1] = 0;
 	} else {
-		if (ISCTL(cod)) {
-			lastkey[0] = cod0(cod);
-			lastkey[1] = cod1(cod);
-		} else if (cod <= 0177) {
-			lastkey[0] = cod0(cod);
-			lastkey[1] = 0;
-		} else {
-			/*
-			 * workaround: any printable non-ascii but single-byte code;
-			 * normal solution may be to use wchar_t for patcmp()
-			 * and lastkey[] and so on;
-			 * anyway rc files are encoded ASCII-only
-			 */
-			lastkey[0] = 0243;
-			lastkey[1] = 0;
-		}
+		/*
+		 * workaround: any printable non-ascii but single-byte code;
+		 * normal solution may be to use wchar_t for patcmp()
+		 * and lastkey[] and so on;
+		 * anyway rc files are encoded ASCII-only
+		 */
+		lastkey[0] = 0243 /*0xff & cod*/;
+		lastkey[1] = 0;
 	}
 	lastkey[2] = 0;
 

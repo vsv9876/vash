@@ -84,17 +84,27 @@ int cod;
 }
 
 /*
- * собрать Unicode codepoint
+ * assembly an codepoint from multibyte stream
+ *
+ * mbrtowc() is only used in case 8bit legacy (koi8, iso8859)
  */
 kbcod r_codep(cod)
 kbcod cod;
 {
-	unsigned int cc;      /* current byte from input stream */
+	     wchar_t cc;      /* current byte from input stream */
 	unsigned int cbytes;  /* bytes count in codepoint */
 	unsigned int cbits;   /* bits encoded */
 	unsigned int cmask;   /* significant bits in current byte */
+	mbstate_t ps = { 0 };
+	u8char_t s[1];
 
-	if (cod <= 0b01111111) return cod; /* ASCII */
+	if(mb_cur_max == 1) {
+		s[0] = 0xff & cod;
+		mbrtowc(&cod, s, 1, &ps);
+		return cod;
+	}
+	if (cod <= 0b01111111)
+		return cod; /* ASCII */
 	cc = cod;
 	if         ((0b11111000 & cc) == 0b11110000) {
 		cmask = 0b00000111; cbits = 3; cbytes = 4;
@@ -106,7 +116,7 @@ kbcod cod;
 	cod = (cc & cmask);/* << cbits;*/
 	while (cbytes > 1) {
 		cbytes -= 1;
-		cc = ttyinp();
+		cc = ttyinp(); /* read next byte in multi-byte sequence */
 		if ((0b11000000 & cc) != 0b10000000) {
 		    /* Error: premature end of multibyte sequence */
 		    return (0x0); /*(0xffffffff);*/
@@ -117,7 +127,7 @@ kbcod cod;
 	return cod;
 }
 
-int u8nopass = 0; /* pass ascii-only */
+int u8nopass = 0; /* pass ascii-only -- flag from setup */
 
 /*---------------------*/
 /* ВЕРНУТЬ КОД КЛАВИШИ */
@@ -128,13 +138,14 @@ kbcod r_key()
 	register pars ;         /* k_pars() = */
 
 	cod = ttyinp();
+
 	if(cod == -1)
 		return( -1);    /* АСИНХРОННЫЙ РЕЖИМ - БЕЗ ОЖИДАНИЯ */
 #ifdef KOI8_RETRO
 	else
 		cod &= 0377;    /* ПОДАВИТЬ ЗНАКОВОЕ РАСШИРЕНИЕ int=char */
 
-	if(cod > 0200 && cod < 0300)
+	if(cod >= 0200 && cod < 0300)
 		cod &= 0177;    /* А ВДРУГ "РУССКИЙ" #,%,?, И Т.Д. */
 #endif
 	/* ТЕРМИНАЛО-ЗАВИСИМЫЙ КОД */
@@ -143,12 +154,13 @@ kbcod r_key()
 		return(pars); /* OK, key recognized from termcap/terminfo database */
 
 #if 0
-	/* ОБРАБОТКА РУССКИХ И АНГЛИЙСКИХ ПЕЧАТНЫХ КОДОВ *//*TODO : utf8 parsing will be there*/
+	/* ОБРАБОТКА РУССКИХ И АНГЛИЙСКИХ ПЕЧАТНЫХ КОДОВ */
 	else if(((cod < 0377)&&(cod > 0277))
 	|| ((cod > 037)&&(cod < 0177)))
 		return(cod);
 #endif
-	if (cod > 0177 && mb_cur_max > 1) {
+	/* UTF-8 parsing there - it working for both locales: legacy 8-bit and utf-8 */
+	if (cod > 0177) {
 		cod = r_codep(cod);
 		if (u8nopass) {	/* suppress upper codes from utf8/unicode table */
 			cod = L'\0';
