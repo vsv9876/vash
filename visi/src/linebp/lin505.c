@@ -28,7 +28,7 @@ int i;
 LINE *phelp;
 {
 	char tmps[80];
-	sprintf(tmps, "%s (page %d of 2); to get another press ", phelp, i);
+	sprintf(tmps, "%s (%d/2) ", phelp, i);
 	w_msg(HDR, tmps);
 	er_eol(TXT);
 }
@@ -57,17 +57,15 @@ char    *page;
 				d_page(phelp);
 				hlppmt(i, pages[i]);
 				at_set(TXT);
-				w_str("");
+				w_str("-- get next page: ");
 				w_lh_str(":HE");
-				fflush(vttout);
 			} else {
 				hlppmt(i, pages[i]);
 				at_set(ERR);
 				sprintf(tmps, "not in \"%s\"", vexdir);
 				w_str(tmps);
-				fflush(vttout);
-				/*if ( ++i > 2 )   return(FALSE);*/
 			}
+			fflush(vttout);
 		}
 
 		cp_set(-1, 0, TXT);

@@ -1,0 +1,11 @@
+vash news (release notes)
+
+2.0.25 -- 22 Mar 2024
+  * support for legacy 8bit encodings is completed
+  * repair recognition of non-ascii symbols in rc files
+  * added setup flag: anyway sh -c
+  * some bugfix and help pages cleanup
+  * actualize docs: COMPILE, README, PLAN, WISHES
+
+2.0.24b -- Feb 2024
+  * first release on sourceforge.net with binary packages for x86_64(amd64)

@@ -32,13 +32,13 @@ CMD     = hx "[A-Z0-9]"
 +.mainvk...............................                                       
 + .:CA switch between editor and main       .:HE... - help      
 + .'uppercase                               .:EX... - exit,return     
-+     execute predefined command     .a.    .:CA    - cancel                
-+     edit a command from template   .b.    
++     execute predefined command   .a.      .:CA    - cancel                
++     edit a command from template .b.      
 + .'lowercase                               .mainv.............................
-+     type a command from scratch    .c.    .CMD.... .cmd...           .:CA  ^  
++     type a command from scratch  .c.      .CMD.... .cmd...           .:CA  ^  
 +                                            :   :   :                   :   :  
 +.cmdedk...............................     .a.  :   : .hist..........   :   :  
-+ .:HE... switch to history view             :  .b.  :  .:NL...    :     :   :  
++ .:HE... switch to history view             :  .b.  :  .:NL...    ^     :   :  
 + .:NL... run a command, sync history        :   :  .c.  :         :     :   :  
 +                                            :   :   :   :     .:HE... .:CA  :  
 +.histk................................      : .cmded......................  :  

@@ -44,6 +44,7 @@ DOC_FILES = \
 	COMPILE \
 	README \
 	WISHES \
+	NEWS \
 	PLAN \
 
 

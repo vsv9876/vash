@@ -12,31 +12,35 @@ VARi    = gvx - - - - " VAR "
 ALTi    = gax - - - - " ALT "
 MSEi    = gmx - - - - " MSE "                       
                                                      
-common  = h  " common: "                             
-page_n  = h  " page navigation: "                                               
-specia  = h  " special: "                                                      
-                                                                               
----SCREEN                                                                                     
-."actions on active lines"......................... .common....................                                                  
-                                                                                *
-+ start edit .VAR.    - untouched: .:SP... .VARi      .:HE... help              *   
-+                  - clear before: .:DE...            .:EX... exit/close page   *
+common  = c  "..common.............."                  
+page_n  = c  "..navigation.........."                                        
+specia  = c  "..special............."                                           
+activa  = c  "..activate......................."
+onedit  = c  "..editing........................"
+alt     = c  "..alternate..........."
+            
+---SCREEN  
+=LINLIB actions
+
+      .activa.....................                          .common..........   *
++ .VAR. editing start - untouched: .:SP... .VARi      .:HE... help              *
++               - cleaning before: .:DE...            .:EX... exit/close page   *
 +                                                     .:NL... commit,complete   *
-+ alter .ALT. (toggle)  - forward: .:SP... .ALTi      .:CA... cancel            *
++ .ALT. alter (toggle)  - forward: .:SP... .ALTi      .:CA... cancel            *
 +                      - backward: .:DE...            .:RE... refresh page      *
 +                                                                               *
-+ select .MSE. item -   .:NL... or .:SP... .MSEi    .page_n.................... *
-+                                                     .:TA... next line         *  
-+                                                     .:KH... jump to 1st line  *
-."in edit mode"................... ."with prefix".    .:KE... jump to last line *
-+ .:DE... erase left from cursor                      .:PD... next page/part    *
-+ .:KD... erase below cursor       .:PR .:DE...       .:PU... prev page/part    *
-+                erase up to end   .:PR .:SP...                                 *
-+ .:KH... jump to 1st symbol       .:PR .:AL...     .specia.................... *
-+ .:KE... jump to end of text      .:PR .:AR...       .:KP... keypad on/off     *   
-+ .:KI... toggle Ins/Ovr mode      .:PR .:PR...       .:PR... prefix            *
-+                                                                               *
-=VISI/LINLIB (c) 1986-1990, 2020-2024 vsv & team 
-
++ .MSE. select item -   .:NL... or .:SP... .MSEi            .page_n...........  *  
++                                                     .:TA... next line         *
+        .onedit...................                    .:KH... jump to 1st line  *
++ .:DE... erase left from cursor  .alt..........      .:KE... jump to last line *
++ .:KD... erase below cursor       .:PR .:DE...       .:PD... next page/part    *
++                erase up to end   .:PR .:SP...       .:PU... prev page/part    *
++ .:KH... jump to 1st symbol       .:PR .:AL...                                 *
++ .:KE... jump to end of text      .:PR .:AR...             .specia...........  *   
++ .:KI... toggle Ins/Ovr mode      .:PR .:PR...       .:KP... keypad on/off     *
++                                                     .:PR... prefix            *
+               
+  VISI/LINLIB (c) 1986-1990 vsv & team
+              (c) 2020-2024 Sergey Vovk <vsv>
 
 ---END                          
