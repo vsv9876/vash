@@ -224,8 +224,23 @@ int  execapnd;
 	}
 	/* подставить аргументы */
 	while( *p ) {
-		if (p[1] == MONEY || p[1] == ',') psep = p[1];
-		else 							psep = '\0';
+		if (p[1] == MONEY || p[1] == ',')
+			psep = p[1];
+		else
+			psep = '\0';
+		if (p[0] == MONEY && p[1] == '@') {
+			p++; p++;
+			/* experiment: pointed by cursor substitution */
+			nm_ptr = nmsubs(&clm._itms[clm._itm][2], Csubs);
+			if (sh_esc(out_str, nm_ptr)) {
+				execmode = execmode & (~ASH_NOSH);
+			}
+			sprintf(&cmd2[i], "%s", out_str);
+			while (cmd2[++i]) ;
+#if 0
+			cmd2[i++] = ' ';
+#endif
+		}
 		if (*p == MONEY && psep) {
 			p++; p++;
 			/* подставить */
