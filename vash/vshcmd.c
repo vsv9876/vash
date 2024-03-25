@@ -123,6 +123,8 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	int msgat;			/*exit code message attribute*/
 
 	u8char_t *u8cmd0[U8_STRBUF + 4];	/* command to be executed */
+	wchar_t *p;
+	int		sufpos;
 
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
@@ -146,7 +148,51 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		}
 		/*strcpy*/u8swcs(cmd0, cmd);
 
+		/* cp/mv commands set pos to just before last significant suffix */
+		p = cmd0;
+		sufpos = -1;
+		while(*p++) {
+			/* determining ofset from end to suffix*/
+			if (p[0] == MONEY && p[1] != MONEY) {
+				if (p[1] >= L'0' && p[1] <= L'9') {
+					sufpos = p[1] - L'0';
+					p[0] = p[1] = 0; /* terminate, clear rc instruction to offset */
+				}
+			}
+		}
 		pos = /*strlen*//*u8slen*/wcslen(cmd0);
+		if (sufpos >= 0) {
+			while(pos > 0) {
+				if (cmd0[pos] == L' ' || cmd0[pos] == 0)
+					cmd0[pos--] = 0;
+				else
+					break;
+			}
+		}
+		if (sufpos == 1) {
+			/* find position of last '.' symbol in name */
+			do {
+				pos--;
+			} while (sufpos < pos && (cmd0[pos] != L'.'));
+			/* pos untouched, still at tail position */
+		} else if (sufpos == 0) {
+			/* find position of 1st '.' symbol in name (last from tail) */
+			sufpos = pos;
+			do {
+				if (cmd0[pos] == L'.')
+					sufpos = pos;
+				pos--;
+			} while (/*sufpos < pos && */(cmd0[pos] != L' '));
+			pos = sufpos;
+		} else if (sufpos > 1) {
+			while (sufpos < pos && (cmd0[pos] == L' ' || cmd0[pos] == 0)) {
+				cmd0[pos] = 0;
+				pos--;
+			}
+			pos++;
+			pos -= sufpos;
+		}
+
 	}
 
 	for (;;) {
