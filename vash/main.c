@@ -191,7 +191,7 @@ char **argv;
 		vashflag.scrolf =
 				vashflag.histf = vashflag.histsn = vashflag.panelf =
 						vashflag.whodirf = vashflag.xtermf = vashflag.clockf = vashflag.cmailf =
-								vashflag.exittrap = vashflag.novice = 0;
+								vashflag.exittrap = vashflag.novice = vashflag.subatrc = 0;
 		/*** yy_max = 10; */
 
 		while (c = *envsup++) {

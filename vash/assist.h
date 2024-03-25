@@ -113,7 +113,8 @@ int		cmailf;			/* = 1; /* флаг: проверять почту */
 int		loginf;			/* = 0; /* флаг: главная оболочка, ppid() == 1 */
 int		exittrap;		/* trap on exit of command: 0 - modern, 1 - vash canonical */
 int		novice;			/* = 1; novice prompter messages allowed */
-int		shanyway;		/* shell -c 'cmd' in all cases anyway*/
+int		shanyway;		/* = 1; shell -c 'cmd' in all cases anyway*/
+int		subatrc;		/* = 0; substitute '#@' from rc files */
 } VASHFLAG;
 
 extern VASHFLAG vashflag; /* defined in main.c */

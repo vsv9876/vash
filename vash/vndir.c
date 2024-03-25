@@ -193,7 +193,7 @@ itmrestor()
 	 */
 	for(clm._itm = 0; clm._itm < clm._itmmax; clm._itm++) {
 	    i = clm._itm;
-	    cmdsub(itmnnm, "#@", clm._itm, 0);
+	    cmdsub(itmnnm, "#@", clm._itm, 0, 1);
 	    if (strcmp(itmcnm, itmnnm) == 0) {
 		goto adjust;
 	    }
@@ -837,7 +837,7 @@ int newflag;    /* если 0, то только обновить каталог
 		/* сохранить прежний номер и содержимое пункта меню */
 		itmci = clm._itm;
 		strcpy(itmcnm, &clm._itms[clm._itm][2]);
-/*                cmdsub(itmcnm, "#@", itm);     */
+/*                cmdsub(itmcnm, "#@", itm, 0, 1);     */
 	}
 	else    {
 		itmci = -1;
@@ -899,7 +899,7 @@ int newflag;    /* если 0, то только обновить каталог
 	}
     if (fpopen) {
     	/*TODO substitution */
-		cmdsub(tmpbuf, p, 0, 0);
+		cmdsub(tmpbuf, p, 0, 0, 1);
 		/*NOSTRICT*/
 		if (/*Cfill[0] == '\0' ||*/ (fpls = popen(tmpbuf, "r")) == NULL) {
 			w_emsg(p); w_str(" -- command failed: ");

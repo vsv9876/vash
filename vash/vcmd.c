@@ -142,7 +142,7 @@ LINE    *mainl; /* указатель на страницу меню */
 		}
 		/* получить образец второго условия, найти совпадение */
 /*                cmdsub(file, &itms[itm][2]);  */
-		cmdsub(file, "#@", clm._itm, 0);
+		cmdsub(file, "#@", clm._itm, 0, 1);
 		patp = tstat2(file);
 		for (pcp=ktp->kt_tab, i=ktp->kt_ib; i <= ktp->kt_ie; i++) {
 			if (pcp[i].pc_pat == (char *)0)
@@ -194,12 +194,13 @@ register char *cmd;     /* встроенная функция */
 extern char* vexdir;
 extern char* vapath;
 
-int cmdsub(ptmp_sh, p, i, need_sh_esc)
+int cmdsub(ptmp_sh, p, i, need_sh_esc, subatrc)
 /*возвращает то же, что и nmsubs - необходимость обработки экранированных символов /bin/sh*/
 register char *p;       /* откуда копировать */
 register char *ptmp_sh;    /* куда копировать */
 register int  i;        /* копия itm */
 int need_sh_esc;			/*требуется экранирование для /bin/sh*/
+int subatrc;		/* substitution of #@ required */
 {
     extern char *getenv();
     register char *s;
@@ -227,10 +228,21 @@ int need_sh_esc;			/*требуется экранирование для /bin/s
 	    case 'A':   /* vexdir contains library path, eg /usr/lib/vash */
 		strcpy(ptmp, vexdir);
 		break;
-	    case '@':   /* имя файла возле курсора, или его часть если есть правило */
-		nm_ptr = nmsubs(&clm._itms[i][2], Csubs);
-		strcpy(ptmp, nm_ptr);
+	    case '@':
+	    	/* имя файла возле курсора, или его часть если есть правило */
+	    	if (subatrc == 0) {
+	    		*ptmp_sh++ = MONEY;
+	    		*ptmp_sh++ = *p++;
+	    		continue;
+	    	} else {
+	    	    nm_ptr = nmsubs(&clm._itms[i][2], Csubs);
+	    	    strcpy(ptmp, nm_ptr);
+	    	}
 		break;
+	    case '$':
+    	    nm_ptr = nmsubs(&clm._itms[i][2], Csubs);
+    	    strcpy(ptmp, nm_ptr);
+	    	break;
 	    case 'i':   /* имя реперного файла/текущего каталога */
 		strcpy(ptmp, Crepf);
 		break;
@@ -294,7 +306,7 @@ char *cmdlbl;   /* вывеска взамен команды */
 
 	if (cmd) {
 	    /* выполнить подстановки */
-	    cmdsub(tmpcmd, cmd, clm._itm, 1); /* TODO: при команде cd здесь не нужно задваивать символы '\\' */
+	    cmdsub(tmpcmd, cmd, clm._itm, 1, vashflag.subatrc); /* TODO: при команде cd здесь не нужно задваивать символы '\\' */
 	    cmd = tmpcmd;
 	}
 	return( vshcmd(cmd, (char *)0) );
@@ -336,7 +348,7 @@ register char *cmd;
 {
 	char  file[140];
 
-	cmdsub(file, cmd, clm._itm, 0);
+	cmdsub(file, cmd, clm._itm, 0, 1);
 	w_msg(TXT, tstat2(file));
 	return( 0 );
 }
