@@ -17,8 +17,8 @@ if [ $? -ne 0 ]; then
 fi
 make DESTDIR=${BUILD} install
 
-# install configs
-cp -rp etc ${BUILD}
+# install vhset configs
+cp -rpd etc ${BUILD}
 
 # install docs and manuals
 mkdir -p 	 ${BUILD}/usr/share/doc/vash

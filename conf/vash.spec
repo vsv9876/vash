@@ -39,7 +39,9 @@ mkdir -p %{buildroot}/%{_mandir}/man1/
 # install -m 664 ./etc/vhset/xterm %{buildroot}/etc/vhset/xterm
 # install -m 664 ./etc/vhset/linux %{buildroot}/etc/vhset/linux
 # install -m 664 ./etc/vhset/screen %{buildroot}/etc/vhset/screen
-install -m 664 ./etc/vhset/* %{buildroot}/etc/vhset/
+#
+#install -m 664 ./etc/vhset/* %{buildroot}/etc/vhset/
+cp -rd ./etc/vhset/* %{buildroot}/etc/vhset/
 # install -m 664 ./LICENSE %{buildroot}/usr/share/doc/%{name}/
 install -m 664 %{name}.1 %{buildroot}/%{_mandir}/man1/
 
