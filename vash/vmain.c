@@ -170,6 +170,23 @@ char *fill;
 	return(1);
 }
 
+/* счетчик помеченных пунтов меню */
+int cntsel()
+{
+	char *p;
+	int cnt;
+	int i;
+
+	cnt = 0;
+	for (i = 0; i < clm._itmmax; i++) {
+	    p = clm._itms[i];
+		if(*p == MONEY) {
+			cnt++;
+		}
+	}
+	return(cnt);
+}
+
 static  int tutsel(cod)
 /*
  * тотальная пометка

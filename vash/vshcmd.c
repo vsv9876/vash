@@ -124,7 +124,8 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 
 	u8char_t *u8cmd0[U8_STRBUF + 4];	/* command to be executed */
 	wchar_t *p;
-	int		sufpos;
+	int		sufpos; /* suffix position and count */
+	int		sufcnt;
 
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
@@ -169,22 +170,36 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 					break;
 			}
 		}
+#if 0
 		if (sufpos == 1) {
 			/* find position of last '.' symbol in name */
 			do {
 				pos--;
 			} while (sufpos < pos && (cmd0[pos] != L'.'));
 			/* pos untouched, still at tail position */
-		} else if (sufpos == 0) {
+		}
+#endif
+		if (sufpos == 0) {
 			/* find position of 1st '.' symbol in name (last from tail) */
 			sufpos = pos;
 			do {
 				if (cmd0[pos] == L'.')
 					sufpos = pos;
 				pos--;
-			} while (/*sufpos < pos && */(cmd0[pos] != L' '));
+			} while (cmd0[pos] != L' ');
 			pos = sufpos;
-		} else if (sufpos > 1) {
+		} else if (sufpos == 1 || sufpos == 2) {
+			/* find position of 1th or 2nd '.' symbol from tail */
+			sufcnt = sufpos;
+			do {
+				if (cmd0[pos] == L'.') {
+					sufpos = pos;
+					sufcnt--;
+				}
+				pos--;
+			} while (sufcnt > 0 && cmd0[pos] != L' ');
+			pos = sufpos;
+		} else if (sufpos > 2) {
 			while (sufpos < pos && (cmd0[pos] == L' ' || cmd0[pos] == 0)) {
 				cmd0[pos] = 0;
 				pos--;
@@ -209,10 +224,12 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		}
 		/*cod = re_str((char *)&cmdbuf[0], cmdsize, 0, &pos);*/
 		showtime(0);
+		showitem(1);
 
 		cod = re_str(cmdo, cmdsize, 0, &pos);
 	    wcuntrim(cmdo, &pos);
 
+	    showitem(0);
 		showtime(1);
 	    }
 		switch(cod) {

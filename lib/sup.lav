@@ -27,6 +27,7 @@ x       = ia    -       onoff   cvt_a   -       xF
 XT      = ia    -       onoff   cvt_a   -       xT
 N       = ia    -       onoff   cvt_a   -       NF
 A       = ia    -       onoff   cvt_a   -       AF
+a       = ia    -       onoff   cvt_a   -       SF
 
 ---#u8nopa  = ia    -       onoff   cvt_a   -       u8nopa
 u8      = ia    -       onoff   cvt_a   -       u8nopa
@@ -51,7 +52,7 @@ C       = ipv    -      "%1d"  -       -       SGR
 ---SCREEN
 ."vash setup parameters"......................... help: .:HE....  exit: .:EX....
 
-+   .h. h,history   .s. s,scroll        .A. anyway sh -c         
++   .h. h,history   .s. s,scroll        .A. anyway sh -c     .a. subatrc    
 +   .S. S,sync      .p. p,panel/keybar  .u8 only ASCII KBD       
 +   .m. m,mail_biff .w. w,title         .XT trap on exit         
 +   .c. c,clock     .x. x,xterm title   .N. help msg on trap     

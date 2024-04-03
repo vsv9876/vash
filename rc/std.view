@@ -3,52 +3,70 @@
 #
 # file view
 
--3VIEW
+-3view
 
 :3
 :U3
 	r?x ?   +View
 
 +View
-	r?? ? *.C            ccat #@
-	r?? D *.tar.[zpC]    :gzip -d < #@ | tar -tvf -
-	r?? D *.tar.bz2      :bzip2 -cd < #@ | tar -tvf -
-	r?? D *.tar.gz       :gzip -d < #@ | tar -tvf -
-	r?? D *.tar.xz       :xz -d < #@ | tar -tvf -
-	r?? D *.taz          :gzip -d < #@ | tar -tvf -
-	r?? D *.tgz          :gzip -d < #@ | tar -tvf -
-	r?? D *.tar.[Z]      :zcat < #@ | tar -tvf -
-	r?? D *.zip          zipinfo -m #@
-	r?? D *.arj          unarj l #@
-	r?? D *.zoo          zoo l #@
-	r?? [DT] *.cpio      cpio -itv -I#@
-	r?? [DT] *.cpio.[Z]  zcat < #@ | cpio -itv
-	r?? [DT] *.cpio.gz   gzip -d < #@ | cpio -itv
-	r?? [DT] *.cpio.[zpC] gzip -d < #@ | cpio -itv
-	r?? [DT] *.[zCp]     gzip -d < #@
-	r?? [DT] *.[Z]       zcat < #@
-	r?? [DT] *.bz2       bzip2 -cd < #@
-	r?? [DT] *.gz        gzip -d < #@ | #m
-	r?? [DT] *.gz-*      gzip -d < #@ | #m
+#
+
+#
+#
+#
+
+	r?? ? *.C            ccat ./#@
+#----
+	r?? D *.tar.[zCp]    :gzip -d < ./#@ | tar -tvf -
+	r?? D *.tar.bz2      :bzip2 -cd < ./#@ | tar -tvf -
+	r?? D *.tar.gz       :gzip -d < ./#@ | tar -tvf -
+	r?? D *.tar.xz       :xz -d < ./#@ | tar -tvf -
+#	r?? D *.tar.[Z]      :zcat < ./#@ | tar -tvf -
+	r?? D *.taz          :gzip -d < ./#@ | tar -tvf -
+	r?? D *.tgz          :gzip -d < ./#@ | tar -tvf -
+	r?? D *.zip          zipinfo -m ./#@
+	r?? D *.arj          unarj l ./#@
+	r?? D *.zoo          zoo l ./#@
+	r?? D *.gz           gzip -d < ./#@ | #m
+	r?? D *.bz2          bzip2 -d < ./#@ | #m
+	r?? D *.xz           xz -d < ./#@ | #m
+#----
+	r?? [DT] *.cpio      cpio -itv -I./#@
+	r?? [DT] *.cpio.[Z]  zcat < ./#@ | cpio -itv
+	r?? [DT] *.cpio.gz   gzip -d < ./#@ | cpio -itv
+	r?? [DT] *.cpio.[zpC] gzip -d < ./#@ | cpio -itv
+	r?? [DT] *.[zCp]     gzip -d < ./#@
+	r?? [DT] *.[Z]       zcat < ./#@
+	r?? [DT] *.bz2       bzip2 -cd < ./#@
+	r?? [DT] *.gz        gzip -d < ./#@ | #m
+#	r?? [DT] *.gz-*      gzip -d < ./#@ | #m
+	r?? [DT] *.xz        xz -d < ./#@ | #m
 	r?? [DT] *.src.rpm   ;rpm -qivp ./#@ | #m
 	r?? [DT] *.rpm       ;rpm -qivp ./#@ | #m
 	r?? [DT] *.deb       ;dpkg --info ./#@ | #m
-	r?? A *.a            ar t #@
-	r?? O *.o            :nm -np #@
-	r?? O *.si           :nm -np #@
-	r?? O *              nm -np #@
-	r?? D *.tar          :tar -tvf #@
-	r?? D *.[wj]ar       ;unzip -l #@ | #m
-	r?? D *              :od -a #@ | #m
-# dodo script companion, not in use
-# 	r?? T .a             :tail -f #@
-# 	r?? T a              :tail -f #@
-	r?? T *              ;#m #@
+#----
+	r?? A *.a            :ar t ./#@
+	r?? O *.o            :nm -np ./#@
+	r?? O *.so           :nm -np ./#@
+	r?? O *              nm -np ./#@
+	r?? D *.tar          :tar -tvf ./#@
+	r?? D *.[wj]ar       :unzip -l ./#@ | #m
+	r?? D *.jpg	     :display ./#@
+	r?? D *.png	     :display ./#@
+	r?? D *.tiff         :display ./#@
+	r?? D *              :od -a ./#@ | #m
+# dodo script companions, not in use
+# 	r?? T .a             :tail -f ./#@
+# 	r?? T a              :tail -f ./#@
+	r?? T *              ;#m ./#@
 # 	r?? E *              _msg file empty, zero length
 # interface files in /dev, /sys, ... - stat(2) show them as zero length regular files
-	r?? E *              :cat #@
-	r?x d *              :ls -aCF #@/.
-#	r?? M *              frm -n #@
-	r?? M *              mutt -Rf #@
-#	??? ? *              _file #@
-	??? ? *              :file #@ ; ls -ld #@
+	r?? E *              :cat ./#@
+	r?x d *              :ls -aCF ./#@/.
+#	r?? M *              frm -n ./#@
+	r?? M *              mutt -Rf ./#@
+#	??? ? *              _file ./#@
+	??? ? *              :ls -ld ./#@; file ./#@
+
+#<<< std.view

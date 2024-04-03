@@ -68,6 +68,7 @@ const IN_PORTS inport[] = {
 	{ "xT",         &vashflag.exittrap },
 	{ "NF",         &vashflag.novice },
 	{ "AF",         &vashflag.shanyway },
+	{ "SF",         &vashflag.subatrc },
 	{ "yy_max",     &clm._yy_max },
 	{ "y0",         &clm._y0     },
 	{ "y0_top",     &y0_top },

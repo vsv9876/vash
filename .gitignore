@@ -20,8 +20,8 @@ vash
 vhset
 pmain
 a.out
-bin
 lbp
 vcc
 vlpb
 visi/src/.*
+visi/bin

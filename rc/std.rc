@@ -3,9 +3,9 @@
 # NOTE:shebang used only for auto syntax colorize by text editors
 #
 # Visual Assistant Shell (vash)
-# 1990-2023 (C) Sergey Vovk
+# 1990-2024 (C) Sergey Vovk
 #
-# MIT license
+# GPL license
 #
 # standard default profile std.rc (former .ashstd)
 # since Tue Jun  1 22:41:47 MVT 1993
@@ -31,6 +31,7 @@
 -@
 
 @std.mark
+@std.rio
 @std.cmd
 
 # read a profile (ex this one)
@@ -75,9 +76,9 @@
 	rwx d *         :cd #$
 # vi не создает нового файла в каталоге
 # а red, например, создает...
-	rw? [TE] *      #e #@
-#	rw? M *         elm -f ./#@
-	rw? M *         mutt -f ./#@
+	rw? [TE] *      #e ./#$
+#	rw? M *         elm -f ./#$
+	rw? M *         mutt -f ./#$
 #	r?? [OD] *      ;strings #@ | #m
 #+edw
 	rwx d *         :cd #$
@@ -85,7 +86,7 @@
 	r?? ? *.rpm     ;rpm -qvp ./#@ --fileprovide | #m # -c -R
 	r?? ? *.deb     ;dpkg --contents ./#@ | #m
 #	rw? [TE] *      #e #@
-	r?? [TE] *      ;#m #@
+	r?? [TE] *      ;#m #$
 #	rw? M *         elm -f #@
 #	r?? * *      ;ls -ld #@
 	r?? * *      ;strings #@ | #m
@@ -106,11 +107,18 @@
 +CP
 	* * .   _
 	* * ..  _
-	* * *.sh   cp -av #@ #$ #3
-	* * *.tar.gz cp -av #@ #@ #7
-	* * *.*.*  cp -av #@ #$ #0
-	* * *.*    cp -av #@ #$ #1
-	* * *      cp -av #@ #@
+	* * *.log.[1-9].xz cp -av ./#@ #$ #9
+	* * *.log.[1-9].gz cp -av ./#@ #$ #9
+	* * *.log.[1-9].   cp -av ./#@ #$ #2
+	* * *.*.log        cp -av ./#@ #$ #1
+	* * *.src.rpm      cp -av ./#@ #$ #2
+	* * *.tar.gz       cp -av ./#@ #$ #2
+	* * *.*.xz         cp -av ./#@ #$ #1
+	* * *.*.gz         cp -av ./#@ #$ #1
+# common case for '2 dots in name' comparizon is incorrect
+#	* * *.?*.[a-z]*    cp -av ./#@ #$ #2
+	* * *.[a-zA-Z0-9]* cp -av ./#@ #$ #1
+	* * *              cp -av ./#@ #$
 
 # Переименование/перенос файлов (требуется еще один аргумент)
 :6
@@ -120,11 +128,17 @@
 +MV
 	* * .   _
 	* * ..  _
-	* * *.sh   mv -av #@ #$ #3
-	* * *.tar.gz mv -av #@ #$ #7
-	* * *.*.*  mv -av #@ #$ #0
-	* * *.*    mv -av #@ #$ #1
-	* * *      mv -nv #@ #@
+	* * *.log.[1-9].xz mv -nv ./#@ #$ #9
+	* * *.log.[1-9].gz mv -nv ./#@ #$ #9
+	* * *.log.[1-9].   mv -nv ./#@ #$ #2
+	* * *.*.log        mv -nv ./#@ #$ #1
+	* * *.src.rpm      mv -nv ./#@ #$ #2
+	* * *.tar.gz       mv -nv ./#@ #$ #2
+	* * *.*.xz         mv -nv ./#@ #$ #1
+	* * *.*.gz         mv -nv ./#@ #$ #1
+#	* * *.?*.[a-z]*    mv -nv ./#@ #$ #2
+	* * *.[a-zA-Z0-9]* mv -nv ./#@ #$ #1
+	* * *              mv -nv ./#@ #$
 
 :7
 :U7
@@ -143,11 +157,11 @@
 # Не руби сук, на котором сидишь...
 	r?x d ..        _msg Please, do not cut the leaf you are sitting on
 	r?x d .         _msg Please, do not cut the leaf you are sitting on
-	rwx d *         rm -r -f ./#@
-	* * -*          rm -f ./#@
-	rw? [AODETM] *    rm -f ./#@
+	rwx d *         rm -r -f ./#$
+	??? * -*          rm -f ./#$
+	rw? [AODETM] *    rm -f ./#$
 #        rw? T *         rm -f #@
-	r-? ? *         rm -f ./#@  # caution! file is write-protected !
+	r-? ? *         rm -f ./#$  # caution! file is write-protected !
 
 
 # Настройка интерпретатора (флаги, команды)
@@ -173,15 +187,15 @@
 #          Прочие часто используемые команды:
 #-------------------------------------------------------
 # Синонимы для перехода в другие каталоги
-:[~]
+#:[~]
 #       Перейти в домашний каталог (HOME)
-	* *     :cd
+#	* *     :cd
 #:[U]
 ::
 	* *     :cd ..
 
 :A
-# library archive, from 'char *vexdir' internal constant
+# vash's library archive, from 'char *vexdir' internal constant
 	* *     :cd #A
 
 # Сравнение файлов
@@ -198,8 +212,7 @@
 	* *.*   :man #*
 	* *     :man #@
 :R
-# Повторить команду для помеченных файлов
-# (echo как пример команды sh)
+# repeat a command (echo as example)
 	* *     for i in ## ;do echo $i; done
 
 :F
@@ -215,29 +228,29 @@
     * +   +targz
 +targz1
 #   r?x [d] *-[0-9]*  tar cvzf #@.tar.gz #@/
-    r?x [d] *         tar cvzf #@.tar.gz #@/
+    r?x [d] *         tar cvzf #$.tar.gz #$/
     r?? [TMD] *       :cat #@
 +targz
-    r?x [d] *         tar cvzf #@.tar.gz ##
+    r?x [d] *         tar cvzf #$.tar.gz ##
     ??? * *           _msg #@ marked: ##
 
 :X
-#       установить полномочия выполнения (для командных файлов)
-	* -     chmod +x #@
+# set execution permissions
+	* -     chmod +x ./#$
 	* ?     chmod +x ##
 :W
-# Сменить полномочия записи файла
+# change write permissions
 	* -     +wprot
-# для группы помеченных файлов убрать права записи
+# remove write permissions for selected files
 	* *     chmod a-w ##
 +wprot
-	?w? ? *         chmod a-w #@
-#                       chmod +w лучше, но в SYSV umask не влияет на chmod
-	?-? ? *         chmod ug+w #@
+	?w? ? *         chmod a-w ./#$
+# chmod +w may be better, but in SYSV umask not affected chmod
+	?-? ? *         chmod ug+w #$
 
 :O
-# Закрыть файл или помеченную группу файлов для категории 'прочие'
-	* -     chmod o-rwx #@
+# disable write on (marked) file(s) for other
+	* -     chmod o-rwx ./#$
 	* *     chmod o-rwx ##
 
 # have to be moved into std.menu

@@ -66,6 +66,7 @@ if [ -x $bintest ]; then
     echo " *** for $vashdir ***"
     echo ' ***'
     exec $BLD/usr/bin/v "$@"
+    #exec gdb $BLD/usr/bin/vash "$@"
 fi
 echo '   *** no build directory found:'
 echo '          "'$BLD'"'

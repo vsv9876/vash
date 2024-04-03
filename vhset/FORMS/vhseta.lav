@@ -11,10 +11,10 @@
      set "w" : .'w or .'o         MSE - menu selection point                
      set "r" : .'r or .'i         ERR - error message                       
                                   ATT - attention (warning message)         
-  change setting s mode:          
+  change setting mode:          
           .'0 .'1 .'2 .'3         /set "w"/
-                                            is used when write lines
+                                            used when write/display lines
                                   /set "r"/ 
-                                            indicates active line 
+                                            active line in focus
 ---END
 * line is a thing which links data and representation in variety of aspects

@@ -46,6 +46,7 @@ int      _itmbsz;       /* РАЗМЕР БУФЕРА СТРОК */
 
 LINE    *_vf;            /* УКАЗАТЕЛЬ НА СТРАНИЦУ МЕНЮ */
 LINE    *_ltmpl;         /* шаблон для построения страницы */
+LINE	*_line;         /* current line pointed by cursor */
 int     _xx1;            /* начальное количество столбцов (xx1 >= 1) */
 
 int     _itm;            /* индекс указанного курсором пункта меню */
@@ -135,7 +136,7 @@ extern int cmdhreset();
 extern int cmdphist(),visini(), cmdset();
 extern int fil_vf(), scrlst(), scrlnl(), cmdsub(), fatal(), clritm();
 extern int itmshow(), cmdghist(), u_menu();
-extern int itmadj(), itmini(), itmfnd(), itmpos(), itmsel(), pre_vf(), patcmp();
+extern int itmadj(), itmini(), itmfnd(), itmpos(), itmsel(), pre_vf(), patcmp(), cntsel();
 extern int vincmd(), vexcmd(), fnsplit(), vcmd(), cwdshow();
 extern int patcmp(), ok_msg();
 extern int gidchk(), filetype(), prefix();

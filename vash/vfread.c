@@ -112,8 +112,9 @@ char *str;
 			; /*strcpy(*v, str);*/
 		}
 		if(*mod == 'w') {
+			clm._line = line;
 			*s++ = *v++; /* PMT itself */
-			v++;
+			v++;		/* skip marker placeholder */
 			/*strncpy*/u8snu8s(s, v, rsize); /* string - file name */
 			v = *spp;
 			rsize = strlen(v);

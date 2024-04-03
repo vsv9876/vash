@@ -207,6 +207,7 @@ int  execapnd;
 
 	p = cmd;
 	i = 0;
+	cmd2[i] = '\0';
 	if ( execapnd ) {
 		/*VARARGS*/
 		sprintf(cmd2, "exec ");

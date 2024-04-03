@@ -12,31 +12,31 @@ VARi    = gvx - - - - " VAR "
 ALTi    = gax - - - - " ALT "
 MSEi    = gmx - - - - " MSE "                       
                                                      
-common  = c  "..common.............."                  
-page_n  = c  "..navigation.........."                                        
-specia  = c  "..special............."                                           
-activa  = c  "..activate......................."
-onedit  = c  "..editing........................"
-alt     = c  "..alternate..........."
+common  = c  "common..."                  
+page_n  = c  "navigation..."                                        
+specia  = c  "special..."                                           
+activa  = c  "activate..."
+onedit  = c  "editing..."
+alt     = c  "alternate..."
             
 ---SCREEN  
 =LINLIB actions
 
-      .activa.....................                          .common..........   *
+ .activa..........................                   .common.................   *
 + .VAR. editing start - untouched: .:SP... .VARi      .:HE... help              *
 +               - cleaning before: .:DE...            .:EX... exit/close page   *
 +                                                     .:NL... commit,complete   *
 + .ALT. alter (toggle)  - forward: .:SP... .ALTi      .:CA... cancel            *
 +                      - backward: .:DE...            .:RE... refresh page      *
 +                                                                               *
-+ .MSE. select item -   .:NL... or .:SP... .MSEi            .page_n...........  *  
++ .MSE. select item -   .:NL... or .:SP... .MSEi     .page_n..................  *  
 +                                                     .:TA... next line         *
-        .onedit...................                    .:KH... jump to 1st line  *
++.onedit..........................                    .:KH... jump to 1st line  *
 + .:DE... erase left from cursor  .alt..........      .:KE... jump to last line *
 + .:KD... erase below cursor       .:PR .:DE...       .:PD... next page/part    *
 +                erase up to end   .:PR .:SP...       .:PU... prev page/part    *
 + .:KH... jump to 1st symbol       .:PR .:AL...                                 *
-+ .:KE... jump to end of text      .:PR .:AR...             .specia...........  *   
++ .:KE... jump to end of text      .:PR .:AR...      .specia..................  *   
 + .:KI... toggle Ins/Ovr mode      .:PR .:PR...       .:KP... keypad on/off     *
 +                                                     .:PR... prefix            *
                

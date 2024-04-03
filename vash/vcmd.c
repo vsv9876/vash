@@ -81,7 +81,7 @@ int     j;      /* индекс пункта рядом с курсором */
 kbcod   cod;    /* код нажатой клавиши */
 LINE    *mainl; /* указатель на страницу меню */
 {
-	char  file[140];
+	char  file[256*4];
 	char    cods[20];       /* строка с идент. встроен. команды */
 	register KEYTAB *ktp;
 	register PATCMD *pcp;
@@ -240,6 +240,7 @@ int subatrc;		/* substitution of #@ required */
 	    	}
 		break;
 	    case '$':
+	    	/* имя файла возле курсора - аналогично #@, но безусловно */
     	    nm_ptr = nmsubs(&clm._itms[i][2], Csubs);
     	    strcpy(ptmp, nm_ptr);
 	    	break;

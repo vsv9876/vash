@@ -368,6 +368,8 @@ extern int tty_li, tty_co;
 /* watch/clock and e_str indicator shares common place on the screen */
 #define WSHOW_LI (lframe->maxli - 2)
 #define WSHOW_CO (lframe->maxco - 9)
+#define WSHOW_EDIT (WSHOW_CO    - 10)
+#define WSHOW_ITEM (WSHOW_EDIT  - 8)
 #define WSHOW_AT TXT|VEXT
 
 

@@ -75,7 +75,7 @@
 
 +tardir
 
-    * d * tar -cvf #@.tar #@
+    * d * tar -cvf ./#@.tar ./xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx#@
     * * * _msg please, point with coursor to directory or mark files
 
 +tarfiles
@@ -90,8 +90,8 @@
 
 +cpiodir
 
-    * d . find #@ -depth -print | grep -v '^\./\.\.cpio' | cpio -odv > #@.cpio
-    * d * find #@ -depth -print | cpio -odv > #@.cpio
+    * d . find ./#@ -depth -print | grep -v '^\./\.\.cpio' | cpio -odv > ./#@.cpio
+    * d * find ./#@ -depth -print | cpio -odv > ./#@.cpio
     * * * _msg please, point to directory or mark files
 
 +cpiofiles

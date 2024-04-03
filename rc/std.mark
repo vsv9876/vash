@@ -7,17 +7,15 @@
 :+
         * ?     _mark +
 :-
-###     * +     _mark -
-        * *     _mark -
-:>
-	* ?	_mark >#
-:<
-	* ?	_mark <#
+        * +     _mark -
+#       * *     _mark -
+
 :TA
-:^
+#:^
 	* ?	_itmpos
 #
 ### :SP does not work as key recognizer, use [ ]
+### note: cursor advance to next item only on [ ] (space key hardcoded)
 :KI
 :[ ]
 	* ?	_mark x#

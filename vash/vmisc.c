@@ -100,6 +100,57 @@ showclck()
 	}
 }
 
+
+showitem(on)
+/*
+ * Показать пункт меню указанный курсором или общее количество помеченных пунктов
+ */
+{
+	char tmps[33] = "";
+	char file[256*4];
+	int n;
+	LINE pline; /* patch line, show over current line */
+
+#ifndef CP_SAV
+		cp_sav();
+#endif
+		pline = *clm._line;
+		n = pline.colu -1;
+		n = n < 0 ? 0 : n;
+		if (on) {
+			cp_set(pline.line, n, WSHOW_AT);
+			w_chr('@');
+/*
+			pline.attr = TXT|VEXT|NED|LFASTR;
+			w_line(&pline);
+*/
+		} else {
+			cp_set(pline.line, n, TXT);
+			w_chr(' ');
+/*
+			pline.attr = TXT;
+*/
+			/*w_line(clm._line)*/;
+		}
+		cp_set(WSHOW_LI, WSHOW_ITEM, WSHOW_AT);
+		if (on) {
+			n = cntsel();
+			if(n) {
+				sprintf(tmps, " ##:%d ", n);
+			}/* else {
+				cmdsub(file, "#@", clm._itm, 0, 1);
+				sprintf(tmps, " '%-40.40s' ", file);
+			}*/
+		} else {
+			/*sprintf(tmps,"%-30.30s", "");*/
+			er_eol(WSHOW_AT);
+		}
+		w_str(tmps);
+#ifndef CP_SAV
+		cp_fet();
+#endif
+}
+
 /* #ifndef SVR4         */
 /* #define MAIL_DUMB    */
 /* #endif               */
@@ -662,8 +713,9 @@ char *from;
 /*
  * Подставить часть строки, определенную в настройке -@
  *
- * пока реализовано два варианта:
+ * пока реализовано два(три) варианта:
  * -@3          в примере третье поле (разделенное пробелами), номер поля задается числом
+ * -@7$			седьмое поле и до конца строки (пробелы после 7 поля игнорируются)
  * -@20-32      вырезка всех знаков в строке между указанными колонками
  */
 static char out_str[800] = "";
@@ -675,6 +727,7 @@ char *s;        /* формат для подстановки */
 	register int i;
 	register char *p;
 	char tmps[20];
+	int toend = 0;
 
 	while (isspace(*s)) s++;
 	if (*s == '\0') goto no_subs;
@@ -684,6 +737,11 @@ char *s;        /* формат для подстановки */
 	while (isdigit(*s)) *p++ = *s++;
 	*p = '\0';
 	a = atoi(tmps);
+	/* если до конца строки */
+	if (*s == '$') {
+		toend++;
+		s++;
+	}
 
 	while (isspace(*s)) s++;
 	if (*s == '\0') {
@@ -695,7 +753,11 @@ char *s;        /* формат для подстановки */
 		}
 		while (   isspace(*inps) ) inps++;
 		p = out_str;
-		while (isspace(*inps) == 0) *p++ = *inps++;
+		if(toend) {
+			while (*inps != '\0') *p++ = *inps++;
+		} else {
+			while (isspace(*inps) == 0) *p++ = *inps++;
+		}
 		*p = '\0';
 	}
 	else if (*s++ == '-') {
