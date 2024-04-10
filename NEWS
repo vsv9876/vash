@@ -1,5 +1,11 @@
 vash news (release notes)
 
+2.0.26 -- 3 Apr 2024
+  * support for '#@' substution both in rc files and in command editor
+  * rc files macro for cursor positioning in editor template
+  * /etc/vhset/xterm-256color now installed as symlink
+  * fix of typo and inaccuracy in help files
+
 2.0.25 -- 22 Mar 2024
   * support for legacy 8bit encodings is completed
   * repair recognition of non-ascii symbols in rc files

@@ -52,7 +52,7 @@ C       = ipv    -      "%1d"  -       -       SGR
 ---SCREEN
 ."vash setup parameters"......................... help: .:HE....  exit: .:EX....
 
-+   .h. h,history   .s. s,scroll        .A. anyway sh -c     .a. subatrc    
++   .h. h,history   .s. s,scroll        .A. anyway sh -c     .a. #@ in rc    
 +   .S. S,sync      .p. p,panel/keybar  .u8 only ASCII KBD       
 +   .m. m,mail_biff .w. w,title         .XT trap on exit         
 +   .c. c,clock     .x. x,xterm title   .N. help msg on trap     

@@ -1,36 +1,35 @@
 
 LINLIB
-- man linlib (en) + actualize russian versions
-
 - revive linlib/visi library as a separate project
 
-- back return cursor moving on r_page() to simple wrap columns and rows
+- man linlib (en) + actualize russian versions
+
+- return cursor moving on r_page() to simple wrap columns and rows (as in the past)
 
 - inheritance from stty cooked:
    intr, erase, werase, kill, eof, tstop
 
 VISI (LBP,VCC,VLBP)
-- filler character must be [~_#], not limited by [.]
+- filler character should be [~_#], not limited by [.]
 
 VASH
-- strip from escapes before internal commands
+- history:
+-- separate shorthand cache(history) and log(conduit) files;
+-- make it compatible with .bash_history (timestamp support required)
+
 - substitution some metasymbols before internal commands
 
-- export vash flags changed in setup,
+- export vash flags (which was changed in setup page),
   on execve() with VASH= environment
 
-- history:
--- separate shorthand cache and log(conduit) files;
--- compatible with .bash_history (timestamp)
-
 -+ rescan dir: keep cursor position near last known item,
--- keep last item name regarding -@
-   parameter (item name fragment) after new rescan
-// it's required more sofisticated comparizon
-// (ex., after 'rm -f ##')
+-- keep last item name regarding -@ parameter (item name fragment)
+   after new rescan
+   // this feature requires more sofisticated comparizon of menu items
+   // (ex., after 'rm -f ##')
 
 -- VASH_LABEL fill from header (1st line) of commands like ps, df, 
- then mark as read-only
+   then mark this line in main menu as read-only
  
 -- extended file attributes permissions check (<rwx> unsufficient) 
 
@@ -38,7 +37,8 @@ VASH
    (realloc vs constant static allocation)
 
 -- more compact rendering of main menu - maximum width of item
-   must be recalculated on every column (now common for all columns -- since 'comint'-compatible)
+   must be recalculated on every column
+   (now common for all columns -- since 'comint'-compatible)
 
 -- navigating of main menu: add functions __next, __prev, __pgup, etc...
    and make links with them via rc files

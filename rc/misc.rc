@@ -75,7 +75,7 @@
 
 +tardir
 
-    * d * tar -cvf ./#@.tar ./xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx#@
+    * d * tar -cvf ./#@.tar ./#@
     * * * _msg please, point with coursor to directory or mark files
 
 +tarfiles
