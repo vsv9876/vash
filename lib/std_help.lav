@@ -6,10 +6,10 @@ mainvk  = c   "main view keys:"
 cmded   = mx - - - - " command editor                  "
 cmdedk  = c   "command editor keys:"
 
-exit    = ax - - - - " exit trap                "
+exit    = mx - - - - " exit trap                "
 exitk   = c   "keys of trap on exit:"
 
-hist    = ax - - - - " history view             "
+hist    = mx - - - - " history view             "
 histk   = c   "history view keys:"
 
 runcmd  = hm "run a command"

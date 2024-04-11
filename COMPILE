@@ -89,13 +89,11 @@ Termcap-based  code  was  modified  to use terminfo.  Starting in 2020,
 UTF-8 support was implemented but only tested for restricted set of  languages
 including european and chinessy.
 
-Interface of vash itself remains english only. I have no plans to implement
-international support like translation 'file not found' to russian language, and other languages.
-This makes little sense because the typical user of this program is
-already proficient in the language due to the profession of
-unix system administrator.
+Interface of vash itself remains english only. I have no plans for implementation
+any other language support. I suppose it have too little sense.
+
 On the other hand, unicode support has already caused the code to swell
-and become more complex compared to the compact and clear initial
-implementation for the 1980x 8-bit encodings.
+and become more complex comparing with compact and clear initial
+implementation for ASCII-based 8-bit encodings in the late of 1980.
 
 2024-03-09 -- vsv

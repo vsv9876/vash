@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "line.h"
 
-#ifdef RETRO
+#if 0
 static LINE helpk[] = {
 {  5,-1,64, 0, LTXT, 0,0,0, "Help:" },
 /*NOSTRICT*/
@@ -11,5 +11,5 @@ static LINE helpk[] = {
 
 /*NOXSTR*/
 char    coprts[] =
-"1990,1996,2020 (c) Sergey Vovk";
+"Copyright (C) 1990,1996,2020-2024 Sergey Vovk";
 /*YESXSTR*/

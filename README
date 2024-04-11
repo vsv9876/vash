@@ -1,7 +1,7 @@
 
 Visual Assistant Shell (vash)
-(c) 1990,1996,2017,2020-2023
-Author: Sergey Vovk, former known as:
+Copyright (C) 1990,1996,2017,2020-2024
+Author: Sergey Vovk, formerly known as:
     vsv@st.simbirsk.su
     vsv@Relcom.EU.net
     vsv@macomnet.ru
@@ -14,25 +14,27 @@ Source of this project will be found on http://github.net/... (not yet)
 Files and directory of distibution:
 
 README		this text
-LICENSE		GPL or MIT or etc license text
+COPYING		GPL.v2 license text
+LICENSE		MIT license text
 COMPILE		instructions how to build binaries including historical notes
+COMPILE.ru	obsoleted instruction in russian
 VERSION		version of distibution
-WISHES		ideas of future enhancements
-PLAN		fixes plan (not in order)
+WISHES		noted an ideas for future enhancements
+PLAN		nearest plan of fixes (not in order)
 BUGS		fixes required
 
 MK-srpm.sh, DEBIAN, DEBIAN.sh	- scripts to build packages
 
-configure	script for configuring compiling
-conf/		cpecs and configuration variants
+configure	script for configuring compiling (not a GNU toolchain but compatible)
+conf/		specs and configuration variants
 Makefile	main makefile
 
-bin/		scripts to be installed with binaries
-etc/		samples of terminal configs from vhset
-lib/		help pages sources
+bin/		scripts to be installed with compiled binaries
+etc/		samples of terminal configs from vhset, installed as /etc/vhset
+lib/		source of help pages
 misc/		miscellaneous staff
 rc/		rc files and profiles
-vash/		vash sources
+vash/		sources of vash main binary
 vash.1		manual sources
 vhset/		vhset utility sources
 vhset.1		vhset manual

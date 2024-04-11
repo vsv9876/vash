@@ -40,7 +40,7 @@ VASHLIB	= ./lib
 VASH_DOC = $(DESTDIR)$(DEST)/share/doc/$(VASH)
 
 DOC_FILES = \
-	LICENSE \
+	COPYING \
 	COMPILE \
 	README \
 	WISHES \
