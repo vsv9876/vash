@@ -190,8 +190,9 @@ char **argv;
 		/* reset defaults in case environment setup is in use */
 		vashflag.scrolf =
 				vashflag.histf = vashflag.histsn = vashflag.panelf =
-						vashflag.whodirf = vashflag.xtermf = vashflag.clockf = vashflag.cmailf =
-								vashflag.exittrap = vashflag.novice = vashflag.subatrc = 0;
+						vashflag.whodirf = vashflag.xtermf = vashflag.clockf =
+								vashflag.cmailf = vashflag.exittrap = vashflag.novice =
+										vashflag.subatrc = vashflag.subshow = 0;
 		/*** yy_max = 10; */
 
 		while (c = *envsup++) {

@@ -111,6 +111,8 @@ showitem(on)
 	int n;
 	LINE pline; /* patch line, show over current line */
 
+		if (vashflag.subshow == 0)
+			return;
 #ifndef CP_SAV
 		cp_sav();
 #endif

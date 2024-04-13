@@ -116,6 +116,7 @@ int		exittrap;		/* trap on exit of command: 0 - modern, 1 - vash canonical */
 int		novice;			/* = 1; novice prompter messages allowed */
 int		shanyway;		/* = 1; shell -c 'cmd' in all cases anyway*/
 int		subatrc;		/* = 0; substitute '#@' from rc files */
+int		subshow;		/* = 0; substitute '#@' show position on main menu */
 } VASHFLAG;
 
 extern VASHFLAG vashflag; /* defined in main.c */
