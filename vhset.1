@@ -1,0 +1,103 @@
+.\" t
+.\" Title: \fBvash\fR
+.\" Author: Sergey Vovk
+.\" Language: English
+.\"
+.TH "\FBVHSET" "1" "2024\-04\-14" "visual hardware setup" "vhset manual"
+.\"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~selected ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.SH "NAME"
+vhset \- visual hardware setup
+
+.SH "SYNOPSIS"
+.HP \w'\fBvhset\fR\ 'u
+.B vhset
+.\" [\-\fI\<flags\>\fR] [\fIconfig_file\fR] [\-\- \fIfill main menu command\fR]
+.\"
+.\"  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\"
+.SH "DESCRIPTION"
+.PP
+.B vhset
+is a main tool for tuning personal runtime settings for all programs which linked with
+.I linlib(3x)
+library.
+It is interactive screen-oriented program which linked with linlib(3x).
+.PP
+Runtime settings changed via \fBvhset\fR pages
+saved in a file. This file is read on every start of any linlib-based program.
+Also this file is read by vhset, so every change reflected immediately.
+.PP
+File edited with
+.B vhset
+patches precompiled defaults.
+So only difference stored in it.
+.SH "SETTINGS FILE"
+.PP
+File name is based on name from environment
+.B TERM
+and can be stored in one of places:
+.RS 2
+.IP \fB/etc/vhset\fR 4
+.b
+system wide standard place;
+distribution contains vhset files for some popular terminals, such as \fIvt100\fR
+or \fBxterm\fR
+.IP \fBVHSET\fR
+personal user home directory which  is pointed by this environment variable.
+An example can be found in online help page of \fBvhset\fR.
+.RE
+.PP
+.\"
+.\"  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\"
+.SH "OVERVIEW"
+.PP
+Vhset program consist of pages:
+.SS "main screen"
+shows an detected name of \fIfile with settings\fR (profile) to be edited and 
+\fImenu\fR to chuse another pages.
+.br
+If profile field is empty it means that no setting will be saved anyway.
+.SS "video attributes"
+contains show of fields and active lines to change every parameter attribute
+of it.
+.SS "keyboard actions"
+It is possible to assign for every linlib action different basic key and 
+spare 2nd key. Assigned keys are used on runtime when source code wrote in terms of
+logical action keys.
+.\"
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SH "RUNNING VHSET"
+.\"
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\"
+.SH "SEE ALSO"
+\fBvisi\fR(3), \fBlinlib\fR(3), \fBterminfo\fR(5), \fBtermcap\fR(5),
+\fBvash\fR(1), \fBxterm\fR(1)
+.nh
+.SH "AUTHOR"
+Sergey Vovk,
+previously known as 
+.br
+<vsv@st.simbirsk.su> 1990-1994
+.br
+<vsv@relcom.eu.net>  1995-1997
+.br
+<vsv@macomnet.ru>    1997-2006 

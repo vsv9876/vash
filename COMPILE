@@ -63,22 +63,23 @@ linlib library. This library was thoughts inspired by some project from
 CERN then used for real-time applications in 1980x.  Later, library was
 extended with some tools and named visi.
 
-Initially vash was wrote on 16-bit environment  on  DEC  PDP-11/23  and
+Initially vash was wrote for 16-bit environment  on  DEC PDP-11/23  and
 VT100  hardware,  using classic K&R dialect of C language.  Only ASCII-
-based 8-bit encodings were supported.
+based 8-bit encodings were supported including KOI8-R and ISO-8859-1.
 
-1st stricted release was about 1990  year  under  name  ash,  assistant
+1st stricted release was done about 1990 year under name ash, assistant
 shell.  Further development was episodical.  In 1991-1993 years ash was
 ported  to  i386  platforms  ISC  UNIX and FreeBSD, then UnixWare. Some
 enhancements was added with port to SPARK Solaris in 1995 and DEC OSF-1
 Unix in 1996. Porting to SGI IRIX was done in that time.
 
-1st port to linux-based systems was done in 2004 since Fedora Core 2.
+1st port to linux-based systems was done in 2004 since Fedora Core 2
+which was selected as nearest linux for for RiP SGI O2..
 
 In modern  time  project  development  was  reactivated  not  observing
-comparable tools, then prepared to wide publication under free license.
+comparable tools. Then prepared for wide publication under free license.
 
-Finally, name vash was assigned to this program avoiding confusion with
+Finally, name VASH was assigned to this program avoiding confusion with
 /bin/ash, again shell.
 
 Most  of  previouse versions was adopted for 32-bit architectures and supported
@@ -89,7 +90,7 @@ Termcap-based  code  was  modified  to use terminfo.  Starting in 2020,
 UTF-8 support was implemented but only tested for restricted set of  languages
 including european and chinessy.
 
-Interface of vash itself remains english only. I have no plans for implementation
+Interface of vash itself remains english only. I have no any plan to implement
 any other language support. I suppose it have too little sense.
 
 On the other hand, unicode support has already caused the code to swell

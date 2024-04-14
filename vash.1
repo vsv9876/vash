@@ -3,7 +3,7 @@
 .\" Author: Sergey Vovk
 .\" Language: English
 .\"
-.TH "\FBVASH" "1" "2021\-04\-20" "visual assistant shell" "Vash User's Manual"
+.TH "\FBVASH" "1" "2021\-04\-20" "Visual Assistant Shell" "Vash User's Manual"
 .\"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
@@ -608,37 +608,6 @@ previously known as
 <vsv@relcom.eu.net>  1995-1997
 .br
 <vsv@macomnet.ru>    1997-2006 
-.SH HISTORICAL NOTE
-Screen mode interface of \fBvash\fR was implemented with a \fItermcap\fR-based \fIlinlib\fR library. This library was thoughts inspired by some project from CERN
-then used for real-time applications in 1980x.
-Later, library was extended with some tools and named \fIvisi\fR.
-.PP
-Initially \fBvash\fR was wrote on 16-bit environment on
-DEC PDP-11/23 and VT100 hardware,
-using classic K&R dialect of C language.
-Only ASCII-based 8-bit encodings were supported.
-.PP
-1st stricted release was about 1990 year under
-name \fIash\fR, assistant shell. 
-Further development was episodical.
-In 1991-1993 years ash was ported to i386 platforms ISC UNIX and FreeBSD,
-then UnixWare. Some enhancements was added with port to SPARK Solaris in 1995 and DEC OSF-1 Unix in 1996. Porting to SGI IRIX was done in 1997.
-.PP
-1st port to linux-based systems was done in 2004 since Fedora Core 2.
-.PP
-In modern time project development was reactivated not observing comparable
-tools, then prepared to wide publication under free license.
-.PP
-Finally, name \fIvash\fR was assigned to this program avoiding confusion with /bin/ash, \fIagain shell\fR.
-.PP
-Most of previouse versions was for 32-bit architectures and
-supported only 8-bit encoding charsets.
-Native 64-bit support added since 2019.
-Probably, 16-bit version may be still compiled, not sure.
-.PP
-\fITermcap\fR-based code was modified to use \fIterminfo\fR.
-Starting in 2020, UTF-8 support was implemented 
-but only for restricted set of languages 
-including european and chinessy. 
-.PP
-Interface of vash itself remains english only.
+.SH HISTORICAL NOTES
+Full version of historical notes was moved to \fICOMPILE\fR document
+in sources tree.
