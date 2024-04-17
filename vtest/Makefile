@@ -45,12 +45,12 @@ LIBS          = \
 		$(VLIB)/libline.a \
 #		$(VLIB)/libtermnew.a
 
-#VCC           = $(VBIN)/vcc
-#VLBP          = $(VBIN)/vlbp
-#LBP           = $(VBIN)/lbp
-VCC           = vcc
-VLBP          = vlbp
-LBP           = lbp
+VCC           = $(VBIN)/vcc
+VLBP          = $(VBIN)/vlbp
+LBP           = $(VBIN)/lbp
+#VCC           = vcc
+#VLBP          = vlbp
+#LBP           = lbp
 MAKEFILE      = Makefile
 
 EXTHDRS	      = $(VISI)/include/line.h \
@@ -117,6 +117,9 @@ SUFFIX        = .cv:sC
 	$(LBP) $*.la $@; rm -f $*.la
 
 all:  $(PROGRAM)
+
+echo:
+	echo PATH=$(PATH)
 
 data-to-text:
 	echo 'g/\.data/s//\.text/' >data-to-text

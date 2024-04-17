@@ -1,4 +1,4 @@
-#include <alloca.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
 #include "line.h"

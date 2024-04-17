@@ -30,7 +30,7 @@ lerror(s)
 register char *s;
 {
 	extern  int errno;              /* СИСТЕМНЫЙ НОМЕР ОШИБКИ */
-	extern  int sys_nerr;           /* МАКС. НОМЕР СООБЩЕНИЯ */
+	/*extern  int sys_nerr;*/           /* МАКС. НОМЕР СООБЩЕНИЯ */
 #ifdef DURA_LINUX
 	extern  char *sys_errlist[];    /* АНГЛ. СПИСОК СООБЩЕНИЙ */
 	extern  char *sys_rerrlist[];   /* РУСС. СПИСОК СООБЩЕНИЙ */

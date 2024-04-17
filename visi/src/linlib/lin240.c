@@ -72,7 +72,6 @@ extern int		sgrmode;   /* initial monochrome */
 extern  char *getenv();
 #endif DEMOS2
 
-
 do_kbl()
 /*--------------------------------*/
 /* ВЫПОЛНИТЬ НАСТРОЙКУ КЛАВИАТУРЫ */
@@ -101,7 +100,7 @@ do_kbl()
 
 #ifndef DEMOS2
 	/* ЕСЛИ НЕТ ИНФОРМАЦИИ, ГДЕ ИСКАТЬ НАСТРОЙКУ, КОНЕЦ */
-	if ( *t_lh == '\0' ) return;
+	if ( *t_lh == '\0' ) return 0;
 #endif
 #ifdef  DEMOS2
 	/* ОПРЕДЕЛИТЬ МЕСТО, ГДЕ ЕЕ ИСКАТЬ */
@@ -122,7 +121,7 @@ do_kbl()
 	/* ОТКРЫВАЕМ ФАЙЛ */
 	if( (lhfp=fopen(name, "r")) == NULL ) {
 		/* НИКАКОЙ ДИАГНОСТИКИ... ЕСТЬ УМОЛЧАНИЕ */
-		return;
+		return 0;
 	}
 #endif  DEMOS2
 
@@ -266,5 +265,5 @@ cont:
 		;
 	}
 	fclose(lhfp);
-	return;
+	return 0;
 }

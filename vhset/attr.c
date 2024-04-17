@@ -962,7 +962,7 @@ LINE *phline;           /* pointer to instant page with help screen */
 			break;
 		case KB_EX :
 			/*NOBREAK*/
-			return;
+			return 0;
 		case '?':
 		case KB_HE:
 			w_help(phline);

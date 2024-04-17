@@ -45,12 +45,12 @@ LIBS          = \
 		$(VLIB)/libline.a \
 #		$(VLIB)/libtermnew.a
 
-#VCC           = $(VBIN)/vcc
-#VLBP          = $(VBIN)/vlbp
-#LBP           = $(VBIN)/lbp
-VCC           = vcc
-VLBP          = vlbp
-LBP           = lbp
+VCC           = $(VBIN)/vcc
+VLBP          = $(VBIN)/vlbp
+LBP           = $(VBIN)/lbp
+#VCC           = vcc
+#VLBP          = vlbp
+#LBP           = lbp
 MAKEFILE      = Makefile
 
 EXTHDRS	      = $(VISI)/include/line.h \

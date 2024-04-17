@@ -26,10 +26,10 @@ LINKER   = cc
 
 MAKEFILE = Makefile
 
-ALL      =  lbp  vcc  linebp  linusr  linlib  termnew
-ALLINST  = .lbp .vcc .linebp .linusr .linlib .termnew
-#ALL      =  lbp  vcc  linebp  linusr  linlib
-#ALLINST  = .lbp .vcc .linebp .linusr .linlib
+#ALL      =  lbp  vcc  linebp  linusr  linlib  termnew
+#ALLINST  = .lbp .vcc .linebp .linusr .linlib .termnew
+ALL      =  lbp  vcc  linebp  linusr  linlib
+ALLINST  = .lbp .vcc .linebp .linusr .linlib
 
 all:            $(ALLINST)
 

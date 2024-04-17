@@ -40,10 +40,10 @@
 #include <wchar.h>
 
 /******* эти константы определяются через Makefile, CFLAGS_VISI */
-/* #define USE_TERMIO    /* must be enabled on SYSTEM V */
-/* #define USE_SGTTYH    /* must be enabled on DEMOS 2.x */
-/* #define USE_TERMIOS_386BSD  /* 386bsd, old versions BSDI,FreeBSD */
-/* #define USE_TERMIOS   /* POSIX */
+/* #define USE_TERMIO    // must be enabled on SYSTEM V */
+/* #define USE_SGTTYH    // must be enabled on DEMOS 2.x */
+/* #define USE_TERMIOS_386BSD  // 386bsd, old versions BSDI,FreeBSD */
+/* #define USE_TERMIOS   // POSIX */
 
 /* тип для арифметики над указателями */
 /*(sizeof(char *) != sizeof(int))*/
@@ -81,7 +81,7 @@ extern char *strncp(char *, char *, size_t);
 #if defined(FILE)
 /* extern  FILE *vttout; very bad idea, macro used as workaround... */
 #define vttout stderr
-/*z#define vttout stdout*/
+/*#define vttout stdout*/
 extern  int   vtti;      /* дескриптор файла для ввода */
 #else           /* temporary for first debug SYSTEM V */
 /* remix, so try again vttout */
@@ -183,7 +183,7 @@ typedef struct  {
 #define FLO    06000    /* вызов форм. преобр. и редактор блокировать */
 #define VEXT   01000    /* видео атрибут для вида "как на вводе", но при выводе  */
 #define LFASTR  0400    /* r_line перерисовывает только первый символ поля */
-/*define U8SOBJ 0 /* no room for... */
+/*define U8SOBJ 0 // no room for... */
 
 /* маска индекса таблицы видеоатрибутов и подсказок: */
 #define VIDEO  0177
@@ -202,9 +202,9 @@ typedef struct  {
 /*----------------------*/
 	/* нет перехода: */
 #define SUSNL   0001    /* к следующему полю по <CR><LF>   */
-/*#define SUSAR   0034    /* по стрелкам                     */
-/*#define SUSUD   0014    /* вверх и вниз                    */
-/*#define SUSLR   0060    /* вправо и влево                  */
+/*#define SUSAR   0034    // по стрелкам                     */
+/*#define SUSUD   0014    // вверх и вниз                    */
+/*#define SUSLR   0060    // вправо и влево                  */
 #define SUSU    0002    /* вверх                           */
 #define SUSD    0004    /* вниз                            */
 #define SUSL    0010    /* влево                           */
@@ -330,14 +330,16 @@ extern  int     io_set(), ttyinp(), w_chr(), w_raw(), w_str(), w_strn();
 extern  int     w_putc(); /*TODO: extend list by functions in fact used */
 
 /* lin(2) - управление терминалом: физический уровень */
-extern  int     at_set();
+extern  void    at_set();
 extern  kbcod   r_cod(), r_key();
 extern  int     hw_set(), do_kbl();
 
 /* lin(3) - управление терминалом: логический уровень */
 
 extern  kbcod   k_pars();
-extern  int     bell(), cp_fet(), cp_sav(), cp_set(), cp_abset(), cp_cret();
+extern  void    bell();
+extern  int     cp_fet(), cp_sav();
+extern  void    cp_set(), cp_abset(), cp_cret();
 extern  int     er_eol(), er_eop(), er_pag(), er_scr();
 extern  kbcod   e_str(), r_line(), r_page();
 extern  int     allcod, edinff;
@@ -357,7 +359,7 @@ extern FILE     *dafopen();
  * limit screen by linlib+termcap limits
  */
 #define MAXLICO 512		/* 255 max ? */
-#define STRBUF (MAXLICO + 2) /*82 /* wcschar_t размер строки ввода */
+#define STRBUF (MAXLICO + 2) /*82 // wcschar_t размер строки ввода */
 #define U8_STRBUF (4*STRBUF)       /* UTF-8 размер строки */
 #define STR_OVRSZ 2048	/* applicable for wcsobj_t */
 

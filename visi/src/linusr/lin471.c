@@ -49,7 +49,7 @@ LINE *phline;           /* ИМЯ ФАЙЛА СТРАНИЦЫ HELP */
 	/*	case KB_CA: no return from page if r_line cancelled */
 		case KB_EX :
 			/*NOBREAK*/
-			return;
+			return cod;
 		case '?':
 		case KB_HE:
 			/* ПОКАЗАТЬ СПРАВОЧНУЮ ИНФОРМАЦИЮ */

@@ -44,6 +44,7 @@
 
 /*extern  char *malloc();*/
 
+extern void pass1();
 char    Enomem[] = "No memory (%s)\n";
 char    Rnomem[] = "Нет памяти (%s)\n";
 
@@ -137,12 +138,12 @@ char *s;
 #ifdef MAKE_VLBP
 
 	fprintf(stderr,
-	"ВЫЗОВ:\n %s [-h file.hv] [-o file.la] file.lav\n",
+	"Usage:\n %s [-h file.hv] [-o file.la] file.lav\n",
 	s);
 #endif
 #ifdef MAKE_VCC
 	fprintf(stderr,
-	"ВЫЗОВ:\n %s [-o file.c] file.cv\n",
+	"Usage\n %s [-o file.c] file.cv\n",
 	s);
 #endif
 	exit(1);
@@ -1060,6 +1061,7 @@ BEG_OF_SCAN:
 	}
 }
 
+void
 pass1()
 /* ПЕРВЫЙ ПРОХОД :
  * ПРОЧИТАТЬ В КУЧУ СТРОКИ ИЗ СЕКЦИЙ PORTS, TABLES, LINES;

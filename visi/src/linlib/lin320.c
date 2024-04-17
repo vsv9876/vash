@@ -56,7 +56,7 @@ static    int aixstate = 0;
 #define COLOR_ANSI
 #ifdef COLOR_ANSI
 
-static w_sgr(sgr)
+static void w_sgr(sgr)
 char *sgr;
 {
 	static char s_csi[40] = "";
@@ -80,6 +80,7 @@ char *sgr;
 	}
 }
 
+void
 at_set(aw_new)
 /*
  * УСТАНОВИТЬ ВИДЕОАТРИБУТЫ
@@ -158,6 +159,7 @@ int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 }
 #else
 
+void
 at_set(awi)
 register int awi;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 /*--------------------------*/
@@ -201,12 +203,14 @@ register int awi;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 /* УСТАНОВКА ПОЗИЦИИ КУРСОРА */
 /* И АТРИБУТОВ ТЕКСТА        */
 /*---------------------------*/
+void
 cp_cret() /* set cursor at column=0 at the unknown(yet not synced) row */
 {
 	scrn.sc_co = 0;
 	w_raw("\r");
 }
 
+void
 cp_abset(li, co, at) /* absolute in hw screen coordinates */
 int li, co, at;
 {
@@ -229,6 +233,7 @@ int li, co, at;
 	}
 }
 
+void 
 cp_set(li, co, at) /* relative */
 int li, co, at;
 {
@@ -331,6 +336,7 @@ int aw;
 	}
 }
 
+void
 bell()
 /*----------------------------*/
 /* ЗВОНОК ИЛИ ИМИТАЦИЯ ЗВОНКА */ /* TODO repaire the logic */

@@ -252,6 +252,7 @@ fnd_nxt(lni, page)
 }
 
 #ifndef W_PAGE_TAB
+void
 aj_tbl(scnd, line_e)
 /*
  * setup table element referring to the base

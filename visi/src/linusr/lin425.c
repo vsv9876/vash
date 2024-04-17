@@ -59,7 +59,7 @@ char *str;
 					s++; p++;
 				}
 				*s = '\0';
-				return;
+				return 0;
 			}
 		}
 		strcpy(str, hlpcod + 1); /* if no code found */

@@ -182,6 +182,7 @@ char *fname;            /* имя файла из меню */
 	return(tstats);
 }
 
+void
 itmrestor()
 {
 	char    itmnnm[ITMCNM+1];   /* новое имя */
@@ -207,7 +208,7 @@ itmrestor()
 	else    {
 	    /* СООТВЕТСТВИЕ НЕ УСТАНОВЛЕНО */
 	    clm._itmofs = clm._itm = 0;
-	    return 0;
+	    return;
 	}
 adjust:
 	/* имя осталось в меню, надо
@@ -273,7 +274,11 @@ register char **p1;
 register char **p2;
 {
 	/* version comparison */
+#if 0
 	return(strverscmp( (*p1)+2, (*p2)+2));
+#else
+	return(strcmp( (*p1)+2, (*p2)+2));
+#endif
 }
 
 /* common flags like for ls() */

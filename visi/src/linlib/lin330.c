@@ -19,7 +19,7 @@
  * 
  */
 #define _XOPEN_SOURCE
-#include <alloca.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <wchar.h>
 #include <ctype.h>

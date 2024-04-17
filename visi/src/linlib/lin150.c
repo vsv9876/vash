@@ -81,9 +81,11 @@ register int c;
 
 #endif /* RT11 */
 #ifdef DEMOS2
+#ifdef DEMOS2CYR_OBSOLETE
 #include <sgtty.h>
 
 extern  int osgflg;             /* ФЛАГИ ДРАЙВЕРА (old.sg_flags) */
+#endif
 
 int w_putc(c)
 int c;
@@ -125,7 +127,7 @@ char *s;
 	int c;
 	for(; s!=(char*)NULL && *s!=0; s++) {
 		c = *s;
-#ifdef DEMOS2CYR
+#ifdef DEMOS2CYR_OBSOLETE
 		/* этого достаточно, потому что
 		 * UCASE все равно подавлен :
 		 */
@@ -183,7 +185,7 @@ int c;
 	extern int osgflg;
 	register int oc;        /* символ для вывода */
 
-#ifdef DEMOS2CYR
+#ifdef DEMOS2CYR_OBSOLETE
 	if(osgflg & LCASE) {
 		switch(c) {
 		case '`' :

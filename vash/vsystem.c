@@ -19,7 +19,7 @@
 
 extern  int     y0_top;
 extern  char    *pmtsh;
-/*extern  char  **environ;*/
+extern  char  **environ;
 extern  char    Csubs[];
 
 extern  char  *nmsubs();
@@ -87,7 +87,7 @@ int execmode;
 		/*...*/
 
 #ifndef LUNIX
-		execvp(argv0, argv, environ);
+		execvp(argv0, argv/*, environ*/);
 #else
 		execvp(argv0, argv);
 #endif
