@@ -1,5 +1,11 @@
 vash news (release notes)
 
+2.0.27 -- 18 Apr 2004
+  * FreeBSD support revailed, checked on 1.2-RELEASE
+  * vhset manual added
+  * add flag to disable #@ marker show
+  * actualize copyright notes and files
+  
 2.0.26 -- 3 Apr 2024
   * support for '#@' substution both in rc files and in command editor
   * rc files macro for cursor positioning in editor template
