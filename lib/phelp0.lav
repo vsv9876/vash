@@ -23,13 +23,13 @@ alt     = c  "alternate..."
 =LINLIB actions
 
  .activa..........................                   .common.................   *
-+ .VAR. editing start - untouched: .:SP... .VARi      .:HE... help              *
-+               - cleaning before: .:DE...            .:EX... exit/close page   *
++  .:SP... start editing untouched   .VARi .VAR.      .:HE... help              *
++  .:DE...      - cleaning before                     .:EX... exit/close page   *
 +                                                     .:NL... commit,complete   *
-+ .ALT. alter (toggle)  - forward: .:SP... .ALTi      .:CA... cancel            *
-+                      - backward: .:DE...            .:RE... refresh page      *
++  .:SP... alter forward             .ALTi .ALT.      .:CA... cancel            *
++  .:DE...       - backward                           .:RE... refresh page      *
 +                                                                               *
-+ .MSE. select item -   .:NL... or .:SP... .MSEi     .page_n..................  *  
++  .:SP... select item, also .:NL... .MSEi .MSE.     .page_n..................  *  
 +                                                     .:TA... next line         *
 +.onedit..........................                    .:KH... jump to 1st line  *
 + .:DE... erase left from cursor  .alt..........      .:KE... jump to last line *
