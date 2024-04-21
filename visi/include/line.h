@@ -264,7 +264,7 @@ extern  int    maxco;   /* размер по вертикали */
 /*
  * cursor position frame, in logical coordinates of screen:
  * for whole screen = { 0, maxli, 0, maxco };
- * ofsli,ofsco values may be negative - means distance from end borders
+ * ofsli,ofsco values may be negative - means distance from (frame) border
  */
 typedef struct {
 	int baseli; /* offset to 1st line */

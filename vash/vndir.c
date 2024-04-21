@@ -274,7 +274,7 @@ register char **p1;
 register char **p2;
 {
 	/* version comparison */
-#if 0
+#ifndef NO_STRVERSCMP
 	return(strverscmp( (*p1)+2, (*p2)+2));
 #else
 	return(strcmp( (*p1)+2, (*p2)+2));

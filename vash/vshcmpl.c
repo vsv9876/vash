@@ -32,12 +32,13 @@ wchar_t *s_ins;
 {
     struct stat statbuf;
     extern char *rwxmode();
+    char  tmps_buf[U8_STRBUF];
     char *tmps;
     char  ftype;	/* file (or dir) type */
     u_short mode;
     char *s;
 
-    tmps = alloca(U8_STRBUF);
+    tmps = tmps_buf/*alloca(U8_STRBUF)*/;
 /*
 	if (
 			(s_mode == path_cmd ||
@@ -547,11 +548,12 @@ int maxpos; /* максимальное значение позиции в бу�
     char *s;
     int   c;
     wchar_t *s_ins; /* the suggestion word to be inserted */
+    wchar_t  s_ins_buf[STRBUF];
     wchar_t *s_ins_esc;
     /*char *stats;*/
     size_t pattsz;
 
-    s_ins_esc = alloca(U8_STRBUF);
+    s_ins_esc = s_ins_buf/*alloca(U8_STRBUF)*/;
     s_dir[0] = s_base[0] = '\0';
     dir_x = dir_end = base_x = 0;
     /* учесть нули за концом команды и поставить курсор перед ними */

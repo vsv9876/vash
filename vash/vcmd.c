@@ -207,8 +207,9 @@ int subatrc;		/* substitution of #@ required */
     char *nm_ptr;
     int sh_req = 0;	/* флаг - сделаны подстановки, требуется вызов /bin/sh*/
     char *ptmp;
+    char  ptmp_buf[U8_STRBUF];
 
-    ptmp = alloca(U8_STRBUF);
+    ptmp = ptmp_buf/*alloca(U8_STRBUF)*/;
 
     *ptmp_sh = '\0';
     while (*p) {
