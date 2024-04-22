@@ -116,7 +116,7 @@ compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib #/LIB-$(ASHLIB)
 	cd $(VHSET); $(MAKE) all "DEST=$(DEST)"
 	cd $(VASH);   $(MAKE) all "DEST=$(DEST)" "CFLAGS_ASH=$(CFLAGS_ASH)" \
 		"VERSN=$(VERSN)"
-	cd lib;               $(MAKE) "DEST=$(DEST)" all
+	cd lib;               $(MAKE) "PATH=$(PATH)" "DEST=$(DEST)" all
 #	cd lib/LIB;           $(MAKE) "DEST=$(DEST)" all
 #	cd lib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
 
@@ -124,9 +124,9 @@ compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib #/LIB-$(ASHLIB)
 install: setup compile $(DESTDIR) $(DEST) $(VISILIB) docinstall
 	cd $(VHSET);	$(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd $(VASH);	$(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd rc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd bin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd lib;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd rc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)" "PATH=$(PATH)"
+	cd bin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)" "PATH=$(PATH)"
+	cd lib;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)" "PATH=$(PATH)"
 #	cd lib/LIB;	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
 #	cd lib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cp -rp termcap/. $(VISILIB)
