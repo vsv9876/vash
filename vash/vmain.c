@@ -436,7 +436,7 @@ char *helpl;
 			break;
 		default:
 			/* не встроенная команда, надо интерпретировать */
-			w_line( &clm._vf[i] );
+			/*w_line( &clm._vf[i] );*/
 			cmdret = vcmd(/*i,*/ cod/*, clm._vf*/);
 			if (cod == ' ') {
 				/* hint after space: advance next line */
