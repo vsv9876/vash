@@ -44,7 +44,7 @@ FUNTAB funtab[] = {
 	{ "f_ls",		f_ls },
 	{ "mark",		f_mark },
 	{ "itmpos",		itmpos },
-	{ "itmsel",		itmsel },
+/*	{ "itmsel",		itmsel }, not used? */
 #ifdef DEBUG_KSHOW
 	{ "kshow",      kshow },
 #endif
@@ -56,11 +56,14 @@ extern  char    Crepf[];
 extern  char    Coutf[];
 extern  char    Csubs[];
 
-extern  PATCMD  pc[];
+/*extern  PATCMD  pc[];*/
 extern  KEYTAB  kt2[];
 extern  KEYTAB  kt1[];
 
 static u8char_t lastkey[4];     /* код последней нажатой клавиши */
+
+/*ARGSUSED*/
+vcmd(/*j, */cod/*, mainl*/)
 /*
  * Интерпретировать клавишную команду
  *
@@ -75,11 +78,9 @@ static u8char_t lastkey[4];     /* код последней нажатой кл
  *       0      отказ от действия, экран не испорчен.
  *       1      команда выполнена, экран испорчен.
  */
-/*ARGSUSED*/
-vcmd(j, cod, mainl)
-int     j;      /* индекс пункта рядом с курсором */
+/*int     j; */     /* индекс пункта рядом с курсором */
 kbcod   cod;    /* код нажатой клавиши */
-LINE    *mainl; /* указатель на страницу меню */
+/*LINE    *mainl;*/ /* указатель на страницу меню */
 {
 	char  file[256*4];
 	char    cods[20];       /* строка с идент. встроен. команды */
@@ -179,7 +180,7 @@ register char *cmd;     /* встроенная функция */
 	/* установить соответствие */
 	for (ftp = funtab; ftp->ft_name; ftp++) {
 		if (strcmp(ftp->ft_name, keywd) == 0) {
-			if (keyf = ftp->ft_fun) /* если функция найдена, ее и вызвать */
+			if ((keyf = ftp->ft_fun)) /* если функция найдена, ее и вызвать */
 				return((*keyf)(cmd));
 			else    break;
 		}
@@ -302,9 +303,9 @@ char *cmd;      /* "сырая" команда, требуются подста�
 char *cmdlbl;   /* вывеска взамен команды */
 {
 	/*char    tmpcmd[140];*/
-	char *tmpcmd;
+	char tmpcmd[U8_STRBUF];
 
-	tmpcmd = alloca(U8_STRBUF);
+	/*tmpcmd = alloca(U8_STRBUF);*/
 
 	if (cmd) {
 	    /* выполнить подстановки */

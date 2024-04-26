@@ -788,6 +788,7 @@ cwdshow()
 #endif
 }
 
+static int fil_first = 1; /*hint for 1st invocation - do it silently*/
 /*
  * Заполнить главное меню.
  * Команда для заполнения указана в Cfill,
@@ -801,7 +802,6 @@ cwdshow()
  *
  * Возвращает 1, если заполнено новое меню, иначе 0.
  */
-static int fil_first = 1; /*hint for 1st invocation - do it silently*/
 fil_vf(newflag)
 int newflag;    /* если 0, то только обновить каталог */
 {
@@ -824,9 +824,10 @@ int newflag;    /* если 0, то только обновить каталог
 	else {
 		stat(Crepf, &newstat);
 		/* надо бы добавить проверку на отсутствие ошибок stat()... */
-
-		samedir = (cwdstat.st_dev   == newstat.st_dev
-				&& cwdstat.st_ino   == newstat.st_ino);
+		samedir = 0;
+		if (       cwdstat.st_dev   == newstat.st_dev
+				&& cwdstat.st_ino   == newstat.st_ino)
+			samedir = 1;
 
 		if (newflag == 0)
 			if (cwdstat.st_mtime == newstat.st_mtime && samedir) {
