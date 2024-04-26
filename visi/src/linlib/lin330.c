@@ -20,6 +20,11 @@
  */
 #define _XOPEN_SOURCE
 #include <stdlib.h>
+
+#ifndef NO_ALLOCA_H
+#include <alloca.h>
+#endif
+
 #include <stdio.h>
 #include <wchar.h>
 #include <ctype.h>

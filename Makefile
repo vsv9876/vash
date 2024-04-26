@@ -3,13 +3,12 @@ SHELL = /bin/sh
 
 #
 # Visual Assistant Shell
-# 1990-2020 (C) Sergey Vovk
+# 1990-2024 (C) Sergey Vovk
 #
 # MIT License
 # 
 
 # this is permanent, other value not tested yet.
-# TODO: separate config files from binaries installed
 #DEST  = /usr/local
 DEST  = /usr
 
@@ -112,21 +111,27 @@ visi_lib: setup
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
 
+# NOTE: at least FreeBSD's make requires PATH= specified explicitly
 compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib #/LIB-$(ASHLIB)
-	cd $(VHSET); $(MAKE) all "DEST=$(DEST)"
-	cd $(VASH);   $(MAKE) all "DEST=$(DEST)" "CFLAGS_ASH=$(CFLAGS_ASH)" \
-		"VERSN=$(VERSN)"
-	cd lib;               $(MAKE) "DEST=$(DEST)" all
+	cd $(VHSET); $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)"
+	cd $(VASH);   $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)" \
+				"CFLAGS_ASH=$(CFLAGS_ASH)" "VERSN=$(VERSN)"
+	cd lib;               $(MAKE) "PATH=$(PATH)" "DEST=$(DEST)" all
 #	cd lib/LIB;           $(MAKE) "DEST=$(DEST)" all
 #	cd lib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
 
 #install:   $(DESTDIR) $(DEST) termcap $(VISILIB)
 install: setup compile $(DESTDIR) $(DEST) $(VISILIB) docinstall
-	cd $(VHSET);	$(MAKE) install CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd $(VASH);	$(MAKE) install "CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd rc;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd bin;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd lib;	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd $(VHSET);	$(MAKE) install "PATH=$(PATH)" \
+		CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd $(VASH);	$(MAKE) install "PATH=$(PATH)" \
+		"CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
+	cd rc;	$(MAKE) install "PATH=$(PATH)" \
+		"DEST=$(DEST)" "DESTDIR=$(DESTDIR)" "PATH=$(PATH)"
+	cd bin;	$(MAKE) install "PATH=$(PATH)" \
+		"DEST=$(DEST)" "DESTDIR=$(DESTDIR)" "PATH=$(PATH)"
+	cd lib;	$(MAKE) install "PATH=$(PATH)" \
+		"DEST=$(DEST)" "DESTDIR=$(DESTDIR)" "PATH=$(PATH)"
 #	cd lib/LIB;	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
 #	cd lib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cp -rp termcap/. $(VISILIB)
@@ -155,7 +160,7 @@ distclean:	clean
 		')' -exec rm -f '{}' ';'
 	rm -rf $(BLD)
 	rm -f  $(BLDCFG) 
-#	touch $(BLDCFG)
+	touch $(BLDCFG)
 
 docinstall: $(VASH_DOC)
 	cp $(DOC_FILES) $(VASH_DOC)

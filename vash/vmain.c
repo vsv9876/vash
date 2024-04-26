@@ -165,7 +165,8 @@ char *fill;
 		w_emsg("");
 		return 0;
 	case KB_NL:
-		return(1);
+		w_msg(TXT, "Please, reload main menu with pressing '='");
+		return(0/*1*/);
 	}
 	return(1);
 }
@@ -261,11 +262,13 @@ kbcod cod;
 	}
 	if (total) {
 		w_msg(TXT, " ");
-		fprintf(vttout, " # marked: %d", total);
+		fprintf(vttout, " # marked: %d ", total);
 		if (unvisible)
-			fprintf(vttout, ", not shown: %d", unvisible);
+			fprintf(vttout, ", not shown: %d ", unvisible);
 	}
-	else w_emsg("");
+	else {
+		w_msg(TXT, " # no mark ");
+	}
 	return 0;
 }
 
@@ -288,7 +291,7 @@ char *cmd;
 		break;
 	case '+':
 	case '-':
-		tutsel(cod);
+		return(tutsel(cod));
 		break;
 	default:
 		w_emsg("invalid arg for _mark");
@@ -346,7 +349,6 @@ char *cmd;
 		}
 		if (ilast != clm._itm) {
 			itmadj(0);
-			w_emsg("");
 		}
 		break;
 	case KB_NL:
@@ -359,7 +361,6 @@ char *cmd;
 		}
 		if (ilast != clm._itm) {
 			itmadj(0);
-			w_emsg("");
 		}
 		break;
 	}
@@ -375,30 +376,39 @@ u_menu(mainl, helpl)
 register LINE *mainl;
 char *helpl;
 {
-	register int i;
+	int i;
 	kbcod cod;
 	int   keyreq;   /* флаг: требуется показать панель */
 	int   cmdret;
+	int	  refresh;  /* flag: total refresh needed */
 
 	/* первоначальный показ на экране */
 	cp_set(clm._y0, 0, TXT);
 	er_eop(TXT);
+#if 0
 	cwdshow();
 	itmshow();
 	w_page(clm._vf, 0);
+#endif
 	keyreq = 1;
 	cmdret = 1;
+	refresh = 1;
 
-	clm._itm = i = 0;
+	clm._itm = 0;
 
 	for ( ;; ) {
 
+		if (refresh) {
+			cwdshow();
+			itmshow();
+			w_page(clm._vf, 0);
+			refresh = 0;
+		}
+
 		/* нет сообщений и требуется нарисовать панель */
-		if ( !ok_msg() ) {
-			if ( keyreq ) {
-				keyshow(vashflag.panelf);
-				keyreq = 0;
-			}
+		if (!ok_msg() && keyreq) {
+			keyshow(vashflag.panelf);
+			keyreq = 0;
 		}
 		showtime( 1 );  /* восстановить индикацию часов */
 
@@ -417,23 +427,27 @@ char *helpl;
 		switch (cod) {
 		case KB_RE:
 			er_pag();
-			cwdshow();
-			w_emsg("");
-			itmshow(); w_page(clm._vf, 0);
+			refresh = 1;
 			keyreq = 1;
 			break;
 		case KB_KH: case KB_KE: case KB_PU: case KB_PD:
 		case KB_AD: case KB_AR: case KB_AL: case KB_AU:
 			i = itmadj(cod);
 			break;
-			/* не встроенная команда, надо интерпретировать */
 		default:
-			w_line( &clm._vf[i] );
-			/*keyreq = 1;*/
-			if ((cmdret = vcmd(i, cod, clm._vf)) > 0) {
-				/* экран меню испорчен или
-				 * новое главное меню.
-				 */
+			/* не встроенная команда, надо интерпретировать */
+			/*w_line( &clm._vf[i] );*/
+			cmdret = vcmd(/*i,*/ cod/*, clm._vf*/);
+			if (cod == ' ') {
+				/* hint after space: advance next line */
+				/* hit space on current line!!! */
+				cod = KB_AD;
+				i = itmadj(cod);
+				cod = ' ';
+				keyreq = 0;
+			}
+			if (cmdret > 0) {
+				refresh = 1;
 				scrlst();
 				cp_sav();
 				if (fil_vf(0)) {
@@ -441,33 +455,15 @@ char *helpl;
 					scrlnl(); /* новый y0... */
 				}
 				er_eop(TXT);
-				cwdshow();      /* вывески */
-				itmshow();      /* положение окна */
-				/*hlp_clr();		/* TODO check if right place?*/
-				w_page(clm._vf, 0);  /* пункты меню */
 			}
+
 			/* синхронизировать y0 и y0_top */
 			if (clm._y0 < y0_top)
 				y0_top = clm._y0;
 
-			/* hint after SP: advance next line */
-			if (cod == ' ') {
-				cod = KB_AD;
-				i = itmadj(cod);
-				cod = ' ';
-				/*NO BREAK*/
-			}
-
-			if(!ok_msg() && cmdret >= 0)
+			if(!ok_msg() && refresh)
 				keyreq = 1;
-			else
-				if(ok_msg())
-					keyreq = 0;
-#if 0
-			else
-				keyreq = 0;
-#endif
-			break; /*switch...default:*/
+			break;
 		}
 
 	}

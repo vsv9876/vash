@@ -18,29 +18,29 @@ specia  = c  "special..."
 activa  = c  "activate..."
 onedit  = c  "editing..."
 alt     = c  "alternate..."
-            
+---#hl      = g - hl - - "."            
 ---SCREEN  
 =LINLIB actions
 
- .activa..........................                   .common.................   *
-+  .:SP... start editing untouched   .VARi .VAR.      .:HE... help              *
-+  .:DE...      - cleaning before                     .:EX... exit/close page   *
++.activa..........................                   .common.................   *
++ start editing untouched .:SP... .VARi .VAR.         .:HE... help              *
++       - cleaning before .:DE...                     .:EX... exit/close page   *
 +                                                     .:NL... commit,complete   *
-+  .:SP... alter forward             .ALTi .ALT.      .:CA... cancel            *
-+  .:DE...       - backward                           .:RE... refresh page      *
++ alter forward           .:SP... .ALTi .ALT.         .:CA... cancel            *
++       - backward        .:DE...                     .:RE... refresh page      *
 +                                                                               *
-+  .:SP... select item, also .:NL... .MSEi .MSE.     .page_n..................  *  
++ select item    .:NL...| .:SP... .MSEi .MSE.        .page_n..................  *  
 +                                                     .:TA... next line         *
-+.onedit..........................                    .:KH... jump to 1st line  *
-+ .:DE... erase left from cursor  .alt..........      .:KE... jump to last line *
-+ .:KD... erase below cursor       .:PR .:DE...       .:PD... next page/part    *
-+                erase up to end   .:PR .:SP...       .:PU... prev page/part    *
-+ .:KH... jump to 1st symbol       .:PR .:AL...                                 *
-+ .:KE... jump to end of text      .:PR .:AR...      .specia..................  *   
-+ .:KI... toggle Ins/Ovr mode      .:PR .:PR...       .:KP... keypad on/off     *
-+                                                     .:PR... prefix            *
-               
-  VISI/LINLIB (c) 1986-1990 vsv & team
-              (c) 2020-2024 Sergey Vovk <vsv>
++                                                     .:KH... jump to 1st line  *
++.onedit..........................                    .:KE... jump to last line *
++ .:DE... erase left from cursor  .alt..........      .:PD... next page/part    *
++ .:KD... erase below cursor       .:PR .:DE...       .:PU... prev page/part    *
++                erase up to end   .:PR .:SP...                                 *
++ .:KH... jump to 1st symbol       .:PR .:AL...      .specia..................  *   
++ .:KE... jump to end of text      .:PR .:AR...       .:KP... keypad on/off     *
++ .:KI... toggle Ins/Ovr mode      .:PR .:PR...       .:PR... prefix            *
+  
+                          VISI/LINLIB Copyright (C) 1986-1990 vsv & team
+                                      Copyright (C) 2020-2024 Sergey Vovk <vsv>
 
 ---END                          

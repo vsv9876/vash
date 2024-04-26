@@ -79,22 +79,3 @@ register char *s;
 {
 	w_msg(ERR, s);
 }
-
-w_amsg(str)
-char    *str ;         /* текст сообщения об ошибке */
-{
-	if (amsgflg) {                   /* если строка на экране занята */
-		amsgflg = 0;             /* погасить ее */
-		cp_set(-2, 0, TXT);
-		er_eol(TXT);
-	}
-	if (*str) {
-		amsgflg = 1;
-		cp_set(-2, 0, ATT);
-		at_set(ATT); w_chr(' ');
-		w_str(str);
-		w_chr(' ');
-		at_set(TXT); er_eol(TXT);
-		fflush(vttout); r_cod(0);
-	}
-}

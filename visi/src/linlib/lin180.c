@@ -11,7 +11,11 @@
  */
 
 #include <stdlib.h>
-/*#include <alloca.h>*/
+
+#ifndef NO_ALLOCA_H
+#include <alloca.h>
+#endif
+
 #include <stdio.h>
 
 #define _XOPEN_SOURCE

@@ -42,11 +42,13 @@ scrlarea()
 	}
 }
 
+int
 vashelp(page)
 LINE *page;
 {
 	scrlarea();
 	w_help (page);
+	return(1); /* screen touched */
 }
 
 /*------*/
