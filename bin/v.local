@@ -31,7 +31,11 @@ EOF
     vashdir=`echo $v`
     ##exit 2
 else
-    vashdir=$ddd
+    case $ddd in
+	/*) vashdir=$ddd  ;;
+	.)  vashdir=`pwd` ;;
+	*)  vashdir=`pwd`/$ddd ;;
+    esac
 fi
 
 # where 'make install' done
