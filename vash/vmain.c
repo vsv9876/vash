@@ -438,14 +438,7 @@ char *helpl;
 			/* не встроенная команда, надо интерпретировать */
 			/*w_line( &clm._vf[i] );*/
 			cmdret = vcmd(/*i,*/ cod/*, clm._vf*/);
-			if (cod == ' ') {
-				/* hint after space: advance next line */
-				/* hit space on current line!!! */
-				cod = KB_AD;
-				i = itmadj(cod);
-				cod = ' ';
-				keyreq = 0;
-			}
+			keyreq = 1;
 			if (cmdret > 0) {
 				refresh = 1;
 				scrlst();
@@ -455,6 +448,14 @@ char *helpl;
 					scrlnl(); /* новый y0... */
 				}
 				er_eop(TXT);
+			}
+			if (cod == ' ') {
+				/* hint after space: advance next line */
+				/* hit space on current line!!! */
+				cod = KB_AD;
+				i = itmadj(cod);
+				cod = ' ';
+				keyreq = 0;
 			}
 
 			/* синхронизировать y0 и y0_top */

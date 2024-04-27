@@ -319,10 +319,12 @@ int
 fsh(cmd)        /* команда sh */
 register char *cmd;
 {
+	int ret;
 	if (*cmd == '\0')
 		/* vshcmd будет использовать старую команду */
 		cmd = (char *)0;
-	return(vexcmd(cmd, (char *)0));
+	ret = vexcmd(cmd, (char *)0);
+	return(ret);
 }
 int
 fmenu2(file)        /* меню из файлов .ashmenu */

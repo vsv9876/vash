@@ -60,11 +60,11 @@
 +Cantw
     * * *   _err Can't write this directory
 
-:@
+:[*]
     rwx -   _msg rwx -
     rwx +   _msg rwx +
-    r-x -   _msg rwx -
-    r-x +   _msg rwx +
+    ?-? -   _msg --- -
+    ?-? +   _msg --- +
 
 :U5
 :5

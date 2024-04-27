@@ -5,7 +5,7 @@
 
 - complete an full utf8 support on '_sh #k' key processing
 
-- incorporate canonical PgUP,PgDOWN,Home,End in vash's u_page()
+- incorporate canonical PgUP,PgDOWN,Home,End in vash's u_menu()
 
 - complete documenting and make code cleanup of wsobj_t (4k string)
 

@@ -106,7 +106,7 @@ int *curpos;
 /*
  * выполнить команду /bin/sh
  */
-vshcmd(cmd, cmdlbl)
+int vshcmd(cmd, cmdlbl)
 char *cmd;      /* команда для выполнения */
 char *cmdlbl;   /* вывеска для показа вместо команды */
 {
@@ -531,4 +531,5 @@ std_shell:
 		/*switch(cod) -- end*/
 		}
 	}
+	return 0;
 }

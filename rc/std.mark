@@ -23,5 +23,5 @@
 # edit fill command, the same as -- tail calling vash
 # :_
 #       * ?     _mark _
-:[*_]
+:[_]
         * ?     _f_ls
