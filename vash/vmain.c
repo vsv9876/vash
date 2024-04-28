@@ -371,28 +371,22 @@ extern  int     y0_top;         /* defined in main.c */
 
 u_menu(mainl, helpl)
 /*
- * работа со страницей меню
+ * Main Menu Loop
  */
 register LINE *mainl;
 char *helpl;
 {
 	int i;
 	kbcod cod;
-	int   keyreq;   /* флаг: требуется показать панель */
+	int   keyreq;   /* flag: keyshow() required */
 	int   cmdret;
-	int	  refresh;  /* flag: total refresh needed */
+	int	  refresh;  /* flag: itmshow() required */
 
-	/* первоначальный показ на экране */
+	/* 1st show before main loop */
 	cp_set(clm._y0, 0, TXT);
 	er_eop(TXT);
-#if 0
-	cwdshow();
-	itmshow();
-	w_page(clm._vf, 0);
-#endif
-	keyreq = 1;
 	cmdret = 1;
-	refresh = 1;
+	refresh = keyreq = 1;
 
 	clm._itm = 0;
 
@@ -403,22 +397,19 @@ char *helpl;
 			itmshow();
 			w_page(clm._vf, 0);
 			refresh = 0;
+			keyreq = 1;
 		}
-
-		/* нет сообщений и требуется нарисовать панель */
 		if (!ok_msg() && keyreq) {
 			keyshow(vashflag.panelf);
 			keyreq = 0;
 		}
-		showtime( 1 );  /* восстановить индикацию часов */
+		showtime( 1 );  /* restore clock */
 
 		i = clm._itm - clm._itmofs;
 
 		/* entry code of main menu */
 		cod = r_line( &clm._vf[i], 0 );
 
-		/* если было сообщение, сбросить после нажатия любой клавиши */
-		/* и затребовать отрисовку панелей */
 		if ( ok_msg() ) {
 			w_emsg("");
 			keyreq = 1;
@@ -428,24 +419,23 @@ char *helpl;
 		case KB_RE:
 			er_pag();
 			refresh = 1;
-			keyreq = 1;
 			break;
 		case KB_KH: case KB_KE: case KB_PU: case KB_PD:
 		case KB_AD: case KB_AR: case KB_AL: case KB_AU:
 			i = itmadj(cod);
 			break;
 		default:
-			/* не встроенная команда, надо интерпретировать */
 			/*w_line( &clm._vf[i] );*/
 			cmdret = vcmd(/*i,*/ cod/*, clm._vf*/);
-			keyreq = 1;
+			if (cmdret == 0)
+				keyreq = 1;
 			if (cmdret > 0) {
 				refresh = 1;
 				scrlst();
 				cp_sav();
 				if (fil_vf(0)) {
 					cp_fet();
-					scrlnl(); /* новый y0... */
+					scrlnl(); /* set new y0... */
 				}
 				er_eop(TXT);
 			}
@@ -455,15 +445,12 @@ char *helpl;
 				cod = KB_AD;
 				i = itmadj(cod);
 				cod = ' ';
-				keyreq = 0;
 			}
 
-			/* синхронизировать y0 и y0_top */
+			/* syncronize y0 and y0_top */
 			if (clm._y0 < y0_top)
 				y0_top = clm._y0;
 
-			if(!ok_msg() && refresh)
-				keyreq = 1;
 			break;
 		}
 

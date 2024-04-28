@@ -75,5 +75,6 @@
 	r?? D *.bat     dos #@
 	r?? D *.com     dos #@
 	r?? D *.exe     dos #@
+	??? * *		_err no action defined for '#$'
 
 #<<< std.open
