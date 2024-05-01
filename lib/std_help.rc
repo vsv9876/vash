@@ -50,6 +50,7 @@
     * * Exit       _help excode_help.lb
 
 :Z
-    * * _msg #k masked
+#    * * _ _msg #k masked
+    * * _ __
 @std.final
 

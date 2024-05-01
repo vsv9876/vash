@@ -15,7 +15,7 @@ VISI (LBP,VCC,VLBP)
 VASH
 - history:
 -- separate shorthand cache(history) and log(conduit) files;
--- make it compatible with .bash_history (timestamp support required)
+-- make the conduit compatible with .bash_history (timestamp support required)
 
 - substitution some metasymbols before internal commands
 

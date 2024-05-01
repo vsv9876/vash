@@ -96,6 +96,16 @@ kbcod cod;
 		itmr += clm._yy;
 		if (itmr >= clm._itmmax) itmr = clm._itmmax - 1;
 		break;
+	case KB_KH:
+		itmr = clm._itmofs;
+		break;
+	case KB_KE:
+		itmr =             clm._itmofs + (clm._yy * clm._xx) -1;
+		if (clm._itmmax < (clm._itmofs + (clm._yy * clm._xx))) {
+			itmr = clm._itmmax  -1;
+		} else {
+		}
+		break;
 	}
 	clm._itm = itmr;
 
@@ -103,7 +113,8 @@ kbcod cod;
 	 * и положение курсора на экране
 	 */
 	i = itmr - clm._itmofs;
-	if (i >= 0 && i < clm._xx * clm._yy) ;      /* ОКНО НЕ НАДО ДВИГАТЬ */
+	if (i >= 0 && i < clm._xx * clm._yy)
+		;      /* ОКНО НЕ НАДО ДВИГАТЬ */
 	else {
 		switch (cod) {
 		case 0:
@@ -115,8 +126,6 @@ kbcod cod;
 			if (clm._itmofs < 0)
 				clm._itmofs = 0;
 			break;
-		case KB_AU:
-			clm._itmofs -= clm._ofsy;   break;
 		case KB_AR:
 			clm._itmofs += clm._ofsx;
 			if (clm._xx > 1
@@ -126,10 +135,21 @@ kbcod cod;
 				clm._itmofs = ((clm._itmmax / clm._ofsy)
 						- (clm._ofsx / clm._ofsy)) * clm._ofsy;
 			break;
+		case KB_AU:
+			clm._itmofs -= clm._ofsy;
+			break;
 		case KB_AD:
 		case ' ':
 			clm._itmofs += clm._ofsy;
 			break;
+/*
+		case KB_KH:
+			clm._itmofs = 0;
+			break;
+		case KB_KE:
+			clm._itmofs = clm._itmmax;
+			break;
+*/
 		}
 		clm._itm = itmr;     /* ВОССТАНОВИТЬ ВНЕШ. */
 		clritm();
