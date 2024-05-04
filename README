@@ -38,6 +38,6 @@ vash/		sources of vash main binary
 vash.1		manual sources
 vhset/		vhset utility sources
 vhset.1		vhset manual
-visi/		embedded VISI project with obsoleted manuals in russian
+visi/		embedded VISI project with OBSOLETED MANUALS in russian
 vtest/		test program for debug VISI itself
 

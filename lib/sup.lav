@@ -58,8 +58,8 @@ C       = ipv    -      "%1d"  -       -       SGR
 +   .m. m,mail_biff .w. w,title         .XT trap on exit         
 +   .c. c,clock     .x. x,xterm title   .N. help msg on trap     
                                                                         
-+."debug of profiles".................. .ym.:linesmax        .yt:y0_top      
-+-- .fo................................                      .y0:y0          
++."debug of profiles"..................                      .yt:y0_top      
++-- .fo................................ .ym.:linesmax        .y0:y0          
 +-@ .rs................................ .lli:lmaxli          .li:maxli       
 +-i .is................................ .bli:baseli          .co:maxco       
 +                                                           

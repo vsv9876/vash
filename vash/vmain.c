@@ -272,7 +272,7 @@ kbcod cod;
 	return 0;
 }
 
-/* команды пометки вынести во внешние файлы .ashstd */
+/* команды пометки вынесены во внешние rc-файлы */
 int f_mark(cmd)
 char *cmd;
 {
@@ -440,8 +440,8 @@ char *helpl;
 				er_eop(TXT);
 			}
 			if (cod == ' ') {
-				/* hint after space: advance next line */
-				/* hit space on current line!!! */
+				/* hint after space key: advance next line */
+				/* click a space key was at current line!!! */
 				cod = KB_AD;
 				i = itmadj(cod);
 				cod = ' ';

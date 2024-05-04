@@ -5,14 +5,14 @@
 #include "assist.h"
 
 /*
- * РАБОТА С МЕНЮ.
+ * main menu support
  *
  */
 
 pre_vf()
-/*----------------------------------*/
-/* построить страницу главного меню */
-/*----------------------------------*/
+/*----------------------*/
+/* build main menu page */
+/*----------------------*/
 {
 	register int i;
 	register int j;
@@ -43,12 +43,12 @@ pre_vf()
 	while( i < yyxx && i + clm._itmofs < clm._itmmax) {
 		for (j = 0; j < clm._yy && i < yyxx && i + clm._itmofs < clm._itmmax; j++) {
 
-			clm._vf[i] = *clm._ltmpl; /* скопировать шаблон */
+			clm._vf[i] = *clm._ltmpl; /* clone line from template */
 			clm._vf[i].colu = clm._x0 + x0x; /* ((i / yy) * dx); */
 			clm._vf[i].line = clm._y0 + j;   /* (i % yy); */
 			clm._vf[i].size = clm._dx;
 			/* clm._vf[i].size = 20; /* test for hack */
-			/* надо учесть атрибут отмеченых файлов */
+			/* keep attributes of items selected */
 			if (*clm._itms[i + clm._itmofs] == MONEY) {
 				clm._vf[i].attr = ATT|INP|NED|LFASTR;
 			} else if (*clm._itms[i + clm._itmofs] == '<'
@@ -68,8 +68,8 @@ pre_vf()
 int
 itmadj(cod)
 /*
- * НАСТРОИТЬ ПОЛОЖЕНИЕ ОКНА, ПОЛОЖЕНИЕ КУРСОРА
- * И ВЕРНУТЬ ИНДЕКС ЛИНИИ ДЛЯ СТРАНИЦЫ МЕНЮ
+ * setup window frame and cursor position
+ * then return corresponding index in the (line[]) page
  */
 kbcod cod;
 {
@@ -78,7 +78,7 @@ kbcod cod;
 
 	itmr = clm._itm;
 
-	/* СНАЧАЛА СМЕСТИТЬ ГЛАВНЫЙ ИНДЕКС */
+	/* main index to be shifted 1st */
 
 	switch (cod) {
 
@@ -100,22 +100,29 @@ kbcod cod;
 		itmr = clm._itmofs;
 		break;
 	case KB_KE:
-		itmr =             clm._itmofs + (clm._yy * clm._xx) -1;
 		if (clm._itmmax < (clm._itmofs + (clm._yy * clm._xx))) {
 			itmr = clm._itmmax  -1;
 		} else {
+			itmr = clm._itmofs + (clm._yy * clm._xx) -1;
 		}
+		break;
+	case KB_PU:
+		itmr = /*clm._itmofs =*/ 0;
+		break;
+	case KB_PD:
+		itmr = clm._itmmax - 1;
 		break;
 	}
 	clm._itm = itmr;
 
-	/* поставить в соответствие значение itm
-	 * и положение курсора на экране
+	/* make correspond between a cursor in frame and index of _itm
+	 * shift a frame if required
 	 */
 	i = itmr - clm._itmofs;
 	if (i >= 0 && i < clm._xx * clm._yy)
-		;      /* ОКНО НЕ НАДО ДВИГАТЬ */
+		;      /* new index is on the same (unshifted) frame */
 	else {
+		/* new index position needed a frame shifting */
 		switch (cod) {
 		case 0:
 			i = (clm._itm / clm._ofsx) * clm._ofsx;
@@ -142,16 +149,18 @@ kbcod cod;
 		case ' ':
 			clm._itmofs += clm._ofsy;
 			break;
-/*
 		case KB_KH:
-			clm._itmofs = 0;
-			break;
 		case KB_KE:
-			clm._itmofs = clm._itmmax;
 			break;
-*/
+		case KB_PU:
+			itmr = clm._itmofs = 0;
+			break;
+		case KB_PD:
+			/* shift frame when a cursor position in last column */
+			itmr = clm._itmmax - 1;
+			clm._itmofs = (((itmr / clm._yy) - (clm._xx - 1)) * clm._yy);
 		}
-		clm._itm = itmr;     /* ВОССТАНОВИТЬ ВНЕШ. */
+		clm._itm = itmr;     /**/
 		clritm();
 		pre_vf();
 		itmshow();
@@ -172,12 +181,15 @@ itmini()
 
 	if (clm._xx1 != 1) {
 		clm._xx = lframe->maxco/(clm._itmlen + 1);
-		if (clm._xx == 0) clm._xx = 1;
+		if (clm._xx == 0)
+			clm._xx = 1;
 	}
 	clm._yy = (clm._itmmax + clm._xx - 1)/clm._xx;        /* м.б. нужно меньше строчек... */
-	if (clm._yy > clm._yy_max) clm._yy = clm._yy_max;
+	if (clm._yy > clm._yy_max)
+		clm._yy = clm._yy_max;
 	nxx = (clm._itmmax + clm._yy - 1)/clm._yy;        /* м.б. нужно меньше колонок... */
-	if (nxx < clm._xx) clm._xx = nxx;
+	if (nxx < clm._xx)
+		clm._xx = nxx;
 	/* если строка только одна */
 	if (clm._yy == 1) {
 		clm._yy = 2;
@@ -186,7 +198,8 @@ itmini()
 	clm._x0 = ((lframe->maxco - ((clm._itmlen + 1) * clm._xx)) / (clm._xx + 1));
 	clm._dx = clm._itmlen + 1 + clm._x0;
 /*      dx = itmlen + 1 + ((lframe->maxco - ((itmlen + 1) * xx)) / (xx + 1));   */
-	if (clm._dx > lframe->maxco) clm._dx = lframe->maxco;
+	if (clm._dx > lframe->maxco)
+		clm._dx = lframe->maxco;
 
 	clm._y0 = lframe->maxli - clm._yy - 2;
 	clm._x0 = (lframe->maxco - (clm._dx * clm._xx))/2;
@@ -200,6 +213,7 @@ itmini()
 		clm._ofsx = clm._yy * (clm._xx - 1);
 		clm._ofsy = clm._yy;
 	}
-	if (clm._x0 < 0) clm._x0 = 0;
+	if (clm._x0 < 0)
+		clm._x0 = 0;
 
 }
