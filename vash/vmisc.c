@@ -14,13 +14,13 @@
 /* ВСЯКА ВСЯЧИНА, misc. */
 /*----------------------*/
 
-/* vash-specific screen area control */
 
 static int doscrl = 1;
 scrldo() {
 	doscrl = 1;
 }
 
+/* vash-specific screen area control */
 scrlarea()
 {
 	int i, n, cltop;

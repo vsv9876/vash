@@ -37,6 +37,14 @@ int     ok_msg()
 	return(msgflg);
 }
 
+w_lbl(vamode, str)
+int 	vamode;
+char	*str;
+{
+	at_set(vamode);
+	w_str(str);
+}
+
 w_msg(vamode, str)
 int     vamode;        /* видеоатрибут */
 char    *str ;         /* текст сообщения об ошибке */
@@ -56,7 +64,7 @@ char    *str ;         /* текст сообщения об ошибке */
 		case ERR:
 			/*bell();*/
 			/*va = ERR;*/
-			w_str("err:");
+			w_str("error:");
 			break;
 		case ATT:
 			w_str(">>>");

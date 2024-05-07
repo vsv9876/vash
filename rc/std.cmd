@@ -11,6 +11,9 @@
 :RE
 	* * ;clear
 
+:$
+	* * _rchelp __HELPRC__
+
 # switch context to command editing, old content will be preserved
 :CA
 :[1!]

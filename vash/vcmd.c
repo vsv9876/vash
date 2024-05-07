@@ -25,8 +25,6 @@ extern  int     kshow();
 
 extern  int     vashelp();
 
-
-
 FUNTAB funtab[] = {
 	{ "read",       0 },
 	{ "sh",         fsh },
@@ -35,9 +33,9 @@ FUNTAB funtab[] = {
 	{ "sup",        sup },
 	{ "sus",        v_susp },
 	{ "file",       ffile },
-	{ "ls",         0 },
 /*	{ "help",       w_help },*/
 	{ "help",       vashelp },
+	{ "rchelp",     rchelp },
 	{ "msg",        fmsg },
 	{ "err",        fmsgerr },
 	{ "rescan",     rescan },
@@ -48,6 +46,7 @@ FUNTAB funtab[] = {
 #ifdef DEBUG_KSHOW
 	{ "kshow",      kshow },
 #endif
+	{ "ls",         0 },
 	{ (char *)0,    0 },
 };
 
@@ -175,11 +174,12 @@ register char *cmd;     /* встроенная функция */
 	while (*cmd && *cmd != ' ')
 		*keywdp++ = *cmd++;
 	*keywdp = 0;
+	keywdp = keywd;
 	while (*cmd && *cmd == ' ') cmd++;   /* остаток команды */
 
 	/* установить соответствие */
 	for (ftp = funtab; ftp->ft_name; ftp++) {
-		if (strcmp(ftp->ft_name, keywd) == 0) {
+		if (strcmp(ftp->ft_name, keywdp) == 0) {
 			if ((keyf = ftp->ft_fun)) /* если функция найдена, ее и вызвать */
 				return((*keyf)(cmd));
 			else    break;
@@ -326,6 +326,113 @@ register char *cmd;
 	ret = vexcmd(cmd, (char *)0);
 	return(ret);
 }
+
+static int x_rckey;
+static void
+rckeyprnt(rckey)
+char *rckey;
+{
+	register int i, x;
+	int ypos, xpos;
+	/*sprintf(tmps, " %s", kt1[i].kt_key);*/
+
+	xpos = (x_rckey / 10) * 12;
+	ypos = (x_rckey % 10) + clm._y0;
+	cp_set(ypos, xpos, TXT);
+	w_lbl(LKEY, rckey);
+	er_eol(TXT);
+	x_rckey++;
+}
+
+int
+rckeys(file)
+char *file;
+{
+	extern int  y0_top;     /* определено в main.c //vshcmd */
+	kbcod cod;
+	LINEMENU savelm;
+	char *tmpkey;
+	char tmps[300];
+	register int i;
+	int ypos, xpos;
+
+	savelm = clm;
+#if 0
+	cp_set(clm._y0 + 1, 0, TXT);   /* СОХРАНИТЬ СВИТОК, СМ. НИЖЕ */
+	er_eop(TXT);
+#endif
+	cp_set(clm._y0 - 1, 0, TXT);
+	clm._y0 = 12;
+	/* keep scroll area */
+	if (y0_top > clm._y0) {
+		y0_top = clm._y0;
+		scrlnl();
+	}
+	cp_set(clm._y0 - 1, 0, HDR);
+	w_str(file);
+#if 0
+	cp_set(y0_top, 0, TXT);
+	w_str(file);
+	/*er_eop(TXT);*/
+	cp_set(-1, 0, TXT);
+	w_msg(TXT, "*>");
+	r_cod(0);
+#endif
+	x_rckey = 0;
+	for (i = 0; kt1[i].kt_key; i++) {
+		tmpkey = kt1[i].kt_key;
+		sprintf(tmps, " %s", tmpkey);
+		if (patcmp("[0-9]", tmpkey))
+			continue;
+		if (patcmp("U[0-9]", tmpkey))
+			continue;
+		if (patcmp("?", tmpkey))
+			rckeyprnt(tmps);
+	}
+	for (i = 0; kt1[i].kt_key; i++) {
+		tmpkey = kt1[i].kt_key;
+		sprintf(tmps, " %s", tmpkey);
+		if (patcmp("[0-9]", tmpkey))
+			continue;
+		if (patcmp("U[0-9]", tmpkey))
+			continue;
+		if (patcmp("??", tmpkey))
+			continue;
+		if (patcmp("?", tmpkey))
+			continue;
+		rckeyprnt(tmps);
+	}
+
+	w_msg(TXT, ""); /* assumed cp_set(-1, 0, TXT) */
+	w_msg(TXT, "press ");
+	w_lh_str(":SP");
+	w_lbl(TXT, " to continue:");
+	cod = r_cod(0);
+	w_msg(TXT, "");
+	clm = savelm;
+
+	return 1;
+}
+
+int
+rchelp(file)        /* показать легенду профиля */
+register char *file;
+{
+	char    cmdlbl[100];    /* вывеска взамен команды */
+	char    tmpcmd[40];
+	char	*tmpflnm;
+
+	switch(rckeys(file)) {
+	case 1:
+		/* результат команды игнорируется */
+		/* NOBREAK */
+	case 0:
+		/* восстановить гл. меню */
+		return( 1 );
+	}
+	return( 0 );
+}
+
 int
 fmenu2(file)        /* меню из файлов .ashmenu */
 register char *file;

@@ -131,7 +131,7 @@ extern int     t_file();
 
 extern int     /*maxli, maxco,*/ y0_top;
 extern LFRAME  lfmain;
-extern int    vashelp(), scrldo(), scrlarea();
+extern int    vashelp(), rchelp(), scrldo(), scrlarea();
 
 extern int cmdhreset();
 extern int cmdphist(),visini(), cmdset();

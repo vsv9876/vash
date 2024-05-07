@@ -20,7 +20,7 @@ FILE   *tmpfp = NULL;
 
 /*extern  char *getenv();*/
 
-int     y0_top = 0;   /* Начало свитка на экране */
+int     y0_top = 0;   /* begin of scroll area // Начало свитка на экране */
 
 VASHFLAG vashflag = { { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1 } };
 

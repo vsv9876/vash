@@ -39,8 +39,6 @@
 #include "assist.h"
 #include "astat.h"
 
-/*#define w_emsg w_amsg*/
-
 /*NOXSTR*/
 char    itmcnm[ITMCNM+1] =      /* Current item's name (saved) */
 			"..";

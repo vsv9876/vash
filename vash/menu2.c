@@ -171,7 +171,7 @@ char *tmps;     /* строка для команды */
 char *cmdlbl;   /* вывеска для показа вместо команды */
 char *mfile;    /* имя файла программы меню */
 {
-	extern int  y0_top;     /* определено в vshcmd */
+	extern int  y0_top;     /* определено в main.c //vshcmd */
 	extern char *pmtsh;    /* --"-- */
 	LINEMENU savelm;
 	int ok;
