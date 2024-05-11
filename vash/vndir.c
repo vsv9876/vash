@@ -300,6 +300,7 @@ int vls()
 #endif
     register char *itmbp;
     short len;
+    short vlen; /* length in codepoints */
     /*int     aflag;*/  /* флаг: показывать все файлы */
     char    *fname;
 
@@ -315,14 +316,15 @@ int vls()
       {
 /*              printf("%6ld %s\n", dp->d_ino, dp->d_name);
  */
-			/* здесь надо бы еще просчитать (в уме), как
-			   правильно учитывать len */
-		len = strlen(dp->d_name);
-
 		if ( !aflag && dp->d_name[0] == '.'
 			    && strcmp(dp->d_name,"..") != 0)
 			/* skip hidden filenames */
 			continue;
+
+		/* internal length */
+		len = strlen(dp->d_name);
+		/* visible (on-screen) length  */
+		vlen = u8vsize(dp->d_name);
 
 		if (&clm._itmbuf[clm._itmbsz] <= &itmbp[len]) {
 			w_emsg("No mem for all menu items");
@@ -335,7 +337,7 @@ int vls()
 		strcpy(itmbp, fname);
 		itmbp += len;
 		*itmbp++ = '\0';
-		if ( len > clm._itmlen ) clm._itmlen = len;
+		if ( vlen > clm._itmlen ) clm._itmlen = vlen;
 		if (clm._itmmax >= ITMMAX)
 			break;  /* НО МОЖНО И ПРОСТО ОБРЕЗАТЬ */
 /*              if ((itmmax % 10) == 0) {
@@ -354,10 +356,10 @@ int vls()
     *itmbp++ = '\0';
     if (clm._itmmax == 0) {
 	    strcpy(clm._itmbuf, " /..");
-	    len = 4;
+	    vlen = 4;
 	    clm._itmmax++;
     }
-    if ( len > clm._itmlen ) clm._itmlen = len;
+    if ( vlen > clm._itmlen ) clm._itmlen = vlen;
     clm._itmlen++;
 /*  w_str("sort..."); fflush(vttout);
  */

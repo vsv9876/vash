@@ -15,7 +15,7 @@
 #define KT1MAX  60
 #define BUFSMAX 2000
 
-#endif /* SYSV */
+#endif /* TINYSMALL */
 
 /*
  * Структуры данных для интерпретатора клавишных команд.

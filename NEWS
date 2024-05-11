@@ -1,5 +1,22 @@
 vash news (release notes)
 
+2.0.31
+  * repair calculation of UTF-8 visible length in main menu rendering
+
+2.0.30
+  * rchelp() draft, yet incomplete
+  * PgUp+PgDown support for main menu
+  * KH+KE in main menu
+  * add script MK-binlocal.sh
+
+2.0.29
+2.0.28
+  * no extra w_line on u_menu
+  * mark & select dialogues cleanup
+  * fix e2k
+  * fix regression of FreeBSD port
+  * strverscmp() from GNU come back
+
 2.0.27 -- 18 Apr 2004
   * FreeBSD support revailed, checked on 1.2-RELEASE
   * vhset manual added
