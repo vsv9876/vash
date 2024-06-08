@@ -1,7 +1,9 @@
 # GNU/Linux
 CFLAGS_VISI = -DUSE_TERMIOS
-CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX
+CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX -DSTRVERSCMP
 ASHLIB      = SVR4
+#TERMLIB     = -lncurses
+TERMLIB     = -ltinfo
 
 CC          = gcc $(DEBUG) -fno-builtin-function \
 			-Wno-int-to-pointer-cast -Wno-pointer-to-int-cast \

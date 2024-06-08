@@ -19,7 +19,7 @@ DEBUG=
 DEBUG_1='-g -O0'
 #TERMLIB=-ltermcap
 #TERMLIB=-lncurses
-TERMLIB=-ltinfo
+#TERMLIB=-ltinfo
 
 # depends on machine, defined in ./conf/*
 CFLAGS_VISI=
@@ -61,7 +61,7 @@ case $opt in
 esac
 case $opt in
 -t=*|--termlib=*)	if [ "$val" != unsup ]; then
- 			    TERMLIB=$val
+ 			    TERMLIB=-l$val
 			else
 			    TERMLIB= # defined in ./conf/*
 			fi

@@ -7,7 +7,7 @@
 static
 ---PAGE pkeys0
 ---TABLES
-	t   = sizeof(KBL)
+	t   = (void *)sizeof(KBL)
 
 ---PORTS
 KO_P    = kbl[0].t_knm

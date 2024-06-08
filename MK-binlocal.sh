@@ -39,6 +39,6 @@ ln -s $pwd $where/$pkgname \
             $pkgname/BLD \
             $pkgname/etc \
             $pkgname/bin \
-            $pkgname/vl \
+            $pkgname/v \
 ) \
 && rm -f $where/$pkgname

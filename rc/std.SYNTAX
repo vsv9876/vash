@@ -1,9 +1,10 @@
 #!/usr/bin/vash
+#
 # shebang for auto syntax colorize only -- this is vash rc profile
 #
 
 # Visual Assistant Shell (vash)
-# 1990-1993,2020 (C) Sergey Vovk
+# 1990-1993,2020-2024 (C) Sergey Vovk
 # MIT license
 #
 # std.rc
@@ -13,86 +14,115 @@
 # content of this file and included files can be changed by user,
 # which is responsible for any changes
 #
+# /usr/lib/vash/std.rc   - default (mandatory) place for std.rc
 # $HOME/.vash/std.rc     - customized by user version
 #
-# Содержимое этого файла содержит информацию, которая может быть изменена
-# пользователем. Ответственность за любые измененения ложится на их автора.
+
+#-------------------------------------------------------
+# help keycaps (on bottom row of main menu screen)
 #
-# Формат файлов настройки будет развиваться, подробности в конце файла.
+-1!sh
+-9setup
+
+#-------------------------------------------------------
+# vash rules for items of main menu:
+# 
+# -f   get item list (any command like /bin/ls, ps, df, etc..)
+#      command ':' may be used instead of ls
+#                  or preceded any other getting listing command (find)
+#   
+# -@   item extract rule for '##' and '#@', examples:
+# -@        (empty) full items subsututed
+# -@1       1st field extracted as item
+# -@12-20   columns from 12 to 20 extracted
+# -@9$      from 9th field up to end of string (ignoring spaces)
+
+#       examples for file names:
+-fls		- 'ls' 
+-f:FLavf	- internal (much faster) ls, with supported flags
+-@		- whole string used
+
+#       example for long listing:
+-fls -al	- long listing
+-@9$		- last field (wrong on simlinks)
+
+#       examples for process:
+-fps -t `tty`	- 
+-@1		- 1st field used as item
+
+#-------------------------------------------------------
+# @     include part of profile, searched on VASH_PATH
+#       example:
+@std.mark
+
+#-------------------------------------------------------
+# Actions programming
 #
-# #A/.ashstd - this file
-# #A substituted with env=VASH_EXDIR, by default is /usr/lib/vash
-
-
-#-------------------------------------------------------
-#       Названия клавиш:
-
-    -1!sh
-    -9setup
-
-# - (minus sign) is a keychar of key label, from 1 to 9 and 0 (like on keyboard)
-# key '9' on up main keyboard (is not F9 key),
-# 'setup' - label viewable
+# keys programming examples:
+:[a-z]		- pressing any key letter
+:Z		- pressing key 'Z'
+:CA		- pressing 'Cancel' key (defined by visi/linlib)
+:^W		- pressing Ctrl-W key
 
 #-------------------------------------------------------
-# Умолчания: как заполнить(fill), откуда(in), куда копировать(out).
-# ':' или '-' - встроенная команда ls (понимает флаги -FLavf)
-#-f:Fa
-#-@ номер поля или вырезка для подстановки по '##', см. .ashproc
-
-#-------------------------------------------------------
-# @ - keychar of file included, followed by a file name,
-# searched on VASH_PATH
-
-    @std.mark
-
-#-------------------------------------------------------
+# 2 conditions are checked on key program:
+#   - access permission to reference object (directory)
+#   - selected items presence ('+' if there are celected items)
 #
-# Реакция на клавишу. Проверяется 2 условия:
-# rwx     :полномочия доступа к реперному файлу (здесь к текущему каталогу)
-# - или + :наличие помеченных файлов
+# actions may be any command or tag of case list, examples:
+:0
+:EX
+    * *   exit
+
+:3
+    r?x +   +View
 
 #-------------------------------------------------------
-# Список действий над файлом(объектом).  Проверяются 3 условия:
-# полномочия доступа к объекту (файлу),
-# тип объекта (см.пояснения в конце этого файла),
-# шаблон имени объекта.
-# Шаблоны имен задаются так же, как шаблоны имен файлов /bin/sh.
+# 3 conditions are checked in case list on item object:
+#  - access permissions to item (file)
+#  - object (file) type (see below...)
+#  - object name pattern, similar to filename patterns in /bin/sh
 #
-# Таблица может быть расположена в любом месте файла настройки,
-# см. ниже +View, +ed, ...
-#-------------------------------------------------------
-# +View
+# case list has mandatory tag name, referenced as action in place of command;
+# case list may be placed anywhere in profile, see below '+View', '+ed' examples
+#
++View
+   r** D *.gz	gzip -d < ./#@
+   r** T *.txt	less ./#@
 
 #-------------------------------------------------------
-# internal commands:
+# internal commands examples:
+#
+* *	cd		# chdir to HOME directory
+* D	cd #@		# chdir to directory pointed by cursor
+* *     exit		# exit from current vash process
+r?x ?	_menu2 std.menu   # menu
+r?x ?	_sh		# change context to command edit, preserving content
+r?x ?	_sh #k		# begin new command
+* *	_file		# debug internal file and permission detector
+* *	_mark +		# menu item (file) selection dialog
+* +	_mark -		# menu item clear selection
+* *	_f_ls		# fill command of main menu editing dialog
+#
+* *	_err message	# error message (with attribute ERR)
+* * 	_msg message	# info message (with attribute TXT)
+#
+* * 	_cmdset profile	# substitute current profile with specified one
+* * 	_sup		# setup runtime parameters of vash interpreter
+* * 	_rescan		# repeat fill main menu content, drop any mark
+* * 	_kshow		# debug info about some substitution values
+* * 	_sus		# suspend process, switch to parent shell
 
-    * *	cd		# chdir to HOME directory
-    * D	cd #@		# chdir to directory pointed by cursor
-    * *     exit	# exit from current vash process
-    r?x ?   _menu2 std.menu	# menu
-    r?x ?   _sh		# change context to command edit, preserving content
-    r?x ?   _sh #k	# begin new command
-    * * _file		# debug internal file and permission detector
-    * * _mark +		# menu item (file) selection dialog
-    * + _mark -		# menu item clear selection
-    * * _f_ls		# fill command of main menu editing dialog
-
-    * * _err message	# error message (with attribute ERR)
-    * * _msg message	# info message (with attribute TXT)
-
-    * * _cmdset profile	# substitute current profile with specified one
-    * * _sup		# setup runtime parameters of vash interpreter
-    * * _rescan		# repeat fill main menu content, drop any mark
-    * * _kshow		# debug info about some substitution values
-    * * _sus		# suspend process, switch to parent shell
-
+#-----------------------------------------
 # mode execution prefixes of command (both internal and external sh -c)
-#             ask before Enter, execute, wait dialog on exit
-  no prefix   +                 +        + 
-  :           -                 +        +
-  ;           -                 +        -
-  _  means internal command or function
+#
+#              	/ ask before Enter
+#		|	/ wait dialog on exit
+#		|	|	
+#  <no prefix>	+	+	execution 
+#  ':'		-	+	execution
+#  ';'		-	+	execution
+#  '_'		-	-	internal command
 
 #-----------------------------------------
 # Структура файла настройки (Формат будет меняться).

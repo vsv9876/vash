@@ -41,7 +41,7 @@
 ---#	CO_fg  = "0";
 ---#	CO_bg  = "1";
 ---TABLES
-	t = 1;
+	t = (void *)1;
 ---LINES
 	P       = ia - -      cvt_pmt - LPA_B
 	CMD     = g8p - -      cvt_atr - "CMD "

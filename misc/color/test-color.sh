@@ -12,9 +12,9 @@ do
 #    if [ $comb -lt $pre ]; then
 #        continue
 #    fi
-    printf "\e[%s;%sm" $pre $comb
+    printf "\033[%s;%sm" $pre $comb
     printf " %s;%s " $pre $comb
-    printf "\e[m"
+    printf "\033[m"
 done
 echo ''
 done
@@ -23,14 +23,14 @@ echo " -- "
 #for pre in '' 3 4 9 10
 for pre in 3 4 9 10
 do
-    printf "\e[m"
+    printf "\033[m"
     for n in 0 1 2 3 4 5 6 7 9
     do
-	printf "\e[%s%sm" $pre $n
+	printf "\033[%s%sm" $pre $n
 	printf " %3s%s " $pre $n
-        printf "\e[m"
+        printf "\033[m"
     done
     echo ''
 done
-printf "\e[m"
+printf "\033[m"
 #echo ''

@@ -8,7 +8,7 @@ CFLAGS_VISI = -DUSE_TERMIOS
 CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX
 ASHLIB      = SVR4
 #TERMLIB     = -ltermcap
-#TERMLIB     = -lncurses
+TERMLIB     = -lncurses
 #TERMLIB     = -ltinfo
 
 CC          = gcc $(DEBUG) -fno-builtin-function \

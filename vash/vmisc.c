@@ -354,7 +354,7 @@ register char *str;
 	else if (*wldpat == '*')
 		/*wldpat++*/;
 	else
-		*pat++ = "*";
+		*pat++ = '*';
 	do {
 		*pat++ = *wldpat++;
 	} while (*wldpat != 0);

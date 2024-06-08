@@ -15,7 +15,7 @@ T_kbl2  = &(kbl[7])
 
 ---TABLES
 tn      = sizeof(keynam[0])
-t       = sizeof(KBL)
+t       = (void *)sizeof(KBL)
 
 ---LINES
 KDESCR  = gc     -      -       cvt_keynm   -   Kcod

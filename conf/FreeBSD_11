@@ -1,0 +1,28 @@
+
+# FreeBSD
+# FreeBSD, BSDI, or any *BSD
+#CFLAGS_VISI = -DUSE_TERMIOS_386BSD -DNOUSE_STRCHR
+#CFLAGS_VISI = -DUSE_TERMIOS_386BSD
+CFLAGS_VISI = -DUSE_TERMIOS -DNO_ALLOCA_H
+#CFLAGS_ASH    = -DJCLsuspend -DFbsd -DBSDmagic
+#CFLAGS_ASH    = -DJCLsuspend -DFbsd -DBSDpagesize -DBSDmagic
+#CFLAGS_ASH    = -DJCLsuspend -DFbsd -DBSDpagesize -DBSDmagic -DMGROUPS
+CFLAGS_ASH    = -DJCLsuspend -DFbsd -DBSDpagesize -DBSDmagic -DMGROUPS \
+				-DNO_STRVERSCMP
+ASHLIB      = BSD
+
+TERMLIB     = -ltermcap
+
+#CC          = gcc -traditional
+#LINKER      = gcc -traditional
+
+# checked on FreeBSD 11.2-RELEASE
+CC          = cc \
+		-Wimplicit-function-declaration \
+		-Wpointer-sign -Wimplicit-int \
+		-Wreturn-type \
+		-Wincompatible-pointer-types-discards-qualifiers \
+		-Wcomment -Wparentheses -Wconstant-conversion \
+		-Wint-conversion
+LINKER      = cc
+

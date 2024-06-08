@@ -1,5 +1,9 @@
 vash news (release notes)
 
+2.0.32
+  * revise rc files
+  * FreeBSD 13.3 compiling 
+
 2.0.31
   * repair calculation of UTF-8 visible length in main menu rendering
 

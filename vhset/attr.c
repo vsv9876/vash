@@ -86,7 +86,7 @@ kbcod   cod;
 			continue;
 		w_line(l);
 	}
-	return( (LINE *)(0) );
+	return( 0 );
 }
 
 cvt_atr(line, cod, mod, str)

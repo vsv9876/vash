@@ -79,11 +79,12 @@ int execmode;
 			close(i);
 		}
 		/* здесь переопределить станд. файлы, -- man credentials(7) ?*/
+		fclose(vttout);
 #if 0
 		setsid();
 		setpgrp();
+		setpgid(getpid(), getpgid(getppid()));
 #endif
-		fclose(vttout);
 		/*...*/
 
 #ifndef LUNIX
@@ -311,7 +312,7 @@ int  execapnd;
 		syscod = avexec(cmd2, cmdlbl, execmode);
 	else {
 		argv[0] = envshell; /* "sh";*/
-		argv[1] = "-c"; /* please, do not hack -cli for bash :) */
+		argv[1] = "-c"; /* please, do not hack -ci for bash :) */
 		argv[2] = cmd2;
 		argv[3] = (char *)0;
 
