@@ -46,6 +46,11 @@ DOC_FILES = \
 	NEWS \
 	PLAN \
 
+MAN_FILES = \
+	vash.1 \
+	vhset.1 \
+
+MAN_DIR = $(DESTDIR)$(DEST)/share/man/man1
 
 all:	setup compile
 
@@ -121,7 +126,7 @@ compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib #/LIB-$(ASHLIB)
 #	cd lib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
 
 #install:   $(DESTDIR) $(DEST) termcap $(VISILIB)
-install: setup compile $(DESTDIR) $(DEST) $(VISILIB) docinstall
+install: setup compile $(DESTDIR) $(DEST) $(VISILIB) docinstall maninstall
 	cd $(VHSET);	$(MAKE) install "PATH=$(PATH)" \
 		CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd $(VASH);	$(MAKE) install "PATH=$(PATH)" \
@@ -162,6 +167,10 @@ distclean:	clean
 	rm -f  $(BLDCFG) 
 	touch $(BLDCFG)
 
+maninstall: $(MAN_FILES) $(MAN_DIR)
+	cp $(MAN_FILES) $(MAN_DIR)
+	gzip $(MAN_DIR)/*
+
 docinstall: $(VASH_DOC)
 	cp $(DOC_FILES) $(VASH_DOC)
 
@@ -176,3 +185,7 @@ $(VISILIB):
 
 $(VASH_DOC):
 	mkdir -p $(VASH_DOC)
+
+$(MAN_DIR):
+	mkdir -p $(MAN_DIR)
+
