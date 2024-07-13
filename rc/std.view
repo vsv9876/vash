@@ -59,7 +59,7 @@
 	r?? T *              ;#m ./#@
 # 	r?? E *              _msg file empty, zero length
 # interface files in /dev, /sys, ... - stat(2) show them as zero length regular files
-	r?? E *              :cat ./#@
+	r?? E *              :cat ./#@ | tr '\0' ' '
 	r?x d *              :ls -aCF ./#@/.
 #	r?? M *              frm -n ./#@
 	r?? M *              mutt -Rf ./#@

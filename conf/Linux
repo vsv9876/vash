@@ -9,6 +9,7 @@ CC          = gcc $(DEBUG) -fno-builtin-function \
 			-Wno-int-to-pointer-cast -Wno-pointer-to-int-cast \
 			-Wno-implicit-int \
 			-Wno-implicit-function-declaration \
+			-Wno-incompatible-pointer-types \
 			-Wwrite-strings
 #
 LINKER      = gcc $(DEBUG) -fno-builtin-function

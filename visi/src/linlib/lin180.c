@@ -91,8 +91,8 @@ wchar_t *dst;
 
 /* копировать n символов в строку UTF-8 из строки wchar_t */
 int wcsnu8s(dst, s, n)
-wchar_t *dst;
-const char    *s;
+char *dst;
+const wchar_t    *s;
 int      n;
 {
 	int len;

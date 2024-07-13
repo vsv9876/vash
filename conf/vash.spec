@@ -1,12 +1,12 @@
 Name:           vash
 Version:
-Release:        1%{dist}
+#Release:        1%%{dist}
+Release:        1
 Summary:        Visual Assistant Shell (vash)
 
 License:        GPL and MIT
 #URL:            file:///home/vsv/proj-ws/
 Source0:        %{name}-%{version}.tar.gz
-
 
 BuildRequires:  ncurses-devel
 Requires:       ncurses
@@ -16,7 +16,6 @@ Visual Assistant Shell, interactive supershell over sh/bash.
 Features visual assistance for typing command line parameters, editing a command string, parameterized command history, hotkey scripting, etc.
 
 %define debug_package %{nil}
-
 
 %prep
 #%autosetup
@@ -36,38 +35,19 @@ make
 mkdir -p %{buildroot}/etc/vhset
 mkdir -p %{buildroot}/usr/share/doc/%{name}
 mkdir -p %{buildroot}/%{_mandir}/man1/
-# install -m 664 ./etc/vhset/xterm %{buildroot}/etc/vhset/xterm
-# install -m 664 ./etc/vhset/linux %{buildroot}/etc/vhset/linux
-# install -m 664 ./etc/vhset/screen %{buildroot}/etc/vhset/screen
-#
-#install -m 664 ./etc/vhset/* %{buildroot}/etc/vhset/
 cp -rd ./etc/vhset/* %{buildroot}/etc/vhset/
-# install -m 664 ./LICENSE %{buildroot}/usr/share/doc/%{name}/
-install -m 664 %{name}.1 %{buildroot}/%{_mandir}/man1/
 
 %clean
 rm -rf %{buildroot}
 
-
 %files
-#%license LICENSE
-#%doc DOC
 /usr/bin/*
 /usr/lib/*
 /usr/share/doc/*
-%_mandir/*/*
+%{_mandir}/man1/*
 %dir /etc/vhset
-#%%config(noreplace) /etc/vhset/xterm
-#%%config(noreplace) /etc/vhset/linux
-#%%config(noreplace) /etc/vhset/screen
 %config(noreplace) /etc/vhset/*
 
 %changelog
-* Mon Jul 15 2019 Sergey Vovk <vsv>
-- Big number of changes, see docs
-
-* Mon Jul 2 2018 Sergey Vovk <vsv>
-- build with -ncurses, compatible with tgoto,tgetent from libtermcap
-
 * Fri Aug  5 2016 Sergey Vovk <s.vovk>
 - initial build for Fedora

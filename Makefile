@@ -46,9 +46,11 @@ DOC_FILES = \
 	NEWS \
 	PLAN \
 
+
 MAN_FILES = \
 	vash.1 \
 	vhset.1 \
+
 
 MAN_DIR = $(DESTDIR)$(DEST)/share/man/man1
 
@@ -153,6 +155,7 @@ clean:
 	cd vtest; $(MAKE) clean
 #	cd lib/LIB; $(MAKE) clean
 #	cd lib/LIB-$(ASHLIB); $(MAKE) clean
+	rm -rf $(BLD)
 
 distclean:	clean
 	find . -type f -a '(' \
@@ -169,7 +172,7 @@ distclean:	clean
 
 maninstall: $(MAN_FILES) $(MAN_DIR)
 	cp $(MAN_FILES) $(MAN_DIR)
-	gzip $(MAN_DIR)/*
+	gzip -f $(MAN_DIR)/*
 
 docinstall: $(VASH_DOC)
 	cp $(DOC_FILES) $(VASH_DOC)
