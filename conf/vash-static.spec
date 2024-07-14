@@ -9,7 +9,7 @@ Source0:        %{name}-%{version}.tar.gz
 
 
 BuildRequires:  ncurses-devel
-Requires:       ncurses
+#Requires:       ncurses
 
 %description
 Visual Assistant Shell, interactive supershell over sh/bash.
