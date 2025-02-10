@@ -32,9 +32,10 @@
 /*
  * get label for key, for help text
  */
+void
 get_lh(str, hlpcod)
-char *hlpcod; /* string pointer for help code, eg. ":HE" */
-char *str;
+const char * hlpcod; /* string pointer for help code, eg. ":HE" */
+const char *str;
 {
 	extern   KBL    kbl[];  /* ТАБЛИЦА СВЯЗИ КОДОВ И НАЗВАНИЙ КЛАВИШ */
 	register KBL   *kblp;
@@ -59,14 +60,14 @@ char *str;
 					s++; p++;
 				}
 				*s = '\0';
-				return 0;
+				return /*0*/;
 			}
 		}
 		strcpy(str, hlpcod + 1); /* if no code found */
 }
 
-w_lh_str(hlpcod)
-char *hlpcod;
+void w_lh_str(hlpcod)
+const char *hlpcod;
 {
 	char out[10]; /* label is no more than 8 ascii symbols */
 	get_lh(out, hlpcod);
@@ -74,14 +75,14 @@ char *hlpcod;
 	w_str(out);
 }
 
-cvt_lh(line, cod, mod, str)
+int cvt_lh(line, cod, mod, str)
 /*------------------------*/
 /* ВЫВОД НАЗВАНИЯ КЛАВИШИ */
 /*------------------------*/
 LINE    *line;
-int       cod;
+kbcod     cod;
 char     *mod;
-char     *str;
+const char     *str;
 {
 	/* НАЙТИ И ПОДСТАВИТЬ НАЗВАНИЕ КЛАВИШИ
 	 * ПО ЕЕ СМЫСЛОВОМУ (ЛОГИЧЕСКОМУ) КОДУ

@@ -11,6 +11,7 @@
 
 #include <stdlib.h>
 #include "line.h"
+#include "linebp.h"
 
 char *strcp(dest, src)
  char *dest;

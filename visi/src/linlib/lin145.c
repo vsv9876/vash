@@ -12,6 +12,7 @@
  * 
  */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <locale.h>
 #include "line.h"
@@ -23,6 +24,7 @@ FILE *vttout;
 int     vtti;
 #endif
 
+void
 visini() {
     /* FILE *vttout = stderr; /* see line.h */
     /* FILE *vttout = stdout; /* see line.h */

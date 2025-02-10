@@ -16,7 +16,7 @@ SOURCES="$rpmbuild/SOURCES"
 RPMS="$rpmbuild/RPMS"
 
 cd `/bin/pwd`
-pwd=$(pwd)
+pwd=$(/bin/pwd)
 
 conf=./BLD.cfg
 prog=vash

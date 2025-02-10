@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include "line.h"
 
-u_page(page, phline)
+void u_page(page, phline)
 /*-----------------------------*/
 /* ФУНКЦИЯ РАБОТЫ СО СТРАНИЦЕЙ */
 /*-----------------------------*/
@@ -46,17 +46,16 @@ LINE *phline;           /* ИМЯ ФАЙЛА СТРАНИЦЫ HELP */
 				w_page(page);
 			}
 			break;
-	/*	case KB_CA: no return from page if r_line cancelled */
+	/*	case KB_CA: no return from r_page if r_line was cancelled */
 		case KB_EX :
 			/*NOBREAK*/
-			return cod;
+			return;
 		case '?':
 		case KB_HE:
-			/* ПОКАЗАТЬ СПРАВОЧНУЮ ИНФОРМАЦИЮ */
 			w_help(phline);
 			w_page(page);
 			break;
-		default:   w_emsg("");     /* ПОГАСИТЬ СООБЩЕНИЕ ОБ ОШИБКЕ */
+		default:   w_emsg("");     /* clear err msg */
 		}
     }
 }

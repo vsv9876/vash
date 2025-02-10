@@ -28,7 +28,7 @@
 
 cvt_a(line, cod, mod, str)
 LINE    *line;
-int       cod;
+kbcod       cod;
 char     *mod;
 char     *str;
 {
@@ -39,8 +39,6 @@ char     *str;
 	indx = (int *)line->varl;
 	p  = (char **)line->cvts;
 
-	/* ДЛЯ НАДЕЖНОСТИ ПРИ РАБОТЕ С "МУСОРОМ" */
-	/* СНАЧАЛА НАПИШЕМ ВЫВОД - ЭТО ПРОЩЕ */
 	if( *mod == 'w' ) {
 		for(i=0; p[i]!=0; i++) ;
 		if( *indx >= i )
@@ -73,5 +71,5 @@ char     *str;
 			break ;
 		}
 	}
-	return( TRUE ) ;        /* ОШИБОК БЫТЬ НЕ ДОЛЖНО БЫ... */
+	return( TRUE ) ;
 }

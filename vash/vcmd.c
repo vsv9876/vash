@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -6,7 +7,6 @@
 #include "astat.h"
 
 /* встроенные функции */
-extern  int     cmdset();
 extern  int     sup(), v_susp();
 extern  int     vshcmd(), menu2();
 extern  int     fsh(), fmenu2();
@@ -62,6 +62,7 @@ extern  KEYTAB  kt1[];
 static u8char_t lastkey[4];     /* код последней нажатой клавиши */
 
 /*ARGSUSED*/
+int
 vcmd(/*j, */cod/*, mainl*/)
 /*
  * Интерпретировать клавишную команду
@@ -192,19 +193,19 @@ register char *cmd;     /* встроенная функция */
 /*
  * выполнить подстановки #k,#@,#i,#o,#a,..., кроме ##.
  */
-extern char* vexdir;
-extern char* vapath;
+
+extern int sh_esc(char *, char *);
 
 int cmdsub(ptmp_sh, p, i, need_sh_esc, subatrc)
 /*возвращает то же, что и nmsubs - необходимость обработки экранированных символов /bin/sh*/
-register char *p;       /* откуда копировать */
 register char *ptmp_sh;    /* куда копировать */
+register const char *p;       /* откуда копировать */
 register int  i;        /* копия itm */
 int need_sh_esc;			/*требуется экранирование для /bin/sh*/
 int subatrc;		/* substitution of #@ required */
 {
     extern char *getenv();
-    register char *s;
+    char *s;
     char *nm_ptr;
     int sh_req = 0;	/* флаг - сделаны подстановки, требуется вызов /bin/sh*/
     char *ptmp;
@@ -437,6 +438,8 @@ int
 fmenu2(file)        /* меню из файлов .ashmenu */
 register char *file;
 {
+	extern int unlink(); /*workaround define*/
+
 	char    cmdlbl[100];    /* вывеска взамен команды */
 	char    tmpcmd[40];
 	char	*tmpflnm;
@@ -446,7 +449,7 @@ register char *file;
 		/* результат команды игнорируется */
 		vshcmd(tmpcmd, cmdlbl);
 		unlink(tmpflnm);
-		/* проваливаемся... */
+		/* NO BREAK */
 	case 0:
 		/* восстановить гл. меню */
 		return( 1 );

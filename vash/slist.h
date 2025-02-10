@@ -25,12 +25,13 @@ typedef struct {
 	size_t	sl_size;
 } SLIST_HEAD;
 
-extern int sl_chk();
-extern wchar_t *sl_sstr();
-extern SLIST *sl_add();
+extern int sl_chk(SLIST_HEAD *);
+extern wchar_t *sl_sstr(SLIST *);
+extern SLIST *sl_add(SLIST_HEAD *, wchar_t *);
 extern SLIST_HEAD *sl_init();
-extern SLIST *sl_prev();
-extern int sl_size();
-extern SLIST_HEAD *sl_free();
+extern SLIST *sl_prev(SLIST *);
+extern int sl_size(SLIST_HEAD *);
+extern SLIST_HEAD *sl_free(SLIST_HEAD *);
+extern int sl_find(SLIST_HEAD *, wchar_t *);
 
 #endif /* VASH_SLIST_H_ */

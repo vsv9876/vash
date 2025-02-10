@@ -83,9 +83,9 @@ struct stat *statp;
 	 * смотрит на права владельца объекта (TODO дополнить acl)
 	 * но не игнорирует их, и поступает как владелец
 	 */
-	rwxs[0] = ((umode & S_IREAD) ? 'r' : '-');
-	rwxs[1] = ((umode & S_IWRITE)? 'w' : '-');
-	rwxs[2] = ((umode & S_IEXEC) ? 'x' : '-');
+	rwxs[0] = ((umode & S_IRUSR/*S_IREAD*/) ? 'r' : '-');
+	rwxs[1] = ((umode & S_IWUSR/*S_IWRITE*/)? 'w' : '-');
+	rwxs[2] = ((umode & S_IXUSR/*S_IEXEC*/) ? 'x' : '-');
 	rwxs[3] = '\0';
 	return(rwxs);
 }
@@ -129,7 +129,7 @@ char *fname;            /* имя файла из меню */
 {
 	int   staterr;
 	struct stat itmstat;
-	u_short     mode;       /* права доступа и тип */
+	short     mode;       /* права доступа и тип */
 #ifdef RETRO
 	char  ftypestr[4];      /* подстрока с типом файла */
 #endif
@@ -273,6 +273,7 @@ register char **p2;
 {
 	/* version comparison */
 #ifndef NO_STRVERSCMP
+	extern int strverscmp(const char *, const char *);
 	return(strverscmp( (*p1)+2, (*p2)+2));
 #else
 	return(strcmp( (*p1)+2, (*p2)+2));
@@ -579,7 +580,7 @@ size_t cwd_fmt(char *ctmps, char *cpath, int room)
 	u8char_t *s;
 	u8char_t *snext;
 	wchar_t  wc;
-	volatile wchar_t *ws;
+	wchar_t *ws;
 	wchar_t *w_path;
 	wchar_t *w_tmps;
 
@@ -690,6 +691,7 @@ size_t cwd_fmt(char *ctmps, char *cpath, int room)
  * if vashflag.xtermf, use xterm escapes '\E]0;'....'^G'
  * if vashflag.panelf is in use
  */
+void
 cwdshow()
 {
 	char cwd_tmpstr[U8_STRBUF]; /* cwdpath fraction to be shown */
@@ -789,6 +791,9 @@ cwdshow()
 }
 
 static int fil_first = 1; /*hint for 1st invocation - do it silently*/
+
+extern void onintr(int);
+
 /*
  * Заполнить главное меню.
  * Команда для заполнения указана в Cfill,
@@ -932,10 +937,13 @@ int newflag;    /* если 0, то только обновить каталог
 /*
  * СМЕНИТЬ КАТАЛОГ, ВЫДАТЬ ДИАГНОСТИКУ, НАСТРОИТЬ cwd, lwd;
  */
+int
 vchdir(cdarg)
 char *cdarg;
 {
-	char  nwdpath[400];     /* НОВЫЙ КАТАЛОГ */ /*TODO FTW 400 */
+	extern int dcanon(); /*workaround from BSD code*/
+	extern void sh_unesc();
+	char  nwdpath[400];     /* НОВЫЙ КАТАЛОГ */ /*TODO WTF 400 */
 	char  tmppath[400];
 	register char *p;
 

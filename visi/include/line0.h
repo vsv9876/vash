@@ -53,8 +53,8 @@ typedef struct {
 #define KBLSIZE 48
 
 typedef struct {
-	kbcod	t_cod;	/* logical 'AU' */
-	char *  t_descr;/* description 'jump cursor up'*/
+	const kbcod	  t_cod;  /* logical 'AU' */
+	const char *  t_descr;/* description 'jump cursor up'*/
 } KBDESCR;
 
 /* ПОДСКАЗКИ И ВИДЕОАТРИБУТЫ */
@@ -79,7 +79,7 @@ extern int		sgrmode; /* runtime attributes setup mode */
 /* ВОЗМОЖНОСТИ ВЫВОДА НА ТЕРМИНАЛ ИЗ /etc/termcap;
  * ИМЯ КЛАВИАТУРЫ ДЛЯ НАСТРОЙКИ КЛАВИШ ТОЖЕ ЗДЕСЬ (lh= ... )
  */
-extern char *tcapo[];
+extern const char *tcapo[];
 
 #define t_cm  tcapo[0]  /* ПРЯМАЯ АДРЕСАЦИЯ КУРСОРА */
 #define t_cl  tcapo[1]  /* СТЕР. ЭКРАН */
@@ -111,5 +111,6 @@ extern char *tcapo[];
 
 #endif /* line0_h_def */
 
-
+#if _POSIX_C_SOURCE >= 200112L
 #define VTTOUT_DEBUG
+#endif

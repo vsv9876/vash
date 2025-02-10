@@ -135,7 +135,7 @@ KBF   kbf[] = {
  * (т.е. на соответствующие esc-последовательности)
  * и поместите в этом файле описание пустой функции "hw_set() {}"
  */
-char *tcapo[] = {
+const char *tcapo[] = {
 	"cm", "cl", "cd", "ce", "ks", "ke",
 	"cs", "sr", "sf", "al", "dl",
 	"so", "se", "us", "ue",
@@ -179,19 +179,19 @@ KBL kbl[KBLSIZE] = {
 { KB_PD, "^F|PgDn", KBCOD('k','N'), KBCTL(    'F') },
 
 /* extended set with limited support, not supported by vhset yet */
-{ KBUSR('0'), "       ", KBCOD('f','0'), KBUSR('0'), KB_EMPTY },
-{ KBUSR('1'), "       ", KBCOD('f','1'), KBUSR('1'), KB_EMPTY },
-{ KBUSR('2'), "       ", KBCOD('f','2'), KBUSR('2'), KB_EMPTY },
-{ KBUSR('3'), "       ", KBCOD('f','3'), KBUSR('3'), KB_EMPTY },
-{ KBUSR('4'), "       ", KBCOD('f','4'), KBUSR('4'), KB_EMPTY },
-{ KBUSR('5'), "       ", KBCOD('f','5'), KBUSR('5'), KB_EMPTY },
-{ KBUSR('6'), "       ", KBCOD('f','6'), KBUSR('6'), KB_EMPTY },
-{ KBUSR('7'), "       ", KBCOD('f','7'), KBUSR('7'), KB_EMPTY },
-{ KBUSR('8'), "       ", KBCOD('f','8'), KBUSR('8'), KB_EMPTY },
-{ KBUSR('9'), "       ", KBCOD('f','9'), KBUSR('9'), KB_EMPTY },
-{ KBUSR('.'), "       ", KBCOD('f','.'), KBUSR('.'), KB_EMPTY },
-{ KBUSR('-'), "       ", KBCOD('f','-'), KBUSR('-'), KB_EMPTY },
-{ KBUSR(','), "       ", KBCOD('f',','), KBUSR(','), KB_EMPTY },
+{ KBUSR('0'), "       ", KBCOD('f','0'), KBUSR('0') },
+{ KBUSR('1'), "       ", KBCOD('f','1'), KBUSR('1') },
+{ KBUSR('2'), "       ", KBCOD('f','2'), KBUSR('2') },
+{ KBUSR('3'), "       ", KBCOD('f','3'), KBUSR('3') },
+{ KBUSR('4'), "       ", KBCOD('f','4'), KBUSR('4') },
+{ KBUSR('5'), "       ", KBCOD('f','5'), KBUSR('5') },
+{ KBUSR('6'), "       ", KBCOD('f','6'), KBUSR('6') },
+{ KBUSR('7'), "       ", KBCOD('f','7'), KBUSR('7') },
+{ KBUSR('8'), "       ", KBCOD('f','8'), KBUSR('8') },
+{ KBUSR('9'), "       ", KBCOD('f','9'), KBUSR('9') },
+{ KBUSR('.'), "       ", KBCOD('f','.'), KBUSR('.') },
+{ KBUSR('-'), "       ", KBCOD('f','-'), KBUSR('-') },
+{ KBUSR(','), "       ", KBCOD('f',','), KBUSR(',') },
 
 { 0 },
 };

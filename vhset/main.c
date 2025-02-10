@@ -17,7 +17,7 @@
 #include "linebp.h"
 #include "vhset.h"      /* описание общих данных и процедур */
 
-char   *vexdir =        /* Каталог вынесенных описаний страниц */
+const char   *vexdir =        /* Каталог вынесенных описаний страниц */
 #ifdef DEMOS2
 	/* определяется через Makefile, изначально было "/usr/local/lib/visi/vhset/"; */
 	VEXDIR;
@@ -71,21 +71,21 @@ static int kbl_std()
 
 	/* kblstd.kbl = kbl */
 	psize = sizeof(KBL) * KBLSIZE;
-	from = &(kbl[0].t_cod);
-	to = &(kblstd.kbl[0].t_cod);
+	from = (char *)&(kbl[0].t_cod);
+	to = (char *)&(kblstd.kbl[0].t_cod);
 	for (k = 0; k < psize; k++)
 		to[k] = from[k];
 
 	/* kblstd.lpaout = lpaout;*/
 	psize = sizeof(LPA) * LPASIZE ;
-	from = &(lpaout[0].lpa_p);
-	to   = &(kblstd.lpaout[0].lpa_p);
+	from = (char *)&(lpaout[0].lpa_p);
+	to   = (char *)&(kblstd.lpaout[0].lpa_p);
 	for (k = 0; k < psize; k++)
 		to[k] = from[k];
 
 	/* kblstd.lpainp = lpainp;*/
-	from = &(lpainp[0].lpa_p);
-	to   = &(kblstd.lpainp[0].lpa_p);
+	from = (char *)&(lpainp[0].lpa_p);
+	to   = (char *)&(kblstd.lpainp[0].lpa_p);
 	for (k = 0; k < psize; k++)
 		to[k] = from[k];
 
@@ -207,7 +207,7 @@ vmain()
 			break;
 		
 		case KB_HE:
-			w_help(helpf);
+			w_help((LINE *)helpf);
 			er_pag();
 			w_page(mainm);
 			break;

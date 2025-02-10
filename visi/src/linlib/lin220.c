@@ -84,18 +84,12 @@ extern  char *BC;
  */
 static char *codesp = 0;
 
-/* РАЗМЕРЫ ЭКРАНА */
-extern  int     maxli;
-extern  int     maxco;
-
 LFRAME *lframe = &hwframe;
 
 /*---------------------*/
 /* ОПИСАНИЕ КЛАВИАТУРЫ */
 /*---------------------*/
 extern  KBF   kbf[];
-extern  char *tcapo[];
-
 
 static int cannot()
 /*-------------*/
@@ -243,7 +237,7 @@ hw_set()
 	/*--------------------------------*/
 	/* НАСТРОИТЬ УКАЗАТЕЛИ ДЛЯ linlib */
 	/*--------------------------------*/
-	for (pp=tcapo; *pp; pp++) {
+	for (pp=(char **)tcapo; *pp; pp++) {
 		*pp = gettcp(*pp);
 	}
 	for (kbfp= &kbf[0]; cod=(kbfp->t_key); kbfp++) {

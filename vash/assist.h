@@ -123,28 +123,69 @@ extern VASHFLAG vashflag; /* defined in main.c */
 
 extern char   *envshell;
 extern char   *homedir;
-extern char   *vexdir; /* vash extra files directory */
-extern char   *vapath; /* vash library search path */
-extern char   *vashrc; /* vash runtime cmdset (rc, profile) */
+extern const char   *vexdir; /* vash extra files directory */
+extern const char   *vapath; /* vash library search path */
+extern const char   *vashrc; /* vash runtime cmdset (rc, profile) */
 extern char   *cwd;
 extern int     t_file();
 
 extern int     /*maxli, maxco,*/ y0_top;
 extern LFRAME  lfmain;
-extern int    vashelp(), rchelp(), scrldo(), scrlarea();
+extern int vashelp(LINE *);
+extern int rchelp(char *);
+extern void scrldo();
+extern void scrlarea();
 
-extern int cmdhreset();
-extern int cmdphist(),visini(), cmdset();
-extern int fil_vf(), scrlst(), scrlnl(), cmdsub(), fatal(), clritm();
-extern int itmshow(), cmdghist(), u_menu();
-extern int itmadj(), itmini(), itmfnd(), itmpos(), itmsel(), pre_vf(), patcmp(), cntsel();
-extern int vincmd(), vexcmd(), fnsplit(), vcmd(), cwdshow();
-extern int patcmp(), ok_msg();
-extern int gidchk(), filetype(), prefix();
-extern int try_compl(), hlp_compl(), hlp_clr(), cmdput(), vsystem(), showtime();
-extern int sl_find();
+extern void cmdhreset();
+extern int cmdphist();
 
-extern int cvt_vf(), cvt_s();
+/*extern int visini();*/
+extern int cmdset(const char *);
+
+extern int fil_vf(int);
+
+extern void scrlst();
+extern void scrlnl();
+extern int cmdsub(char *, const char *, int, int, int);
+extern void fatal();
+extern void clritm();
+
+extern void itmshow();
+extern int cmdghist();
+
+extern void u_menu(LINE */*, char **/);
+
+extern int itmadj(kbcod);
+extern void itmini();
+/*extern int itmfnd();*/
+extern int itmpos(char *);
+extern int itmsel(int);
+extern void pre_vf();
+extern int patcmp(const char *, char *);
+extern int cntsel();
+
+extern int vincmd(char *);
+extern int vexcmd(char *, char *);
+extern int fnsplit(char *, char *, int);
+extern int vcmd(kbcod);
+extern void w_cmd(wchar_t *);
+extern void cwdshow();
+
+extern int ok_msg();
+
+extern int gidchk(int);
+extern int filetype(char *);
+extern int prefix(char *, char *); /*TODO WTF*/
+
+extern int try_compl(wchar_t *, int *, int);
+extern int hlp_compl();
+extern void hlp_clr();
+extern int cmdput(u8char_t *);
+extern int vsystem(char *, char *);
+extern void showtime(int);
+
+extern int cvt_vf(LINE *, kbcod, char *, char *);
+extern int cvt_s(LINE *, kbcod, char *, char *);
 
 /*extern  u8sobj_t *Cfill_o;*/
 extern  char Cfill_o[/*STR_OVRSZ+4*/];
@@ -154,8 +195,20 @@ extern  char Crepf[];
 extern  char Coutf[];
 extern  char Csubs[];
 
-kbcod pmtrstr();
-kbcod pmtrobj();
+kbcod pmtrstr(const char *, char *, int);
+kbcod pmtrobj(char *, u8sobj_t *, int);
+
+extern void vfread(FILE *);
+extern void showitem(int);
+extern int  cmdvew(wchar_t *);
+extern int  cmdprv(wchar_t *);
+extern int  cmdnxt(wchar_t *);
+extern void onexit(int);
+extern int  vchdir(char *);
+extern int  sh_wcesc(wchar_t *, wchar_t *, int);
+extern int  sh_esc(char *, char *);
 
 
-#endif /* assist_h_def */
+
+#endif
+/* assist_h_def */

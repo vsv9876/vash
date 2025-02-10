@@ -7,6 +7,7 @@
 
 #define eq(a, b) (strcmp(a, b) == 0)
 
+extern void onintr(int);
 /*
  * dcanon - canonicalize the pathname, removing excess ./ and ../ etc.
  *      we are of course assuming that the file system is standardly
@@ -61,6 +62,7 @@ dcanon(cp)
 	}
 }
 
+int
 prefix(sub, str)
 	register char *sub, *str;
 {
@@ -73,4 +75,5 @@ prefix(sub, str)
 		if (*sub++ != *str++)
 			return (0);
 	}
+	return 0;
 }

@@ -9,6 +9,8 @@
 #include "line0.h"
 #include "lineva.h"
 
+extern int sgr_csel(LINE *, kbcod, char *);
+
 static LINE *attrpg;	/* global reference for partial refresh routines */
 
 extern LPA lpainp[];
@@ -28,14 +30,14 @@ LPA     *lpa_p[2] = {
 	lpaout,         lpainp
 	};
 
-static char *pimmsg[] = {
+static const char *pimmsg[] = {
 	"/set \"w\"/ ->  ",
 	"/set \"r\"/ --->",
 	"               " /* string for wipe on screen */
 };
 
 /* Color support for attr.cv page */
-char   *sgrms[] = {
+const char   *sgrms[] = {
 		"#0-dumb       ",
 		"#1-mono (b/w) ",
 		"#2-color      ",
@@ -137,6 +139,56 @@ register LINE *line;
 	return( (LINE *)(0) );
 }
 
+sgrtst(line, cod)
+LINE *line;
+kbcod cod;
+{
+	LINE *l;
+
+	/*if (sgrmode == 0)*/
+	w_raw("\033[m"); /*hint for attributes on dumb mode*/
+	switch(cod) {
+	case ('0'):
+	case ('1'):
+	case ('2'):
+	case ('3'):
+	case ('4'):
+	case ('5'):
+	case (' '):
+	case(KB_DE):
+
+	case(KB_NL):
+		cp_set(0,0,CMD); er_eop(CMD);
+		/*er_pag();*/
+		/* find 1st line with HDR type wide of screen */
+		for (l=linem; l->size != 0; l++) {
+			if (l->colu <= 16 && l->attr & (VIDEO & HDR)) {
+				cp_set(l->line, 0/*l->colu*/, TXT);
+				er_eop(TXT);
+				break;
+			}
+		}
+		w_page(linem);
+		break;
+	}
+	return(TRUE);
+}
+
+reline(vai)
+{
+	LINE *l;
+	l = attrpg;
+	for (l = linem; l->size > 0; l++) {
+		if ((l->attr & VIDEO) == vai)
+			w_line (l);
+	}
+}
+
+repage()
+{
+	sgrtst(linem, KB_NL);
+}
+
 /* копипаста из cvt_va... */
 cvt_sgr(line, cod, mod, str)
 /*------------------*/
@@ -154,7 +206,7 @@ char *str;
 	register LPA *lpap;
 	char *sgr_v;
 
-	i = (int) line->varl;
+	i = (int) line->varl;   /* a cast from pointer to int: that's it (since ash1.0) */
 	if (*mod == 'w') {
 		if (sgrmode >= 2) {
 			/*strcpy(outstr, ". .");*/
@@ -296,8 +348,8 @@ int *bribg;
 	char fg, bg;
 	fg = *fgp;
 	bg = *bgp;
-	char *bfg;
-	char *bbg;
+	const char *bfg;
+	const char *bbg;
 
 	 bfg = "3";
 	 bbg = "4";
@@ -345,7 +397,7 @@ char   *str;
 
 	/*Rbrifg = Rbribg = Wbrifg = Wbribg = 0;*/
 
-	fbx = line->cvts[0];	/* 1st symbol in field is significant only */
+	fbx = ((char *)line->cvts)[0];	/* only 1st symbol of field is significant */
 	lpax = (int)line->varl; /* lpa*[] index*/
 	if (!(fbx == 'f' || fbx == 'b')) {
 		w_msg(ERR, "internal, cvt_cb(): line.cvts has wrong value");
@@ -420,6 +472,7 @@ char   *str;
 	char    outstr[20];      /* строка для формирования вывода */
 	int     lpax;			/* index for lpa[] */
 	char    fbx;			/* row on screen page: 'fg' or 'bg' 1st char significant only, see attr.cv */
+	const char *s;
 	int		gv;
 	int		i;
 	register LINE *line4;   /* указатель на базовую линию в 4-й строке */
@@ -432,7 +485,8 @@ char   *str;
 	int  Wbrifg, Wbribg, Rbrifg, Rbribg;
 	Wfg = Wbg = Rfg = Rbg = 0;
 
-	fbx = line->cvts[0];
+	s = line->cvts;
+	fbx = s[0];
 	lpax = (int)line->varl; /* lpa*[] index*/
 	if (!(fbx == 'f' || fbx == 'b')) {
 		w_msg(ERR, "internal, cvt_co(): line.cvts has wrong value");
@@ -620,7 +674,7 @@ kbcod cod;
 	if ((/*linesgr=*/getlsgr(line, &sgra)) != (LINE *)0) {
 		linesgr->attr |= INP;
 		posp = 0;
-		w_line(linesgr, &posp);
+		w_line(linesgr);
 		ed_cod = r_line(linesgr, &posp);
 		linesgr->attr &= (~INP);
 
@@ -793,7 +847,8 @@ char   *mod;
 char   *str;
 {
 	char outs[30];
-	char *cvts;
+	const char *cvts;
+
 	size_t size = line->size;
 	cvts = line->cvts;
 
@@ -822,9 +877,12 @@ char   *str;
 {
 	char outs[30];
 	int xactive;
+	char *p;
 
 	size_t size = line->size;
-	xactive = line->cvts[0] - '0'; /*iconv the special*/
+	p = (char *)line->cvts;
+	/*xactive = line->cvts[0] - '0'; /*iconv the special*/
+	xactive = p[0] - '0'; /*iconv the special*/
 
 	outs[0] = '\0';
 	if (mod[0] == 'w') {
@@ -854,66 +912,8 @@ show_pi()
 	}
 }
 
-reline(vai)
-{
-	LINE *l;
-	l = attrpg;
-	for (l = linem; l->size > 0; l++) {
-		if ((l->attr & VIDEO) == vai)
-			w_line (l);
-	}
-}
-
-repage()
-{
-	sgrtst(linem, KB_NL);
-}
-
-sgrtst(line, cod)
-LINE *line;
-kbcod cod;
-{
-	LINE *l;
-	
-	/*if (sgrmode == 0)*/
-	w_raw("\033[m"); /*hint for attributes on dumb mode*/
-	switch(cod) {
-	case ('0'):
-	case ('1'):
-	case ('2'):
-	case ('3'):
-	case ('4'):
-	case ('5'):
-	case (' '):
-	case(KB_DE):
-
-	case(KB_NL):
-		cp_set(0,0,CMD); er_eop(CMD);
-		/*er_pag();*/
-		/* find 1st line with HDR type wide of screen */
-		for (l=linem; l->size != 0; l++) {
-			if (l->colu <= 16 && l->attr & (VIDEO & HDR)) {
-				cp_set(l->line, 0/*l->colu*/, TXT);
-				er_eop(TXT);
-				break;
-			}
-		}
-		w_page(linem);
-		break;
-	}
-	return(TRUE);
-}
-
 static  char    helpf[] = "vhseta.lb";
 
-pag_a()
-/*---------------------*/
-/* настройка атрибутов */
-/*---------------------*/
-{
-	uspage(linem, helpf);
-	return(TRUE);
-}
 
 static LINE *cline = (LINE *)-1;
 uspage(page, phline)
@@ -972,4 +972,13 @@ LINE *phline;           /* pointer to instant page with help screen */
 		default:   w_emsg("");     /* clear message string */
 		}
     }
+}
+
+pag_a()
+/*---------------------*/
+/* настройка атрибутов */
+/*---------------------*/
+{
+	uspage(linem, helpf);
+	return(TRUE);
 }

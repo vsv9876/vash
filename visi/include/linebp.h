@@ -37,7 +37,7 @@
 /* описания для прикладной программы */
 /*-----------------------------------*/
 typedef struct {
-	char    *in_name;        /* имя для поиска во внешнем описании */
+	const char    *in_name;        /* имя для поиска во внешнем описании */
 	void    *in_addr;        /* адрес в программе */
 	} IN_PORTS;
 
@@ -57,6 +57,8 @@ typedef struct {
 
 #define  LH_MAGIC 000477
 
-extern  char   *v_dir;          /* каталог VISI */
-extern  char   *phelp0;         /* имя файла со стандартной подсказкой */
+extern  const char   *v_dir;          /* каталог VISI */
+extern  const char   *phelp0;         /* имя файла со стандартной подсказкой */
 extern  IN_PORTS in_help[];     /* порты для библиотечн. имен */
+
+extern LINE	   *b_page(const char *, char *, const IN_PORTS *);

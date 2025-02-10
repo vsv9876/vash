@@ -103,7 +103,7 @@ char *cmdlbl;   /* вывеска для показа вместо выполн�
 	er_eop(TXT);
 	cwdshow();
 	itmshow();
-	w_page(clm._vf, 0);
+	w_page(clm._vf);
 
 	for ( ;; ) {
 
@@ -149,7 +149,7 @@ char *cmdlbl;   /* вывеска для показа вместо выполн�
 			er_pag();
 			cwdshow();
 			w_emsg("");
-			itmshow(); w_page(clm._vf, 0);
+			itmshow(); w_page(clm._vf);
 			break;
 		case KB_AL:
 		case KB_AU:

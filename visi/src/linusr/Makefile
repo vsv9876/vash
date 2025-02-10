@@ -52,7 +52,6 @@ OBJS	      = lin420.o \
 		lin440.o \
 		lin450.o \
 		lin460.o \
-		lin465.o \
 		lin470.o \
 		lin471.o \
 		lin472.o \
@@ -66,7 +65,6 @@ SRCS	      = lin420.c \
 		lin440.c \
 		lin450.c \
 		lin460.c \
-		lin465.c \
 		lin470.cv \
 		lin471.c \
 		lin472.c \
@@ -176,7 +174,6 @@ unlock:         .co .unlock
 #lin440.o: /usr/include/stdio.h ../../include/line.h ../../include/linebp.h
 #lin450.o: ../../include/line.h
 #lin460.o: /usr/include/stdio.h ../../include/line.h
-#lin465.o: /usr/include/stdio.h ../../include/line.h
 #lin470.o: /usr/include/stdio.h ../../include/line.h
 #lin471.o: /usr/include/stdio.h ../../include/line.h
 #lin472.o: /usr/include/stdio.h ../../include/line.h

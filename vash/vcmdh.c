@@ -38,6 +38,7 @@ static  int     cmdpi = -3;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ
 static  int     cmdpisel = -3;      /* ИНДЕКС ПОСЛЕДНЕЙ ВЗЯТОЙ/ПОЛОЖ. КОМАНДЫ в фильтрованом списке */
 static  int     cmdsmax;	    /* количество пунктов фильтрованого списка */
 
+void
 cmdhreset() {
 	/* сбросить все текущие индексы меню истории, применяется при запуске команды */
 	/*cmdpi = cmdpisel = -2;*/
@@ -248,7 +249,7 @@ wchar_t *cmd;
  */
 
 /* history cache file*/
-char *hfile = "/.ashhist";
+const char *hfile = "/.ashhist";
 
 /*
  * flag: last timestamp of hfile known in this process of vash
@@ -400,7 +401,7 @@ kbcod cod;
 /*
 			pre_vf();
 			itmshow();
-			w_page(clm._vf, 0);
+			w_page(clm._vf);
 */
 			/* синхронизировать историю при удалении каждой команды */
 			if (vashflag.histsn) {
@@ -435,7 +436,7 @@ kbcod h_menu()
 	/*w_cmd(cmdpp);*/
 #endif
 	itmshow();
-	w_page(clm._vf, 0);
+	w_page(clm._vf);
 
 	for ( ;; ) {
 
@@ -467,7 +468,7 @@ kbcod h_menu()
 			er_pag();
 			cwdshow();
 			w_emsg("");
-			itmshow(); w_page(clm._vf, 0);
+			itmshow(); w_page(clm._vf);
 			break;
 #ifdef RETRO
 		case KB_DE:
@@ -507,6 +508,7 @@ static  LINE tmplate =
  * returns 0, in case no view was done
  * returns 2, in case select of new content for Cfill
  */
+int
 cmdvew(cmd0)
 wchar_t  *cmd0;
 {
@@ -554,12 +556,14 @@ wchar_t  *cmd0;
 restart:
 	/* определить размер списка меню команд, если заказана селекция по образцу ^R */
 	wcsnu8s(u8cmp, cmd0, STRBUF);	/*сравнивать при поиске в utf-8*/
-	cmds = cmdpsel;
+	cmds = (u8char_t **)cmdpsel;
 	cmdsmax = 0;
 	cmp_sz = strlen(u8cmp);
 	if (*u8cmp != '\0') {
 		/* заодно посчитать размер полного списка */
-		for (i = 0, pcmd = cmdptr; *pcmd != '\0'; pcmd++) {
+		for (i = 0, pcmd = (u8char_t **)cmdptr;
+				*pcmd != '\0'; /*comparizon between zero char and u8char_t */
+				pcmd++) {
 			i++;
 			for (p = *pcmd; *p != '\0'; p++) {
 				/*поиск образца в любом месте команды, не только от начала*/

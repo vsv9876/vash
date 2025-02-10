@@ -40,16 +40,6 @@ extern int     maxli;
 extern int     maxco;
 
 
-/*---------------------*/
-/* ОПИСАНИЕ КЛАВИАТУРЫ */
-/*---------------------*/
-
-extern  KBF   kbf[];
-
-
-/* ОПИСАНИЕ ВОЗМОЖНОСТЕЙ ВЫВОДА НА ЭКРАН */
-extern  char *tcapo[];
-
 /* СВЯЗЬ ФИЗИЧЕСКИХ И ЛОГИЧЕСКИХ КОДОВ, А ТАКЖЕ ИМЕН КЛАВИШ */
 extern  KBL kbl[KBLSIZE];
 
@@ -63,7 +53,7 @@ int     kpadon = 0;     /* ФЛАГ: ПРАВАЯ ДОП. КЛАВИАТУРА �
 static  kbcod   backcod = 0;
 #endif
 
-unr_c(cod)
+void unr_c(cod)
 kbcod   cod;
 {
 	backcod = cod;

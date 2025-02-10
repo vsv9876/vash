@@ -269,20 +269,20 @@ int li, co, at;
 /* СОХРАНИТЬ/ВОССТАНОВИТЬ ПОЛОЖЕНИЕ И АТРИБУТЫ КУРСОРА */
 /*-----------------------------------------------------*/
 static int s_colu, s_line, s_attr/*, s_colr*/;
-cp_sav()
+void cp_sav()
 {
 	s_colu = scrn.sc_co;
 	s_line = scrn.sc_li;
 	s_attr = scrn.sc_at;
 /*	s_colr = scrn.sc_ac;*/
 }
-cp_fet()
+void cp_fet()
 {
 /*	w_csi(s_colr);*/
 	cp_abset(s_line, s_colu, s_attr);
 }
 
-er_pag()
+void er_pag()
 /*
  * erase (er) page at all, all screen erased
  */
@@ -302,7 +302,7 @@ er_pag()
 
 }
 
-er_eop(aw)
+void er_eop(aw)
 /*
  * erase to end of page
  */
@@ -312,14 +312,14 @@ int aw; /* (visual) attributes word */
 	w_raw(t_cd);
 }
 
-er_eol(aw)
+void er_eol(aw)
 int aw; /* (visual) attributes word */
 {
 	at_set(aw);
 	w_raw(t_ce);
 }
 
-er_scr(from, to, aw)
+void er_scr(from, to, aw)
 /*
  * clear (erase) part of screen between lines 'from' and 'to' with attribute word 'aw'
  */

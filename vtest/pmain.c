@@ -18,7 +18,9 @@
 /* $$narg = 1 ;            /* НЕ ВЫДАВАТЬ ПОДСКАЗКУ НА ВВОД АРГУМЕНТОВ */
 #endif
 
-char *vexdir = "../BLD/usr/lib/vhset:/usr/lib/vhset"; /* anought to debug in current directory */
+const char *vexdir = "../BLD/usr/lib/vhset:/usr/lib/vhset"; /* anought to debug in current directory */
+
+extern void vmain();
 
 main()
 /*--------*/

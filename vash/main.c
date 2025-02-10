@@ -22,13 +22,13 @@ FILE   *tmpfp = NULL;
 
 int     y0_top = 0;   /* begin of scroll area // Начало свитка на экране */
 
-VASHFLAG vashflag = { { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1 } };
+VASHFLAG vashflag = { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1 } ;
 
 char   *envshell;		/* env SHELL= */
 char   *homedir;        /* домашний каталог */
 char   *cwd;            /* текущий (рабочий) каталог */
 
-char *pmtsh;
+const char *pmtsh;
 
 usage()
 {
@@ -39,6 +39,7 @@ usage()
 
 int     allcod = 1;
 
+void
 onexit(ok)
 int ok;
 {
@@ -56,13 +57,16 @@ int ok;
 	if (ok == 0 && vashflag.histf && homedir != (char *)0 && vashflag.histsn == 0) {
 		cmdphist();
 	}
+
 	unlink(tmpflnm);
+
 
 /*	exit(ok);*/
 }
 
 /*ARGSUSED*/
 void onintr(signo)
+int signo;
 {
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
@@ -72,6 +76,8 @@ void onintr(signo)
 /*ARGSUSED*/
 void sigwinch(signo)
 {
+	extern int rescan();
+
 	if (0 != gtty_sz()) {
 		return;
 	}
@@ -246,9 +252,9 @@ char **argv;
 		}
 	}
 
-	/*Cfill_o = */u8o_init(Cfill_o, CFILL_MAX); /*malloc*/
+	/*Cfill_o = */u8o_init((u8sobj_t *)Cfill_o, CFILL_MAX); /*malloc*/
 	if (Cfill_o == NULL) {
-		printf(stderr, "Can't get extra memory");
+		fprintf(stderr, "Can't get extra memory");
 		exit (1);
 	} else
 		Cfill = ((u8sobj_t *)Cfill_o)->u8s;
@@ -327,6 +333,7 @@ args_done:
     if (homedir != (char *)0) {
 		cmdghist(homedir);
 	}
+
     /*  tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
     tmpfd = mkstemp(tmpflnm);      /* получить имя временного файла */
     if (tmpfd >= 0) {
@@ -361,7 +368,7 @@ args_done:
 			signal( SIGQUIT, SIG_IGN );
 			signal(SIGWINCH, sigwinch);
 
-			u_menu(clm._vf, "mainh.lb");
+			u_menu(clm._vf);
 			onexit(0); exit(0);
 		}
 	} else {

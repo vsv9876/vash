@@ -126,7 +126,6 @@ int execmode;
 #endif
 }
 
-extern int showtime();
 /*
  * Экранная преамбула запуска команды.
  */

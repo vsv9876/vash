@@ -297,13 +297,12 @@ on_base:
 	scnd->varl += (linptr_t)(saved.varl);
 }
 
-#endif W_PAGE_TAB
+#endif /*W_PAGE_TAB*/
 /*----------------*/
 /* write the page */
 /*----------------*/
-w_page ( line_e, cod )
+void w_page ( line_e )
 LINE    *line_e;
-register kbcod cod;
 {
 	register LINE *line;
 
@@ -314,7 +313,7 @@ register kbcod cod;
 		if(line->flag & SUST){
 			aj_tbl(line, line_e);
 		}
-#endif W_PAGE_TAB
+#endif /*W_PAGE_TAB*/
 		if( (INP & ~(line->attr)) )
 		    /*    w_line(line, cod);    */
 			w_line(line);
@@ -392,7 +391,7 @@ int    *posp;                /* cursor position during edit process */
 		break ;
 	case KB_RE :		/*TODO more sofisticated solution*/
 		er_pag();
-		w_page(page, 0);
+		w_page(page);
 		break ;
 	default :
 		break;

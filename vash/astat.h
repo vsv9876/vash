@@ -37,9 +37,10 @@ typedef struct {
 
 /* таблица имен встроенных функций */
 typedef struct {
+	const 
 	char   *ft_name;        /* строка с именем */
 	int    (*ft_fun)();    /* указатель на функцию */
 } FUNTAB;
 
 extern  char *tstat1();
-extern  char *tstat2();
+extern  char *tstat2(char *);

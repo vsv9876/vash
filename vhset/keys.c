@@ -59,7 +59,7 @@ char *str;
 	kbcod *codixp;
 
 	if ( *mod == 'w' ) {
-		codixp = line->varl;
+		codixp = (kbcod *)line->varl;
 		codix = *codixp;
 		for (x=0; keynm[x].t_cod != 0; x++) {
 			if (keynm[x].t_cod == codix) {
@@ -82,7 +82,7 @@ char *str;
 {
 	int x;			/* indexes in KBL, KBDESCR */
 	kbcod codix;	/* t_cod from kbl */
-	kbcod *codixp;
+	const kbcod *codixp;
 	char buf[8];
 
 	if ( *mod == 'w' ) {
@@ -116,11 +116,11 @@ char *str;
 	 */
 	register KBL *kblp;
 	kbcod tmpcod;
-	char skey = 0;	/* cvts field used in keys.cv as descriptor for primary/secondary */
+	char skey = 0;	/* cvts field used in keys.cv as a descriptor for primary/secondary */
 	kbcod keyptr;
 
 	if (line->cvts) {
-		skey = line->cvts[0];
+		skey = ((char *)line->cvts)[0];
 	}
 
 	kblp = (KBL *)line->varl;
@@ -177,6 +177,6 @@ pag_k()
 /* НАСТРОЙКА КЛАВИШ*/
 /*-----------------*/
 {
-	u_page(mainm, helpf);
+	u_page(mainm, (LINE *)helpf);
 	return(TRUE);
 }

@@ -158,7 +158,8 @@ char *fill;
 	maxlen = (MAXLICO > lframe->maxco ? lframe->maxco : MAXLICO) - 1;
 
 	sprintf(prompts, "-- ");
-	cod = pmtrobj(prompts, Cfill_o, lframe->maxco - strlen(prompts) - 2);
+	cod = pmtrobj(prompts, (u8sobj_t *)Cfill_o,
+			lframe->maxco - strlen(prompts) - 2);
 	switch(cod) {
 	case KB_CA:
 	case KB_EX:
@@ -369,13 +370,13 @@ char *cmd;
 
 extern  int     y0_top;         /* defined in main.c */
 
-u_menu(mainl, helpl)
+void u_menu(mainl)
 /*
  * Main Menu Loop
  */
 register LINE *mainl;
-char *helpl;
 {
+	extern int keyshow();
 	int i;
 	kbcod cod;
 	int   keyreq;   /* flag: keyshow() required */
@@ -395,7 +396,7 @@ char *helpl;
 		if (refresh) {
 			cwdshow();
 			itmshow();
-			w_page(clm._vf, 0);
+			w_page(clm._vf);
 			refresh = 0;
 			keyreq = 1;
 		}

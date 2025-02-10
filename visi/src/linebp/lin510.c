@@ -65,6 +65,7 @@ LINE *line;
 	}
 }
 
+void
 d_page(llll)
 /*---------------------*/
 /* УНИЧТОЖИТЬ СТРАНИЦУ */
@@ -74,15 +75,61 @@ LINE *llll;
 	free( llll );
 }
 
+static char *
+adj_ptr( s )
+/*---------------------*/
+/* НАСТРОИТЬ УКАЗАТЕЛЬ */
+/*---------------------*/
+char  *s;
+{
+	register linptr_t u;
+	char   *rets;
+
+	u = (linptr_t)s;
+
+	if(u == 0)
+		return( NULL );
+	if(u<maxid) {
+		if( atabp[u] == (char *)(~0) ) {
+			errflg = 1;
+		} else {
+			/* АДРЕС ПОДСТАВЛЯЕТСЯ ИЗ ТАБЛИЦЫ */
+			rets = atabp[u];
+		}
+	} else {
+		/* АДРЕС СТРОКИ ИЗ ВНЕШНЕГО ОПИСАНИЯ */
+		u -= 2048;             /* УБРАТЬ КОМПЕНСАЦИЮ */
+		u += (lhd.lh_lines);   /* СМЕЩ. ОТ line */
+		u += (linptr_t)(lineb); /* БАЗА */
+		rets = (char *)u;
+	}
+	return( rets );
+}
+
+/*---------------------------------------*/
+/* НАСТРОЙКА УКАЗАТЕЛЕЙ В ПРЕДЕЛАХ ЛИНИИ */
+/*---------------------------------------*/
+static void
+adj_lin(line)
+LINE *line;
+{
+	/*char    *adj_ptr();*/
+
+	line->cvts =         adj_ptr( (char *)line->cvts );
+	line->cvtf = (void *)adj_ptr( (char (*)())line->cvtf );
+	line->test = (void *)adj_ptr( (char (*)())line->test );
+	line->varl =         adj_ptr( (char *)line->varl );
+}
+
 
 LINE *
 b_page(libnam, fnam, ports)
 /*-----------------------------------------*/
 /* ПОСТРОИТЬ СТРАНИЦУ ПО ВНЕШНЕМУ ОПИСАНИЮ */
 /*-----------------------------------------*/
-char  *libnam;          /* ИМЯ БИБЛИОТЕКИ С ОПИСАНИЯМИ */
+const char  *libnam;          /* ИМЯ БИБЛИОТЕКИ С ОПИСАНИЯМИ */
 char  *fnam;            /* ИМЯ ФОРМЫ (ОПИСАНИЯ) */
-IN_PORTS *ports;        /* ТАБЛИЦА ИМЕН УКАЗАТЕЛЕЙ */
+const IN_PORTS *ports;        /* ТАБЛИЦА ИМЕН УКАЗАТЕЛЕЙ */
 {
 	register LINE *line;
 	int      j;
@@ -144,7 +191,7 @@ IN_PORTS *ports;        /* ТАБЛИЦА ИМЕН УКАЗАТЕЛЕЙ */
 	}
 
 	/* ПРОЧИТАТЬ line И heaps */
-	s = lineb;
+	s = (void *)lineb;
 	for(i=0; i<count; i++) {
 		if ((c=fgetc(fp)) == EOF)  break;
 		else                      *s++ = c;
@@ -195,49 +242,4 @@ IN_PORTS *ports;        /* ТАБЛИЦА ИМЕН УКАЗАТЕЛЕЙ */
 
 	/* --- ВЕРНУТЬ УКАЗАТЕЛЬ НА СТРАНИЦУ --- */
 	return(lineb);
-}
-
-/*---------------------------------------*/
-/* НАСТРОЙКА УКАЗАТЕЛЕЙ В ПРЕДЕЛАХ ЛИНИИ */
-/*---------------------------------------*/
-adj_lin(line)
-LINE *line;
-{
-	char    *adj_ptr();
-
-	line->cvts = adj_ptr( (char *)line->cvts );
-	line->cvtf = adj_ptr( (char (*)())line->cvtf );
-	line->test = adj_ptr( (char (*)())line->test );
-	line->varl = adj_ptr( (char *)line->varl );
-}
-
-char *
-adj_ptr( s )
-/*---------------------*/
-/* НАСТРОИТЬ УКАЗАТЕЛЬ */
-/*---------------------*/
-char  *s;
-{
-	register linptr_t u;
-	char   *rets;
-
-	u = (linptr_t)s;
-
-	if(u == 0)
-		return( NULL );
-	if(u<maxid) {
-		if( atabp[u] == (char *)(~0) ) {
-			errflg = 1;
-		} else {
-			/* АДРЕС ПОДСТАВЛЯЕТСЯ ИЗ ТАБЛИЦЫ */
-			rets = atabp[u];
-		}
-	} else {
-		/* АДРЕС СТРОКИ ИЗ ВНЕШНЕГО ОПИСАНИЯ */
-		u -= 2048;             /* УБРАТЬ КОМПЕНСАЦИЮ */
-		u += (lhd.lh_lines);   /* СМЕЩ. ОТ line */
-		u += (linptr_t)(lineb); /* БАЗА */
-		rets = (char *)u;
-	}
-	return( rets );
 }

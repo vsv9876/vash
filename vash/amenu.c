@@ -9,6 +9,7 @@
  *
  */
 
+void
 pre_vf()
 /*----------------------*/
 /* build main menu page */
@@ -164,11 +165,12 @@ kbcod cod;
 		clritm();
 		pre_vf();
 		itmshow();
-		w_page(clm._vf, 0);
+		w_page(clm._vf);
 	}
 	return(clm._itm - clm._itmofs);
 }
 
+void
 itmini()
 /*-------------------------------*/
 /* НАСТРОИТЬ НАЧАЛЬНЫЕ ПАРАМЕТРЫ */

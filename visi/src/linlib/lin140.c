@@ -8,6 +8,7 @@
  *  New version for POSIX termios.h.
  */
 
+#include <unistd.h>
 #include <stdio.h>
 #include "line.h"
 
@@ -217,8 +218,10 @@ ret_c:
  *
  * чтение выполняется в режиме за одно обращение к этой функции - один байт, а
  * сборка в codepoint (символ UTF-8) выполняется на уровень выше, в вызывающей функции */
+int
 ttyinp()
 {
+	extern void next_j();
 	char cc[1];
 	int  c;
 

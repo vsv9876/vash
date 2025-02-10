@@ -23,11 +23,13 @@
 
 #include "line.h"
 
+extern int wcwidth();	/*workaround declaration...*/
 
 /*
  * visible size of wide char string
  */
-int vsize(wchar_t *s)
+int
+vsize(wchar_t *s)
 {
 	wchar_t *sp;
 	wchar_t c;
@@ -83,22 +85,22 @@ int      n;
 
 /* копировать строку UTF-8 в строку wchar_t */
 int u8swcs(dst, src)
-char    *src;
 wchar_t *dst;
+char    *src;
 {
 	return(u8snwcs(dst, src, STRBUF*4));
 }
 
 /* копировать n символов в строку UTF-8 из строки wchar_t */
 int wcsnu8s(dst, s, n)
-char *dst;
+const u8char_t *dst;
 const wchar_t    *s;
 int      n;
 {
 	int len;
 	mbstate_t ps = { 0 };
 	mbsinit(&ps);
-    len = wcsrtombs(dst, &s, n, &ps);
+    len = wcsrtombs(dst, (const wchar_t **)&s, n, &ps);
     		/*mbsrtowcs(dst, &s, n, &ps);*/
 
 	return len;
@@ -106,8 +108,8 @@ int      n;
 
 /* копировать строку wchar_t в строку UTF-8 */
 int wcsu8s(dst, src)
-wchar_t *dst;
-const char *src;
+u8char_t *dst;
+const wchar_t *src;
 {
 	return(wcsnu8s(dst, src, STRBUF*4));
 }
@@ -162,7 +164,8 @@ wcsobj_t *so;
 	dst->u8o_sig = U8O_SIG;
 	dst->u8o_sizeh = size / 256;
 	dst->u8o_sizel = size % 256;
-	return (wcsnu8s(&(dst->u8s), &(so->wcs), size));
+	/*return (wcsnu8s(&(dst->u8s), &(so->wcs), size));*/
+	return (wcsnu8s(dst->u8s, so->wcs, size));
 }
 
 /* cannot be implemented as a macro */

@@ -239,7 +239,7 @@ wchar_t *wcs;
 {
 	int size;
 
-	wcs = wcsobj;
+	wcs = (wchar_t *)wcsobj;
 	if (wcsobj->wco_sig == -1) { /* string object setup */
 		(*wcs)++;
 		(*wcs)++;
@@ -265,7 +265,7 @@ int vshift;	/* start of visible part of wcsobj->wcs */
 	int k;
 	int iv, w;
 
-	wcs = wcsobj;
+	wcs = (wchar_t *)wcsobj;
 	size = vsize; /* preset for ordinary string */
 	if (wcsobj->wco_sig == -1) { /* string object setup */
 		wcs++;
@@ -391,7 +391,7 @@ kbcod cod;		/* kbcod() pressed */
 		int i_shift = 0; /* cursor position inside of visible part of s */
 		int w;			/* width of character to be changed */
 
-	wc_s = wcsobj;
+	wc_s = (wchar_t *)wcsobj;
 	if (wcsobj->wco_sig == -1) {
 		size = wcsobj->wco_size;
 		/*wcs = &(wco->wcs);*/
@@ -581,7 +581,7 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 	attrib = scrn.sc_at;
 
 	size = vsize;
-	wc_s = wcsobj;
+	wc_s = (wchar_t *)wcsobj;
 	if (wcsobj->wco_sig == WCO_SIG) {
 		size = wcsobj->wco_size;
 		size--;

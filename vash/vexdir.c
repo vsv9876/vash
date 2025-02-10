@@ -8,7 +8,7 @@
 
 #include "assist.h"
 
-char   *vexdir = DESTLIB;
-char   *versn  = VERSN;
-char   *vapath  = VASH_PATH;
-char   *vashrc = NULL; /* defined in runtime by default */
+const char   *vexdir = DESTLIB;
+const char   *versn  = VERSN;
+const char   *vapath  = VASH_PATH;
+const char   *vashrc = NULL; /* defined in runtime by default */

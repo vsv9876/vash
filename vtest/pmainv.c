@@ -116,13 +116,14 @@ static sout2()
 static sout3()
 {
 	extern SCRN scrn;
+/*	char *wcs;*/
 	char *wcs;
 
 	cp_sav();
 
 	cp_set(-3, TXT_CO, TXT);
 	w_str("0123456789-123456789-123456789-123456789-12345");
-	wcs = &wcso.wcs;
+	wcs = (void *)&wcso.wcs;
 
 	cp_set(-6, TXT_CO-1,  HDR/*ATT*/);
 	sprintf(tmps, "'%ls'", wcs);
@@ -235,7 +236,8 @@ int vmain()
 		case '+': case '=':  sout2(); break;
 		case '?': case '/':  sout3(); break;
 		case KB_HE:
-			w_help("no_help.lb"); w_page(linem);
+/*			w_help("no_help.lb"); w_page(linem);*/
+			w_emsg("no_help.lb"); w_page(linem);
 			break;
 		case KB_EX :
 			bell();

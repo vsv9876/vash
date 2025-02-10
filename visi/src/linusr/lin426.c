@@ -24,12 +24,12 @@ int cvt_hl(line, cod, mod, str)
  * символ для рисования линии указывается в форме, первый символ строки varl.
  *
  */
-	LINE    *line;
-	int       cod;
-	char     *mod;
-	char     *str;
-	{
-	register char *s;
+LINE    *line;
+int       cod;
+char     *mod;
+char     *str;
+{
+	register const char *s;
 	register int   i;
 
 	if( *mod == 'w' ) {

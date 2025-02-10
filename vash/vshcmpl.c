@@ -13,8 +13,8 @@
 
 extern char *getenv();
 /* suggestion mode */
-static enum sugg_mode { path_cmd, command, cd_dir, file_dir, flag1, flag2 } ;
-static char *s_debug[] = { "path_cmd", "command", "cd_dir", "file_dir", "flag1", "flag2", (char *)0 };
+enum sugg_mode { path_cmd, command, cd_dir, file_dir, flag1, flag2 } ;
+static const char *s_debug[] = { "path_cmd", "command", "cd_dir", "file_dir", "flag1", "flag2", (char *)0 };
 enum sugg_mode s_mode;
 
 SLIST_HEAD *sgglist;
@@ -114,7 +114,8 @@ wchar_t *s_ins;
 }
 
 
-int hlp_clr() {
+void
+hlp_clr() {
 	int cur_co; /* расчетная позиция курсора перед показом элемента */
 	int cur_li;
 
@@ -368,7 +369,7 @@ wchar_t *s_base;
 	if (slist_sz == 0) return s_buf;
 
 	slist    = sgglist->sl_last;
-	sggstr = (char **)malloc(sizeof(wchar_t *) * slist_sz);
+	sggstr = (wchar_t **)malloc(sizeof(wchar_t *) * slist_sz);
 	if (sggstr == NULL) return s_buf; /* nothing to do */
 	i = slist_sz;
 	while(i > 0) {
@@ -525,6 +526,7 @@ ret:
  *
  * другие функции вызываются для подбора вариантов, но не для ввода
  */
+int
 try_compl(cmd0, curpos, maxpos)
 wchar_t  *cmd0; /* буфер строки набираемой команды */
 int  *curpos; /* текущая позиция курсора в буфере */

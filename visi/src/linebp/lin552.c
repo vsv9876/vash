@@ -2,5 +2,5 @@
 #include "linebp.h"
 
 /* СТРАНИЦА ПОДСКАЗКИ */
-char    *phelp0 = "phelp0.lb";
+const char    *phelp0 = "phelp0.lb";
 

@@ -117,10 +117,11 @@ int c;
  * так, чтобы драйвер снова перекодировал, a
  * терминал понял правильно...
  */
-w_raw(s)
-char *s;
+void w_raw(s)
+const char *s;
 {
 #ifndef USE_W_RAW
+	extern int tputs();
 	/* modern documented way to use terminfo/termcap string capabilities */
 	tputs(s, 1, w_putc);
 #else
@@ -152,8 +153,8 @@ char *s;
  * так, чтобы они занимали одну позицию,
  * и были на что-то похожи.
  */
-w_str(s)
-register char *s;
+void w_str(s)
+const char *s;
 {
 
 	for(; *s; s++) {
@@ -165,7 +166,7 @@ w_strn(s, n)
 /*---------------------------------------------------*/
 /* ВЫДАТЬ СТРОКУ ЗАДАННОЙ ДЛИНЫ, ДОПОЛНИТЬ ПРОБЕЛАМИ */
 /*---------------------------------------------------*/
-register char *s;
+register const char *s;
 register int n;
 {
 	n -= strlen(s);

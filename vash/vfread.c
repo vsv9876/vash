@@ -21,6 +21,7 @@ void sig_vfread(signo)
 signal(SIGINT, SIG_DFL);
 signal(SIGQUIT, SIG_DFL);
  */
+void
 vfread(fpread)
 /*никогда не вызывается?!!!*/
 FILE *fpread;

@@ -25,7 +25,7 @@ static  int old_pos = 0;	/* позиция курсора до попытки о
 			если изменилась, выполнена вставка в буфер команды */
 
 /* command buffer is a string object, it is not a simple char-type string */
-volatile static  wchar_t cmdbuf[2 + STRBUF];  /* size for wcsobj_t cmdo -- below */
+static  wchar_t cmdbuf[2 + STRBUF];  /* size for wcsobj_t cmdo -- below */
 
 static  wcsobj_t *cmdo = (wcsobj_t *)cmdbuf;
 static  wchar_t *cmd0 = /*cmdo->wcs;*/ &cmdbuf[2];
@@ -40,6 +40,7 @@ cmdo_init()
 	}
 }
 
+void
 w_cmd(cmd)
 register wchar_t *cmd;
 {
@@ -59,6 +60,7 @@ register wchar_t *cmd;
 #endif
 }
 
+void
 scrlst()        /* курсор к началу свитка */
 {
 	cp_set(y0_top, 0, CMD); er_eop(CMD);
@@ -122,7 +124,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	int trapcod;		/* flag: trap active, no return from exit indicator */
 	int msgat;			/*exit code message attribute*/
 
-	u8char_t *u8cmd0[U8_STRBUF + 4];	/* command to be executed */
+	u8char_t u8cmd0[U8_STRBUF + 4];	/* TODO check a type of variable - command to be executed */
 	wchar_t *p;
 	int		sufpos; /* suffix position and count */
 	int		sufcnt;
@@ -404,7 +406,7 @@ std_shell:
 					cod = r_cod(0);
 					switch (cod) {
 					case KB_HE:
-						w_help("excode_help.lb");
+						w_help((LINE *)"excode_help.lb");
 						break;
 					case KB_AU:
 					case KB_AD:

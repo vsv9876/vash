@@ -152,123 +152,6 @@ char *s;
 int     cnterr = 0 ;    /* СЧЕТЧИК ОШИБОК */
 
 
-main(argc, argv)
-/*----------*/
-/*   MAIN   */
-/*----------*/
-int  argc;
-char *argv[];
-{
-	register int acnt;
-	char *s;
-
-	_setediag();
-
-	/*TODO locale constant UTF8 + diag msg*/
-	if (!setlocale(LC_CTYPE, "")) {
-		fprintf(stderr, "Can't set the specified locale! "
-			"Check LANG, LC_CTYPE, LC_ALL.\n");
-		return 1;
-	} else {
-		mb_cur_max = MB_CUR_MAX;
-	}
-
-	if (argc <  2) {
-		usage(argv[0]);
-	}
-
-	for ( acnt=1; acnt < argc ; acnt++ ) {
-		if ( (int)argv[acnt][0] == '-' ) {
-			switch( (int)argv[acnt][1] ) {
-			case 'h' :
-			case 'H' :
-				strcpy(hvfn, argv[++acnt]);
-				break;
-			case 'o' :
-			case 'O' :
-				acnt += 1;
-				strcpy( ofn, argv[acnt]);
-				break;
-			default:
-				usage(argv[0]);
-				break;
-			};
-		} else if ( ifn[0] == '\0') {
-			strcpy( ifn, argv[acnt]);
-		} else {
-			usage(argv[0]);
-		}
-	}
-
-	/* ОТКРЫТЬ ФАЙЛ.lav */
-	if ((ifp=fopen(ifn, "r")) == NULL) {
-		perror(ifn);
-		exit(1);
-	}
-	/* ЗАПРОСИТЬ ПАМЯТЬ ДЛЯ ОБРАЗА ЭКРАНА */
-	if ( (scrp=calloc(4, MAX_BUF_CO * MAX_BUF_LI))==NULL ) {
-		fprintf(stderr, ediag(Enomem, Rnomem), "scrp");
-		exit(1);
-	}
-	/* ОТКРЫТЬ ОСНОВНОЙ ВЫВОДНОЙ ФАЙЛ */
-	if(*ofn) {
-		if ((freopen(ofn, "w", stdout)) == NULL) {
-			perror(ofn);
-			exit(1);
-		}
-	}
-
-#ifdef MAKE_VCC
-    /*----------- В ОДНОМ ФАЙЛЕ М.БЫТЬ БОЛЬШЕ ОДНОЙ СТРАНИЦЫ */
-    while(fgets(lbpo, LBPOSIZE, ifp), feof(ifp) == 0) {
-
-      if (str_eq(lbpo, pag_id) == 0) {
-    	  printf("%s", lbpo);             /* ТЕКСТ НА СИ */
-      }
-      else {
-    	  s = lbpo + strlen(pag_id);      /* СНАЧАЛА НАЙТИ ИМЯ СТРАНИЦЫ */
-    	  while(isspace(*s)) s++;
-    	  s[ strlen(s) - 1 ] = '\0';
-    	  printf("LINE %s[] = {\n", s);  /* НАЧАЛО ОПИСАНИЯ СТРАНИЦЫ */
-#endif
-		/* ИНИЦИАЛИЗИРОВАТЬ КУЧУ СТРОК (РАЗМЕР_БУФЕРА, КОЛИЧЕСТВО_СТРОК) */
-		ini_hs( &shp, HS_SIZE, HS_MAXNUM);
-
-		/* ЗАПОЛНИТЬ КУЧУ СТРОК С ОПРЕДЕЛЕНИЯМИ ИМЕН;
-		 * ЗАПОЛНИТЬ БУФЕР ЭКРАНА ИЗ СЕКЦИИ SCREEN;
-		 */
-		cur_li = 0;    /* СКАНИРОВАНИЕ ЭКРАНА НАЧАТЬ СНАЧАЛА */
-
-		pass1();
-
-		if ( cnterr ) {
-			fprintf(stderr,
-ediag("PASS1: Errors detected: %d\n", "PASS1: ОБНАРУЖЕНО ОШИБОК: %d\n"),
-			cnterr);
-			exit(1);
-		}
-		/* СКАНИРОВАТЬ ЭКРАН, ЗАПИСАТЬ ФАЙЛ.la */
-		scan_s();
-
-		/* ЕСЛИ ЗАТРЕБОВАН ФАЙЛ.hv, ЗАПИСАТЬ ЕГО,
-		 * НО ПОКА НЕПОНЯТНО КАК ЭТО ЛУЧШЕ СДЕЛАТЬ */
-/*      do_hv();        */
-
-#ifdef MAKE_VCC
-		des_hs( &shp ); /* УНИЧТОЖИТЬ КУЧУ СТРОК */
-
-		printf( "%s\n\n",   "{ 0 }, };"  );
-
-		} /*---------- КОНЕЦ СТРАНИЦЫ */
-    } /*--------- ПРОДОЛЖИТЬ ПОИСК ДРУГИХ ОПИСАНИЙ СТРАНИЦ */
-#endif
-
-	fclose(ifp);
-	exit(0);
-
-}
-
-
 /*--------- ПРОЦЕДУРЫ НИЖНЕГО УРОВНЯ ----------*/
 
 str_eq(s, pat)
@@ -604,7 +487,7 @@ int     typ;            /* 'h', 'c', 'k', 'K', '?' */
 	register NM_DEF *hpp;           /* ОПРЕДЕЛЕНИЕ ИМЕНИ */
 	register char *os;
 	register char *o2s;
-	char *typp;
+	const char *typp;
 
 	if(typ == '?') {        /* ПОЛЕ С ИМЕНЕМ, НАДО СДЕЛАТЬ ПОДСТАНОВКУ */
 		/*strcpy(nm_fnd, s);*/
@@ -746,6 +629,7 @@ mk_lin(li, co)
 int li;
 int co;
 {
+	extern int wcwidth();
 	/* ПОСЛЕ ТОГО, КАК СТРОКА lbp ЗАПИСАНА,
 	 * В БУФЕРЕ ОБРАЗА ЭКРАНА НЕ ОСТАВЛЯЕТСЯ
 	 * НИКАКОГО СЛЕДА ОТ ПОЛЯ - ВСЕ РАСПИСЫВАЕТСЯ ПРОБЕЛАМИ.
@@ -1137,5 +1021,122 @@ pass1()
 	"%s: %d: section not found '%s%s'\n",
 	ifn, nlin, vis_id, end_id );
 	cnterr++;
+}
+
+
+main(argc, argv)
+/*----------*/
+/*   MAIN   */
+/*----------*/
+int  argc;
+char *argv[];
+{
+	register int acnt;
+	char *s;
+
+	_setediag();
+
+	/*TODO locale constant UTF8 + diag msg*/
+	if (!setlocale(LC_CTYPE, "")) {
+		fprintf(stderr, "Can't set the specified locale! "
+			"Check LANG, LC_CTYPE, LC_ALL.\n");
+		return 1;
+	} else {
+		mb_cur_max = MB_CUR_MAX;
+	}
+
+	if (argc <  2) {
+		usage(argv[0]);
+	}
+
+	for ( acnt=1; acnt < argc ; acnt++ ) {
+		if ( (int)argv[acnt][0] == '-' ) {
+			switch( (int)argv[acnt][1] ) {
+			case 'h' :
+			case 'H' :
+				strcpy(hvfn, argv[++acnt]);
+				break;
+			case 'o' :
+			case 'O' :
+				acnt += 1;
+				strcpy( ofn, argv[acnt]);
+				break;
+			default:
+				usage(argv[0]);
+				break;
+			};
+		} else if ( ifn[0] == '\0') {
+			strcpy( ifn, argv[acnt]);
+		} else {
+			usage(argv[0]);
+		}
+	}
+
+	/* ОТКРЫТЬ ФАЙЛ.lav */
+	if ((ifp=fopen(ifn, "r")) == NULL) {
+		perror(ifn);
+		exit(1);
+	}
+	/* ЗАПРОСИТЬ ПАМЯТЬ ДЛЯ ОБРАЗА ЭКРАНА */
+	if ( (scrp=calloc(4, MAX_BUF_CO * MAX_BUF_LI))==NULL ) {
+		fprintf(stderr, ediag(Enomem, Rnomem), "scrp");
+		exit(1);
+	}
+	/* ОТКРЫТЬ ОСНОВНОЙ ВЫВОДНОЙ ФАЙЛ */
+	if(*ofn) {
+		if ((freopen(ofn, "w", stdout)) == NULL) {
+			perror(ofn);
+			exit(1);
+		}
+	}
+
+#ifdef MAKE_VCC
+    /*----------- В ОДНОМ ФАЙЛЕ М.БЫТЬ БОЛЬШЕ ОДНОЙ СТРАНИЦЫ */
+    while(fgets(lbpo, LBPOSIZE, ifp), feof(ifp) == 0) {
+
+      if (str_eq(lbpo, pag_id) == 0) {
+    	  printf("%s", lbpo);             /* ТЕКСТ НА СИ */
+      }
+      else {
+    	  s = lbpo + strlen(pag_id);      /* СНАЧАЛА НАЙТИ ИМЯ СТРАНИЦЫ */
+    	  while(isspace(*s)) s++;
+    	  s[ strlen(s) - 1 ] = '\0';
+    	  printf("LINE %s[] = {\n", s);  /* НАЧАЛО ОПИСАНИЯ СТРАНИЦЫ */
+#endif
+		/* ИНИЦИАЛИЗИРОВАТЬ КУЧУ СТРОК (РАЗМЕР_БУФЕРА, КОЛИЧЕСТВО_СТРОК) */
+		ini_hs( &shp, HS_SIZE, HS_MAXNUM);
+
+		/* ЗАПОЛНИТЬ КУЧУ СТРОК С ОПРЕДЕЛЕНИЯМИ ИМЕН;
+		 * ЗАПОЛНИТЬ БУФЕР ЭКРАНА ИЗ СЕКЦИИ SCREEN;
+		 */
+		cur_li = 0;    /* СКАНИРОВАНИЕ ЭКРАНА НАЧАТЬ СНАЧАЛА */
+
+		pass1();
+
+		if ( cnterr ) {
+			fprintf(stderr,
+ediag("PASS1: Errors detected: %d\n", "PASS1: ОБНАРУЖЕНО ОШИБОК: %d\n"),
+			cnterr);
+			exit(1);
+		}
+		/* СКАНИРОВАТЬ ЭКРАН, ЗАПИСАТЬ ФАЙЛ.la */
+		scan_s();
+
+		/* ЕСЛИ ЗАТРЕБОВАН ФАЙЛ.hv, ЗАПИСАТЬ ЕГО,
+		 * НО ПОКА НЕПОНЯТНО КАК ЭТО ЛУЧШЕ СДЕЛАТЬ */
+/*      do_hv();        */
+
+#ifdef MAKE_VCC
+		des_hs( &shp ); /* УНИЧТОЖИТЬ КУЧУ СТРОК */
+
+		printf( "%s\n\n",   "{ 0 }, };"  );
+
+		} /*---------- КОНЕЦ СТРАНИЦЫ */
+    } /*--------- ПРОДОЛЖИТЬ ПОИСК ДРУГИХ ОПИСАНИЙ СТРАНИЦ */
+#endif
+
+	fclose(ifp);
+	exit(0);
+
 }
 

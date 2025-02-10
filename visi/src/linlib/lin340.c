@@ -42,6 +42,9 @@
 #include "line.h"
 #include "line0.h"
 
+extern int wcwidth();
+
+
 extern LPA lpainp[];
 extern LPA lpaout[];
 
@@ -108,8 +111,8 @@ cvts_out(line, buf)
 LINE *line;
 char *buf;      /* СТРОКА, КУДА ПОМЕСТИТЬ ВЫВОД */
 {
-	char *fo;      /* ФОРМАТ printf */
-	char *va;      /* УКАЗАТЕЛЬ НА ПЕРЕМЕННУЮ */
+	const char *fo;      /* ФОРМАТ printf */
+	const char *va;      /* УКАЗАТЕЛЬ НА ПЕРЕМЕННУЮ */
 	int cvt_ok = 0;
 	long vl;
 	short vh;
@@ -195,7 +198,7 @@ register char *u8buf;
 }
 
 
-w_line(line)
+void w_line(line)
 register LINE *line;
 {
 /*      next_j();     */
@@ -210,6 +213,8 @@ kbcod r_line(line, posp)
 register LINE    *line;
 	 int     *posp; /* position of editing */
 {
+
+	extern void unr_c();
 	kbcod   cod;
 	short   attr;
 	int     cvt_ret;        /* exit code from sscanf: OK if = 0 */
@@ -451,7 +456,7 @@ edit_retry:
 	} else {
 		if (clrwcs)
 			wcsptr[0] = 0;
-		cod = e_str(wcsptr/*editptr*/, size,
+		cod = e_str((wcsobj_t *)wcsptr/*editptr*/, size,
 				((attr & EDT) ? line->test : 0), posp);
 		/* finally back to UTF-8 encoding */
 #ifdef DEBUG_R_LINE

@@ -17,12 +17,16 @@ TERMLIB     = -ltermcap
 #LINKER      = gcc -traditional
 
 # checked on FreeBSD 11.2-RELEASE
-CC          = cc -std=c89 \
-		-Wimplicit-function-declaration \
-		-Wpointer-sign -Wimplicit-int \
-		-Wreturn-type \
-		-Wincompatible-pointer-types-discards-qualifiers \
-		-Wcomment -Wparentheses -Wconstant-conversion \
-		-Wint-conversion
-LINKER      = cc -std=c89
+#CC          = cc -std=c89 \
+#		-Wimplicit-function-declaration \
+#		-Wpointer-sign -Wimplicit-int \
+#		-Wreturn-type \
+#		-Wincompatible-pointer-types-discards-qualifiers \
+#		-Wcomment -Wparentheses -Wconstant-conversion \
+#		-Wint-conversion
+
+# checked on FreeBSD 14.1-RELEASE
+CC          = cc -std=c89 -Wwrite-strings
+
+LINKER      = cc
 

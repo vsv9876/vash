@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <wchar.h>
+#include <stdlib.h>
 #include "line.h"
 #include "line0.h"
 
@@ -21,6 +22,7 @@ extern SCRN scrn;
  * невозможности записи в vtttout,
  * либо сама функция w_wchr должна выбрасывать вызвавшую программу
  */
+extern int wcwidth();
 
 /*
  * выдать символ с перекодировкой в UTF-8 из внутреннего формата

@@ -16,11 +16,13 @@
 
 
 static int doscrl = 1;
+void
 scrldo() {
 	doscrl = 1;
 }
 
 /* vash-specific screen area control */
+void
 scrlarea()
 {
 	int i, n, cltop;
@@ -57,6 +59,7 @@ LINE *page;
 static time_t prevtime = (time_t)0;
 static int nxtjflag;
 
+void
 showtime(on)
 /* Управление семафором часов и др. асинхронных заданий */
 {
@@ -242,6 +245,7 @@ next_j()
 	}
 }
 
+void
 clritm()
 /* прочистить место на экране для меню */
 {
@@ -253,6 +257,7 @@ clritm()
     }
 }
 
+void
 scrlnl()
 /*
  * to scroll with newlines
@@ -272,6 +277,7 @@ scrlnl()
 	else    er_pag();
 }
 
+void
 fatal()
 {
 	cp_set(-1, 0, CMD);
@@ -282,6 +288,7 @@ fatal()
 
 char itmnav[STRBUF] = "";
 
+void
 itmshow()
 /* показать положение "окна" */
 {
@@ -375,7 +382,7 @@ register char *str;
  * Сравнение начинается и заканчивается на границах строки.
  */
 int patcmp(pat, str)
-register char *pat;
+register const char *pat;
 register char *str;
 {
 	register int whileok;
@@ -498,7 +505,7 @@ int   size;     /* размер поля для ввода */
 
 kbcod
 pmtrstr(pmtstr, str, size)
-char *pmtstr;   /* строка подсказки */
+const char *pmtstr;   /* строка подсказки */
 char *str;      /* строка для ввода */
 int   size;     /* размер строки для ввода */
 {
@@ -537,6 +544,7 @@ int   size;     /* размер строки для ввода */
  * sufmode == 1         копируется суффикс с точкой;
  * sufmode == 2         копируется суффикс без точки.
  */
+int
 fnsplit(to, from, sufmode)
 	 char *to;      /* куда копировать */
 register char *from;    /* откуда копировать */
@@ -601,7 +609,7 @@ int mode_quote; /* 0 - простое экранирование каждого 
 	if (mode_quote) {
 		inps = inps_keep;
 		if (in_quote == 0) {
-			strcpy(outs, inps);
+			strcpy((char *)outs, (char *)inps);
 			return 0;
 		} else {
 			*outs++ = '\'';
@@ -698,7 +706,7 @@ register char *inps;
 }
 
 /*декодировать строку имени файла, убрать экранирование /bin/sh*/
-sh_unesc(to, from)
+void sh_unesc(to, from)
 char *to;
 char *from;
 {

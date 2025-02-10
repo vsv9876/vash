@@ -12,8 +12,8 @@
 FILE *
 dafopen(filen, dirpath, fmode)
 char *filen;
-char *dirpath;
-char *fmode;
+const char *dirpath;
+const char *fmode;
 {
 	FILE *fp;
 	char fname[200];

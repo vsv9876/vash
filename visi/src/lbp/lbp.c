@@ -20,112 +20,63 @@ char    *nms = 0;      /* ТАБЛИЦА ИМЕН АДРЕСОВ ДЛЯ ШЛЮЗ
 char i_fnam[100];       /* ИМЯ ВХОДНОГО ФАЙЛА */
 char o_fnam[100];       /* ИМЯ ВЫХОДНОГО ФАЙЛА */
 
-/*------------*/
-/*   main     */
-/*------------*/
-main(argc, argv)
-int		argc;
-char    *argv[];
+static  int     s_count;        /* СЧЕТЧИК СТРОК */
+
+/*---------------------------------*/
+/* ПОСТРОИТЬ ПОЗИЦИОННЫЕ ПАРАМЕТРЫ */
+/*---------------------------------*/
+
+bld_pos(line)
+LINE    *line;
 {
-	/*char *malloc(), *calloc();*/
-	register linptr_t i;
-	register char *s;
-	register int   c;
-	linptr_t     *ip;
-	FILE *i_fp, *o_fp;
-	FILE *fopen();
+	char *f_sbbs();
+	static  int iii;
 
-	/* ПОЛУЧИТЬ ИМЕНА ФАЙЛОВ */
-	if( argc != 3 ) {
-		printf("Usage : bl ifile ofile\n");
-		exit(1);
-	}
-	strcpy(i_fnam, argv[1]);
-	strcpy(o_fnam, argv[2]);
+	ssp = f_sbbs( ssp );
+	sscanf(sbbs, "%d", &iii);
+	line->size = (char)iii;
 
-	/* ОТКРЫТЬ ФАЙЛ НА ЧТЕНИЕ */
-	if((i_fp = fopen(i_fnam, "r")) == NULL ) {
-		printf("%s : Can't read\n", i_fnam);
-		exit(1);
-	}
+	ssp = f_sbbs( ssp );
+	sscanf(sbbs, "%d", &iii);
+	line->line = (char)iii;
 
-	/* ОТКРЫТЬ ФАЙЛ НА ЗАПИСЬ */
-	if((o_fp = fopen(o_fnam, "wn")) == NULL ) {
-		printf("%s : Can't write\n", o_fnam);
-		exit(1);
-	}
-
-	/* ЗАПРОСИТЬ ПАМЯТЬ ДЛЯ ОПИСАНИЯ СТРАНИЦЫ */
-	if((linep = calloc(1000, sizeof(LINE))) == NULL ) {
-		printf("No memory for LINE...\n");
-		exit(1);
-	}
-	/* ЗАПРОСИТЬ ПАМЯТЬ ДЛЯ КУЧИ СТРОК */
-	if((hps = malloc(4000)) == NULL ) {
-		printf("No memory for HEAP...\n");
-		exit(1);
-	}
-	hpsp = hps;
-
-	/* ЗАПРОСИТЬ ПАМЯТЬ ДЛЯ ТАБЛИЦЫ ИМЕН */
-	if((nms = calloc(200, 8)) == NULL ) {
-		printf("No memory for NAMTAB...\n");
-		exit(1);
-	}
-	put_nm("**--**");
-
-	/* ПОСТРОИТЬ ОПИСАНИЕ СТРАНИЦЫ */
-	linebp(i_fp);
-
-	/* ВЫРОВНЯТЬ ПО ГРАНИЦЕ 16byte РАЗМЕРЫ В ЗАГОЛОВКЕ */
-	i = lhd.lh_lines;
-	i += (16 - (i % 16));
-	lhd.lh_lines = i;
-
-	i = lhd.lh_heaps;
-	i += (16 - (i % 16));
-	lhd.lh_heaps = i;
-
-	i = lhd.lh_names;
-	i += (2 - (i % 2));
-	lhd.lh_names = i;
-
-	/* ЗАПИСАТЬ ЗАГОЛОВОК ОПИСАНИЯ СТРАНИЦЫ */
-	s = (char *)&lhd;
-	for(i=0; i<sizeof(LINE_H); i++ ) {
-		c = *s++;
-		putc( c, o_fp);
-	}
-
-	/* ЗАПИСАТЬ line[]  В ВЫХОДНОЙ ФАЙЛ */
-	s = (char *)linep;
-	for(i=0; i<lhd.lh_lines; i++ ) {
-		c = *s++;
-		putc( c, o_fp);
-	}
-
-	/* ЗАПИСАТЬ КУЧУ СТРОК */
-	s = hps;
-	for(i=0; i<lhd.lh_heaps; i++ ) {
-		c = *s++;
-		putc( c, o_fp);
-	}
-
-	/* ЗАПИСАТЬ ТАБЛИЦУ ИМЕН */
-	s = nms;
-	for(i=0; i<lhd.lh_names; i++ ) {
-		c = *s++;
-		putc( c, o_fp);
-	}
-
-	/* ЗАКРЫТЬ ВЫХОДНОЙ ФАЙЛ */
-	fclose( o_fp );
-
-	exit(0);
+	ssp = f_sbbs( ssp );
+	sscanf(sbbs, "%d", &iii);
+	line->colu = (char)iii;
 
 }
 
-static  int     s_count;        /* СЧЕТЧИК СТРОК */
+/*------------------------------*/
+/* ЗАПОЛНИТЬ АДРЕСНЫЕ ПАРАМЕТРЫ */
+/*------------------------------*/
+
+bld_c(line)             /* КОММЕНТАРИИ */
+LINE  *line;
+{
+	char   bld_flg();
+	char  *bld_par();
+
+	line->flag = 0;
+	line->cvts = 0;
+	line->cvtf = 0;
+	line->test = 0;
+	line->varl = bld_par("");
+}
+
+bld_g(line)             /* ОБЩИЙ СЛУЧАЙ */
+LINE  *line;
+{
+	char   bld_flg();
+	char  *bld_par();
+
+	line->flag = bld_flg();
+	line->cvts = bld_par("");
+	line->cvtf = (void *)bld_par("");
+	line->test = (void *)bld_par("");
+	line->varl = bld_par("");
+}
+
+
 /*-----------------------------*/
 /* ПОСТРОИТЬ ОПИСАНИЕ СТРАНИЦЫ */
 /*-----------------------------*/
@@ -232,30 +183,6 @@ cont:   ;
 
 }
 
-/*---------------------------------*/
-/* ПОСТРОИТЬ ПОЗИЦИОННЫЕ ПАРАМЕТРЫ */
-/*---------------------------------*/
-
-bld_pos(line)
-LINE    *line;
-{
-	char *f_sbbs();
-	static  int iii;
-
-	ssp = f_sbbs( ssp );
-	sscanf(sbbs, "%d", &iii);
-	line->size = (char)iii;
-
-	ssp = f_sbbs( ssp );
-	sscanf(sbbs, "%d", &iii);
-	line->line = (char)iii;
-
-	ssp = f_sbbs( ssp );
-	sscanf(sbbs, "%d", &iii);
-	line->colu = (char)iii;
-
-}
-
 /*-------------------------------------*/
 /* ПОСТРОИТЬ ПАРАМЕТРЫ ФЛАГОВ ЗАДЕРЖЕК */
 /*-------------------------------------*/
@@ -316,6 +243,38 @@ bld_flg()
 		}
 	}
 	return(flg);
+}
+
+/*----------------------------*/
+/* ПРОВЕРИТЬ, ИЗВЕСТНО ЛИ ИМЯ */
+/*----------------------------*/
+tst_nm( s )
+char  *s;
+{
+	register int i;
+	register char *p;
+
+	for(p=nms, i=0; i<nmi; p += 8, i++) {
+			if(strncmp(p, s, 6) == 0)
+				return( i );
+		}
+	return( 0 );
+}
+
+/*-------------------------*/
+/* ПОМЕСТИТЬ ИМЯ В ТАБЛИЦУ */
+/*-------------------------*/
+int
+put_nm( s )
+char  *s;
+{
+	register char *p;
+
+	p = nms + (nmi * 8);
+	strncpy(p, s, 6);
+	lhd.lh_names += 8;
+	nmi += 1;
+	return( nmi-1 );
 }
 
 /*--------------------------*/
@@ -386,38 +345,6 @@ ret_ret:
 	return( ret_s );
 }
 
-/*----------------------------*/
-/* ПРОВЕРИТЬ, ИЗВЕСТНО ЛИ ИМЯ */
-/*----------------------------*/
-tst_nm( s )
-char  *s;
-{
-	register int i;
-	register char *p;
-
-	for(p=nms, i=0; i<nmi; p += 8, i++) {
-			if(strncmp(p, s, 6) == 0)
-				return( i );
-		}
-	return( 0 );
-}
-
-/*-------------------------*/
-/* ПОМЕСТИТЬ ИМЯ В ТАБЛИЦУ */
-/*-------------------------*/
-int
-put_nm( s )
-char  *s;
-{
-	register char *p;
-
-	p = nms + (nmi * 8);
-	strncpy(p, s, 6);
-	lhd.lh_names += 8;
-	nmi += 1;
-	return( nmi-1 );
-}
-
 /*---------------------*/
 /* ЗАПОЛНИТЬ ПОДСТРОКУ */
 /*---------------------*/
@@ -441,33 +368,107 @@ register char *ispp;
 	return( ispp );
 }
 
-/*------------------------------*/
-/* ЗАПОЛНИТЬ АДРЕСНЫЕ ПАРАМЕТРЫ */
-/*------------------------------*/
 
-bld_c(line)             /* КОММЕНТАРИИ */
-LINE  *line;
+/*------------*/
+/*   main     */
+/*------------*/
+main(argc, argv)
+int		argc;
+char    *argv[];
 {
-	char   bld_flg();
-	char  *bld_par();
+	register linptr_t i;
+	register char *s;
+	register int   c;
+	linptr_t     *ip;
+	FILE *i_fp, *o_fp;
+	FILE *fopen();
 
-	line->flag = 0;
-	line->cvts = 0;
-	line->cvtf = 0;
-	line->test = 0;
-	line->varl = bld_par("");
-}
+	/* ПОЛУЧИТЬ ИМЕНА ФАЙЛОВ */
+	if( argc != 3 ) {
+		printf("Usage : bl ifile ofile\n");
+		exit(1);
+	}
+	strcpy(i_fnam, argv[1]);
+	strcpy(o_fnam, argv[2]);
 
+	/* ОТКРЫТЬ ФАЙЛ НА ЧТЕНИЕ */
+	if((i_fp = fopen(i_fnam, "r")) == NULL ) {
+		printf("%s : Can't read\n", i_fnam);
+		exit(1);
+	}
 
-bld_g(line)             /* ОБЩИЙ СЛУЧАЙ */
-LINE  *line;
-{
-	char   bld_flg();
-	char  *bld_par();
+	/* ОТКРЫТЬ ФАЙЛ НА ЗАПИСЬ */
+	if((o_fp = fopen(o_fnam, "wn")) == NULL ) {
+		printf("%s : Can't write\n", o_fnam);
+		exit(1);
+	}
 
-	line->flag = bld_flg();
-	line->cvts = bld_par("");
-	line->cvtf = bld_par("");
-	line->test = bld_par("");
-	line->varl = bld_par("");
+	/* ЗАПРОСИТЬ ПАМЯТЬ ДЛЯ ОПИСАНИЯ СТРАНИЦЫ */
+	if((linep = calloc(1000, sizeof(LINE))) == NULL ) {
+		printf("No memory for LINE...\n");
+		exit(1);
+	}
+	/* ЗАПРОСИТЬ ПАМЯТЬ ДЛЯ КУЧИ СТРОК */
+	if((hps = malloc(4000)) == NULL ) {
+		printf("No memory for HEAP...\n");
+		exit(1);
+	}
+	hpsp = hps;
+
+	/* ЗАПРОСИТЬ ПАМЯТЬ ДЛЯ ТАБЛИЦЫ ИМЕН */
+	if((nms = calloc(200, 8)) == NULL ) {
+		printf("No memory for NAMTAB...\n");
+		exit(1);
+	}
+	put_nm("**--**");
+
+	/* ПОСТРОИТЬ ОПИСАНИЕ СТРАНИЦЫ */
+	linebp(i_fp);
+
+	/* ВЫРОВНЯТЬ ПО ГРАНИЦЕ 16byte РАЗМЕРЫ В ЗАГОЛОВКЕ */
+	i = lhd.lh_lines;
+	i += (16 - (i % 16));
+	lhd.lh_lines = i;
+
+	i = lhd.lh_heaps;
+	i += (16 - (i % 16));
+	lhd.lh_heaps = i;
+
+	i = lhd.lh_names;
+	i += (2 - (i % 2));
+	lhd.lh_names = i;
+
+	/* ЗАПИСАТЬ ЗАГОЛОВОК ОПИСАНИЯ СТРАНИЦЫ */
+	s = (char *)&lhd;
+	for(i=0; i<sizeof(LINE_H); i++ ) {
+		c = *s++;
+		putc( c, o_fp);
+	}
+
+	/* ЗАПИСАТЬ line[]  В ВЫХОДНОЙ ФАЙЛ */
+	s = (char *)linep;
+	for(i=0; i<lhd.lh_lines; i++ ) {
+		c = *s++;
+		putc( c, o_fp);
+	}
+
+	/* ЗАПИСАТЬ КУЧУ СТРОК */
+	s = hps;
+	for(i=0; i<lhd.lh_heaps; i++ ) {
+		c = *s++;
+		putc( c, o_fp);
+	}
+
+	/* ЗАПИСАТЬ ТАБЛИЦУ ИМЕН */
+	s = nms;
+	for(i=0; i<lhd.lh_names; i++ ) {
+		c = *s++;
+		putc( c, o_fp);
+	}
+
+	/* ЗАКРЫТЬ ВЫХОДНОЙ ФАЙЛ */
+	fclose( o_fp );
+
+	exit(0);
+
 }

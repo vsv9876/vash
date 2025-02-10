@@ -41,6 +41,8 @@ extern int mb_cur_max;
 kbcod  k_pars(cod)
 int cod;
 {
+	extern int escseq();
+
 	register int n;
 	register KBF *kbfp;
 	register char *esccod;

@@ -36,6 +36,7 @@
  */
 #ifndef line_h_def
 #define line_h_def
+
 #include <stdio.h>
 #include <wchar.h>
 
@@ -64,12 +65,14 @@ typedef unsigned linptr_t;
 #define rindex strrchr
 #endif
 
+#if 0
 #define NOUSE_STRCP
 #ifndef NOUSE_STRCP
 extern char *strcp(char *, char *);
 extern char *strncp(char *, char *, size_t);
 #define strcpy strcp
 #define strncpy strncp
+#endif
 #endif
 
 /* требуется для разных констант, RT11 более не поддерживается */
@@ -91,7 +94,8 @@ extern  FILE *vttout; /* ex, no matter: very bad idea, macro used as workaround.
 extern  int   vtti;
 #endif
 
-typedef unsigned int kbcod;  /* код клавиши, например '^M', 'P1', 'k1' */
+/*typedef unsigned int kbcod;  /* код клавиши, например '^M', 'P1', 'k1' */
+typedef int   kbcod;  /* код клавиши, например '^M', 'P1', 'k1' */
 typedef short  bool;     /* короткий формат для целых чисел, флагов */
 
 #define KBCOD_INT32
@@ -106,7 +110,7 @@ typedef short  bool;     /* короткий формат для целых чи
 #define tocod1(c) (((c)<<8) & 0xff00)   /* ---"---- второй --"--- */
 
 /* сформировать код клавиши (kbcod из двух типа char) */
-#define KBCOD(c0, c1)   (tocod0(c0)|tocod1(c1))
+#define KBCOD(c0, c1)   tocod0(c0)|tocod1(c1)
 #define KBUSR( c )      (tocod0( 'U' )|tocod1(c))
 #define KBCTL( c )      (tocod0( '^' )|tocod1(c))
 #define ISCTL( c )      (cod1(c) != 0 ? 1 : 0)
@@ -119,22 +123,27 @@ typedef short  bool;     /* короткий формат для целых чи
  * and control logical code is outside Unicode/utf8 space in upper byte 3;
  * Unicode character is not masked/confused by control code mask.
  */
+
+/* kbcod control prefix, outside Unicode space below 0x10ffffff */
+#define KBPRE 0x1f000000
+
 #define cod0(c)       ((c)  & 0xff)       /* extract 1st symbol */
 #define cod1(c)   (((c)>>8) & 0xff)       /* extract 2nd symbol */
-#define tocod0(c)     ((c)  & 0x00ff)     /* prepare 1st symbol */
-#define tocod1(c) (((c)<<8) & 0xff00)     /* prepare 2nd symbol */
+/* prepare 1st, 2nd symbol */
 
-#define KBPRE 0x1f000000    /* kbcod control prefix, outside Unicode space below 0x10ffffff */
+#define tocod0(c)  (c       & 0xff)
+#define tocod1(c) ((c << 8) & 0xff00)
+
 /* сформировать код клавиши (kbcod из двух типа char) */
-#define KBCOD(c0, c1)   (KBPRE|tocod0(c0)|tocod1(c1))
-#define KBUSR( c )      (KBPRE|tocod0('U')|tocod1(c))
-#define KBCTL( c )      (KBPRE|tocod0('^')|tocod1(c))
-/* check if kbcod is linlib control code */
-#if 0
-#define ISCTL( c )      (((c)&KBPRE) != 0 ? 1 : 0)
-#else
+#define KBCOD( c1 , c2 )     ((tocod0 (c1) | tocod1 (c2)) | KBPRE)
+#define KBUSR( c )      KBCOD('U',c)
+#define KBCTL( c )      KBCOD('^',c)
+
+/*#define  KB_EMPTY  KBCTL( 0 )/*((kbcod)0)*/
+#define KB_EMPTY		(kbcod)0
+/* check if kbcod is linlib control code - TODO more accurate, see KBCOD_INT16 */
 #define ISCTL( c )      (((c) & KBPRE) == KBPRE)
-#endif
+
 #endif /*KBCOD_INT32*/
 
 #ifndef FALSE           /* определение м.быть в др. месте */
@@ -152,10 +161,10 @@ typedef struct  {
 	bool    colu;           /* номер колонки (позиция промптера)    */
 	bool    flag;           /* флаги задержек                       */
 	short   attr;           /* слово атрибутов линии (тип,видео,..) */
-	char    *cvts;          /* строка формат. преобр. (sprintf)     */
+	const void    *cvts;    /* строка формат. преобр. (sprintf)     */
 	int     (*cvtf)();      /* функция нестандарт. форматн. преобр. */
 	int     (*test)();      /* адрес функции проверки               */
-	char    *varl;          /* адрес переменной, связанной с линией */
+	const void    *varl;    /* адрес переменной, связанной с линией */
 } LINE ;
 
 /*---------------------------------------*/
@@ -243,7 +252,8 @@ typedef struct  {
 #define KB_PU     KBCOD('P','U')
 #define KB_PD     KBCOD('P','D')
 #define KB_SP     KBCOD('S','P') /* never detected, used in help pages */
-#define KB_EMPTY  KBCOD(' ',' ')
+/*#define KB_EMPTY  KBCOD(' ' , ' ')*/
+/*#define  KB_EMPTY  KBCTL( 0 )/*((kbcod)0)*/
 
 /*----------------------*/
 /* флаги функции io_set */
@@ -301,24 +311,35 @@ typedef struct {
 	u8char_t u8s[];		/* string container */
 } u8sobj_t;
 #define const_u8sobj(z,s) { U8O_SIG,(z/256),(z%256),s }
-extern u8sobj_t * u8o_init();
-extern int cvt_u8o();
+extern u8sobj_t * u8o_init(u8sobj_t *, int);
+/*extern int cvt_u8o();*/
 
-extern int wco_size(), wcsobj();
-extern int u8o_size(), u8sobj();
+extern int wco_size(wcsobj_t *);
+/*extern int wcsobj();*/
+extern int u8o_size(u8sobj_t *);
+/*extern int u8sobj();*/
 /* convert string objects couple functions */
-extern int u8owco(), wcou8o();
+extern int u8owco(wcsobj_t *, u8sobj_t *);
+extern int wcou8o(u8sobj_t *, wcsobj_t *);
+
+extern int wcsu8s(u8char_t *, const wchar_t *); /*TODO WTF opposite parameters!!!*/
+extern int wcsnu8s(const u8char_t *, const wchar_t *, int); /*TODO check above */
 
 extern int vsize(wchar_t *);
 extern int u8vsize(char *);
 /* unicode utf-8 limited support */
 extern  int mb_cur_max;
 extern  int u8nopass;
-extern  int u8slen(), u8swcs(), u8snwcs();
-extern  int u8snu8s();
-extern u8char_t *u8pxx();
+extern  int u8slen(char *);
+extern  int u8swcs(wchar_t *, char *);
+extern  int u8snwcs(wchar_t *, const char *, int);
+extern  int u8snu8s(char *, char *, size_t);
+extern u8char_t *u8pxx(u8char_t *, wchar_t *);
 
-extern 	int w_wchr(), w_wcstrn(), w_wcstrv(), w_wcstr();
+extern 	int w_wchr(wchar_t c);
+extern  int w_wcstrn(wchar_t *s, int n);
+extern  int w_wcstrv(wchar_t *s, int n);
+extern  int w_wcstr(wchar_t *s);
 
 
 /*--------------------*/
@@ -326,31 +347,57 @@ extern 	int w_wchr(), w_wcstrn(), w_wcstrv(), w_wcstr();
 /*--------------------*/
 
 /* lin(1) - интерфейс терминала с операционной системой */
-extern  int     io_set(), ttyinp(), w_chr(), w_raw(), w_str(), w_strn();
-extern  int     w_putc(); /*TODO: extend list by functions in fact used */
+extern  int     io_set(int);
+extern  int	    ttyinp();
+extern  int     w_chr(int);
+extern  void     w_raw(const char *);
+extern  void     w_str(const char *);
+extern  int     w_strn(const char *, int);
+extern  int     w_putc(int);
+/*TODO: extend list by functions in fact used */
+
 
 /* lin(2) - управление терминалом: физический уровень */
-extern  void    at_set();
-extern  kbcod   r_cod(), r_key();
-extern  int     hw_set(), do_kbl();
+extern  void    at_set(int p);
+extern  kbcod   r_cod(kbcod cod);
+extern  kbcod   r_key();
+extern  int     hw_set();
+extern  int     do_kbl();
+extern  void    visini();
 
 /* lin(3) - управление терминалом: логический уровень */
 
-extern  kbcod   k_pars();
+extern  kbcod   k_pars(int);
 extern  void    bell();
-extern  int     cp_fet(), cp_sav();
-extern  void    cp_set(), cp_abset(), cp_cret();
-extern  int     er_eol(), er_eop(), er_pag(), er_scr();
-extern  kbcod   e_str(), r_line(), r_page();
+extern  void    cp_fet(), cp_sav();
+extern  void    cp_set(int, int, int), cp_abset(int, int, int), cp_cret();
+extern  void    er_eol(int), er_eop(int), er_pag(), er_scr(int, int, int);
+extern  kbcod   r_line(LINE *, int *);
+extern  kbcod   r_page(LINE *, LINE**, int *);
+extern  void    w_line(LINE */*, int **/);
+extern  void    w_page(LINE */*, kbcod*/);
+extern  kbcod   e_str(wcsobj_t *, int vsize, int (*)(), int *);
+extern  kbcod   re_str(wcsobj_t *, int vsize, kbcod (*)(), int *);
 extern  int     allcod, edinff;
-extern  int     w_line(), w_page();
 
 /* lin(4) - функции уровня пользователя */
-extern  int     cvt_a(), cvt_s(), cvt_sp(), cvt_lh(), get_lh(), w_lh_str(), cvt_hl(), tst_m();
+extern  int     cvt_a(LINE *, kbcod, char *, char *);
+extern  int     cvt_s(LINE *, kbcod, char *, char*);
+extern  int     cvt_sp(LINE *, kbcod, char *, char*);
+extern  int     cvt_lh(LINE *, kbcod, char *, const char *);
+extern  void    get_lh(const char *, const char *);
+extern  void    w_lh_str(const char *);
+extern  int     cvt_hl(LINE *, int, char *, char *);
+extern  int     tst_m(LINE *, kbcod);
 
-extern  int     w_lbl(), w_msg(), w_emsg(), w_help(), u_page(), d_page();
-extern  LINE	*b_page();
-extern FILE     *dafopen();
+extern  void    w_lbl(int, const char *);
+extern  void    w_msg(int, const char *);
+extern  void    w_emsg(const char *);
+extern  void    w_help(const LINE *);
+
+
+extern void     u_page(LINE *, LINE*), d_page(LINE *);
+extern FILE    *dafopen(char *, const char*, const char*);
 
 #define er_page er_pag
 #define r_str   e_str
@@ -373,6 +420,5 @@ extern int tty_li, tty_co;
 #define WSHOW_EDIT (WSHOW_CO    - 10)
 #define WSHOW_ITEM (WSHOW_EDIT  - 8)
 #define WSHOW_AT TXT|VEXT
-
 
 #endif /* line_h_def */

@@ -37,17 +37,17 @@ int     ok_msg()
 	return(msgflg);
 }
 
-w_lbl(vamode, str)
+void w_lbl(vamode, str)
 int 	vamode;
-char	*str;
+const char	*str;
 {
 	at_set(vamode);
 	w_str(str);
 }
 
-w_msg(vamode, str)
+void w_msg(vamode, str)
 int     vamode;        /* видеоатрибут */
-char    *str ;         /* текст сообщения об ошибке */
+const char    *str ;         /* текст сообщения об ошибке */
 {
 	int va;	/* attribute of message */
 
@@ -82,8 +82,8 @@ char    *str ;         /* текст сообщения об ошибке */
 }
 
 /* для поддержки совместимости со старыми версиями */
-w_emsg(s)
-register char *s;
+void w_emsg(s)
+const char *s;
 {
 	w_msg(ERR, s);
 }

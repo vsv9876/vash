@@ -9,14 +9,12 @@
 extern  char    coprts[];
 extern  char    buildd[];
 extern  char   *versn;
-extern  char   *vexdir;
-/*extern  char   *vlibpath;*/
 extern  int     y0_top;
 
 extern int sgrmode;
 
-/*char   *onoff[] = { "[ ]", "[X]", 0 };*/
-char   *onoff[] = { "[ ]", "[*]", 0 };
+/*const char   *onoff[] = { "[ ]", "[X]", 0 };*/
+const char   *onoff[] = { "[ ]", "[*]", 0 };
 
 /*ARGSUSED*/
 int
@@ -107,7 +105,7 @@ sup()
 	if ((supm = getvex("sup.lb")) == NULL)
 		return(FALSE);
 	scrlarea();
-	u_page(supm, "sup_help.lb");
+	u_page(supm, (LINE *)"sup_help.lb");
 	d_page(supm);
 
 	pre_vf();

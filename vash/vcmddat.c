@@ -176,7 +176,7 @@ register int kt1x;
 #define MAXFP 8
 int
 cmdset(file)
-char *file;
+const char *file;
 {
     FILE *fp[MAXFP];	/* opened included files */
     int fpix;			/* current opened FILE pointer index*/

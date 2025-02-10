@@ -16,6 +16,7 @@ Revision 1.1  89/08/29  14:50:38  vsv
 ВЕРСИЯ LINLIB_3
 
  */
+#if 0
 
 #include <stdio.h>
 #include "line.h"
@@ -46,7 +47,6 @@ static
 
 ---END
 
-
 w_help(phelp)
 /*--------------------------------*/
 /* ПОКАЗАТЬ СПРАВОЧНУЮ ИНФОРМАЦИЮ */
@@ -75,3 +75,4 @@ help_2:
 help_0:
 	er_pag();
 }
+#endif

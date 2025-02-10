@@ -70,7 +70,7 @@ extern int		sgrmode;   /* initial monochrome */
 
 #ifdef DEMOS2
 extern  char *getenv();
-#endif DEMOS2
+#endif /*DEMOS2*/
 
 do_kbl()
 /*--------------------------------*/
@@ -123,7 +123,7 @@ do_kbl()
 		/* НИКАКОЙ ДИАГНОСТИКИ... ЕСТЬ УМОЛЧАНИЕ */
 		return 0;
 	}
-#endif  DEMOS2
+#endif  /*DEMOS2*/
 
 #ifdef  RT11
 	/* НАДО НАЙТИ ФАЙЛ ВИДА 'HOM:VT52.VHS' */

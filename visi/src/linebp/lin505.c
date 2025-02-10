@@ -17,7 +17,7 @@
 #include "line.h"
 #include "linebp.h"
 
-extern  char *phelp0;
+extern  const char *phelp0;
 
 extern  IN_PORTS in_help[];
 
@@ -33,19 +33,19 @@ LINE *phelp;
 	er_eol(TXT);
 }
 
-
+void 
 w_help(page)
 /*--------------------------------*/
 /* ПОКАЗАТЬ СПРАВОЧНУЮ ИНФОРМАЦИЮ */
 /*--------------------------------*/
-char    *page;
+const LINE    *page;
 {
 	char tmps[200];
-    char *pages[3];
+    const char *pages[3];
     LINE *phelp = (LINE *)NULL;
     register int i;
 
-    pages[1] = page !=0 ? page : "";
+    pages[1] = page != (LINE *)0 ? (void *)page : "";
     pages[2] = phelp0;
 
     for (i = 1; i> 0; ) {
@@ -82,5 +82,4 @@ char    *page;
     }
     er_pag();
     w_msg(TXT, "");
-    return(TRUE);
 }
