@@ -1,3 +1,5 @@
+#include <sys/types.h>
+#include <unistd.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -99,6 +101,17 @@ int     pc_ix;
 char   *bufsp;
 
 /*
+ * skip spaces until next expr; stop on end of string
+ */
+char *skipsp(p)
+char *p;
+{
+	while(*p != '\0' && *p != '\n' && isspace(*p))
+		p++;
+	return p;
+}
+
+/*
  * Добавить строку в буфер,
  * вернуть указатель на конец проч. части строки.
  * Читать не больше n слов, здесь это означает, что
@@ -137,6 +150,7 @@ register char *s;
 		/* НАЗВАНИЕ КЛАВИШИ ДЛЯ МЕНЮ */
 		i = (int)*s++ - '0'; i--; if (i < 0) i = 9;
 		keys0[i].kc_cap = bufsp;
+		s = skipsp(s);
 		apndstr(s, 1);
 		break;
 	case 'f': case 'i': case 'o': case '@':
@@ -152,8 +166,9 @@ register char *s;
 		case 'o': p = Coutf; break;
 		case '@': p = Csubs; break;
 		}
+		s = skipsp(s);
 		if (*s) {
-			/* откусить '\n' в конце строки */
+			/* trim line, clear last '\n' */
 			strcpy(p, s); p[strlen(s)-1] = '\0';
 		} else  *p = '\0';
 		break;
@@ -185,14 +200,22 @@ const char *file;
 
     char ws[WSMAX];     /* рабочая строка для чтения из файла */
     register char *p;
+    register char *p1;
+    
+    int predef;         /* 1 if BSD, 0 if other */
+    int noskip = 1;
+    int isroot = 0;
     /*extern FILE *afopen();*/
     int wslen;
 
+    isroot = getuid() == 0 ? 1 : 0;
     for (fpix=0; fpix<MAXFP; fpix++)
     	fp[fpix] = NULL;
 
     fpix = 0;
     fname = file;
+
+    predef = vashflag.predef;
 
 	/* инициализация переменных сканирования */
 	pc_ix = 0;
@@ -208,33 +231,74 @@ open_include:
 				w_emsg(ws); er_eol(ERR); at_set(CMD);
 				return(0);
 			}
+			if (predump) {
+				printf("#+++ fpix=%d ------------------- <@%s> \n", fpix, fname);
+			}
 		}
+skip:
 		while (fgets(ws, WSMAX, fp[fpix]) != NULL) {
 			p = ws;
 
+			if(*p == '|') {
+				/* preprocessing a block of strings */
+				p1 = skipsp(p + 1);
+				if (*p1 == '+') {
+					noskip = (predef == 1 ? 1 : 0);
+				} else
+				if (*p1 == '|') {
+					noskip = (predef == 0 ? 1 : 0);
+				} else
+				if (*p1 == '-') {
+					noskip = 1;
+					p1++;
+				}
+				/* preprocessing single line of config */
+				if (*p1 == '#') {
+					if ( ! isroot)
+						continue;
+				}
+				if (*p1 == '$') {
+					if (isroot)
+						continue;
+				}
+				/*if (*p1 == '#' || *p1 == '$')*/
+				p1++; /*+*/
+				p = skipsp(p1);
+				if(*p == '|') p++; /* keep leading spaces if required */
+			}
+			if (noskip == 0) {
+				continue;
+			}
+
+			if (predump && *p != '\0') {
+				printf("%s", p);
+			}
+			/* 1st symbol determins processing of rest of the string */
 			switch (*p) {
-			/* первый символ определяет поведение сканера */
+			case '#':
+			case '\n':
+				/* skip any comments and dummy strings */
+				continue;
 			case '@':
-				/* trim spaces for file name */
+				p = skipsp(p+1);
+				/* trim trailing EOL char or space for file name */
 				wslen = strlen(p);
 				while (wslen > 0) {
 					wslen--;
-					if (ws[wslen] == '\n' || isspace(ws[wslen])) {
-						ws[wslen] = '\0';
+					if (p[wslen] == '\n' || isspace(p[wslen])) {
+						p[wslen] = '\0';
 					}
 				}
-				strcpy(incfile, &ws[1]);
+				strcpy(incfile, p);
+
 				fname = &incfile[0]; /* new file included */
 				fpix++;
 				goto open_include;
 				continue;
 			case '-':
-				/* строка умолчаний */
+				/* strings like '-i', '-o',... */
 				p++;
 				setdef(p);
-			case '#':
-			case '\n':
-				/* строки коментария и пустые отбрасываются */
 				continue;
 			case ' ':
 			case '\t':
@@ -276,7 +340,10 @@ open_include:
 				p = apndstr(p, 999);    /* всю строку до конца */
 				continue;
 			}
-			/* здесь м.б. анализ ошибок... */
+			/* TODO здесь мог быть анализ ошибок... */
+		}
+		if (predump) {
+			printf("#--- fpix=%d -----------------------\n", fpix);
 		}
 		fclose(fp[fpix]); fp[fpix] = NULL;
 		fpix--;

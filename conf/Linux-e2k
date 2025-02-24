@@ -1,16 +1,13 @@
-# GNU/Linux
-# common for e2k (mcst)
+# like GNU/Linux E2K/MCST
+#
+# since lcc-1.23 most of gcc flags are supported
 CFLAGS_VISI = -DUSE_TERMIOS
-CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX
+CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX -DSTRVERSCMP
 ASHLIB      = SVR4
 #TERMLIB     = -ltermcap
 TERMLIB     = -lncurses
 #TERMLIB     = -ltinfo
 
-CC          = gcc $(DEBUG) -fno-builtin-function \
-			-Wno-int-to-pointer-cast -Wno-pointer-to-int-cast \
-			-Wno-implicit-int \
-			-Wno-implicit-function-declaration \
-			-Wwrite-strings
+CC          = gcc $(DEBUG) -std=gnu89 -Wwrite-strings
 #
-LINKER      = gcc $(DEBUG) -fno-builtin-function
+LINKER      = gcc $(DEBUG)

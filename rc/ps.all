@@ -1,0 +1,26 @@
+#!/usr/bin/vash
+#
+# menu of all processes of user
+# 
+#
+|+
+|# |-f ps -audx
+|$ |-f ps -dfu -U $LOGNAME
+-@2
+||
+#
+|#|-f ps xf -N -f
+|#|-@2
+|$|-f ps af -u $LOGNAME
+|$|-@1
+|-
+
+-7 <user
+
+:U7
+:7
+    * *   :exec vash ps.rc
+#    * *   _cmdset ps.rc
+#
+@ps.common
+#<<< ps.all

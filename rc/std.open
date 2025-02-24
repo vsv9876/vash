@@ -1,5 +1,6 @@
+#!/usr/bin/vash
 #
-#@ std.open
+#>>> std.open
 #
 # file edit
 

@@ -22,7 +22,9 @@ MAKEFILE      = Makefile
 PROFILES        = \
 		std \
 		rpm \
+		pp* \
 		ps \
+		ps.* \
 		ll \
 		ls-av \
 		menu \

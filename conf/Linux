@@ -1,11 +1,13 @@
 # GNU/Linux
+# RHEL, Fedora, SUSE
+# 
 CFLAGS_VISI = -DUSE_TERMIOS
 CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX -DSTRVERSCMP
 ASHLIB      = SVR4
 TERMLIB     = -lncurses
 #TERMLIB     = -ltinfo
 
-CC          = gcc $(DEBUG) \
-			-std=gnu89 -Wwrite-strings -Wno-implicit-int
-
+CC          = gcc $(DEBUG) -std=gnu89 -Wwrite-strings
+##			-std=gnu89 -Wwrite-strings -Wno-implicit-int
+#
 LINKER      = gcc $(DEBUG) 

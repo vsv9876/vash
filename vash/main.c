@@ -22,7 +22,8 @@ FILE   *tmpfp = NULL;
 
 int     y0_top = 0;   /* begin of scroll area // Начало свитка на экране */
 
-VASHFLAG vashflag = { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1 } ;
+VASHFLAG vashflag = { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0 } ;
+int predump = 0;
 
 char   *envshell;		/* env SHELL= */
 char   *homedir;        /* домашний каталог */
@@ -199,6 +200,12 @@ char **argv;
 						vashflag.whodirf = vashflag.xtermf = vashflag.clockf =
 								vashflag.cmailf = vashflag.exittrap = vashflag.novice =
 										vashflag.subatrc = vashflag.subshow = 0;
+		if(strcmp("BSD", VASHLIB)==0)
+			vashflag.predef = 1;
+#if 1
+		else
+			vashflag.predef = 0;
+#endif
 		/*** yy_max = 10; */
 
 		while (c = *envsup++) {
@@ -306,6 +313,9 @@ char **argv;
 			case 'A':
 				vashflag.shanyway = 1;
 				continue;
+			case 'P':
+				predump = 1;
+				continue;
 
 			case '-':
 /*				cfill(argc, argv);  tail of agruments is fill command replaced one from vashrc */
@@ -341,16 +351,18 @@ args_done:
     	unlink(tmpflnm);
     }
 
-	io_set(IO_VIDEO);
-
-	signal(SIGINT, onintr);
 #ifdef DEBUG
 	printf("   Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
 #endif
 /*NOXSTR*/
 	if ( cmdset(vashrc) ) {
 
+		if (predump)
+			exit(0);
+		io_set(IO_VIDEO);
+
 		cfill(argc, argv); /* tail of agruments is fill command replaced one from vashrc */
+		signal(SIGINT, onintr);
 
 #ifdef DEBUG
 		printf("cmdset; Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
@@ -369,12 +381,16 @@ args_done:
 			signal(SIGWINCH, sigwinch);
 
 			u_menu(clm._vf);
-			onexit(0); exit(0);
+
+			onexit(0);
+
+			io_set(IO_TTYPE);
+
+			exit(0);
 		}
 	} else {
 		/* ошибки (плохо установлен ash, не читается реперный файл */
 		/* scrlnl(); */
-		io_set(IO_TTYPE);
 		printf("\n");
 		exit(1);
 	}

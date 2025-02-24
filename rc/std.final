@@ -1,6 +1,6 @@
 #!/usr/bin/vash
 #
-# std.final
+#>>> std.final
 #
 # last resort section,
 # may be used in any *.rc as a last included file
@@ -23,7 +23,8 @@
 #-------------------------------------------------------
 :[%]
         * *     _file #@
-#        * *     _kshow
+:[^]
+        * *     _kshow
 
 #
 # Посмотреть подстановки ash (для отладки:
@@ -34,7 +35,7 @@
 #       #S - суффикс имени без точки
 #:@
 ###	* *     ;_sh echo # s='#s' S='#S' *='#*' e='#e'
-#	* *     ;echo # s='#s' S='#S' *='#*' e='#e'
+#	* *     ;echo # %s='#s' S='#S' *='#*' e='#e'
 # ------------
 # experiment: repeat last command
 :@      repeat cmd
@@ -55,3 +56,4 @@
 :*
 	* * _msg Please, switch keyboard to ASCII/Latin mode
 
+#<<< std.final

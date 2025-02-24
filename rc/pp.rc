@@ -1,0 +1,63 @@
+#!/usr/bin/vash
+# config preprocessor test
+
+|+ # BSD stuff
+|# |-f :Fa
+|$ |-f :F
+|| # other than BSD stuff (SYSV, SVR4, ISC)
+|#  -f :F ls -ar
+|$  -f ls
+|-   ########
+
+-@1
+-i.
+-o/dev/null
+
+|#|-3|#
+|$|-3|$
+ 
+|+
+-4|+
+||
+-4|-
+|-
+ 
+|+
+-6 |+
+||
+-6 |-
+|-
+
+| + -7|+
+| | -7||
+| - -7|-
+
+-9setup
+-0exit
+
+@ std.mark
+
+@ std.cmd
+
+:U9
+:9
+    * *   _sup
+
+:^D
+:EX
+:U0
+:0
+    * *     :exit
+
+-5?
+:5
+|+
+    * -   ;echo predef=1 - 
+    * +   ;echo predef=1 +++
+||
+    * -   ;echo predef=0 - 
+    * +   ;echo predef=0 +++
+|-
+
+@std.final
+#<<< pp.rc

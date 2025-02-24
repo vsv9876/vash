@@ -6,7 +6,8 @@
 # included sections:
 # shell (bash) command
 
--1!sh
+|# -1 #root!
+|$ -1 $
 
 :RE
 	* * ;clear

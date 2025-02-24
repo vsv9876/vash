@@ -1,7 +1,6 @@
+#!/usr/bin/vash
 #
-#@ std.view
-#
-# file view
+#>>> std.view
 
 -3view
 
@@ -10,14 +9,6 @@
 	r?x ?   +View
 
 +View
-#
-
-#
-#
-#
-
-	r?? ? *.C            ;ccat ./#@ | #m
-#----
 	r?? D *.tar.[zCp]    ;gzip -d < ./#@ | tar -tvf - | #m
 	r?? D *.tar.bz2      ;bzip2 -cd < ./#@ | tar -tvf - | #m
 	r?? D *.tar.gz       ;gzip -d < ./#@ | tar -tvf - | #m
@@ -31,6 +22,7 @@
 	r?? D *.gz           ;gzip -d < ./#@ | #m
 	r?? D *.bz2          ;bzip2 -d < ./#@ | #m
 	r?? D *.xz           ;xz -d < ./#@ | #m
+	r?? ? *.C            ;ccat ./#@ | #m
 #----
 	r?? [DT] *.cpio      ;cpio -itv -I./#@ | #m
 	r?? [DT] *.cpio.[Z]  ;zcat < ./#@ | cpio -itv | #m
@@ -42,28 +34,30 @@
 	r?? [DT] *.gz        ;gzip -d < ./#@ | #m
 #	r?? [DT] *.gz-*      ;gzip -d < ./#@ | #m
 	r?? [DT] *.xz        ;xz -d < ./#@ | #m
-	r?? [DT] *.src.rpm   ;rpm -qivp ./#@ | #m
+|+| r?? [DT] *.pkg       ;pkg info -F ./#@ | #m
+|||	r?? [DT] *.src.rpm   ;rpm -qivp ./#@ | #m
 	r?? [DT] *.rpm       ;rpm -qivp ./#@ | #m
 	r?? [DT] *.deb       ;dpkg --info ./#@ | #m
-#----
+|-
 	r?? A *.a            :ar t ./#@ | #m
 	r?? O *.o            :nm -np ./#@ | #m
 	r?? O *.so           :nm -np ./#@ | #m
 	r?? O *              nm -np ./#@ | #m
 	r?? D *.tar          :tar -tvf ./#@ | #m
 	r?? D *.[wj]ar       :unzip -l ./#@ | #m
+	r?? D *.JPG	     :display ./#@
 	r?? D *.jpg	     :display ./#@
 	r?? D *.png	     :display ./#@
 	r?? D *.tiff         :display ./#@
 	r?? D *              ;od -a ./#@ | #m
 	r?? T *              ;#m ./#@
 # 	r?? E *              _msg file empty, zero length
-# interface files in /dev, /sys, ... - stat(2) show them as zero length regular files
+# interface files in /dev, /sys,: stat(2) show them as zero length regular files
 	r?? E *              :cat ./#@ | tr '\0' ' '
 	r?x d *              :ls -aCF ./#@/.
 #	r?? M *              frm -n ./#@
 	r?? M *              mutt -Rf ./#@
 #	??? ? *              _file ./#@
-	??? ? *              ;file ./#; ls -ld ./#@
+	??? ? *              ;file ./#@; ls -ld ./#@
 
 #<<< std.view

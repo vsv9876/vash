@@ -68,6 +68,7 @@ const IN_PORTS inport[] = {
 	{ "AF",         &vashflag.shanyway },
 	{ "SF",         &vashflag.subatrc },
 	{ "SO",         &vashflag.subshow },
+	{ "PP",         &vashflag.predef },
 	{ "yy_max",     &clm._yy_max },
 	{ "y0",         &clm._y0     },
 	{ "y0_top",     &y0_top },

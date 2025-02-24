@@ -1,6 +1,7 @@
 #!/usr/bin/vash
-#
-# shebang for auto syntax colorize only -- this is vash rc profile
+# NOTE:
+# this is description of vash rc profile syntax;
+# shebang for auto syntax colorize only;
 #
 
 # Visual Assistant Shell (vash)
@@ -87,8 +88,8 @@
 # case list may be placed anywhere in profile, see below '+View', '+ed' examples
 #
 +View
-   r** D *.gz	gzip -d < ./#@
-   r** T *.txt	less ./#@
+   r?? D *.gz	gzip -d < ./#@
+    r* T *.txt	less ./#@
 
 #-------------------------------------------------------
 # internal commands examples:
@@ -108,7 +109,7 @@ r?x ?	_sh #k		# begin new command
 * * 	_msg message	# info message (with attribute TXT)
 #
 * * 	_cmdset profile	# substitute current profile with specified one
-* * 	_sup		# setup runtime parameters of vash interpreter
+* * 	_sup		# setup parameters of vash in runtime
 * * 	_rescan		# repeat fill main menu content, drop any mark
 * * 	_kshow		# debug info about some substitution values
 * * 	_sus		# suspend process, switch to parent shell
@@ -121,7 +122,7 @@ r?x ?	_sh #k		# begin new command
 #		|	|	
 #  <no prefix>	+	+	execution 
 #  ':'		-	+	execution
-#  ';'		-	+	execution
+#  ';'		-	-	execution
 #  '_'		-	-	internal command
 
 #-----------------------------------------
@@ -137,7 +138,7 @@ r?x ?	_sh #k		# begin new command
 #       + действие (имя действия), начало таблицы действия над пунктом меню;
 #       пробел, табуляция
 #         продолжение таблицы программы клавиши или действия.
-#       @ имя файла, включаемого в этот профиль
+#       @ имя включаемого файла (вставки) в этот профиль
 # Символ типа файла (в таблицах действий):
 #       d       каталог (directory)
 #       b       блочный специальный (например /dev/rk0)

@@ -3,7 +3,7 @@
 # NOTE:shebang used only for auto syntax colorize by text editors
 #
 # Visual Assistant Shell (vash)
-# 1990-2024 (C) Sergey Vovk
+# 1990-2025 Sergey Vovk
 #
 # GPL license
 #
@@ -43,15 +43,15 @@
 
 # exit with no comfirmation
 #:^D
-:EX
 #    * * ;exit
+:EX
     * * exit
 
 :0
     * * exit
 
 #
-# User menu
+# User menu (experimental status)
 #
 :2
 :U2
@@ -82,6 +82,8 @@
 #	r?? [OD] *      ;strings #@ | #m
 #+edw
 	rwx d *         :cd #$
+|+|	r?? ? *.pkg ;pkg info -F ./#@ | #m
+|-
 	r?? ? *.src.rpm ;rpm -qlvp ./#@ | #m
 	r?? ? *.rpm     ;rpm -qvp ./#@ --fileprovide | #m # -c -R
 	r?? ? *.deb     ;dpkg --contents ./#@ | #m
@@ -207,8 +209,9 @@
 
 :M
 #       Посмотреть раздел оперативного руководства по компоненте,
-#       правильно работает в каталоге с файлами man (/usr/catman,
-#       /usr/local/man). Может работать в каталогах /bin, /lib /include)
+#       правильно работает в каталоге с файлами man
+#       (/usr/catman, /usr/local/man.
+#       Может работать в каталогах /bin, /lib /include)
 	* *.*   :man #*
 	* *     :man #@
 :R
@@ -259,4 +262,4 @@
 	* *	:du -s ##
 
 @std.final
-
+#<<< std.rc

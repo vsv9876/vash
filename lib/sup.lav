@@ -29,6 +29,7 @@ N       = ia    -       onoff   cvt_a   -       NF
 A       = ia    -       onoff   cvt_a   -       AF
 a       = ia    -       onoff   cvt_a   -       SF
 o       = ia    -       onoff   cvt_a   -       SO
+P       = ia    -       onoff   cvt_a   -       PP
 
 ---#u8nopa  = ia    -       onoff   cvt_a   -       u8nopa
 u8      = ia    -       onoff   cvt_a   -       u8nopa
@@ -56,7 +57,7 @@ C       = ipv    -      "%1d"  -       -       SGR
 +   .h. h,history   .s. s,scroll        .A. anyway sh -c     .a. #@ in rc    
 +   .S. S,sync      .p. p,panel/keybar  .u8 only ASCII KBD   .o. #@ show pos        
 +   .m. m,mail_biff .w. w,title         .XT trap on exit         
-+   .c. c,clock     .x. x,xterm title   .N. help msg on trap     
++   .c. c,clock     .x. x,xterm title   .N. help msg on trap  .P. predef   
                                                                         
 +."debug of profiles"..................                      .yt:y0_top      
 +-- .fo................................ .ym.:linesmax        .y0:y0          

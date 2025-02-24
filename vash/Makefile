@@ -45,7 +45,8 @@ DESTBIN       = $(DESTDIR)$(DEST)/bin
 #CFLAGS_ASH    = -DJCLsuspend -DFbsd -DBSDpagesize -DBSDmagic
 #CFLAGS_ASH    =
 CFLAGS        = $(CFLAGS_ASH) \
-		-I$(VISI)/include\
+		-I$(VISI)/include \
+		-D'VASHLIB="$(ASHLIB)"' \
 		-D'DESTLIB="$(DESTLIB)"' \
 		-D'VERSN="$(VERSN)"' \
 		-D'VASH_PATH="$(VASH_PATH)"'

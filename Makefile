@@ -153,6 +153,7 @@ clean:
 	cd $(VASH); $(MAKE) clean
 	cd lib; $(MAKE) clean
 	cd vtest; $(MAKE) clean
+	cd misc; $(MAKE) clean
 #	cd lib/LIB; $(MAKE) clean
 #	cd lib/LIB-$(ASHLIB); $(MAKE) clean
 	rm -rf $(BLD)

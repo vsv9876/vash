@@ -1,21 +1,16 @@
-
-# lunix
+# GNU/Linux (Debian)
+#
 # debian use old ncurses,
-# portable build with static linkage
+# this is portable build with static linkage
 #
 CFLAGS_VISI = -DUSE_TERMIOS
-#CFLAGS_VISI = -DUSE_TERMIOS -DNOUSE_STRCHR -DNOUSE_STRCP
-CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX
+CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX -DSTRVERSCMP
 ASHLIB      = SVR4
 #TERMLIB     = -ltermcap
 TERMLIB     = -lncurses
 #TERMLIB     = -ltinfo
 
-CC          = gcc $(DEBUG) -fno-builtin-function \
-			-Wno-int-to-pointer-cast -Wno-pointer-to-int-cast \
-			-Wno-implicit-int \
-			-Wno-implicit-function-declaration \
-			-Wwrite-strings -static
+CC          = gcc $(DEBUG) -std=gnu89 -Wwrite-strings
+##			-std=gnu89 -Wwrite-strings -Wno-implicit-int
 
 LINKER      = gcc $(DEBUG) -fno-builtin-function -static
-
