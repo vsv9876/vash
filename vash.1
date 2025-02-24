@@ -432,6 +432,10 @@ is a comment string. Comments and dummy strings omitted by parser.
 NOTE: sign simbol '\fB#\fR' has a special meaning if found
 not in 1st position.
 .TP
+.B |
+preprocessing prefix which followed by a symbol '+', '|', '#', '$' -
+see below a section \fBPREPROCESSING CONFIG FILES\fR.
+.TP
 .B -
 setup parameter, defines variouse constants and parameters
 .TP
@@ -547,12 +551,52 @@ othervie clear screen after every command on return to main view
 .B -p
 show \fBp\fRanel of description labels of keys 0-9
 .TP
+.B -P
+show config after \fBp\fRreprocessor;
+.br
+(see section \fBPREPROCESSING CONFIG FILES\fR)
+.TP
 .B -w
 title of session, \fBw\fRhoami (user,host,current dir if configured)
 .TP
 .B -x
 title on \fBx\fRterm window if supported by X window manager
 
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.SH "PREPROCESSING CONFIG FILES"
+.PP
+String of any config file may be filtered with preprocessor.
+Such a string contains symbol '|' in 1st position. The rest of the string
+will be filtered dependig of 2nd symbol,
+which may be separated by a space symbol.
+.PP
+Filtering is based on a session running (as root or ordinary user) and
+historycal difference between OSes - BSD or SYSV.
+.PP
+Preprocessor's symbols is omitted from resulting string skipping spaces.
+If config string requires leading spaces, 3rd symbol may be '|' which
+will be omit also.
+.RS 4
+.PP
+Block filtering organised by 2nd symbol:
+.TP
+.B +
+config strings specific for BSD family
+.TP
+.B |
+all other systems
+.TP
+.B -
+and of block filtering
+.PP
+Config strings defined with '|#' and '|$' must be repeated before
+every config string:
+.TP
+.B #
+config string specific for root sessions
+.TP
+.B $
+config string specific for user session without root permissions
 .\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SH "ENVIRONMENT"
 .PP
