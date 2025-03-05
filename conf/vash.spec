@@ -24,6 +24,8 @@ Features visual assistance for typing command line parameters, editing a command
 %build
 #%%make_build
 make config
+# core dump if compiled with optimization
+#./configure -d=-O3
 make
 
 %install
@@ -33,6 +35,7 @@ mkdir -p %{buildroot}/etc/vhset
 mkdir -p %{buildroot}/usr/share/doc/%{name}
 mkdir -p %{buildroot}/%{_mandir}/man1/
 cp -rd ./etc/vhset/* %{buildroot}/etc/vhset/
+cd %{buildroot}/etc/vhset; ln -sf xterm-256color-std xterm-256color
 
 %clean
 rm -rf %{buildroot}

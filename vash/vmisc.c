@@ -497,7 +497,7 @@ int   size;     /* размер поля для ввода */
 	line.cvts = (char *)0;
 	line.cvtf = (void *)0;
 	line.test = (void *)0;
-	line.varl = (char*)wobj;
+	line.varl = (void*)wobj;
 
 	cod = r_pmt(pmtstr, &line, savedf);
 	return(cod);

@@ -170,15 +170,25 @@ wcsobj_t *so;
 
 /* cannot be implemented as a macro */
 int u8o_size(u8o)
-u8sobj_t *u8o;
+const u8sobj_t *u8o;
 {
-	 return ((256 * (u8o->u8o_sizeh)) + (u8o->u8o_sizel));
+	int ret = 0;
+
+	if (u8o != NULL && u8o->u8o_sig != U8O_SIG)
+		return 0; /* -1 */
+	ret = (256 * (u8o->u8o_sizeh)) + (u8o->u8o_sizel);
+	return (ret);
 }
 
 int wco_size(wco)
 wcsobj_t *wco;
 {
-	return(wco->wco_size);
+	int ret = 0;
+
+	if (wco != NULL && wco->wco_sig != WCO_SIG)
+		return 0; /* -1 */
+	ret = wco->wco_size;
+	return(ret);
 }
 
 /* initialize pre-allocated memory for UTF-8 string object */

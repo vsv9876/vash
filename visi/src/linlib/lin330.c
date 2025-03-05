@@ -240,7 +240,7 @@ wchar_t *wcs;
 	int size;
 
 	wcs = (wchar_t *)wcsobj;
-	if (wcsobj->wco_sig == -1) { /* string object setup */
+	if (wcsobj->wco_sig == WCO_SIG/*-1*/) { /* string object setup */
 		(*wcs)++;
 		(*wcs)++;
 		size = wcsobj->wco_size;
@@ -267,7 +267,7 @@ int vshift;	/* start of visible part of wcsobj->wcs */
 
 	wcs = (wchar_t *)wcsobj;
 	size = vsize; /* preset for ordinary string */
-	if (wcsobj->wco_sig == -1) { /* string object setup */
+	if (wcsobj->wco_sig == WCO_SIG/*-1*/) { /* string object setup */
 		wcs++;
 		wcs++;
 		size = wcsobj->wco_size;
@@ -392,7 +392,7 @@ kbcod cod;		/* kbcod() pressed */
 		int w;			/* width of character to be changed */
 
 	wc_s = (wchar_t *)wcsobj;
-	if (wcsobj->wco_sig == -1) {
+	if (wcsobj->wco_sig == WCO_SIG/*-1*/) {
 		size = wcsobj->wco_size;
 		/*wcs = &(wco->wcs);*/
 		wc_s++; wc_s++; /* shift pointer to real string buffer */
@@ -556,7 +556,7 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 	 *                -1, ЕСЛИ НАДО ЗАКОНЧИТЬ РЕДАКТИРОВАНИЕ;
 	 *              cod,  ЕСЛИ КОД ИЗМЕНЯЕТ СОДЕРЖИМОЕ СТРОКИ.
 	 */
-	wchar_t tmps[8];
+	/*wchar_t tmps[8];*/
 	register
 	wchar_t    *wc_s;  /* wide char string to be edited -- СТРОКА ДЛЯ РЕДАКТИРОВАНИЯ*/
 	wchar_t     c;

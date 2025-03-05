@@ -288,21 +288,35 @@ extern LFRAME *lframe; /* logical current frame, by default is &hwframe */
 
 /*
  * string object limited itself
- * can be represented as wchar_t[], where [0] and [1] initialised before usage
+ *
+union wco {
+	wchar_t s[];
+	struct o {
+		wchar_t wco_sig;
+		wchar_t wco_size;
+		wchar_t wcs[];
+	};
+};
+ *
+ * can be represented as wchar_t[], where [0] and [1] elements initialised before usage
  */
 
 #define WCO_SIG ((wchar_t)-1)
+/*#define WCO_SIG ((wchar_t)0xffffffff)*/
+/*#define WCO_SIG ((wchar_t)0x8)*/
 typedef struct {
-	wchar_t wco_sig;	/* allways (wchar_t)-1 */
-	wchar_t wco_size;	 /* size of string container */
-	wchar_t wcs[];	/* string container */
+	wchar_t wco_sig;    /* allways (wchar_t)-1 */
+	wchar_t wco_size;   /* size of string container */
+	wchar_t wcs[];      /* string container */
 } wcsobj_t;
 #define const_wcsobj(z,s) { WCO_SIG,z,s }
 
 typedef unsigned char u8char_t;
 
 /* DLE Data Link Escape - any which not used in 1st position of text */
-#define U8O_SIG (0x10)
+/*#define U8O_SIG (0x10)*/
+/*#define U8O_SIG (0x1)*/
+#define U8O_SIG (1)
 
 typedef struct {
 	u8char_t u8o_sig;	/* allways (u8char_t)0xFF */
@@ -314,10 +328,8 @@ typedef struct {
 extern u8sobj_t * u8o_init(u8sobj_t *, int);
 /*extern int cvt_u8o();*/
 
-extern int wco_size(wcsobj_t *);
-/*extern int wcsobj();*/
-extern int u8o_size(u8sobj_t *);
-/*extern int u8sobj();*/
+extern int wco_size(wcsobj_t *); /*extern int wcsobj();*/
+extern int u8o_size(const u8sobj_t *); /*extern int u8sobj();*/
 /* convert string objects couple functions */
 extern int u8owco(wcsobj_t *, u8sobj_t *);
 extern int wcou8o(u8sobj_t *, wcsobj_t *);
@@ -376,7 +388,7 @@ extern  kbcod   r_line(LINE *, int *);
 extern  kbcod   r_page(LINE *, LINE**, int *);
 extern  void    w_line(LINE */*, int **/);
 extern  void    w_page(LINE */*, kbcod*/);
-extern  kbcod   e_str(wcsobj_t *, int vsize, int (*)(), int *);
+extern  kbcod   e_str(wcsobj_t *, int vsize, kbcod (*)(), int *);
 extern  kbcod   re_str(wcsobj_t *, int vsize, kbcod (*)(), int *);
 extern  int     allcod, edinff;
 

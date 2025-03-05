@@ -1,0 +1,15 @@
+# GNU/Linux
+# RHEL, Fedora, SUSE
+#
+# clang 19.x
+# 
+CFLAGS_VISI = -DUSE_TERMIOS
+CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX -DSTRVERSCMP
+ASHLIB      = SVR4
+TERMLIB     = -lncurses
+#TERMLIB     = -ltinfo
+
+CC          = clang $(DEBUG) -std=gnu89 -Wwrite-strings
+##			-std=gnu89 -Wwrite-strings -Wno-implicit-int
+#
+LINKER      = clang $(DEBUG) 

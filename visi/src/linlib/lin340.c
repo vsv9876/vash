@@ -54,7 +54,7 @@ extern int allcod;
 
 /*#define DEBUG_R_LINE*/
 #ifdef DEBUG_R_LINE
-static int sout(lipos, ban, u8s)
+static void sout(lipos, ban, u8s)
 char *u8s;
 char *ban;
 int lipos;
@@ -69,7 +69,7 @@ int lipos;
 	er_eol(HDR);
 	cp_fet();
 }
-static int dout(lipos, ban, u8s)
+static void dout(lipos, ban, u8s)
 char *u8s;
 char *ban;
 int lipos;
@@ -88,19 +88,6 @@ int lipos;
 	er_eol(HDR);
 	cp_fet();
 }
-#else
-/*
-static int sout(colu, ban, s)
-char *s;
-char *ban;
-int colu;
-{}
-static int dout(colu, ban, s)
-char *s;
-char *ban;
-int colu;
-{}
-*/
 #endif
 
 /*----------------------------*/
