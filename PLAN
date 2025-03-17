@@ -10,9 +10,5 @@
 - complete support for marker 'x' visual attributes
   (lbp, vcc, vlbp)
 
-- write vhset.1 manual
-
 - export vash flags changed in setup, 
   on execve() with VASH= environment
-
-* C89/ANSI C total rewrite instead K&R C...

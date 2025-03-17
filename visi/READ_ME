@@ -1,67 +1,40 @@
-#       +----------+    LINe LIBrary
-#      (C) LINLIB  !    for
-#       +----------+    video terminals
 
-Sergey Vovk & team (C) 1985-1989, 2016 remix revision
+#
+#  LINLIB(tm) library for video terminals
+#
+#  1985-1989 (c) Sergey Vovk & team
+#
+2016-2025 maintanance and renewal by Sergey Vovk
 
-There is full source distribution of LINLIB framework
+WARNING NOTICE:
+this document describes parts of LINLIB/VISI used 
+as part of vash - Visual Assistant shell.
 
-The distribution is adressed to experienced unix system administrator,
-which have to install from scratch all components in order described below.
+Only short library documentation files (mini-help) are included in this release:
+ doc/*
 
-Order of installation:
-1. Format documents, print, read (sorry, most of documents still remain in Russian)
-	cd doc/book; make all; more reclam.lp book.lp
-	cd doc/man; make all;
+The compilation procedure is performed as part of an assembly of vash
+and shares common config ../BLD.cfg which controlled by ../Makefile.
 
-2. Compile libraries and utility commands:
-	cd src; make all;
-
-3. Compile and test two programs based on LINLIB framework:
-
-3.1 Compile VHSET utility, setup with it keyboard and videoattributes:
-	cd prog/vhset; make all; more READ_ME
-
-3.2 Compile ldemo project, make sure it works well:
-	cd prog/ldemo; make all; ldemo;
-
-4. Next steps with distribution files.
-    Please, redo all desribed in documentation
-    to install files in place.
-    In case personal installation it is reasonable to
-    leave on place directories
-	bin, lib, include, prog/proto
-    and remove all other with quiet. If place on disk
-    is not to shirt it is desirable leave all subdirectories prog.
-    Man pages may be installed to standard place:
-	cd doc/man; make install;
-	whatis linlib; man linlib;
-
-    Please, do not forget to print mini-help files (doc/hlp/*)
-    which may be helpfull in everyday usage.
-
-	Directories and files of distribution:
-	==============================
+Directories and files of LINLIB/VISI project:
 
   READ_ME   - this text
-  doc       - documentation
-    doc/book       ads and verbose manual
-    doc/man        man pages
-    doc/hlp/*      mini-help pages
+  doc/       - documentation
+  doc/hlp/       mini-help pages
 
-These directories have to be placed to /usr or /usr/local:
-  lib       - runtime librries
-  bin       - framework utilities
-  include   - header files
+  These directories have to be installed to /usr or /usr/local,
+  but used internally for assembly vash only:
 
-  prog      - instant programs
-  prog/ldemo    demo sample program
-  prog/vhset    video hardware setup on user taste
-  prog/proto    prototype of user app
+  lib/      - runtime librries
+  bin/      - framework utilities
+  include/  - header files
 
-  src       - sources of runtime libraries
+  programs to be linked with LIBLIB:
 
-  visi      - user interaction preprocessors
+  ../vash    - assistant shell itself
+  ../vhset   - video hardware setup on user taste
+  ../vtest   - testing of LINLIB
 
-  rt11      - RT-11 distribution (РАФОС-2, ФОДОС, ОС ДВК)
-  dos       - MS-DOS distribution (which was never completed)
+  src/       - sources of runtime libraries
+
+  visi/      - user interaction preprocessors

@@ -1,24 +1,14 @@
 
 SHELL    = /bin/sh
 
-#       +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
-#      (C) LINLIB  !    ДЛЯ АЛФАВИТНО-ЦИФРОВЫХ
-#       +----------+    ВИДЕОТЕРМИНАЛОВ
-#
-#       Установка компонент в каталоги дистрибутива
-#
-
-#       $Header$
-#       $Log$
+#/*
+# *  LINLIB -- library for video terminals
+# *
+# *  1985-1989 (c) Sergey Vovk & team
+# */
 
 DEST     = ../..
 CC       = cc
-
-# наследуется из ../src/Makefile, список возможных значений берется из line.h
-#CGLAGS_VISI = -DUSE_TERMIO
-#CGLAGS_VISI = -DUSE_SGTTYH
-#CGLAGS_VISI = -DUSE_TERMIOS_386BSD
-#CGLAGS_VISI = -DUSE_TERMIOS
 
 # нигде не используется CFLAGS в этом Makefile
 CFLAGS   =

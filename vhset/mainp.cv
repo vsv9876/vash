@@ -24,7 +24,7 @@ sp   = gv       -   -   -       -       "spacebar"
  profile:
     .lh......................................................................
 
-=
+
 ---#  LINLIB V3.4
 
 ---#  Exit from setup:
@@ -36,8 +36,8 @@ sp   = gv       -   -   -       -       "spacebar"
 
         .m_ex......................
 
-=
-        get help:    .:HE....
+
+  get help:    .:HE....
 
 
 ---END

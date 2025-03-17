@@ -119,7 +119,7 @@
 	* * *.*.gz         cp -av ./#@ #$ #1
 # common case for '2 dots in name' comparizon is incorrect
 #	* * *.?*.[a-z]*    cp -av ./#@ #$ #2
-	* * *.[a-zA-Z0-9]* cp -av ./#@ #$ #1
+#	* * *.[a-zA-Z0-9]* cp -av ./#@ #$ #1
 	* * *              cp -av ./#@ #$
 
 # Переименование/перенос файлов (требуется еще один аргумент)
@@ -139,7 +139,7 @@
 	* * *.*.xz         mv -nv ./#@ #$ #1
 	* * *.*.gz         mv -nv ./#@ #$ #1
 #	* * *.?*.[a-z]*    mv -nv ./#@ #$ #2
-	* * *.[a-zA-Z0-9]* mv -nv ./#@ #$ #1
+#	* * *.[a-zA-Z0-9]* mv -nv ./#@ #$ #1
 	* * *              mv -nv ./#@ #$
 
 :7
@@ -157,8 +157,8 @@
 	rwx ?           rm -f ##
 +Rmfile
 # Не руби сук, на котором сидишь...
-	r?x d ..        _msg Please, do not cut the leaf you are sitting on
-	r?x d .         _msg Please, do not cut the leaf you are sitting on
+	r?x d ..        _msg Please don't do this...
+	r?x d .         _msg Please stop chopping down the branch under you
 	rwx d *         rm -r -f ./#$
 	??? * -*          rm -f ./#$
 	rw? [AODETM] *    rm -f ./#$

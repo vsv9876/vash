@@ -28,8 +28,8 @@ KO      = ipv   -       -       cvt_s   -       KO_P
     .t......   cursor left             
     .t......   cursor right
 				    step 2: edit key label:
-    .t......   Tab                     press .:SP.... to edit label;
-    .t......   space                   press .:NL.... when complete
+    .t......   space                   press .:SP.... to edit label;
+    .t......   Tab                     press .:NL.... when complete
 
     .t......   Enter/Return 
                                     step 3: when done,

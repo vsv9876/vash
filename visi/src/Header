@@ -1,7 +1,5 @@
-#       +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
-#      (C) LINLIB  !    ДЛЯ АЛФАВИТНО-ЦИФРОВЫХ
-#       +----------+    ВИДЕОТЕРМИНАЛОВ
-#
-#       $Header$
-#       $Log$
-#
+/*
+ *  LINLIB -- library for video terminals
+ *
+ *  1985-1989 (c) Sergey Vovk & team
+ */

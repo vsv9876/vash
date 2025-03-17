@@ -1,0 +1,60 @@
+/*
+ * linlib data used in LINE structure
+ */
+
+#include "line.h"
+
+ ------------------------- 1...79       field size occupied on a screen
+/        ----------------- 0...23       line number
+|       /        --------- 0...79       column
+|       |       /        - suspenders and object flags
+|       |       |       /
++---    +---    +---    +---
+size    line    colu    flag    attr    cvts    cvtf    test    varl
+----------------------------    ----    ----    ----    ----    ----
+accessible for input            INP
+with prompter                   PMT
+                                ----    ----    ----    ----    ----
+string of symbols (UTF-8)       LVAR                    tst     s
+centered header                 LHDR                            "text"
+comment                         LTXT                            "text"
+printf() variable               LVAR    "%2.5f"         tst     &v
+non-printf variable             LVAR            cvt     tst     &v       (1
+alterator                       LALT    idxp    cvt_a   tst     &idxv    (2
+menu item selector              LMSE            proc_m  tst_m   name_m   (2
+----------------------------    ----    ----    ----    ----    ----
+   Notes:
+(1 optionally, "cvts" field may be used 
+(2 Only the "varl" field is required, the rest can be used at your discretion.
+(3 WCSOBJ/U8SOBJ must be used in "flag" field if "varl" field points to an object
+
+char    s[];            /* string in UTF-8 */
+float   v;              /* any type variable, eg float */
+int     tst();          /* input check function, optional */
+int     cvt();          /* convert format function */
+int     idxv;           /* index controlled by alterator, also:         */
+char   *idxp[];         /* - textual representation of every index value; */
+int     cvt_a();        /* - supporting function from library; */
+
+int     proc_m();       /* function to be called if */
+char    name_m[];       /*        pointed this item */
+int     tst_m();        /* library testing function for menu */
+
+LINE line = { size, line, colu, flag, attr, cvts, cvtf, test, varl };
+LINE page[] = { {line1}, {line2}, ..., { 0 } };
+
+vmain() {
+	LINE *cline;    /* pointer to current line (pointed by cursor) */
+	int   cpos;     /* current position on editing start */
+
+	w_line( &line);   r_line( &line, &cpos );
+	w_page( page );   r_page( page, &cline, &cpos );
+}
+
+tst(line, cod)
+LINE *line;  kbcod cod; {
+	return(TRUE);   /* if input check is OK */
+	return(FALSE);  /* smth wrong, request for input again */	
+}
+
+/* original 1986-1989, cosmetic changes 2019, English translation 2025 */

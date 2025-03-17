@@ -19,53 +19,45 @@ m       = g  - - - - " *)"
 ---# a       = cx "<1>"
 ---# b       = cx "<2>"
 ---# c       = cx "<3>"
-a       = cx "*1"
-b       = cx "*2"
-c       = cx "*3"
+a       = cx "1:"
+b       = cx "2:"
+c       = cx "3:"
 
 X	= hx "[=]"
 cmd     = hx "[a-z./]"
-CMD     = hx "[0-9A-Z]"
+CMD     = hx "[A-Z0-9]"
 
 ---SCREEN
 =vash workflow -- context switching                                      
 +                                             
 +.mainvk............................... please, see 'man vash' for more details                                       
-+ .:CA switch between editor and main                                         
-+ .'uppercase                               .:HE... - help            
-+     execute predefined command   .a       .:EX... - exit,return           
++ .'lowercase,dot,slash                                                    
++     type a command from scratch  .a       .:HE... - help            
++ .'uppercase,digit                         .:EX... - exit,return           
 +     edit a command from template .b       .:CA    - cancel                
-+ .'lowercase                                
-+     type a command from scratch  .c       .mainv............................. 
++     execute predefined command   .c        
++ .:CA switch between editor and main       .mainv............................. 
 +                                            ^ .:CA       ^    .cmd... .CMD....
-+.histk................................      :   :     .X.:          :   :   :
-+ .:CA    return to editor untouched         :   : .hist..........   :   : .a:
-+ .:NL... take a command to editor           :   :    ^     .:NL...  : .b:   :
-+                                            :   :    :        :   .c:   :   :
-+.cmdedk...............................      : .:CA .:HE...    :     :   :   :
-+ .:HE... switch to history view             : .cmded......................  :  
++.histk................................      :   :     .X.:         :    :   : 
++ .:CA    return to editor untouched         :   : .hist.......... .a    :   :
++ .:NL... take a command to editor           :   :    ^     .:NL... :   .b   :
++                                            :   :    :        :    :    :  .c
++.cmdedk...............................      : .:CA .:HE...    :    :    :   :
++ .:HE... switch to history view             : .cmded....................... :  
 + .:NL... run a command, sync history        :        ^            .:NL...   :
-+                                            :      .c:              :       :    
++                                            :       .a              :       :    
 +.exitk................................     .:CA      :              :       :    
-+ .:SP...| .:CA return to main view         .:SP... .cmd...          :       :    
-+ .'lovercase  return to editor             .exit.......... <- .runcmd.........     
++ .:SP...| .:CA return to main view         .:SP... .cmd...    .runcmd.........   
++ .'lovercase  return to editor             .exit.......... <--                  
 +                                       
 
 ---END                                                                         
 +  .:NL...  - defencive trap for mistakes   
 +                                     .m. see 'man vash' for details
 
-
-  .mainv............................. 
-  .CMD.... .cmd...     ^     .:CA  ^  
-   :   :   :         .X:       :   :  
- .a:   :   : .hist..........   :   :  
-   : .b:   :     ^   .:NL...   :   :  
-   :   : .c:     :     :       :   :  
-   :   :   : .:HE...   :     .:CA  :  
-   : .cmded......................  :  
-   :   .:NL...          ^          :  
-   :     :            .c:          :  
-   :     :              :        .:CA  
-   :     :            .cmd... .:SP...  
-  .runcmd........ -> .exit...........  
+  .'lowercase                        
+      type a command from scratch  .a
+  .'uppercase                        
+      edit a command from template .b
+      execute predefined command   .c
+  .:CA switch between editor and main

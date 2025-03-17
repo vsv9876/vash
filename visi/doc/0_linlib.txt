@@ -1,0 +1,43 @@
+LINLIB structure diagram
+--------------.-----------------------.-----------------------.--------------
+ user         : high level            : low level             : termlib  
+--------------:-----------------------:-----------------------:--------------
+	      :                       :      er_pag()         :
+	      : w_page()              :      cp_set()         :
+	      :      -> w_line()      :         -> w_raw() -> :
+ LINE[] <->   :                   ->  : w_str()               :  putc()
+              :                       :         -> w_chr() -> :
+ strobj <->   :                       :                       :
+              :                       : r_str()               :
+              :       <- r_line() <-  : r_cod() <- r_key() <- :  read()
+ kbcod  <-    : r_page() <-           :                       :
+              :                       :            hw_set()   : tgetent()
+              :                       :            io_set()   : ioctl()
+--------------:-----------------------:-----------------------:--------------
+legend:
+	---->   output to screen
+	<----   input from keyboard
+
+     *) hw_set  tune in to the hardware of terminal
+     *) io_set  switch mode of terminal IO (teletype or screen)
+	w_chr   output a symbol
+	w_str   output a string (text)
+	w_raw   output a terminal control code
+	cp_set  set coursor position (and attributes)
+     *) er_pag  clear screen
+	r_key   read a keycode (phisical, before parsing)
+	r_cod   read a logical code of a key (after parsing)
+	r_str   edit(read) a string
+
+work with elements of screen (form):
+	w_line  write a line
+	r_line  read line
+     *) w_page  write a page of lines
+     *) r_page  read a page
+
+basic library types:
+     *) LINE    line structure, an array of lines form a page
+	kbcod   a code of a key pressed
+
+NOTES:
+ *) mostly used

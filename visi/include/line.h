@@ -89,7 +89,7 @@ extern  int   vtti;      /* дескриптор файла для ввода */
 #else           /* temporary for first debug SYSTEM V */
 /* remix, so try again vttout */
 extern  FILE *vttout; /* ex, no matter: very bad idea, macro used as workaround... */
-/* #define vttout stderr
+/* #define vttout stderr */
 /* #define vttout stdout */
 extern  int   vtti;
 #endif
@@ -220,7 +220,7 @@ typedef struct  {
 #define SUSR    0020    /* вправо                          */
 	/* base of table signature */
 #define SUST    0040    /* элемент таблицы: базу искать по флагу */
-	/* oversize string object signature (no room in line-flag) */
+	/* oversize string object signature (no room in line->flag) */
 #define U8SOBJ  0100    /* line->varl points to u8sobj_t */
 #define WCSOBJ  0200    /* line->varl points to wcsobj_t */
 

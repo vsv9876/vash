@@ -39,7 +39,7 @@
 	r?? [DT] *.rpm       ;rpm -qivp ./#@ | #m
 	r?? [DT] *.deb       ;dpkg --info ./#@ | #m
 |-
-	r?? A *.a            :ar t ./#@ | #m
+	r?? [AD] *.a         :ar tv ./#@ | #m
 	r?? O *.o            :nm -np ./#@ | #m
 	r?? O *.so           :nm -np ./#@ | #m
 	r?? O *              nm -np ./#@ | #m
@@ -58,6 +58,6 @@
 #	r?? M *              frm -n ./#@
 	r?? M *              mutt -Rf ./#@
 #	??? ? *              _file ./#@
-	??? ? *              ;file ./#@; ls -ld ./#@
+	??? ? *              :file ./#@; ls -ld ./#@
 
 #<<< std.view
