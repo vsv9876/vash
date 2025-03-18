@@ -12,6 +12,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>      /* заголовок стандартной библиотеки вв/выв */
+#include <signal.h>
+#include <setjmp.h>
 #include "line.h"       /* файл-заголовок LINLIB */
 #include "line0.h"
 #include "linebp.h"
@@ -170,6 +172,43 @@ mkexit()
 
 static  char    helpf[] = "vhsetm.lb";
 
+LFRAME lfmain = { 0 };
+
+/*ARGSUSED*/
+void sigwinch(signo)
+int signo;
+{
+	extern sigjmp_buf jenv;
+	if (0 != gtty_sz()) {
+		return;
+	}
+	/*bell(); /* removed when DEBUG done */
+
+	/* this is restriction for main frame to use classic 24 lines */
+	lfmain.maxli  =  24;
+	/* lfmain.baseli = -24; */
+	lfmain.baseli = hwframe.maxli - lfmain.maxli;
+	/* correct below maxsize */
+	if (lfmain.baseli < 0) {
+		lfmain.maxli = hwframe.maxli;
+		lfmain.baseli = 0;
+	}
+	/*lfmain.baseco = 0;*/
+	lfmain.maxco  = hwframe.maxco;
+
+	lframe = &lfmain;
+
+   	/*vfresh();*/
+	/*unr_c(KB_RE);*/
+	/*w_msg(VEXT|ATT, " refresh? ");
+	fflush(vttout);
+	next_j();*/
+	if (signo)
+		siglongjmp(jenv, 1);
+}
+
+
+
 /*------------*/
 /* VIDEO MAIN */
 /*------------*/
@@ -183,10 +222,12 @@ vmain()
 
 	er_pag();
 
+	sigwinch(0);
+	signal(SIGWINCH, sigwinch);
+	w_page(mainm);
+
 	if( namelh[0] == 0 )
 		w_emsg("setup file directory unknown, see manual");
-
-	w_page(mainm);
 
 	while( -1 ) {
 		cod = r_page(mainm, &cline, 0);
@@ -218,8 +259,6 @@ vmain()
 #ifdef RT11
 /* $$narg = 1 ;            /* не выдавать подсказку на ввод аргументов */
 #endif
-
-LFRAME lfmain = { 0 };
 
 main()
 {

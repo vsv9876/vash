@@ -12,13 +12,15 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <stdio.h>
+#include <signal.h>
 #include "line.h"       /* ФАЙЛ-ЗАГОЛОВОК LINLIB */
 
 #ifdef RT11
 /* $$narg = 1 ;            /* НЕ ВЫДАВАТЬ ПОДСКАЗКУ НА ВВОД АРГУМЕНТОВ */
 #endif
 
-const char *vexdir = "../BLD/usr/lib/vhset:/usr/lib/vhset"; /* anought to debug in current directory */
+/* anought to debug in current directory */
+const char *vexdir = "../BLD/usr/lib/vhset:/usr/lib/vhset";
 
 extern void vmain();
 
@@ -38,7 +40,12 @@ main()
 	printf("VTEST>"); fflush(stdout); fscanf(stdin, "%c", &ch);
     visini();
     hw_set();
+
+/*	signal( SIGINT, SIG_IGN );
+	signal( SIGQUIT, SIG_IGN );*/
+
     io_set(IO_VIDEO);
+	signal( SIGQUIT, SIG_DFL );
 
     vmain();    /* СМ. ФАЙЛ pvmain.cv */
 

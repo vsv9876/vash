@@ -1,7 +1,6 @@
 Name:           vash
 Version:
-#Release:        1%%{dist}
-Release:        1
+Release:        1%{dist}
 Summary:        Visual Assistant Shell (vash)
 
 License:        GPL and MIT
@@ -15,6 +14,7 @@ BuildRequires:  ncurses-devel
 Visual Assistant Shell, interactive supershell over sh/bash.
 Features visual assistance for typing command line parameters, editing a command string, parameterized command history, hotkey scripting, etc.
 
+%define source_date_epoch_from_changelog   0
 %define debug_package %{nil}
 
 %prep
@@ -49,5 +49,3 @@ rm -rf %{buildroot}
 %config(noreplace) /etc/vhset/*
 
 %changelog
-* Fri Aug  5 2016 Sergey Vovk <s.vovk>
-- initial build for Fedora

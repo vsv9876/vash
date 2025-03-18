@@ -27,6 +27,7 @@
  */
 
 #include <stdio.h>
+#include <setjmp.h>
 #include "line.h"
 #include "line0.h"
 
@@ -51,6 +52,9 @@ int     kpadon = 0;     /* ФЛАГ: ПРАВАЯ ДОП. КЛАВИАТУРА �
 /* ВЕРНУТЬ ПРОЧИТАННЫЙ КОД ВО ВХОДНОЙ ПОТОК */
 /*------------------------------------------*/
 static  kbcod   backcod = 0;
+
+sigjmp_buf jenv;
+
 #endif
 
 void unr_c(cod)
@@ -88,6 +92,14 @@ kbcod cod;
 	kbcod   bckc;
 
 #ifdef UNREAD_CHAR_RETRO
+	int jmp;
+
+	jmp = sigsetjmp(jenv, 1);
+	if (jmp != 0) {
+		fflush(vttout);
+		unr_c(KB_RE);
+	}
+
 	if(backcod) { bckc = backcod; backcod = 0; return(bckc); }
 #endif
 	if(cod==0) {

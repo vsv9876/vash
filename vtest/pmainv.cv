@@ -43,17 +43,21 @@ ff      = iv    -   -           -       -   fmtf
 fl      = iv    -   -           -       -   fmtl
 fh      = iv    -   -           -       -   fmth
 fi      = iv    -   -           -       -   fmti
-s_vd	= ipv   -   fmtd        -       -   &vd
-s_vf	= ipv   -   fmtf        -       -   &vf
-s_vl	= ipv   -   fmtl        -       -   &vl
-s_vh	= ipv   -   fmth        -       -   &vh
-s_vi	= ipv   -   fmti        -       -   &vi
 
 ---#s_vd	= ipv   -   "%.20lf"    -       -   &vd
 ---#s_vf	= ipv   -   "%.5f"      -       -   &vf
 ---#s_vl	= ipv   -   "%ld"       -       -   &vl
 ---#s_vh	= ipv   -   "%hd"       -       -   &vh
 ---#s_vi	= ipv   -   "%d"        -       -   &vi
+s_vd	= ipv   -   fmtd        -       -   &vd
+s_vf	= ipv   -   fmtf        -       -   &vf
+s_vl	= ipv   -   fmtl        -       -   &vl
+s_vh	= ipv   -   fmth        -       -   &vh
+s_vi	= ipv   -   fmti        -       -   &vi
+
+li      = gc     -      "%3d"   -       -      &hwframe.maxli
+co      = gc     -      "%3d"   -       -      &hwframe.maxco
+bli     = vip    -      "%3d"  -       -       &lfmain.baseli
 
 ---# unsupported
 ---SCREEN
@@ -70,9 +74,9 @@ s_vi	= ipv   -   fmti        -       -   &vi
   str_raw           .s_raw.               .'?/     show str object
   str_var           .s_var..              .'|\     dump str with byte hex
   str_tst           .s_tst...             
-                    .o_tst1..  .op_tst1....
-                    .o_u8....  .op_u8......
-
+          .bli      .o_tst1..  .op_tst1....
+           .li      .o_u8....  .op_u8......
+           .co          
         width1= .d1 .e_tst1.......        .'"'     e_str(3)
         width2= .d2 .e_tst2.......        .':;     e_str(5)
                     .m_exit.......

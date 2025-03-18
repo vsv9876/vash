@@ -11,6 +11,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
+#include <setjmp.h>
 #include <wchar.h>
 #include "line.h"
 #include "line0.h"
@@ -201,7 +203,38 @@ register LINE *line;
 	return(TRUE);   /* last resort */
 }
 
+LFRAME lfmain = { 0 };
+
 #include "pmainv.i"
+
+/*ARGSUSED*/
+void sigwinch(signo)
+int signo;
+{
+	extern sigjmp_buf jenv;
+
+	if (0 != gtty_sz()) {
+		return;
+	}
+	/*bell(); /* removed when DEBUG done */
+
+	/* this is restriction for main frame to use classic 24 lines */
+	lfmain.maxli  =  24;
+	/* lfmain.baseli = -24; */
+	lfmain.baseli = hwframe.maxli - lfmain.maxli;
+	/* correct below maxsize */
+	if (lfmain.baseli < 0) {
+		lfmain.maxli = hwframe.maxli;
+		lfmain.baseli = 0;
+	}
+	/*lfmain.baseco = 0;*/
+	lfmain.maxco  = hwframe.maxco;
+
+	lframe = &lfmain;
+
+	if (signo)
+		siglongjmp(jenv, 1);
+}
 
 int vmain()
 /*------------*/
@@ -212,8 +245,10 @@ int vmain()
 	LINE *cline;
 	cline = 0;
 
+	sigwinch(0);
 	er_pag();
 	w_page(linem);
+	signal(SIGWINCH, sigwinch);
 
 	for( ;; ) {
 		cod = r_page(linem, &cline, 0);
