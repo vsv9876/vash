@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <unistd.h>
-/*#include <stdlib.h>*/
+#include <stdlib.h>
 #include <locale.h>
 #include <wchar.h>
 #include <signal.h>
@@ -74,6 +74,8 @@ int signo;
 	onexit(1); exit(1);
 }
 
+LFRAME lfmain = { 0 };
+
 /*ARGSUSED*/
 void sigwinch(signo)
 {
@@ -82,27 +84,21 @@ void sigwinch(signo)
 	if (0 != gtty_sz()) {
 		return;
 	}
-	/*bell(); /* removed when DEBUG done */
-
-	/* TODO make better - this is restriction for classic 24 lines */
-	lfmain.maxli  =  24;
-	/* lfmain.baseli = -24; */
+	lfmain.maxli  =  24; /* it is restriction for classic 24 lines */
 	lfmain.baseli = hwframe.maxli - lfmain.maxli;
-	/* correct below maxsize */
 	if (lfmain.baseli < 0) {
 		lfmain.maxli = hwframe.maxli;
 		lfmain.baseli = 0;
 	}
-	/*lfmain.baseco = 0;*/
 	lfmain.maxco  = hwframe.maxco;
 
 	lframe = &lfmain;
 
-	/* TODO: experimental refresh of */
-	/*itmini();       /* ПОСЧИТАТЬ ГАБАРИТЫ МЕНЮ */
-	/*itmrestor();*/
-	/*pre_vf();       /* СОЗДАТЬ СТРАНИЦУ LINLIB ДЛЯ МЕНЮ */
 	rescan();
+
+	if (signo)
+		jkb_re();
+
 }
 
 static  LINE tmplate =
@@ -131,8 +127,6 @@ char **argv;
 		}
 	}
 }
-
-LFRAME lfmain = { 0 };
 
 main(argc, argv)
 int argc;

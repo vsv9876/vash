@@ -376,6 +376,7 @@ extern  kbcod   r_key();
 extern  int     hw_set();
 extern  int     do_kbl();
 extern  void    visini();
+extern  void    jkb_re();
 
 /* lin(3) - управление терминалом: логический уровень */
 
@@ -424,7 +425,7 @@ extern FILE    *dafopen(char *, const char*, const char*);
 
 /* internal function, called from hw_set only */
 extern int	gtty_sz();
-extern int tty_li, tty_co;
+/*extern int tty_li, tty_co;*/
 
 /* watch/clock and e_str indicator shares common place on the screen */
 #define WSHOW_LI (lframe->maxli - 2)

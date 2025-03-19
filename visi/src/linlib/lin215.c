@@ -31,16 +31,6 @@
 #include "line.h"
 #include "line0.h"
 
-
-/* ВНЕШНИЕ ПЕРЕМЕННЫЕ ДЛЯ tgoto() ИЗ termcap */
-extern char *UP;
-extern char *BC;
-
-/* РАЗМЕРЫ ЭКРАНА */
-extern int     maxli;
-extern int     maxco;
-
-
 /* СВЯЗЬ ФИЗИЧЕСКИХ И ЛОГИЧЕСКИХ КОДОВ, А ТАКЖЕ ИМЕН КЛАВИШ */
 extern  KBL kbl[KBLSIZE];
 
@@ -55,13 +45,17 @@ static  kbcod   backcod = 0;
 
 sigjmp_buf jenv;
 
-#endif
-
 void unr_c(cod)
 kbcod   cod;
 {
 	backcod = cod;
 }
+
+void jkb_re() {
+	siglongjmp(jenv, 1);
+}
+
+#endif
 
 int k_pad(on)
 int on;

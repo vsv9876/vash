@@ -189,7 +189,7 @@ hw_set()
 		ok = tgetent(buf,p);
 		if(ok != 1) {
 			fprintf(stdout, "%s: '%s'\n",
-	   ediag("Unknown terminal type", "ТЕРМИНАЛ НЕИЗВЕСТЕН"), p);
+				ediag("Unknown terminal type", "ТЕРМИНАЛ НЕИЗВЕСТЕН"), p);
 			exit(1);
 		}
 	}
@@ -222,10 +222,13 @@ hw_set()
 	hwframe.maxco = tgetnum("co");
 #else
 	/*hwframe.maxli = hwframe.maxco = 0;*/
-	if (0 == gtty_sz()) {
+	ok = gtty_sz();
+/*
+	if (0 == ok) {
 		hwframe.maxli = tty_li;
 		hwframe.maxco = tty_co;
 	}
+*/
 	if (p = getenv("LINES"))        hwframe.maxli = atoi(p);
 	if (hwframe.maxli == 0)         hwframe.maxli = tgetnum("li");
 	if (hwframe.maxli > MAXLICO)    hwframe.maxli = MAXLICO;

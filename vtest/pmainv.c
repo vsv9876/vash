@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
-#include <setjmp.h>
 #include <wchar.h>
 #include "line.h"
 #include "line0.h"
@@ -211,29 +210,22 @@ LFRAME lfmain = { 0 };
 void sigwinch(signo)
 int signo;
 {
-	extern sigjmp_buf jenv;
-
 	if (0 != gtty_sz()) {
 		return;
 	}
-	/*bell(); /* removed when DEBUG done */
-
 	/* this is restriction for main frame to use classic 24 lines */
 	lfmain.maxli  =  24;
-	/* lfmain.baseli = -24; */
 	lfmain.baseli = hwframe.maxli - lfmain.maxli;
-	/* correct below maxsize */
 	if (lfmain.baseli < 0) {
 		lfmain.maxli = hwframe.maxli;
 		lfmain.baseli = 0;
 	}
-	/*lfmain.baseco = 0;*/
 	lfmain.maxco  = hwframe.maxco;
 
 	lframe = &lfmain;
 
 	if (signo)
-		siglongjmp(jenv, 1);
+		jkb_re();
 }
 
 int vmain()

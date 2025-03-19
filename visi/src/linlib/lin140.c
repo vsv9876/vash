@@ -21,10 +21,10 @@
 /* #ifndef UW_20 */
 /* #include <sys/filio.h> */
 /* #endif */
-
+/*
 int tty_li = 0;
 int tty_co = 0;
-
+*/
 /*
 extern int maxli;
 extern int maxco;
@@ -36,8 +36,8 @@ int gtty_sz()
 	int ret;
 	ret = ioctl(vtti, TIOCGWINSZ, &winsz);
 	if (ret == 0) {
-		hwframe.maxli = tty_li = winsz.ws_row;
-		hwframe.maxco = tty_co = winsz.ws_col;
+		hwframe.maxli = /*tty_li =*/ winsz.ws_row;
+		hwframe.maxco = /*tty_co =*/ winsz.ws_col;
 	}
 	return ret;
 }
@@ -157,7 +157,7 @@ ttytst()
  * и если принят символ русского регистра, то
  * на тех терминалах, где режим клавиатуры управляется
  * выводом символа на экран терминала (рус/лат или ^N/^O),
- * требуется скорректировать состояние ктавиатуры
+ * требуется скорректировать состояние клавиатуры
  * до ввода следующего символа.
  *      P.S.
  *      Поскольку такие терминалы сами по себе продукт
