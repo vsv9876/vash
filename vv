@@ -1,0 +1,21 @@
+#
+# source this to debug ./v under gdb or eclipse 
+#echo ./v?
+export VASH=xpl10sw
+
+# suspend after every character output, in msec
+# perform fflush(stdout) on every character outputed
+##export VISI_DEBUG_IOS=200
+export VISI_DEBUG_IOS=100
+
+# trase io_set()
+export VISI_DEBUG_IO=0
+
+# trace tcsetpgrp and signals
+export VASH_PGRP=0
+
+# print prompt with process number on every start the vash
+export VASH_DEBUG=0
+
+# help to reanimate tty after vash crash
+alias tt='stty sane'

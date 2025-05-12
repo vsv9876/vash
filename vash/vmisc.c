@@ -45,9 +45,12 @@ scrlarea()
 }
 
 int
-vashelp(page)
-LINE *page;
+vashelp(cmd)
+const char *cmd;
 {
+	const LINE *page;
+
+	page = (LINE *)cmd;
 	scrlarea();
 	w_help (page);
 	return(1); /* screen touched */
@@ -65,7 +68,7 @@ showtime(on)
 {
 	nxtjflag = on;
 #ifdef RETRO
-	if ( !on && vashflag.clockf) {
+	if ( !on && v.flag.clockf) {
 		cp_set(1, lframe->maxco - 8, TXT);
 		fprintf(vttout, "%8.8s", "");
 	}
@@ -82,7 +85,7 @@ showclck()
 	struct tm *localtime();
 	char tmps[12] = "";
 
-	if (vashflag.clockf) {
+	if (v.flag.clockf) {
 
 		time(&curtime);
 		if (curtime != prevtime) {
@@ -116,7 +119,7 @@ showitem(on)
 	int n;
 	LINE pline; /* patch line, show over current line */
 
-		if (vashflag.subshow == 0)
+		if (v.flag.subshow == 0)
 			return;
 #ifndef CP_SAV
 		cp_sav();
@@ -185,7 +188,7 @@ chckmail()
     char *mailbox;
     kbcod cod;
 
-    if (vashflag.cmailf) {
+    if (v.flag.cmailf) {
 	if (!mailf2) return;
 
 	if ((mailbox = getenv("MAIL")) == (char *)0)
@@ -266,7 +269,7 @@ scrlnl()
 {
 	register int i;
 
-	if (vashflag.scrolf) {
+	if (v.flag.scrolf) {
 		/*at_set(CMD); */er_eop(CMD);
 		io_set(IO_TTYPE);
 		for (i = clm._y0; i < lframe->maxli; i++) {

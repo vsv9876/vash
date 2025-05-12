@@ -1,14 +1,14 @@
-/*
- * Определяется через маке,
- * может быть   "/usr/new/lib/???/", или
- *              "/usr/lib/???/", или
- *              "/usr/local/lib/???/"
- */
-/*NOXSTR*/
 
 #include "assist.h"
 
+/*
+ * defined via Makefile
+ * can be   "/usr/new/lib/???/",
+ *     or   "/usr/lib/???/",
+ *     or   "/usr/local/lib/???/"
+ */
 const char   *vexdir = DESTLIB;
-const char   *versn  = VERSN;
+/* members of struct v (type VASH_PROC)
 const char   *vapath  = VASH_PATH;
-const char   *vashrc = NULL; /* defined in runtime by default */
+const char   *versn  = VERSN;
+*/

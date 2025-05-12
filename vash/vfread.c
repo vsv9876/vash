@@ -23,7 +23,7 @@ signal(SIGQUIT, SIG_DFL);
  */
 void
 vfread(fpread)
-/*никогда не вызывается?!!!*/
+/* -- calling from vndir.c:fil_vf() */
 FILE *fpread;
 /*
  * Заполнить буфер пунктов меню через внешнюю команду:
@@ -37,7 +37,7 @@ FILE *fpread;
 	stopvfread = 0;
 	/*signal(SIGINT, sig_vfread);*/
 	vfr_fp = fpread;
-	signal(SIGINT, SIG_DFL);
+	/*signal(SIGINT, SIG_DFL);*/
 	io_set(IO_TTYPE);
 	len = clm._itmlen = clm._itmmax = 0;
 	clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
@@ -76,7 +76,7 @@ FILE *fpread;
 	if ( len > clm._itmlen ) clm._itmlen = len;
 	clm._itmlen++;
 	io_set(IO_VIDEO);
-	signal(SIGINT, SIG_IGN);
+	/*signal(SIGINT, SIG_IGN);*/
 }
 
 int     cvt_vf(line, cod, mod, str)

@@ -39,7 +39,7 @@ typedef struct {
 typedef struct {
 	const 
 	char   *ft_name;        /* строка с именем */
-	int    (*ft_fun)();    /* указатель на функцию */
+	int    (*ft_fun)(const char *);    /* указатель на функцию */
 } FUNTAB;
 
 extern  char *tstat1();

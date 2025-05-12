@@ -1,26 +1,18 @@
 /*
-**      +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
-**     (c) linlib  !    ДЛЯ АЛФАВИТНО-ЦИФРОВЫХ
-**      +----------+    ВИДЕОТЕРМИНАЛОВ
-**/
-
-/*
- *      $Header: lineva.h,v 1.3 90/01/11 10:18:33 vsv Rel $
+ * VISI(LINLIB)
+ * Copyright (c) 1986-1990 Sergey Vovk and the team of RIAR, Dimitrovgrad, USSR
+ * Copyright (c) 2017-2025 Sergey Vovk
  *
- *      $Log:	lineva.h,v $
- * Revision 1.3  90/01/11  10:18:33  vsv
- * ВЕРСИЯ V32
- * 
- * Revision 1.2  89/08/29  16:21:59  vsv
- * ВЕРСИЯ LINLIB_3
- * 
- * Revision 1.1  88/04/27  08:40:56  vsv
- * Initial revision
- * 
+ * VISI -- a visual interactive simple interface for non-GUI terminals
+ * LINLIB -- library for video terminals
+ *
+ * This is free software, 
+ * please keep applied LICENSE file and copyright notice above
+ *
  */
 
-/* ОПРЕДЕЛЕНИЕ БИТОВ ВИДЕОАТРИБУТОВ
- *      ДЛЯ ФИЗИЧЕСКОГО УРОВНЯ
+/*
+ * definitions of video attributes bits for phisical level
  */
 
 #define A_SO    0001

@@ -26,7 +26,7 @@ TERMLIB     = -ltermcap
 #		-Wint-conversion
 
 # checked on FreeBSD 14.1-RELEASE
-CC          = cc -std=c89 -Wwrite-strings
+CC          = cc $(DEBUG) -std=c89 -Wwrite-strings
 
-LINKER      = cc
+LINKER      = cc $(DEBUG)
 

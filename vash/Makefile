@@ -95,6 +95,7 @@ SRCS          = buildd.c\
 		menu2.c\
 		slist.c\
 		vcmd.c\
+		vcmdin.c\
 		vcmddat.c\
 		vcmdh.c\
 		vcoprt.c\
@@ -102,6 +103,7 @@ SRCS          = buildd.c\
 		vex.c\
 		vexdir.c\
 		vfread.c\
+		vjobs.c\
 		vmain.c\
 		vmisc.c\
 		vndir.c\
@@ -119,6 +121,7 @@ OBJS	      = \
 		menu2.o\
 		slist.o\
 		vcmd.o\
+		vcmdin.o\
 		vcmddat.o\
 		vcmdh.o\
 		vcoprt.o\
@@ -126,6 +129,7 @@ OBJS	      = \
 		vex.o\
 		vexdir.o\
 		vfread.o\
+		vjobs.o\
 		vmain.o\
 		vmisc.o\
 		vndir.o\
@@ -304,11 +308,13 @@ main.o: assist.h
 menu2.o: assist.h
 slist.o: slist.h
 vcmd.o: assist.h astat.h
+vcmdin.o: assist.h
 vcmddat.o: assist.h astat.h
 vcmdh.o: assist.h
 vex.o: assist.h astat.h
 vfread.o: assist.h
 vmain.o: assist.h
+vjobs.o: assist.h vjobs.h
 vmisc.o: assist.h
 vndir.o: assist.h astat.h
 vshcmd.o: assist.h

@@ -73,7 +73,7 @@
 #	r-x ?   +ed
 #	rwx ?   +edw
 +ed
-	rwx d *         :cd #$
+	rwx d *         ;cd #$
 # vi не создает нового файла в каталоге
 # а red, например, создает...
 	rw? [TE] *      #e ./#$
@@ -81,7 +81,7 @@
 	rw? M *         mutt -f ./#$
 #	r?? [OD] *      ;strings #@ | #m
 #+edw
-	rwx d *         :cd #$
+	rwx d *         ;cd #$
 |+|	r?? ? *.pkg ;pkg info -F ./#@ | #m
 |-
 	r?? ? *.src.rpm ;rpm -qlvp ./#@ | #m
@@ -181,7 +181,7 @@
 
 :&
 #       Программа (настройка) ash для работы с процессами
-	* *     ;env VASH=l20spw VASH_LABEL='ps ' vash ps.rc
+	* *     ;env VASH=l20spw VASH_LABEL='ps ' vash -1 ps.rc
 #        * *     _cmdset ps.rc
 
 
@@ -194,11 +194,11 @@
 #	* *     :cd
 #:[U]
 ::
-	* *     :cd ..
+	* *     ;cd ..
 
 :A
 # vash's library archive, from 'char *vexdir' internal constant
-	* *     :cd #A
+	* *     ;cd #A
 
 # Сравнение файлов
 :D

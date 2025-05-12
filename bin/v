@@ -39,7 +39,7 @@
 # vd;
 #
 # usefull environment for debug:
-# VTTOUT_SLEEP=800      interval between printing characters, in msec
+# VISI_IOS=800          interval between printing characters, in msec
 # VASH_DEBUG=1		extra prompt before attaching gdb or eclipse,
 # 			prints PID of vash process
 

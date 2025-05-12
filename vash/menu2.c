@@ -43,7 +43,7 @@ char *mfile;
 	/*extern FILE *afopen();*/
 
 	/* файлы меню выбираются из текущего каталога тоже */
-	if ((fpmenu = dafopen(mfile, vapath, "r")) == NULL)
+	if ((fpmenu = dafopen(mfile, v.vapath, "r")) == NULL)
 		return(0);
 	/*
 	 * Читать строку из файла, запомнить ее начало,
@@ -172,7 +172,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 char *mfile;    /* имя файла программы меню */
 {
 	extern int  y0_top;     /* определено в main.c //vshcmd */
-	extern char *pmtsh;    /* --"-- */
+	/*extern char *pmtsh;     --"-- */
 	LINEMENU savelm;
 	int ok;
 

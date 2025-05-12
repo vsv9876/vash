@@ -451,8 +451,8 @@ wchar_t *av0;	/* name of command, argv0 */
 	char *path;		/* env PATH element iterator like */
 	int n, maxnpath, n2, ndup; /* n2 for deduplicate path dirs */
 
-	tmps = malloc((size_t)(BUFSMAX + 1));
 	bufs = malloc((size_t)(BUFSMAX + 1));
+	tmps = malloc((size_t)(BUFSMAX + 1));
 /*	sgglist = sl_init();*/
 
 	if (bufs == NULL) return -1;
@@ -536,10 +536,10 @@ int maxpos; /* максимальное значение позиции в бу�
     static char debugs[U8_STRBUF];			/* completion string */
 #endif
 /*	char s_ins[STRBUF] = "";		/* suggestion string to be inserted */
-    wchar_t s_argv0[STRBUF];	/* собственно имя команды */
+  static  wchar_t s_argv0[STRBUF];	/* собственно имя команды */
     wchar_t *av0;
-    wchar_t s_dir[STRBUF];      /* база (например, путь до каталога) */
-	wchar_t s_base[STRBUF];     /* хвост (например, префикс имени в каталоге) */
+  static  wchar_t s_dir[STRBUF];      /* база (например, путь до каталога) */
+  static  wchar_t s_base[STRBUF];     /* хвост (например, префикс имени в каталоге) */
     int argc, x_in, x_out, ins_len /*, dir_len, base_len;*/;
     int base_x, dir_x, dir_end;
     /* cmd scaner context: 's'eparator, 'a'rg, 'n'ull, //'i'ni */

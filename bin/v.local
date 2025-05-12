@@ -63,6 +63,7 @@ if [ -x $bintest ]; then
     echo " * from $vashdir ***"
     echo ' *'
     . $BLD/usr/bin/v "$@"
+    # exec $BLD/usr/bin/vash "$@"
 fi
 echo '   *** no compiled binaries found in:'
 echo '          "'$BLD'"'

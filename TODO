@@ -1,0 +1,5 @@
+- a message overlap of 'position on' (:TA)
+
+- sigwinch between suspend/continue - no reaction on resize
+
+- regression: stty modes lost via _cmdset

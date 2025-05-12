@@ -91,7 +91,8 @@ kbcod cod;
 	jmp = sigsetjmp(jenv, 1);
 	if (jmp != 0) {
 		fflush(vttout);
-		unr_c(KB_RE);
+		/*unr_c(KB_RE);*/
+		backcod = KB_RE;
 	}
 
 	if(backcod) { bckc = backcod; backcod = 0; return(bckc); }

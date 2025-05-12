@@ -29,10 +29,12 @@
 #include "line.h"
 #include "line0.h"
 
-#ifdef VTTOUT_DEBUG
+#ifdef VISI_DEBUG
 #include <stdlib.h>
 #include <time.h>
-#endif
+#endif /*VISI_DEBUG*/
+
+#include <term.h> /* required for tputs; refer to man tputs */
 
 /*
 **      ВЫВОД НА ЭКРАН СТРОК В КОДАХ ТЕРМИНАЛА
@@ -90,25 +92,27 @@ extern  int osgflg;             /* ФЛАГИ ДРАЙВЕРА (old.sg_flags) */
 int w_putc(c)
 int c;
 {
-#ifdef VTTOUT_DEBUG
+#ifdef VISI_DEBUG
 	int nanosec = 0;
 	struct timespec req = { 0 };
 	struct timespec rem = { 0 };
 	char *sleepenv;
 
-	if ((sleepenv = getenv("VTTOUT_SLEEP")) != NULL) {
+	if ((sleepenv = getenv("VISI_DEBUG_IOS")) != NULL) {
 		req.tv_sec  = 0;
 		req.tv_nsec = 1000 * atoi(sleepenv); /* in microseconds, not nanoseconds */
 	}
-#endif
+#endif /*VISI_DEBUG*/
 
 	fputc(c, vttout);
-#ifdef VTTOUT_DEBUG
+#ifdef VISI_DEBUG
 	if (sleepenv != NULL) {
 		fflush(vttout);
-		nanosleep(&req, &rem);
+		if (strcmp(sleepenv, "") != 0)
+			nanosleep(&req, &rem);
 	}
-#endif
+#endif /*VISI_DEBUG*/
+	return(0);
 }
 /*--------------------------------*/
 /* ВЫВОД СТРОКИ В КОДАХ ТЕРМИНАЛА */
@@ -121,9 +125,11 @@ void w_raw(s)
 const char *s;
 {
 #ifndef USE_W_RAW
-	extern int tputs();
+	/*extern int tputs(), putp();*/
 	/* modern documented way to use terminfo/termcap string capabilities */
+	/* it seems OK to use tputs() without curses libraries initialisation*/
 	tputs(s, 1, w_putc);
+	/*putp(s);*/
 #else
 	int c;
 	for(; s!=(char*)NULL && *s!=0; s++) {

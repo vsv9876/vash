@@ -23,7 +23,7 @@ extern  char  *nmsubs();
 extern  int     kshow();
 #endif
 
-extern  int     vashelp();
+/*extern  int     vashelp();*/
 
 FUNTAB funtab[] = {
 	{ "read",       0 },
@@ -35,7 +35,7 @@ FUNTAB funtab[] = {
 	{ "file",       ffile },
 /*	{ "help",       w_help },*/
 	{ "help",       vashelp },
-	{ "rchelp",     rchelp },
+	{ "rchelp",		rchelp },
 	{ "msg",        fmsg },
 	{ "err",        fmsgerr },
 	{ "rescan",     rescan },
@@ -157,20 +157,23 @@ kbcod   cod;    /* код нажатой клавиши */
 		cmd = pcp[i].pc_cmd;    /* новая команда получена */
 	}
 	if (*cmd == '_' && cmd++) {
-	/* встроенная команда */
-		return(vincmd(cmd));
+		/* встроенная команда */
+		return(vincmd(cmd)); /*internal command*/
 	}
-	return(vexcmd(cmd, (char *)0));   /* внешняя команда */
+	return(vexcmd(cmd, (char *)0)); /* external command */
 }
 
-int vincmd(cmd)
-register char *cmd;     /* встроенная функция */
+int vincmd(cmdarg)
+/*register*/ char *cmdarg;     /* встроенная функция */
 {
 	char  keywd[20];        /* ключевое слово команды */
 	char *keywdp;
-	int (*keyf)();
-	register FUNTAB *ftp;
+	int (*keyf)(const char *);
+	register FUNTAB *ftabp;
+	char *cmd;
+	int ret;
 
+	cmd = cmdarg;
 	keywdp = keywd;
 	while (*cmd && *cmd != ' ')
 		*keywdp++ = *cmd++;
@@ -179,10 +182,13 @@ register char *cmd;     /* встроенная функция */
 	while (*cmd && *cmd == ' ') cmd++;   /* остаток команды */
 
 	/* установить соответствие */
-	for (ftp = funtab; ftp->ft_name; ftp++) {
-		if (strcmp(ftp->ft_name, keywdp) == 0) {
-			if ((keyf = ftp->ft_fun)) /* если функция найдена, ее и вызвать */
-				return((*keyf)(cmd));
+	for (ftabp = funtab; ftabp->ft_name; ftabp++) {
+		if (strcmp(ftabp->ft_name, keywdp) == 0) {
+			if ((keyf = ftabp->ft_fun)) {
+				/* если функция найдена, ее и вызвать */
+				ret = (*keyf)(cmd);
+				return(ret);
+			}
 			else    break;
 		}
 	}
@@ -205,7 +211,7 @@ int need_sh_esc;			/*требуется экранирование для /bin/s
 int subatrc;		/* substitution of #@ required */
 {
     extern char *getenv();
-    char *s;
+    const char *s;
     char *nm_ptr;
     int sh_req = 0;	/* флаг - сделаны подстановки, требуется вызов /bin/sh*/
     char *ptmp;
@@ -310,21 +316,21 @@ char *cmdlbl;   /* вывеска взамен команды */
 
 	if (cmd) {
 	    /* выполнить подстановки */
-	    cmdsub(tmpcmd, cmd, clm._itm, 1, vashflag.subatrc); /* TODO: при команде cd здесь не нужно задваивать символы '\\' */
+	    cmdsub(tmpcmd, cmd, clm._itm, 1, v.flag.subatrc); /* TODO: при команде cd здесь не нужно задваивать символы '\\' */
 	    cmd = tmpcmd;
 	}
-	return( vshcmd(cmd, (char *)0) );
+	return( vshcmd(cmd, NULL/*(char *)0*/) );
 }
 
 int
 fsh(cmd)        /* команда sh */
-register char *cmd;
+/*register */char *cmd;
 {
 	int ret;
 	if (*cmd == '\0')
 		/* vshcmd будет использовать старую команду */
-		cmd = (char *)0;
-	ret = vexcmd(cmd, (char *)0);
+		cmd = NULL/*(char *)0*/;
+	ret = vexcmd(cmd, NULL/*(char *)0*/);
 	return(ret);
 }
 
@@ -417,7 +423,7 @@ char *file;
 
 int
 rchelp(file)        /* показать легенду профиля */
-register char *file;
+const /*register*/ char *file;
 {
 	char    cmdlbl[100];    /* вывеска взамен команды */
 	char    tmpcmd[40];
@@ -459,7 +465,7 @@ register char *file;
 
 int
 ffile(cmd)
-register char *cmd;
+/*register*/ const char *cmd;
 {
 	char  file[140];
 
@@ -470,7 +476,7 @@ register char *cmd;
 
 int
 fmsg(s)
-register char *s;
+/*register*/ const char *s;
 {
 	w_msg(TXT, s);
 	return(0);
@@ -478,7 +484,7 @@ register char *s;
 
 int
 fmsgerr(s)
-register char *s;
+/*register*/ const char *s;
 {
 	w_msg(ERR, s);
 	return(0);
@@ -489,7 +495,7 @@ kshow(s)
 /*
  * Показать программу настройки (для отладки)
  */
-register char *s;
+/*register*/ const char *s;
 {
 	char tmps[300];
 	register int i, j;

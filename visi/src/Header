@@ -1,5 +1,12 @@
 /*
- *  LINLIB -- library for video terminals
+ * VISI(LINLIB)
+ * Copyright (c) 1986-1990 Sergey Vovk and the team of RIAR, Dimitrovgrad, USSR
+ * Copyright (c) 2017-2025 Sergey Vovk
  *
- *  1985-1989 (c) Sergey Vovk & team
+ * VISI -- a visual interactive simple interface for non-GUI terminals
+ * LINLIB -- library for video terminals
+ *
+ * This is free software, 
+ * please keep applied LICENSE file and copyright notice above
+ *
  */

@@ -44,10 +44,10 @@ const IN_PORTS inport[] = {
 	{ "cvt_a",      cvt_a },
 	{ "coprts",     coprts },
 	{ "buildd",     buildd },
-	{ "versn",      &versn },
+	{ "versn",      &v.versn },
 	{ "vexdir",     &vexdir },
-	{ "vpath",      &vapath },
-	{ "vashrc",     &vashrc },
+	{ "vpath",      &v.vapath },
+	{ "vashrc",     &v.rc },
 	{ "f_o",        &Cfill_o },
 	{ "f",          &Cfill },
 	{ "i",          Crepf },
@@ -55,20 +55,20 @@ const IN_PORTS inport[] = {
 	{ "r",          Csubs },
 	{ "onoff",      onoff },
 	{ "t_ymax",     t_ymax },
-	{ "pF",         &vashflag.panelf },
-	{ "xF",         &vashflag.xtermf },
-	{ "wF",         &vashflag.whodirf },
-	{ "sF",         &vashflag.scrolf },
-	{ "hF",         &vashflag.histf  },
-	{ "hS",         &vashflag.histsn },
-	{ "cF",         &vashflag.clockf },
-	{ "mF",         &vashflag.cmailf },
-	{ "xT",         &vashflag.exittrap },
-	{ "NF",         &vashflag.novice },
-	{ "AF",         &vashflag.shanyway },
-	{ "SF",         &vashflag.subatrc },
-	{ "SO",         &vashflag.subshow },
-	{ "PP",         &vashflag.predef },
+	{ "pF",         &v.flag.panelf },
+	{ "xF",         &v.flag.xtermf },
+	{ "wF",         &v.flag.whodirf },
+	{ "sF",         &v.flag.scrolf },
+	{ "hF",         &v.flag.histf  },
+	{ "hS",         &v.flag.histsn },
+	{ "cF",         &v.flag.clockf },
+	{ "mF",         &v.flag.cmailf },
+	{ "xT",         &v.flag.exittrap },
+	{ "NF",         &v.flag.novice },
+	{ "AF",         &v.flag.shanyway },
+	{ "SF",         &v.flag.subatrc },
+	{ "SO",         &v.flag.subshow },
+	{ "PP",         &v.flag.predef },
 	{ "yy_max",     &clm._yy_max },
 	{ "y0",         &clm._y0     },
 	{ "y0_top",     &y0_top },
@@ -99,7 +99,8 @@ register char *pgname;   /* имя файла страницы */
 	return(linep);
 }
 
-sup()
+sup(cmd)
+const char *cmd;
 {
 	LINE *supm;
 

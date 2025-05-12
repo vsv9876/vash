@@ -24,7 +24,7 @@
 #define CMDB (CMDP * MAXLICO)  /* 8192 */      /* command buffer size */
 #endif /* TINYSMALL */
 
-extern char *homedir;
+/*extern char *homedir;*/
 /*extern int histsn;*/
 
 static  char    cmdbuf[CMDB+1];   /* БУФЕР КОМАНД */
@@ -48,10 +48,10 @@ cmdhreset() {
 		cmdpi = cmdpisel = -2/*0*/;
 }
 
-
+#if 1
 int mystrcpy(to, from)
-char *to;
-char *from;
+u8char_t *to;
+u8char_t *from;
 {
 	for(;;) {
 		*to++ = *from;
@@ -62,17 +62,17 @@ char *from;
 }
 
 #define strcpy mystrcpy
-
+#endif
 /*
  * УБРАТЬ ИЗ БУФЕРА
  * возвращается номер удаляемой команды или -1 если удалять было нечего
  */
-int cmddel(cmd0)
+static int cmddel(cmd0)
 /*wchar_t*/u8char_t *cmd0;
 {
-	u8char_t cmd[U8_STRBUF];
+	static /*u8char_t*/char cmd[U8_STRBUF];
 
-	register int i;
+	/*register*/ int i;
 	int savenext;      /* индекс указателя следующей команды */
 	int delsize;    /* размер удаляемой команды */
 
@@ -82,10 +82,10 @@ int cmddel(cmd0)
 	if (*cmd == '\0')
 		return(-1);
  ***/
-	for (i = 0; cmdptr[i]; i++) {
-		if (strcmp(cmd, cmdptr[i]) == 0) {
+	for (i = 0; cmdptr[i] != NULL && i < CMDP; i++) {
+		if (strcmp(&cmd[0], cmdptr[i]) == 0) {
 			delsize = strlen(cmd) + 1;
-			/* СКОПИРУЕМ СОДЕРЖИМОЕ БУФЕРА В НОВОЕ МЕСТО */
+			/* copy buffer to new place */
 			for (savenext = i + 1; savenext < cmdplast; i++,savenext++) {
 				cmdptr[i] = cmdptr[savenext] - delsize;
 				strcpy(cmdptr[i], cmdptr[savenext]);
@@ -189,7 +189,7 @@ u8char_t *newcmd;
 #if 0
 	/* сначала синхронизация истории в файл? */
 	/* при каждом изменении истории команд!!! */
-	if (vashflag.histsn == 1) cmdphist();
+	if (v.flag.histsn == 1) cmdphist();
 #endif
 	return(-1);
 }
@@ -243,9 +243,9 @@ wchar_t *cmd;
  *
  * NOTE:
  * assistant shell's history is not a full log of invoked commands like shell .history,
- * but a common cache shared by another vash session (in concurrent way if vashflag.histsn != 0)
+ * but a common cache shared by another vash session (in concurrent way if v.flag.histsn != 0)
  *
- * this two routines called from main() on vash start and exit regardless of vashflag.histsn value
+ * this two routines called from main() on vash start and exit regardless of v.flag.histsn value
  */
 
 /* history cache file*/
@@ -257,7 +257,7 @@ const char *hfile = "/.ashhist";
  * read history file, in case:
  *  1) first time
  *  2) file modified since last reading
- * write history file (after every command, if vashflag.histsn!=0)
+ * write history file (after every command, if v.flag.histsn!=0)
  * saving internal mark about st_mtime preventing useless read
  */
 
@@ -266,7 +266,7 @@ static time_t hflast = (time_t)0; /* zero for fisrt time comparizon */
 /*
  * get history from file into cmdb[] buffer
  *
- * if vashflag.histsn==0 (syncronize history is disabled),
+ * if v.flag.histsn==0 (syncronize history is disabled),
  * do it once when program started
  *
  * returns 1, if get commands from history file
@@ -284,14 +284,14 @@ cmdghist()
 	register char *p;
 	register int i;
 
-	strcpy(filename, homedir);
+	strcpy(filename, v.home);
 	strcat(filename, hfile);
 
 	if (stat(filename, &hfstat) < 0)
 		return(0);
 	hftime = hfstat.st_mtime;
 
-	if (vashflag.histsn == 0) {
+	if (v.flag.histsn == 0) {
 		if (hflast != 0) return(1);
 	}
 /*	if (hflast != 0 && hflast == hftime) return(1);*/
@@ -329,16 +329,16 @@ cmdghist()
  */
 cmdphist()
 {
-	char filename[200];
+	char filename[STRBUF]; /*[200]*/
 	struct stat	hfstat;
 	time_t      hftime;
 	FILE *fp;
 	int ok;
 	register char **pp;
 
-	if (homedir == (char *)0) return(0) ; /* history file is not defined */
+	if (v.home == NULL/*(char *)0*/) return(0) ; /* history file is not defined */
 
-	strcpy(filename, homedir);
+	strcpy(filename, v.home);
 	strcat(filename, hfile);
 
 	if ((fp = fopen(filename, "w")) == NULL)
@@ -404,7 +404,7 @@ kbcod cod;
 			w_page(clm._vf);
 */
 			/* синхронизировать историю при удалении каждой команды */
-			if (vashflag.histsn) {
+			if (v.flag.histsn) {
 				cmdphist();
 			} /*else {
 				cp_set(-1, -14, ATT|INP);
@@ -449,13 +449,14 @@ kbcod h_menu()
 
 		default:
 			break;
-		case KB_HE:      /* справка */
-#if 0
+		case '1':      /* справка */
+#if 1
 			cp_set(-1, 0, TXT);
 			fprintf(vttout, "Cmd# %2d/%2d, use %d (%d%%)",
 			clm._itm, cmdplast, cmdbufree, (int)((cmdbufree * 100)/CMDB));
 			break;
 #endif
+		case KB_HE:		/* TODO help msg */
 		case '=':
 		case ';':
 		case KB_CA:
@@ -513,7 +514,7 @@ cmdvew(cmd0)
 wchar_t  *cmd0;
 {
 	extern int  y0_top;     /* определено в vshcmd */
-	extern char *pmtsh;    /* --"-- */
+	/*extern char *pmtsh;     --"-- */
 	LINEMENU savelm;
 	kbcod cod;
 	
@@ -544,7 +545,7 @@ wchar_t  *cmd0;
 	ret = 0;
 
 	/* сначала синхронизация истории из файла? */
-	if (vashflag.histsn) {
+	if (v.flag.histsn) {
 		cmdghist();
 	}
 
@@ -618,7 +619,8 @@ rebuild_help_menu:
 	/* hint to avoid new overlapping malloc? /* TODO WTF */
 /*	clm._vf     = (LINE *)0;		*/
 
-	clm._itmlen = lframe->maxco - ((strlen(pmtsh)) * 2); /*по феншую, отступ на промптер слева и справа*/
+	/*по феншую, отступ на промптер слева и справа*/
+	clm._itmlen = lframe->maxco - ((strlen(pmtsh)) * 2);
 	clm._ltmpl  = &tmplate;
 
 	clm._yy_max = 10;		/*TODO вынести в начало функции как константу */
@@ -657,7 +659,7 @@ rebuild_help_menu:
 
 	w_cmd(cmd0);
 	if (clm._itms == cmdpsel) {
-		at_set(CMD|VEXT/*ATT*/);
+		at_set(ATT|INP/*CMD|VEXT*//*ATT*/);
 	} else {
 		at_set(CMD);
 	}

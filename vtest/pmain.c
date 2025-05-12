@@ -44,13 +44,13 @@ main()
 /*	signal( SIGINT, SIG_IGN );
 	signal( SIGQUIT, SIG_IGN );*/
 
-    io_set(IO_VIDEO);
+    io_set(VT_ON);
 	signal( SIGQUIT, SIG_DFL );
 
     vmain();    /* СМ. ФАЙЛ pvmain.cv */
 
     er_eop(0);
-    io_set(IO_TTYPE);
+    io_set(VT_OFF);
     printf("\n");
     exit(0);
 }

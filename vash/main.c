@@ -22,14 +22,29 @@ FILE   *tmpfp = NULL;
 
 int     y0_top = 0;   /* begin of scroll area // Начало свитка на экране */
 
-VASHFLAG vashflag = { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0 } ;
+/*VASHFLAG nu_vashflag = { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0 } ;*/
 int predump = 0;
 
-char   *envshell;		/* env SHELL= */
-char   *homedir;        /* домашний каталог */
+/*char   *envshell;		/* env SHELL= */
+/*char   *homedir;        /* домашний каталог */
 char   *cwd;            /* текущий (рабочий) каталог */
 
 const char *pmtsh;
+
+VASHFLAG *vflag;
+VASH_PROC v = {
+		{ 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0 },
+		0,
+		0,
+		0,
+		0,
+		NULL, 	    /* .argv0 */
+		NULL,		/* $HOME */
+		"/bin/sh",	/* $SHELL */
+		VASH_PATH,	/* .vapath */
+		VERSN,
+		"std.rc",
+};
 
 usage()
 {
@@ -51,11 +66,11 @@ int ok;
 	er_eop(0);
 	cp_set(clm._y0-1, 0, CMD);
 #endif
-	io_set(IO_TTYPE);
+	io_set(VT_OFF);
 #ifdef RETRO
 	putchar('\n');
 #endif
-	if (ok == 0 && vashflag.histf && homedir != (char *)0 && vashflag.histsn == 0) {
+	if (ok == 0 && v.flag.histf && v.home != (char *)0 && v.flag.histsn == 0) {
 		cmdphist();
 	}
 
@@ -66,13 +81,163 @@ int ok;
 }
 
 /*ARGSUSED*/
-void onintr(signo)
-int signo;
+int onintr(signo)
 {
+	onexit(1);
+	printf("\n(%-d)bye\n", signo);
+	fflush(stdout);
+	exit(1);
+}
+
+#if 0 /*on_onintr()*/
+/*
+ * finish vash jobs handler
+ */
+static void on_onintr()
+{
+#if VASH_SIG_POSIX
+	struct sigaction sa;
+	sa.sa_handler = onintr;
+	sa.sa_flags = 0;
+
+/*	sigfillset(&sa.sa_mask);*/
+	sigemptyset(&sa.sa_mask);
+
+	sigaction(SIGHUP, &sa, NULL);
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGQUIT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+#else
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	onexit(1); exit(1);
+#endif
 }
+#endif
+#if 0
+static void Signal(sig, hdlr)
+int sig;
+void *hdlr;
+{
+	struct sigaction sa;
+
+/*	sigemptyset(sa.sa_mask);*/
+
+	sigaction(sig, NULL, &sa);
+	if (sa.sa_handler != hdlr) {
+		sa.sa_flags = 0;
+		sa.sa_handler = hdlr;
+		sigaction(sig, &sa, NULL);
+	}
+}
+#endif
+
+/*disabling any linlib signal processing*/
+void vsignal(ontty)
+int ontty;
+{
+	fflush(stdout);
+}
+
+#if 0 /*vsignal()*/
+/*
+ * in linlib exists standard handler-dispatcher with the same name
+ * there is a replacement for it, adding mode ontty=2
+ *
+ */
+void vsignal(ontty)
+int ontty;
+{
+	int debug = 0;
+#if VASH_SIG_POSIX
+	sigset_t sblock, snorm;
+	sigemptyset(&sblock);
+	sigaddset(&sblock, SIGTERM);
+	sigaddset(&sblock, SIGTTOU);
+	sigaddset(&sblock, SIGTTIN);
+	sigaddset(&sblock, SIGTSTP);
+/*	sigaddset(&sblock, SIGCHLD);*/
+
+	if(ontty == 0)	{
+		if (debug)
+			printf("\n-VIDEO-\n");
+		Signal(SIGHUP,  &onintr);
+		Signal(SIGINT,  SIG_IGN);
+		Signal(SIGQUIT, &onintr/*SIG_DFL*/);
+		Signal(SIGCHLD,  &onchld);
+/*		Signal(SIGTSTP,  SIG_IGN);
+		Signal(SIGTTIN,  SIG_IGN);
+		Signal(SIGTTOU,  SIG_IGN);*/
+/*		sigaddset(&sblock, SIGCHLD);*/
+		sigprocmask(SIG_BLOCK, &sblock, &snorm);
+	} else if(ontty == 1) {
+		if (debug)
+			printf("\n-TTY-");
+		Signal(SIGHUP,  SIG_DFL);
+		Signal(SIGINT,  SIG_IGN);
+		Signal(SIGQUIT, SIG_IGN);
+
+		Signal(SIGTERM, SIG_IGN);
+		Signal(SIGCHLD,  &onchld);
+/*		Signal(SIGTSTP,  SIG_IGN);
+		Signal(SIGTTIN,  SIG_IGN);
+		Signal(SIGTTOU,  SIG_IGN);*/
+		sigprocmask(SIG_BLOCK, &snorm, NULL);
+	} else if(ontty == 2) {
+		/* after fork() before exec() */
+		if (debug)
+			printf("\t\t\t-child-\r\n");
+		Signal(SIGHUP,  SIG_DFL);
+		Signal(SIGINT,  SIG_DFL);
+		Signal(SIGQUIT, SIG_DFL);
+
+		Signal(SIGTERM, SIG_DFL);
+		Signal(SIGCHLD, &onchld);
+/*		Signal(SIGTSTP, SIG_DFL);
+		Signal(SIGTTIN,  SIG_IGN);
+		Signal(SIGTTOU,  SIG_IGN);*/
+		/*Don't forget a handler after */
+	}
+#else
+	if(ontty == 0)	{
+		if (debug)
+			printf("\n--VIDEO--\n");
+		signal(SIGHUP,  &onintr); /* TODO clean of children */
+		signal(SIGINT,  SIG_IGN);
+		signal(SIGQUIT, &onintr/*SIG_DFL*/);
+		signal(SIGCHLD, &onchld);
+		signal(SIGTSTP, &onchld);
+	} else if(ontty == 1) {
+		if (debug)
+			printf("\n---TTY---");
+		signal(SIGHUP,  SIG_DFL);
+		signal(SIGINT,  SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
+
+		signal(SIGTERM, SIG_IGN);
+		signal(SIGTTIN, SIG_IGN);
+		signal(SIGTTOU, SIG_IGN);
+		signal(SIGCHLD, &onchld);
+		signal(SIGTSTP, &onchld);
+	} else if(ontty == 2) {
+		/* after fork() before exec() */
+		if (debug)
+			printf("\t\t\t--child--\r\n");
+		signal(SIGHUP,  SIG_DFL);
+		signal(SIGINT,  SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+
+		signal(SIGTERM, SIG_DFL);
+		signal(SIGCHLD, SIG_DFL);
+		signal(SIGTTIN, SIG_DFL);
+		signal(SIGTTOU, SIG_DFL);
+		signal(SIGTSTP, SIG_DFL);
+		/*Don't forget a handler after */
+	}
+#endif
+	fflush(stdout);
+}
+#endif
+
 
 LFRAME lfmain = { 0 };
 
@@ -94,11 +259,28 @@ void sigwinch(signo)
 
 	lframe = &lfmain;
 
-	rescan();
+	rescan(NULL);
 
 	if (signo)
 		jkb_re();
 
+}
+
+static void on_sigwinch()
+{
+#if VISI_SIG_POSIX
+	struct sigaction sa, osa;
+
+	sigaction(SIGWINCH, NULL, &sa);
+/*	sigemptyset(&sa.sa_mask);*/
+	sa.sa_handler = sigwinch;
+	sa.sa_flags = 0;
+
+	sigaction(SIGWINCH, &sa, &osa);
+#else
+	/*fsig = */
+	signal(SIGWINCH, sigwinch);
+#endif
 }
 
 static  LINE tmplate =
@@ -128,6 +310,25 @@ char **argv;
 	}
 }
 
+static void vash_ini()
+{
+	/*
+	 * passport constants
+	 */
+	v.ppid = getppid();
+	v.pid = getpid();
+	v.pgrp = getpgrp();
+	v.sid = getsid(v.pid);
+	if (v.sid == v.pid)
+		printf("session leader;\n");
+	if (v.pgrp == v.pid)
+		printf("process group leader;\n");
+	if ((v.shell = getenv("SHELL")) == NULL /*(char *)0*/)
+   		v.shell = "/bin/sh";
+   	if ((v.home = getenv("HOME")) == NULL /*(char *)0*/)
+   		v.flag.histf = 0;
+}
+
 main(argc, argv)
 int argc;
 char **argv;
@@ -146,25 +347,28 @@ char **argv;
 	}
 #endif
 	if (!setlocale(LC_CTYPE, "")) {
-			fprintf(stderr, "Can't set the specified locale! "
-				"Check LANG, LC_CTYPE, LC_ALL.\n");
-			return 1;
-		} else {
-			mb_cur_max = MB_CUR_MAX;
-		}
+		fprintf(stderr, "Can't set the specified locale! "
+			"Check LANG, LC_CTYPE, LC_ALL.\n");
+		return 1;
+	} else {
+		mb_cur_max = MB_CUR_MAX;
+	}
 
+	vash_ini();
 
-       /* инициализация главного меню */
-       clm._itms   = itms1;
-       clm._ltmpl  = &tmplate;
-       clm._itmbsz = ITMBUF;
-       clm._yy_max = 10;
+	v.argv0 = argv0 = *argv;
 
-       vashrc = "std.rc";
+	/* setup extra directory for all working files library, vashrc will be found in that place */
+	if ((s = getenv(VEXDIR)) != (char *)0)
+		vexdir = s;
+	if ((s = getenv(VAPATH)) != (char *)0)
+		v.vapath = s;
 
-       /* setup extra directory for all working files library, vashrc will be found in that place */
-       if ((s = getenv(VEXDIR)) != (char *)0) vexdir = s;
-       if ((s = getenv(VAPATH)) != (char *)0) vapath = s;
+	/* main menu init. */
+	clm._itms   = itms1;
+	clm._ltmpl  = &tmplate;
+	clm._itmbsz = ITMBUF;
+	clm._yy_max = 10;
 
 #ifdef  VTTY
 	vtty();
@@ -172,7 +376,7 @@ char **argv;
 	visini();
 	hw_set();
 
-	sigwinch(0);
+	sigwinch(0); /* get initial sizes of screen */
 
 	if (getuid() == 0) {
 		pmtsh = " # ";
@@ -183,26 +387,26 @@ char **argv;
 	/*
 	 * environment setup parsed before command line args
 	 */
-	vashflag.exittrap = 0;
+	v.flag.exittrap = 0;
 	if ((envsup = getenv("VASH")) != (char *) 0) {
 		char linenoa[4];
 		char *p;
 
 		/* reset defaults in case environment setup is in use */
-		vashflag.scrolf =
-				vashflag.histf = vashflag.histsn = vashflag.panelf =
-						vashflag.whodirf = vashflag.xtermf = vashflag.clockf =
-								vashflag.cmailf = vashflag.exittrap = vashflag.novice =
-										vashflag.subatrc = vashflag.subshow = 0;
+		v.flag.scrolf =
+				v.flag.histf = v.flag.histsn = v.flag.panelf =
+						v.flag.whodirf = v.flag.xtermf = v.flag.clockf =
+								v.flag.cmailf = v.flag.exittrap = v.flag.novice =
+										v.flag.subatrc = v.flag.subshow = 0;
 		if(strcmp("BSD", VASHLIB)==0)
-			vashflag.predef = 1;
+			v.flag.predef = 1;
 #if 1
 		else
-			vashflag.predef = 0;
+			v.flag.predef = 0;
 #endif
 		/*** yy_max = 10; */
 
-		while (c = *envsup++) {
+		while ((c = *envsup++)) {
 			switch (c) {
 			case 'l':
 				p = linenoa;
@@ -217,37 +421,37 @@ char **argv;
 					clm._yy_max = lframe->maxli - 4;
 				break;
 			case 'p':
-				vashflag.panelf++;
+				v.flag.panelf++;
 				break;
 			case 'x':
-				vashflag.xtermf++;
+				v.flag.xtermf++;
 				break;
 			case 'w':
-				vashflag.whodirf++;
+				v.flag.whodirf++;
 				break;
 			case 's':
-				vashflag.scrolf++;
+				v.flag.scrolf++;
 				break;
 			case 'h':
-				vashflag.histf++;
+				v.flag.histf++;
 				break;
 			case 'S':
-				vashflag.histsn++;
+				v.flag.histsn++;
 				break;
 			case 'c':
-				vashflag.clockf++;
+				v.flag.clockf++;
 				break;
 			case 'm':
-				vashflag.cmailf++;
+				v.flag.cmailf++;
 				break;
 			case 'T':
-				vashflag.exittrap++;
+				v.flag.exittrap++;
 				break;
 			case 'N':
-				vashflag.novice++;
+				v.flag.novice++;
 				break;
 			case 'A':
-				vashflag.shanyway++;
+				v.flag.shanyway++;
 				break;
 			}
 		}
@@ -259,7 +463,6 @@ char **argv;
 		exit (1);
 	} else
 		Cfill = ((u8sobj_t *)Cfill_o)->u8s;
-
 
    	for (argc--, argv++; argc > 0; argc--, argv++) {
 		if (*argv[0] == '-') {
@@ -278,34 +481,34 @@ char **argv;
 				clm._xx1 = 1;
 				continue;
 			case 'p':
-				vashflag.panelf = 0;
+				v.flag.panelf = 0;
 				continue;
 			case 'x':
-				vashflag.xtermf = 0;
+				v.flag.xtermf = 0;
 				continue;
 			case 'w':
-				vashflag.whodirf = 0;
+				v.flag.whodirf = 0;
 				continue;
 			case 's':
-				vashflag.scrolf = 0;
+				v.flag.scrolf = 0;
 				continue;
 			case 'h':
-				vashflag.histf = 0;
+				v.flag.histf = 0;
 				continue;
 			case 'S':
-				vashflag.histsn = 0;
+				v.flag.histsn = 0;
 				continue;
 			case 'c':
-				vashflag.clockf = 0;
+				v.flag.clockf = 0;
 				continue;
 			case 'm':
-				vashflag.cmailf = 0;
+				v.flag.cmailf = 0;
 				continue;
 			case 'T':
-				vashflag.exittrap = 0;
+				v.flag.exittrap = 0;
 				continue;
 			case 'A':
-				vashflag.shanyway = 1;
+				v.flag.shanyway = 1;
 				continue;
 			case 'P':
 				predump = 1;
@@ -318,7 +521,7 @@ char **argv;
 			}
 		} else {
 			/* имя файла для интерпретации cmdset() */
-			vashrc = *argv;
+			v.rc = *argv;
 		}
 	}
 args_done:
@@ -326,16 +529,8 @@ args_done:
 	printf("args_done; Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
 #endif
 
-   	if ((envshell=getenv("SHELL")) == (char *)0) {
-   		envshell = "/bin/sh";
-   	}
-
-   	if ((homedir=getenv("HOME")) == (char *)0) {
-   		vashflag.histf = 0;
-   	}
-
-    if (homedir != (char *)0) {
-		cmdghist(homedir);
+    if (v.home != NULL /*(char *)0*/) {
+		cmdghist(v.home);
 	}
 
     /*  tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
@@ -349,14 +544,17 @@ args_done:
 	printf("   Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
 #endif
 /*NOXSTR*/
-	if ( cmdset(vashrc) ) {
+	if ( cmdset(v.rc) ) {
 
 		if (predump)
 			exit(0);
-		io_set(IO_VIDEO);
+
+		/*vsignal(1);*/
+		io_set(IO_SAVE | VT_OFF);
+		io_set(VT_ON);
 
 		cfill(argc, argv); /* tail of agruments is fill command replaced one from vashrc */
-		signal(SIGINT, onintr);
+		/*signal(SIGINT, onintr);*/
 
 #ifdef DEBUG
 		printf("cmdset; Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
@@ -370,15 +568,19 @@ args_done:
 			scrlnl();
 			/*y0_top = clm._y0;*/
 
-			signal( SIGINT, SIG_IGN );
-			signal( SIGQUIT, SIG_IGN );
-			signal(SIGWINCH, sigwinch);
+			on_sigwinch();
+
+			cp_cret();
+			on_onchld();
+
+			blk_on();
 
 			u_menu(clm._vf);
 
 			onexit(0);
 
-			io_set(IO_TTYPE);
+			io_set(VT_OFF);
+			/*vsignal(0);*/
 
 			exit(0);
 		}

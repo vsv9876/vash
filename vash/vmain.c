@@ -56,7 +56,7 @@ kbcod cod;
 	register char **pp;
 
 	if (cod == ' '
-	|| (vashflag.oneitm && cod == KB_NL)
+	|| (v.flag.oneitm && cod == KB_NL)
 	|| (cod == '<')
 	|| (cod == '>')) {
 		pp = (char **)line->varl;
@@ -147,7 +147,7 @@ int f_ls(fill)
 /*
  * edit fill command
  */
-char *fill;
+const char *fill;
 {
 	kbcod cod;
 
@@ -275,7 +275,7 @@ kbcod cod;
 
 /* команды пометки вынесены во внешние rc-файлы */
 int f_mark(cmd)
-char *cmd;
+const char *cmd;
 {
 	kbcod cod;
 	cod = cmd[0];
@@ -324,13 +324,13 @@ register int i; /* search start position */
 
 /* position cursor on first letter given in dialog */
 int itmpos(cmd)
-char *cmd;
+const char *cmd;
 {
 	extern kbcod pmtrstr(); /* ввод строки с промптером */
 	kbcod cod;
 	int i, ilast;
 
-	cod = pmtrstr(" position on: ", pattpos, 16);
+	cod = pmtrstr(" jump to pos: ", pattpos, 16);
 	if (strchr(pattpos, '*') || strchr(pattpos, '?'))
 		ispatt++;
 
@@ -401,7 +401,7 @@ register LINE *mainl;
 			keyreq = 1;
 		}
 		if (!ok_msg() && keyreq) {
-			keyshow(vashflag.panelf);
+			keyshow(v.flag.panelf);
 			keyreq = 0;
 		}
 		showtime( 1 );  /* restore clock */

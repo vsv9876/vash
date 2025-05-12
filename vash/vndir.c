@@ -50,7 +50,8 @@ struct  stat cwdstat;
 char    cwdpath[U8_STRBUF];   /* CURRENT working directory full name */
 char    lwdpath[U8_STRBUF];   /* LAST working directory full name */
 
-int rescan()
+int rescan(cmd)
+const char *cmd;
 {
 /*     cwdstat.st_ino = (ino_t)0;   */
     cwdstat.st_mtime = (time_t)0L;
@@ -410,7 +411,7 @@ char *file;
     	s++;
     }
     *s = '\0';
-	if ((fp = dafopen(file, vapath, "r")) == NULL) {
+	if ((fp = dafopen(file, v.vapath, "r")) == NULL) {
     	return(1); /* ERROR filling main menu */
 	} else {
 		ip = &itmname[0];
@@ -713,7 +714,7 @@ cwdshow()
 
 	mailf2 = 1;
 
-	if (vashflag.panelf) {
+	if (v.flag.panelf) {
 		if (clm._y0 > y0_top) {
 			showli = y0_top-1;
 			cp_set(y0_top-1, 0, TXT);
@@ -756,7 +757,7 @@ cwdshow()
 	binpwd(cwdpath);
 
 /*	sprintf(tmpstr, "[ %s ]", cwdpath); */
-	if (vashflag.xtermf) {
+	if (v.flag.xtermf) {
 		w_raw("\033]0;");
 		w_str(lbl_tmpstr);
 
@@ -765,7 +766,7 @@ cwdshow()
 
 		w_raw("\007"); /* terminate escape sequence for xterm window title */
 	}
-	if (vashflag.whodirf) {
+	if (v.flag.whodirf) {
 		cp_set(showli, 0, HDR);
 		w_str(lbl_tmpstr);
 
@@ -939,12 +940,12 @@ int newflag;    /* если 0, то только обновить каталог
  */
 int
 vchdir(cdarg)
-char *cdarg;
+const char *cdarg;
 {
 	extern int dcanon(); /*workaround from BSD code*/
 	extern void sh_unesc();
-	char  nwdpath[400];     /* НОВЫЙ КАТАЛОГ */ /*TODO WTF 400 */
-	char  tmppath[400];
+	char  nwdpath[U8_STRBUF];     /* new working directory path */
+	char  tmppath[U8_STRBUF];
 	register char *p;
 
 	p = nwdpath;
@@ -966,11 +967,13 @@ char *cdarg;
 	dcanon(nwdpath);        /* canonicalize new path */
 
 	if (access(nwdpath, R_OK|X_OK)) {
-		w_emsg("access error: "); w_str(nwdpath);
+		w_emsg("no access: ");  w_str("'");
+		w_str(nwdpath);         w_str("'");
 		return(-1);
 	}
 	if (chdir(nwdpath) < 0) {
-		w_emsg("Can't chdir() to "); w_str(nwdpath);
+		w_emsg("can't chdir() to ");  w_str("'");
+		w_str(nwdpath);               w_str("'");
 		return(-1);
 	}
 	strcpy(lwdpath, cwdpath);

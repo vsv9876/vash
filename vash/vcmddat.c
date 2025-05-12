@@ -189,6 +189,9 @@ register int kt1x;
 }
 
 #define MAXFP 8
+/*
+ * source vash rc file
+ */
 int
 cmdset(file)
 const char *file;
@@ -215,7 +218,7 @@ const char *file;
     fpix = 0;
     fname = file;
 
-    predef = vashflag.predef;
+    predef = v.flag.predef;
 
 	/* инициализация переменных сканирования */
 	pc_ix = 0;
@@ -226,9 +229,9 @@ const char *file;
     while(fpix >= 0) {
 open_include:
 		if (fp[fpix] == NULL) {
-			if((fp[fpix]=dafopen(fname, vapath, "r")) == NULL) {
-				sprintf(ws, "can't read '%s' in vexdir='%s'", fname, vapath);
-				w_emsg(ws); er_eol(ERR); at_set(CMD);
+			if((fp[fpix]=dafopen(fname, v.vapath, "r")) == NULL) {
+				sprintf(ws, "can't read '%s' in vexdir='%s'", fname, v.vapath);
+				w_msg(ERR, ws);
 				return(0);
 			}
 			if (predump) {

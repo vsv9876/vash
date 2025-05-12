@@ -30,7 +30,7 @@
 /*---------------------------*/
 
 static  int msgflg ;    /* На экране есть сообщение */
-static  int amsgflg;
+static  int msgflg;
 
 int     ok_msg()
 {
@@ -50,34 +50,40 @@ int     vamode;        /* видеоатрибут */
 const char    *str ;         /* текст сообщения об ошибке */
 {
 	int va;	/* attribute of message */
+	char *whatmsg = "*";
 
-	va = TXT;
-	if (msgflg) {       /* если строка на экране занята */
-		msgflg = 0;     /* погасить ее */
-		cp_set(-1, 0, TXT);
-		er_eol(TXT);
-	}
-	if (*str) {    /* если аргумент вызова непустая строка */
-		msgflg = 1;
-		cp_set(-1, 0, vamode);
+	if(!io_get(IO_VIDEO)) {
 		switch (vamode & VIDEO) {
-		case ERR:
-			/*bell();*/
-			/*va = ERR;*/
-			w_str("error:");
-			break;
-		case ATT:
-			w_str(">>>");
-			break;
-		case TXT:
-			break;
-		default:
-			w_str("*");
-			break;
+		case ERR: whatmsg = "[error]";   break;
+		case ATT: whatmsg = "[warning]"; break;
+		case TXT: whatmsg = "";          break;
 		}
-		at_set(va); w_chr(' ');
-		w_str(str);
-		at_set(va); er_eol(va);
+		if (*str)
+			printf("%s %s: %s", argv0, whatmsg, str);
+		fflush(stdout);
+
+	} else {
+		va = TXT;
+		if (msgflg) {       /* если строка на экране занята */
+			msgflg = 0;     /* погасить ее */
+			cp_set(-1, 0, TXT);
+			er_eol(TXT);
+		}
+		if (*str) {    /* если аргумент вызова непустая строка */
+			msgflg = 1;
+			cp_set(-1, 0, vamode);
+
+			switch (vamode & VIDEO) {
+			case ERR: whatmsg = "error"; break;
+			case ATT: whatmsg = ">>>";   break;
+			case TXT: whatmsg = "";      break;
+			/*default:  whatmsg = "*";     break;*/
+			}
+			fprintf(vttout, " %s: ", whatmsg);
+			at_set(va); w_chr(' ');
+			w_str(str);
+			at_set(TXT); er_eol(TXT);
+		}
 	}
 }
 

@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "line.h"
+#include "line0.h"
 
 #ifdef USE_TERMIOS
 #include <signal.h>
@@ -18,119 +19,216 @@
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <stdlib.h>
+#include <errno.h>
+
 /* #ifndef UW_20 */
 /* #include <sys/filio.h> */
 /* #endif */
-/*
-int tty_li = 0;
-int tty_co = 0;
-*/
-/*
-extern int maxli;
-extern int maxco;
-*/
 
-struct winsize winsz;
+#ifdef VISI_DEBUG
+static int debug = 0; /* env VISI_IO= */
+static int debug_vt = 1;
+#endif /*VISI_DEBUG*/
+
+/* do not wait of input;
+ * if no input cycle asinc jobs - call nxt_job();
+ */
+static int kb_nwt = 0; /* wait input by default */
+static int vt_off(void);
+static int vt_on(void);
+static void vt_ini(void);
+
 int gtty_sz()
 {
 	int ret;
-	ret = ioctl(vtti, TIOCGWINSZ, &winsz);
+	struct winsize wsz;
+
+	ret = ioctl(vtti, TIOCGWINSZ, &wsz);
 	if (ret == 0) {
-		hwframe.maxli = /*tty_li =*/ winsz.ws_row;
-		hwframe.maxco = /*tty_co =*/ winsz.ws_col;
+		hwframe.maxli = /*tty_li =*/ wsz.ws_row;
+		hwframe.maxco = /*tty_co =*/ wsz.ws_col;
 	}
 	return ret;
 }
 
-
 /*
- *  Управление режимами драйвера терминала
+ *  internal state of terminal i/o
  */
 
-static struct termios old;
-static struct termios new;  /* terminal i/o status */
+static struct termios t_vton;  /* terminal i/o status */
+static struct termios t_vtoff;
+static int s_vton = 0;	/* saved */
+static int s_vtoff = 0;
 
-int osgflg = 0;         /* ФЛАГИ ДРАЙВЕРА (old.sg_flags)???????? */
+/*static int l_vton = -1;
+static int l_vtoff = -1;*/
 
+/* int osgflg = 0;         /* NotUsed! ФЛАГИ ДРАЙВЕРА (old.sg_flags)???????? */
+
+static void onintr(int);
+
+static   void     (*fsig)();
+/*TODO
+static struct sigaction act_def = { onintr, NULL, 0, 0, NULL };
+static struct sigation osig;
+*/
 /*
- * реакция на сигнал прерывания
+ * signal disposition for VIDEO mode
  */
-static v_off();
-static void onintr()
-{
-	/* эта функция применяется как реакция на SIG_QUIT и при exit */
-	signal(SIGINT,SIG_IGN);
-	v_off(); exit(0);
+void vsig_on(void) {
+#if VISI_SIG_POSIX
+	struct sigaction sa;
+	sa.sa_handler = onintr;
+	sa.sa_flags = SA_RESTART;
+
+	sigemptyset(&sa.sa_mask);
+
+	sigaction(SIGHUP, &sa, NULL);
+	sigaction(SIGINT, &sa, NULL);
+/*	sigaction(SIGTERM, &sa, NULL);*/
+/*	sa.sa_handler = SIG_IGN;*/
+/*	sigaction(SIGQUIT, &sa, NULL);*/
+
+#else
+	signal(SIGHUP, &onintr);
+	fsig = signal(SIGINT,SIG_IGN);
+	if( fsig == SIG_DFL )   {
+		fsig = &onintr;
+		signal( SIGINT, fsig );
+	}
+#endif
 }
 
-/*------------------------------*/
-/* ТЕЛЕТАЙПНЫЙ РЕЖИМ - СТАНДАРТ */
-/*------------------------------*/
-static int v_off()
-{
-	static   void     (*fsig)();
+/* for TTY mode */
+void vsig_off(void) {
+#if VISI_SIG_POSIX
+	struct sigaction sa;
+	sa.sa_handler = SIG_DFL/*onintr*/;
+	sa.sa_flags = 0;
 
-	fflush(vttout);         /* СНАЧАЛА ЗАКОНЧИТЬ ВЫВОД */
+	sigemptyset(&sa.sa_mask);
 
-	/* вернуть стандартную реакцию на сигнал SIG_INT */
+	sigaction(SIGHUP,  &sa, NULL);
+	sigaction(SIGINT,  &sa, NULL);
+/*	sigaction(SIGTERM, &sa, NULL);*/
+/*	sigaction(SIGQUIT, &sa, NULL);*/
+#else
+	/* backing LINLIB default reaction on signals */
+	signal(SIGHUP, &onintr);
 	fsig = signal(SIGINT,SIG_IGN);
 	if( fsig == &onintr ) {
 		fsig = SIG_DFL;
 	}
 	signal( SIGINT, fsig );
-
-#if 0
-	ioctl(vtti, TCSETS, &old);
 #endif
+}
+
+/*
+ *  default library handler for SIG_INT, SIG_QUIT and used on exit
+ *  */
+static void onintr(sig)
+int sig;
+{
+#if VISI_SIG_POSIX
+	/*signal(SIGINT,SIG_IGN);*/
+#else
+	signal(SIGHUP, &onintr);
+	signal(SIGINT, &onintr);
+#endif
+	vt_off();
+/*	printf("-------- exited via onintr(%-d) --------\n", sig);*/
+	fflush(stdout);
+	exit(0);
+}
+
+/*------------------------------*/
+/* ТЕЛЕТАЙПНЫЙ РЕЖИМ - СТАНДАРТ */
+/*------------------------------*/
+static int vt_off()
+{
+#ifdef VISI_DEBUG
+	if (debug)
+		printf(" ~vt_off~ ");
+/*	fflush(vttout);         /* СНАЧАЛА ЗАКОНЧИТЬ ВЫВОД */
+#endif /*VISI_DEBUG*/
+	vsignal(1);
+
+	/*ioctl(vtti, TCSETS, &old);*/
 	/* tcsetattr(vtti, TCSADRAIN, &old); */
-	return (tcsetattr(vtti, TCSANOW, &old));
+	fflush(stdout);
+	return (tcsetattr(STDOUT_FILENO /*vtti*/, TCSADRAIN/*TCSANOW*/, &t_vtoff));
 }
 
 /*----------------------------*/
 /* УСТАНОВКА ЭКРАННОГО РЕЖИМА */
 /*----------------------------*/
-static int v_on(inherit)
-int inherit;
+static int vt_on()
+{
+#ifdef VISI_DEBUG
+	if (debug)
+		printf(" ~vt_on~ ");
+	fflush(stdout);
+/*	fflush(vttout);         /* СНАЧАЛА ЗАКОНЧИТЬ ВЫВОД */
+#endif /*VTTOUT_DEBUG*/
+
+	vsignal(1);
+
+	/*ioctl(vtti, TCSETS, &old);*/
+	/* tcsetattr(vtti, TCSADRAIN, &old); */
+	fflush(stdout);
+	return (tcsetattr(STDOUT_FILENO /*vtti*/, TCSADRAIN/*TCSANOW*/, &t_vton));
+}
+
+static void vt_ini()
 {
 	static   void       (*fsig)();
 	cc_t i;
 
-	if (inherit) {
-		/* get prev tty modes */
-#if 0
-	ioctl(vtti,TCGETS,&old);        /* get prev tty modes */
-#endif
-		tcgetattr(vtti, &old);
-		new = old;
-		new.c_iflag = (new.c_iflag&(~(ICRNL|IGNCR)));
-		new.c_oflag = (new.c_oflag&(~OPOST));
-		new.c_lflag = ISIG;
+#ifdef VISI_DEBUG
+	if (debug)
+		printf(" ~vt_ini ");
+	fflush(stdout);
+#endif /*VISI_DEBUG*/
+
+	/* get prev tty modes if
+	 * it is indtended for old code with first call io_set(IO_VIDEO);
+	 * modern code have to use first the io_set(IO_SAVE|);
+	 */
+	if (s_vtoff == 0) {
+		tcgetattr(vtti, &t_vtoff);
+		/* get copy of common flags from prepare settings for vt_on */
+		t_vton = t_vtoff;
+		s_vton = s_vtoff = 1;
+	}
+
+	t_vton.c_iflag = (t_vton.c_iflag & (~(ICRNL|IGNCR)));
+	t_vton.c_oflag = (t_vton.c_oflag & (~(OPOST|ONLCR))); /* ~(|)*/
+	t_vton.c_lflag = ISIG;
+	t_vton.c_lflag = (t_vton.c_lflag | (t_vtoff.c_lflag & (TOSTOP)));
 #ifndef CNUL
 #define CNUL '\0'
 #endif
 	/* special character processing */
 /*        new.c_cc[VINTR  ] = CNUL; */
 /*        new.c_cc[VQUIT  ] = CNUL; */
-		for ( i = 0; i <= NCCS; i++)
-			new.c_cc[i] = CNUL;
-		new.c_cc[VSTART] = old.c_cc[VSTART];
-		new.c_cc[VSTOP] = old.c_cc[VSTOP];
-		new.c_cc[VMIN ] = 1;    /* TODO check, may be VMIN=VTIME=0 is better ? */
-		new.c_cc[VTIME] = 5;
-	}
+	for ( i = 0; i <= NCCS; i++)
+		t_vton.c_cc[i] = CNUL;
+	t_vton.c_cc[VSTART] = t_vtoff.c_cc[VSTART];
+	t_vton.c_cc[VSTOP]  = t_vtoff.c_cc[VSTOP];
+	t_vton.c_cc[VMIN ]  = 1; /* TODO check, may be VMIN=VTIME=0 is better ? */
+	t_vton.c_cc[VTIME]  = 0;
 
-	fsig = signal(SIGINT,SIG_IGN);
-	if( fsig == SIG_DFL )   {
-		fsig = &onintr;
-		signal( SIGINT, fsig );
-	}
+#if 0
+	vsignal(0);
 
 #if 0
 	ioctl(vtti, TCSETS, &new);
 #endif
 	/* tcsetattr(vtti, TCSADRAIN, &new); */
 	fflush(vttout);
-	return(tcsetattr(vtti, TCSANOW, &new));
+	/*return(tcsetattr(vtti, TCSANOW, &t_vton));*/
+	return(tcsetattr(vtti, TCSADRAIN, &t_vton));
+#endif
 }
 
 /*-----------------------------------------------------*/
@@ -172,10 +270,6 @@ static  int cyrkbd()
 /* оставлена заглушка для совместимости */
 }
 
-static int kb_nwt = 0;  /* Не ожидать ввод с клавиатуры -
-			 * при пустой очереди выполнять
-			 * асинхронные задания.
-			 * ПО УМОЛЧАНИЮ - ВВОД ОЖИДАЕТСЯ */
 /*
  * Вернуть принятый символ, без символа
  * асинхронные задания выполняются в фоне, если нужно
@@ -222,6 +316,7 @@ int
 ttyinp()
 {
 	extern void next_j();
+	int  e_saved;
 	char cc[1];
 	int  c;
 
@@ -233,15 +328,23 @@ ttyinp()
 		while( ttytst() ) { /* пока очередь ввода пустая */
 			next_j();       /* выполнить другие асинхронные задания */
 			/*
-			 * в 1986 году мы с коллегами не знали что эта техника называется threads,
+			 * в 1986 году мы с коллегами не знали что эта техника называется
+			 * multitreads,
 			 * а PosixThreads появились позже на несколько лет -- vsv, 2019г.
 			 */
 			cyrkbd();
 			fflush(vttout);
 		}
 	}
-	if (read(vtti, cc, 1) < 0)
-		exit(1);
+	if (read(vtti, cc, 1) < 0) {
+#if 0
+		io_set(VT_ON);
+#endif
+		perror("\r\nread(vtti)");
+		fprintf(stderr, "\r\n-- tcsetpgrp missed ?--\n");
+		raise(SIGSTOP/*TTIN*/);
+		/*exit(1);*/
+	}
 	c = cc[0] & 0377;
 	return (c);
 }
@@ -253,37 +356,72 @@ ttyinp()
 
 extern int k_pad();     /* см. lin215.c */
 
-io_set(flags)
+static int oflags = 0;
+
+int io_get(flags)
+int flags;
+{
+	if(flags == 0)
+		return(oflags);
+	if(oflags & flags)
+		return(1);
+	return(0);
+}
+
+/*
+ * main control of tty mode
+ */
+int io_set(flags)
 register int flags;
 {
-	int inherit = 1; /* by default save old tty state, or drop in case waiting killed child */
-	/* переключение keypad приходится делать из-за
-	 * повсеместного распространения termcap для vt100, xterm,
-	 * в котором клавиши со стрелками правильно работают
-	 * только при включенном keypad
-	 */
-	if(flags & IO_VIDEO)    {
-		fflush(vttout);
-		if (flags & IO_TTYSANE)
-				inherit = 0;
-		if (v_on(inherit)) {
-			perror("io_set(v_on)");
-			v_on(inherit);
-		}
-		k_pad(1);
+	int ret;
+	const char *tmps;
+
+#ifdef VISI_DEBUG
+	/* check environment 1st */
+	if (debug_vt) {
+		if ((tmps = getenv("VISI_DEBUG_IO")) != NULL)
+			debug = atoi(tmps);
+			debug_vt = 0;
 	}
-	if(flags & IO_TTYPE)    {
-		k_pad(0);
-		fflush(vttout);
-		if (v_off()) {
-			perror("io_set(v_off)");
-			v_off();
+#endif /*VISI_DEBUG*/
+	ret = oflags;
+	oflags = flags;
+	if(flags & IO_SAVE) {
+		if (flags & VT_OFF) {
+			ret = tcgetattr(vtti, &t_vtoff);
+			vt_ini(); /*s_vtoff = 1;*/
+		}
+		if (flags & VT_ON) {
+			ret = tcgetattr(vtti, &t_vton);
+			s_vton = 1;
+		}
+	} else {
+		/* переключение keypad приходится делать из-за
+		 * повсеместного распространения termcap-описания для vt100, xterm,
+		 * в котором клавиши со стрелками правильно работают
+		 * только при включенном keypad
+		 */
+		if(flags & VT_ON) { /*IO_VIDEO*/
+			fflush(stdout);
+			/*fflush(vttout);*/
+			if (s_vtoff == 0)
+				{ vt_ini(); /*s_vtoff = 1;*/ }
+			vt_on();
+			k_pad(1);
+			if(flags & IO_WAIT)
+						kb_nwt = 0;
+			if(flags & IO_NOWAIT)
+						kb_nwt = 1;
+		}
+		if(flags & VT_OFF) { /*IO_TTYPE*/
+			k_pad(0);
+			fflush(vttout);
+			/*fflush(stdout);*/
+			vt_off();
 		}
 	}
-	if(flags & IO_WAIT)
-				kb_nwt = 0;
-	if(flags & IO_NOWAIT)
-				kb_nwt = 1;
+	return(ret);
 }
 
 #endif  /* USE_TERMIOS */

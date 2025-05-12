@@ -4,19 +4,16 @@
 #include <stdio.h>
 #include "line.h"
 #include "assist.h"
+#include "vjobs.h"
 #include "slist.h"
 
 extern SLIST_HEAD *sgglist;
 
-extern  char *getenv();
+/*extern  char *getenv();*/
 
 extern  int     y0_top; /* defined in main.c */
 
-/*NOXSTR*/
-extern char    *pmtsh;/* = ".$"; /*"sh>" ;*/
-/*YESXSTR*/
 int pmtshsz;            /* размер подсказки */
-
 
 static  int  cmdsize = 0;       /* vsize e_str -- depends of screen width */
 static  int  pos = 0;           /* i     e_str    позиция в строке */
@@ -49,7 +46,6 @@ register wchar_t *cmd;
 
 	cp_set(cmd_li, 0, CMD); er_eol(CMD);
 	at_set(CMD|INP);
-	/*if (getuid() == 0) pmtsh = ".#";*/
 	w_str(pmtsh);
 	cp_set(cmd_li, pmtshsz, CMD); /* point to start re_str() editor */
 
@@ -106,6 +102,99 @@ int *curpos;
 }
 
 /*
+ * prompter dialog on command complete/terminated
+ */
+static kbcod trapstop (wstatus, msgat)
+int wstatus;
+int msgat;
+{
+	int trapcod;
+	kbcod cod;
+
+	do {
+		fflush(vttout);
+		fflush(stdout);
+		trapcod = 0;
+		cod = r_cod(0);
+		switch (cod) {
+		case KB_HE:
+			w_help((LINE *)"excode_help.lb");
+			break;
+		case KB_AU:
+		case KB_AD:
+		case KB_AL:
+		case KB_AR:
+		case KB_CA:
+			trapcod = 0;
+			break;
+		case KB_EX:
+			scrlnl();
+			onexit(0); exit(0);
+			break;
+		default:
+			if (v.flag.exittrap) {
+				if (cod == KB_NL || cod < ' ' || ISCTL(cod)) {
+					trapcod = 1;
+				}
+			} else { /* no exittrap */
+				if (/*cod == KB_NL || */cod < ' ' || ISCTL(cod)) {
+					trapcod = 1;
+				}
+			}
+			break;
+		}
+		at_set(msgat);
+		if ( ! v.flag.exittrap && cod == KB_NL) {
+			er_eol(CMD);
+			/*trapcod = 1;*/
+			if (wstatus) {
+				cp_cret();
+				wstatus = 0; /* show exitcode only once */
+			} else {
+				w_str("\r");
+				w_str("\n");
+			}
+			at_set(CMD); er_eol(CMD);
+			at_set(msgat = (CMD|INP));
+			sprintf(tmpstr, pmtsh);
+		}
+		if (cod == KB_NL) {
+			at_set(CMD);
+/*			printf("\r");*/
+			vj_notify(0);
+		}
+#if 0
+		if (v.flag.exittrap) {
+			at_set(atrib = HDR);
+		}
+#endif
+		if (trapcod) {
+			if (v.flag.novice) {
+          /*TODO:
+           * w_hlp(TXT,
+           * "main view: click :SP or :CA      get help: :HE"); */
+				at_set(TXT);
+				w_str(" main view: click ");
+				w_lh_str(":SP");
+				at_set(TXT);
+				w_str(" or ");
+				w_lh_str(":CA");
+				at_set(TXT);
+				w_str("               help: ");
+				w_lh_str(":HE");
+				/*at_set(TXT);*/
+				er_eol(TXT);
+			}
+		}
+		er_eop(CMD);
+		cp_cret();
+		at_set(msgat); w_str(tmpstr);
+	} while (trapcod);
+	return (cod);
+}
+
+
+/*
  * выполнить команду /bin/sh
  */
 int vshcmd(cmd, cmdlbl)
@@ -113,28 +202,31 @@ char *cmd;      /* команда для выполнения */
 char *cmdlbl;   /* вывеска для показа вместо команды */
 {
 	kbcod cod;
-	int syscod;             /* код возврата system */
+	int wstatus;        /* wstatus (код возврата system) */
+	int jobno;         /* job number > 0 - return from reapw(), reapchk() */
 	int codexit, codsig;
 
-	int cmdrun;             /* ФЛАГ: КОМАНДА ЗАПУСКАЛАСЬ */
+	int cmdrun;             /* ФЛАГ: для воостановления глав.меню: КОМАНДА ЗАПУСКАЛАСЬ */
 	int justrun;            /* флаг: запускать, не редактировать */
-	int okwait;             /* флаг: после wait() ожидать подтверждения пробелом, если OK */
+	int trapwait;             /* flag: wait ok after vsystem() */
 	int slsize;				/* количество возможных окончаний */
 
 	int trapcod;		/* flag: trap active, no return from exit indicator */
-	int msgat;			/*exit code message attribute*/
+	int msgat = 0;			/*exit code message attribute*/
 
 	u8char_t u8cmd0[U8_STRBUF + 4];	/* TODO check a type of variable - command to be executed */
 	wchar_t *p;
 	int		sufpos; /* suffix position and count */
 	int		sufcnt;
+	int     inret = 0; /* return from internal command parser*/
+	int     jobnum;
 
 	cmdrun = 0;
 	pmtshsz = strlen(pmtsh) /* + 1*/;
 	cmdsize = lframe->maxco - 1 - pmtshsz; /*TODO size must be defined by command editor buffer*/
 	cmdo_init(); /* once called */
 	justrun = 0;
-	okwait = 1;  /* флаг: после wait() не ожидать подтверждения пробелом, если OK */
+	trapwait = 1;  /* флаг: после wait() не ожидать подтверждения пробелом, если OK */
 	cod = 0;
 	int atrib;
 
@@ -143,7 +235,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	    ;
 	} else {
 		if (*cmd == ':' || *cmd == ';') {
-			okwait = (*cmd == ';')? 0 : 1;
+			trapwait = (*cmd == ';')? 0 : 1;
 			justrun = 1;
 			cod = KB_NL;
 			/* пропускаем первый символ, затем копируем команду полностью */
@@ -254,7 +346,8 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		case KB_AU:
 			/* пред. команда */
 			/* синхронизировать историю, если в буфере набираемой команды пусто */
-			if (vashflag.histsn && cmd0[0] == 0) cmdghist();
+			if (v.flag.histsn && cmd0[0] == 0)
+				cmdghist();
 			if (!cmdprv(cmd0))
 				bell();
 
@@ -292,21 +385,21 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 				cmd = "";
 			}
 			/* сохранить команду, если ее редактировали */
-			if (cmd0cmp(cmd, cmd0, /*strlen*//*u8slen*/wcslen(cmd0)) != 0) {
-			/*if (strncmp(cmd, cmd0, strlenu8slenwcslen(cmd0)) != 0) {*/
-				if (vashflag.histsn) {
+			if (cmd0cmp(cmd, cmd0, /*strlen*/wcslen(cmd0)) != 0) {
+				if (v.flag.histsn) {
 					cmdghist();
 				}
 
 				wcsu8s(tmpstr, cmd0);
 				cmdput(tmpstr/*cmd0*/);
 
-				if (vashflag.histsn) {
+				if (v.flag.histsn) {
 					cmdphist();
 				}
 				/* заставить при повт.запуске снова сохранять: */
 				cmd = "";
 			}
+#if 0
 			/* конец работы? */
 			if(/*strcmp*/wcscmp(cmd0, L"exit")==0) {
 				onexit(0); exit(0);
@@ -346,137 +439,166 @@ fil_cd:
 				}
 			}
 std_shell:
-			/*-----------------*/
-			/* обычная команда */
-			/*-----------------*/
+#endif
+			/*
+			 * vcmdin() vin_chk(),
+			 * vin_do() returns:
+			>* -1 internal command notexist or an error
+			 * -2 (return 0): motion cancelled - screen untouched (notatty)
+			 * -3 (return 1): command done - screen touched (notatty)
+			>* -4 no parse cmd0 or internal error
+			 *    -5 resume from point of parsing extra command
+			 * -6 normal bg after prompt for new commands
+			 * -7 normal fg resume waiting
+			 * >0 command: resume or parsing cmd0, exit(trap)
+			 *
+			 * vsystem(),vexec() returns:
+			 *  0 - fg (wait a command)
+			 *  1 - bg (nowait)
+			 * -1 - errors
+			 *
+			 */
+			wstatus = -1;
+			jobno = 0;
+			/*int nn;*/
+			if ((inret = vin_chk(cmd0)) > 0) {
+				if (inret > 1) {
+					io_set(VT_OFF);
 
-			cmdrun = 1;
+					shprolog();
+					tty_cmd(cmd0, NULL);
 
-			wcsu8s(u8cmd0, cmd0);
-
-			syscod = vsystem(u8cmd0, cmdlbl);
-			justrun = 0;
-			scrldo();
-			if(syscod) {
-				msgat = ERR;
-#if 0
-				codexit = cod1(syscod); /*TODO cleanup trick, replace with stdlib.h and sys/wait.h stuff */
-				codsig  = cod0(syscod);
-				if (codsig) {
-					sprintf(tmpstr, "[ exit= %d, signal= %d ]", codexit, codsig);
-				} else {
-					sprintf(tmpstr, "[ exit= %d ]", codexit);
+					putchar('\r');
+					putchar('\n');
 				}
-				/*w_str(tmpstr); cp_cret();*/
-#else
-				if (WIFEXITED(syscod)) {
-					sprintf(tmpstr, "[ exit= %d ]", WEXITSTATUS(syscod));
-				} else if (WIFSIGNALED(syscod)) {
-                    sprintf(tmpstr, "[ signal= %d ]", WTERMSIG(syscod));
-#if VASH_NO_SUPPORT_JobControl
-				} else if (WIFSTOPPED(syscod)) {
-                    sprintf(tmpstr, "[ stopped by signal %d ]", WSTOPSIG(syscod));
-                } else if (WIFCONTINUED(syscod)) {
-                    sprintf(tmpstr, "[ continued ]");
-#endif
-                }
-#endif
+				inret = vin_do(cmd0, tmpstr); {
+					/* internal command before regular shell command */
+					/*if (inret <= 0) {*/
+						switch(inret) {
+						case 0:
+						case 1:
+							return(inret); break;
+						case -1:	break;
+						case -4: 	jobno = 0; break;
+						case -5:	/*nn = vreap(&wstatus, 2);*/ break;
+						case -6:	jobno = 0; break;
+						case -7:
+							jobno = reapw(fgn_get());
+							Tpgrp(v.pid, "VASH", "vshcmd dialog"); /*may be in reapw()*/
+						break;
+						default:
+							printf("vash wrong vin_do() return(%-d)\n", inret);
+							break;
+						}
+						/*wstatus = 0;*/
+						trapwait = 1;
+					/*}*/
+				}
 			}
 			else {
-				if (okwait == 1) {
-					if (vashflag.exittrap) {
-						msgat = HDR/*ATT/*VEXT|MSE*//*HDR*/;
-						sprintf(tmpstr, "[ ok ]");
-					} else {
-						msgat = CMD|INP;
-						sprintf(tmpstr, pmtsh);
-						/*w_str(tmpstr); cp_cret();*/
-					}
+
+				/* starting or parse or continue an extra command
+				 * with exit/trap confirmation */
+				cmdrun = 1;
+				shprolog();
+
+/*				io_set(VT_OFF);*/
+
+				wcsu8s(u8cmd0, cmd0);
+				tty_cmd(NULL, u8cmd0);
+				if ( ! (wcscmp(cmd0, L"") == 0)) {
+					/*
+					 * vsystem returns: 0:fg; 1:bg; -1:errors
+					 */
+					jobnum = vsystem(u8cmd0, cmdlbl/*, &execmp*/);
+					if      (jobnum <  0)
+						return (-1);
+					else if (jobnum > 0)
+						jobno = reapw(fgn_get());
+					else
+						jobno = reapchk(0);
+				} else {
+					jobno = reapchk(0);
+				}
+				/*io_set(VT_ON);*/
+/*				blk_on();*/
+			}
+			blk_on();
+			blk_sigchld(0);
+
+			/*Tpgrp(v.pid, "VASH", "dialog");*/ /* may be in reapw() */
+			vj_notify(jobno);
+			io_set(VT_ON);
+
+			justrun = 0;
+			/*...*/
+			/*vj_notify();*/
+
+			scrldo();
+
+			msgat = 0;
+			sistat(tmpstr, jobno); /* get verbose status */
+			/*sprintf(tmpstr, pmtsh);*/
+
+			switch (vj[jobno].si.si_code) {
+			case CLD_EXITED:
+				if (vj[jobno].si.si_status)
+					msgat = ERR;
+				else
+					msgat = HDR;
+				break;
+			case CLD_KILLED:
+			case CLD_DUMPED:
+				msgat = ERR|INP;
+				break;
+			case CLD_STOPPED:
+				msgat = ATT|INP;
+				trapwait = 1;
+				break;
+			default:
+				msgat = TXT|INP;
+				break;
+			}
+#if 0
+			if (trapwait == 1 ) {
+				if (v.flag.exittrap) {
+					msgat = HDR/*ATT/*VEXT|MSE*//*HDR*/;
+					sprintf(tmpstr, "[ ok ]");
+				} else {
+					msgat = CMD|INP;
+					sprintf(tmpstr, pmtsh);
 				}
 			}
-			/*cp_cret();*/
-			/*at_set(CMD|INP); w_str(pmtsh);*/
-			at_set(msgat); w_str(tmpstr); /*cp_sav();*/
-			at_set(CMD);
-			if (okwait == 1) {
-				do {
-					fflush(vttout);
-					fflush(stdout);
-					trapcod = 0;
-					cod = r_cod(0);
-					switch (cod) {
-					case KB_HE:
-						w_help((LINE *)"excode_help.lb");
-						break;
-					case KB_AU:
-					case KB_AD:
-					case KB_AL:
-					case KB_AR:
-					case KB_CA:
-						trapcod = 0;
-						break;
-					case KB_EX:
-						scrlnl();
-						onexit(0); exit(0);
-						break;
-					default:
-						if (vashflag.exittrap) {
-							if (cod == KB_NL || cod < ' ' || ISCTL(cod)) {
-								trapcod = 1;
-							}
-						} else {
-							if (/*cod == KB_NL || */cod < ' ' || ISCTL(cod)) {
-								trapcod = 1;
-							}
-						}
-						break;
-					}
-					/*sprintf(tmpstr, pmtsh);*/
-					/*at_set(msgat = (CMD|INP));*/
-					at_set(msgat);
-					if ( ! vashflag.exittrap && cod == KB_NL) {
-						er_eol(CMD);
-						/*trapcod = 1;*/
-						if (syscod) {
-							cp_cret()/*w_str("\r")*/;
-							syscod = 0; /* show exitcode only once */
-						} else {
-							w_str("\n");
-						}
-						at_set(CMD); er_eol(CMD);
-						at_set(msgat = (CMD|INP));
-						sprintf(tmpstr, pmtsh);
-					}
-#if 0
-					if (vashflag.exittrap) {
-						at_set(atrib = HDR);
-					}
 #endif
-					if (trapcod) {
-						if (vashflag.novice) {
-							at_set(TXT);
-							w_str(" main view: click ");
-							w_lh_str(":SP");
-							at_set(TXT);
-							w_str(" or ");
-							w_lh_str(":CA");
-							at_set(TXT);
-							w_str("               help: ");
-							w_lh_str(":HE");
-							/*at_set(TXT);*/
-							er_eol(TXT);
-						}
-					}
-					er_eop(CMD);
-					cp_cret(); /*w_str("\r");*/
-					/*at_set(CMD|INP); w_str(pmtsh);*/
-					at_set(msgat); w_str(tmpstr);
-				} while (trapcod);
+			if (vj[jobno].notify)
+				vj[jobno].notify = 0;
+			if (vj[jobno].done)
+				vj_clr(jobno);
+
+			at_set(msgat);
+			w_str(tmpstr); /*cp_sav();*/
+			at_set(CMD);
+#if 0
+			if ((jobno = reapchk(0)) /*!= jobno*/) {
+				/*fgn_set(jobnum);  /* force vj_notify() to omit fg job */
+				vj_notify();
+				/*printf("\r");*/
+			}
+#endif
+			/*fgn_set(0);	/*forget to notify about current job*/
+
+			io_set(VT_ON);
+			Tpgrp(v.pid, "VASH", "vshcmd before trapstop()");
+
+			if (trapwait == 1) {
+				cod = trapstop(vj[jobno].si.si_code, msgat);
 			} else {
-				cp_cret(); /*w_str("\r");*/
+				cp_cret();
 				at_set(CMD);
 			}
 			cp_cret(); /*er_eop(TXT);*/
+			fgn_set(0);	/*forget to notify about current job*/
+
 			/* проверка завершения команды sh */
 			er_eol(CMD); fflush(vttout);
 
@@ -485,18 +607,21 @@ std_shell:
 			showtime( 1 );          /* часы включить */
 
 			switch (cod) {
-			case KB_AL:
-			case KB_AR:
-			case KB_AD:
 			case KB_AU:
+			case KB_AL:
+					continue;
+			case KB_AD:
+			case KB_AR:
 			/* case KB_TA */
 				/*cp_sav(); cp_set(-2, 1, ATT); w_str("ta"); cp_fet();*/
+					cmd0[0] = L'\0';
+					pos = 0;
 					continue;
 			/* возврат в меню имен файлов */
 			case ' ':
 			case KB_CA:
 #if 0
-						if (vashflag.exittrap && cod == ' ')
+						if (v.flag.exittrap && cod == ' ')
 							continue;
 #endif
 						return(1);
@@ -510,7 +635,11 @@ std_shell:
 					pos = 1;
 					continue;
 				}
-				goto fil_cd;
+				/*goto fil_cd;*/ /*копипаста из исключаемого кода в пользу vcmdin() */
+				if (clm._y0 < y0_top)
+				     y0_top = clm._y0;
+				/* тут было заполнение меню */
+				return(1);
 				/*break;*/
 			}       /* финал проверки завершения команды sh */
 

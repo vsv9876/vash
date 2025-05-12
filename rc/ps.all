@@ -19,7 +19,7 @@
 
 :U7
 :7
-    * *   :exec vash ps.rc
+    * *   :exec vash -1 ps.rc
 #    * *   _cmdset ps.rc
 #
 @ps.common

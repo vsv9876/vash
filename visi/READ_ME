@@ -1,40 +1,42 @@
-
-#
-#  LINLIB(tm) library for video terminals
-#
-#  1985-1989 (c) Sergey Vovk & team
-#
-2016-2025 maintanance and renewal by Sergey Vovk
+ *
+ * VISI(LINLIB)
+ * Copyright (c) 1986-1990 Sergey Vovk and the team of RIAR, Dimitrovgrad, USSR
+ * Copyright (c) 2017-2025 Sergey Vovk
+ *
+ * VISI -- a visual interactive simple interface for non-GUI terminals
+ * LINLIB -- library for video terminals
+ *
 
 WARNING NOTICE:
-this document describes parts of LINLIB/VISI used 
-as part of vash - Visual Assistant shell.
+this document describes parts of LINLIB/VISI used as part of vash,
+Visual Assistant shell.
 
-Only short library documentation files (mini-help) are included in this release:
- doc/*
+The compilation procedure of VISI tools is part of the assembly of vash.
 
-The compilation procedure is performed as part of an assembly of vash
-and shares common config ../BLD.cfg which controlled by ../Makefile.
+So, vash and linlib/visi share common config file ../BLD.cfg
+which is controlled by the ../Makefile and the ../configure script.
+
+Only short library documentation (mini-help) files are included
+in this release.
 
 Directories and files of LINLIB/VISI project:
 
   READ_ME   - this text
-  doc/       - documentation
-  doc/hlp/       mini-help pages
+  doc/      - documentation mini-help files
 
-  These directories have to be installed to /usr or /usr/local,
-  but used internally for assembly vash only:
-
-  lib/      - runtime librries
-  bin/      - framework utilities
-  include/  - header files
-
-  programs to be linked with LIBLIB:
+  programs to be linked with LINLIB:
 
   ../vash    - assistant shell itself
   ../vhset   - video hardware setup on user taste
   ../vtest   - testing of LINLIB
 
-  src/       - sources of runtime libraries
+  src/       - sources of runtime libraries and VISI tools
 
   visi/      - user interaction preprocessors
+
+  The next directories are used internally for the assembly ../vash only:
+
+  lib/      - runtime librries
+  bin/      - framework utilities
+  include/  - header files
+

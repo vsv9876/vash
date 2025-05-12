@@ -56,7 +56,7 @@ extern  KBL kbl[];
 extern  int     kpadon;
 extern int		sgrmode;
 
-/*static */struct {
+/*static */struct kblstd {
 	KBL kbl[KBLSIZE];
 	LPA lpaout[LPASIZE];
 	LPA lpainp[LPASIZE];

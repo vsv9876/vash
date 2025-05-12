@@ -17,9 +17,12 @@
 #include <locale.h>
 #include "line.h"
 
+#ifdef VTTOUT
 static  char    devtty[] = "/dev/tty";
+#endif
 
-FILE *vttout;
+/*FILE *vttout;*/
+
 #ifdef DEMOS2
 int     vtti;
 #endif
@@ -36,12 +39,22 @@ visini() {
 			exit(1);
 	}
 	setlocale(LC_COLLATE, "");
-
-	if((vttout = fopen(devtty, "w+")) == NULL) {
-		fprintf(stderr, "%s: no r/write access\n", devtty);
+#ifdef VTTOUT
+	if((vttout = fopen(devtty, "w")) == NULL) {
+		fprintf(stderr, "%s: no write access\n", devtty);
 		exit(1);
 	}
+#else
+/*	vttout = stdout;*/
 
+#if 0
+	if((vttout = fdopen(dup(2), "w")) == NULL) {
+		fprintf(stderr, "%s: no write access\n", "fd[1]");
+		exit(1);
+	}
+#endif
+#endif
 
     int     vtti = 0;
 }
+

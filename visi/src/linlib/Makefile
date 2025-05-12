@@ -54,6 +54,7 @@ OBJS          = lin100.o \
 		lin110.o \
 		lin132.o \
 		lin140.o \
+		lin141.o \
 		lin145.o \
 		lin150.o \
 		lin151.o \
@@ -75,6 +76,7 @@ SRCS          = lin100.c \
 		lin110.c \
 		lin132.c \
 		lin140.c \
+		lin141.c \
 		lin145.c \
 		lin150.c \
 		lin151.c \
@@ -190,6 +192,7 @@ unlock:         .co .unlock
 #lin140.o: /usr/include/stdio.h ../../include/line.h /usr/include/sgtty.h \
 #	/usr/include/sys/ioctl.h \
 #	/usr/include/signal.h
+#lin145.c: <TODO>
 #lin145.o: /usr/include/stdio.h ../../include/line.h
 #lin150.o: /usr/include/stdio.h ../../include/line.h /usr/include/sgtty.h \
 #	/usr/include/sys/ioctl.h

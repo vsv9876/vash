@@ -1,64 +1,46 @@
 /*
-**      +----------+    библиотека ввода-вывода
-**     (c) linlib  !    для алфавитно-цифровых
-**      +----------+    видеотерминалов
-**/
-
-/*
- *      $Header: linebp.h,v 3.4 90/01/11 16:20:26 vsv Exp $
+ * VISI(LINLIB)
+ * Copyright (c) 1986-1990 Sergey Vovk and the team of RIAR, Dimitrovgrad, USSR
+ * Copyright (c) 2017-2025 Sergey Vovk
  *
- *      $Log:	linebp.h,v $
- * Revision 3.4  90/01/11  16:20:26  vsv
- * переделано состав библиотеки:
- * все, что связано с внешними описаниями,
- * вынесено в библиотеку linxhe
- * 
- * Revision 3.3  90/01/11  10:18:26  vsv
- * версия V32
- * 
- * Revision 3.2  89/08/29  16:21:51  vsv
- * версия LINLIB_3
- * 
- * Revision 3.1  88/04/27  08:40:30  vsv
- * переделано для поддержки
- * системы VISI
- * 
- * Revision 3.0  87/12/21  12:24:06  vsv
- * предварительный выпуск.
- * 
+ * VISI -- a visual interactive simple interface for non-GUI terminals
+ * LINLIB -- library for video terminals
+ *
+ * This is free software, 
+ * please keep applied LICENSE file and copyright notice above
+ *
  */
 
 /*
-** структуры данных для работы
-** с внешними описаниями страниц
+ * LBP - linlib build pages
+ * data structures for external build pages
 */
 
-/*-----------------------------------*/
-/* описания для прикладной программы */
-/*-----------------------------------*/
+/*
+ * link between names from page and program internal names (addresses)
+ */
 typedef struct {
-	const char    *in_name;        /* имя для поиска во внешнем описании */
-	void    *in_addr;        /* адрес в программе */
+	const char *in_name; /* name in external desciption */
+	void       *in_addr; /* program address */
 	} IN_PORTS;
 
 /*
- * структура данных внешнего описания страницы
+ * header of external description of page
  */
-
 typedef struct {
-	int     lh_magic;       /* идентификатор описания страницы */
+	int     lh_magic;       /* id of external description */
 	int     lh_len;
 	char    lh_name[6];
-	int     lh_free[16];   /* пока не используется */
+	int     lh_free[16];   /* not used yet */
 	linptr_t lh_lines;
 	linptr_t lh_heaps;
 	linptr_t lh_names;
-	} LINE_H;               /* заголовок описания страницы */
+	} LINE_H;
 
 #define  LH_MAGIC 000477
 
-extern  const char   *v_dir;          /* каталог VISI */
-extern  const char   *phelp0;         /* имя файла со стандартной подсказкой */
-extern  IN_PORTS in_help[];     /* порты для библиотечн. имен */
+extern  const char   *v_dir;
+extern  const char   *phelp0;         /* file name of common help page */
+extern  IN_PORTS in_help[];     /* LINLIB library ports */
 
 extern LINE	   *b_page(const char *, char *, const IN_PORTS *);
