@@ -218,7 +218,7 @@ const char *file;
     fpix = 0;
     fname = file;
 
-    predef = v.flag.predef;
+    predef = vflag.predef;
 
 	/* инициализация переменных сканирования */
 	pc_ix = 0;

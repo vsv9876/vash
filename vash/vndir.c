@@ -285,7 +285,7 @@ register char **p2;
 static int     Lflag;  /* ФЛАГ: НЕ РАЗЛИЧАТЬ СИМВ. ССЫЛКИ */
 static int     Fflag;  /* ФЛАГ: ПОКАЗЫВАТЬ ТИП ФАЙЛА */
 static int     aflag;  /* флаг: показывать все файлы */
-static int     vflag;  /* флаг: сортировать по версиям */
+static int     Vflag;  /* флаг: сортировать по версиям */
 static int     fflag;  /* флаг: не сортировать */
 
 int vls()
@@ -366,7 +366,7 @@ int vls()
 /*  w_str("sort..."); fflush(vttout);
  */
     if ( ! fflag ) {
-    	if (vflag)
+    	if (Vflag)
         	qsort(clm._itms, clm._itmmax, sizeof(char *), vscomp);
     	else
     		qsort(clm._itms, clm._itmmax, sizeof(char *), scomp);
@@ -714,7 +714,7 @@ cwdshow()
 
 	mailf2 = 1;
 
-	if (v.flag.panelf) {
+	if (vflag.panelf) {
 		if (clm._y0 > y0_top) {
 			showli = y0_top-1;
 			cp_set(y0_top-1, 0, TXT);
@@ -757,7 +757,7 @@ cwdshow()
 	binpwd(cwdpath);
 
 /*	sprintf(tmpstr, "[ %s ]", cwdpath); */
-	if (v.flag.xtermf) {
+	if (vflag.xtermf) {
 		w_raw("\033]0;");
 		w_str(lbl_tmpstr);
 
@@ -766,7 +766,7 @@ cwdshow()
 
 		w_raw("\007"); /* terminate escape sequence for xterm window title */
 	}
-	if (v.flag.whodirf) {
+	if (vflag.whodirf) {
 		cp_set(showli, 0, HDR);
 		w_str(lbl_tmpstr);
 
@@ -870,7 +870,7 @@ int newflag;    /* если 0, то только обновить каталог
 	}
 
 	/* флаги ls (для встроенной и для внешней команды) */
-    Lflag = Fflag = aflag = vflag = fflag = 0;
+    Lflag = Fflag = aflag = Vflag = fflag = 0;
 
     p = Cfill;
     if(*p == '<') { /* список в файле по пути vapath */
@@ -888,7 +888,7 @@ int newflag;    /* если 0, то только обновить каталог
 	    	case 'L': Lflag = 1; break;
 #endif
 	    	case 'a': aflag = 1; break;
-	    	case 'v': vflag = 1; break;
+	    	case 'v': Vflag = 1; break;
 	    	case 'f': fflag = 1; break;
 	    	default:
 	    		w_emsg("Cfill: flag unsupported: '");

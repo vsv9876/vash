@@ -1,5 +1,8 @@
 vash news (release notes)
 
+2.0.34
+  * job conrtrol
+
 2.0.33
   * total rewrite source confirming ANSI syntax
   * config preprocessor implemented

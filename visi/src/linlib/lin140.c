@@ -190,14 +190,14 @@ static void vt_ini()
 	fflush(stdout);
 #endif /*VISI_DEBUG*/
 
-	/* get prev tty modes if
-	 * it is indtended for old code with first call io_set(IO_VIDEO);
-	 * modern code have to use first the io_set(IO_SAVE|);
+	/* get prev tty modes if ...
+	 * it is intended for old code with first call io_set(IO_VIDEO);
+	 * modern code have to use io_set(IO_SAVE) first;
 	 */
 	if (s_vtoff == 0) {
 		tcgetattr(vtti, &t_vtoff);
 		/* get copy of common flags from prepare settings for vt_on */
-		t_vton = t_vtoff;
+		memcpy(&t_vton, &t_vtoff, sizeof(t_vton));
 		s_vton = s_vtoff = 1;
 	}
 

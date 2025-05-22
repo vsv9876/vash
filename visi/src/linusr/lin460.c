@@ -79,7 +79,10 @@ const char    *str ;         /* текст сообщения об ошибке 
 			case TXT: whatmsg = "";      break;
 			/*default:  whatmsg = "*";     break;*/
 			}
-			fprintf(vttout, " %s: ", whatmsg);
+			if (whatmsg[0] == '\0')
+				fprintf(vttout, "  ");
+			else
+				fprintf(vttout, " %s: ", whatmsg);
 			at_set(va); w_chr(' ');
 			w_str(str);
 			at_set(TXT); er_eol(TXT);

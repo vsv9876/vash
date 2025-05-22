@@ -9,8 +9,8 @@
 ---SCREEN
 =about vash
 
-        vash, Visual Assistant for shell
-        Copyright (C) 1990-1993,1996,2018-2024 Sergey Vovk <vsv>
+        vash, visual assistant for shell
+        Copyright (C) 1990-1993,1996,2017-2025 Sergey Vovk <vsv>
 
  Vash provides variety of tools intended to speedup user interaction with
  command line, designed to be intuitive and simple. 

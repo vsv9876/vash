@@ -68,7 +68,7 @@ showtime(on)
 {
 	nxtjflag = on;
 #ifdef RETRO
-	if ( !on && v.flag.clockf) {
+	if ( !on && vflag.clockf) {
 		cp_set(1, lframe->maxco - 8, TXT);
 		fprintf(vttout, "%8.8s", "");
 	}
@@ -77,7 +77,7 @@ showtime(on)
 
 showclck()
 /*
- * Показать системные часы.
+ * show system clock if no active jobs
  */
 {
 	time_t curtime;
@@ -85,7 +85,7 @@ showclck()
 	struct tm *localtime();
 	char tmps[12] = "";
 
-	if (v.flag.clockf) {
+	if (vflag.clockf || vflag.jobshow) {
 
 		time(&curtime);
 		if (curtime != prevtime) {
@@ -93,17 +93,44 @@ showclck()
 
 			tp = localtime(&prevtime);
 
+			if (vflag.jobshow) {
+				strncpy(tmps, jobshow(), 12);
+			}
+			if (vflag.clockf) {
+				if (tmps[0] == '\0')
+					sprintf(tmps, "%02d:%02d'%02d",
+							tp->tm_hour, tp->tm_min, tp->tm_sec);
+			}
+			if (tmps[0] != '\0') {
 #ifndef CP_SAV
 			cp_sav();
 #endif
 			/*cp_set(lframe->maxli - 2 //1//, lframe->maxco - 8, TXT|INP);*/
 			cp_set(WSHOW_LI, WSHOW_CO, WSHOW_AT);
-			sprintf(tmps, "%02d:%02d'%02d",
-					tp->tm_hour, tp->tm_min, tp->tm_sec);
-			w_str(tmps);
+				w_str(tmps);
 #ifndef CP_SAV
 			cp_fet();
 #endif
+			}
+		}
+	}
+}
+
+/*independent from showclock stuff -- to be removed TODO*/
+static void showjob()
+{
+	return;
+
+	static time_t prevtme;
+	time_t curtime;
+	if (1) {
+		time(&curtime);
+		if (curtime != prevtme) {
+			prevtme = curtime;
+			cp_sav();
+			cp_set(WSHOW_LI, WSHOW_JOBS, WSHOW_AT);
+			w_str(jobshow());
+			cp_fet();
 		}
 	}
 }
@@ -119,7 +146,7 @@ showitem(on)
 	int n;
 	LINE pline; /* patch line, show over current line */
 
-		if (v.flag.subshow == 0)
+		if (vflag.subshow == 0)
 			return;
 #ifndef CP_SAV
 		cp_sav();
@@ -146,7 +173,7 @@ showitem(on)
 		if (on) {
 			n = cntsel();
 			if(n) {
-				sprintf(tmps, " ##:%d ", n);
+				sprintf(tmps, " #%d ", n);
 			}/* else {
 				cmdsub(file, "#@", clm._itm, 0, 1);
 				sprintf(tmps, " '%-40.40s' ", file);
@@ -188,7 +215,7 @@ chckmail()
     char *mailbox;
     kbcod cod;
 
-    if (v.flag.cmailf) {
+    if (vflag.cmailf) {
 	if (!mailf2) return;
 
 	if ((mailbox = getenv("MAIL")) == (char *)0)
@@ -241,6 +268,7 @@ next_j()
 		cp_sav();
 #endif
 		showclck();
+		showjob();
 		chckmail();
 #ifdef CP_SAV
 		cp_fet();
@@ -269,13 +297,14 @@ scrlnl()
 {
 	register int i;
 
-	if (v.flag.scrolf) {
+	if (vflag.scrolf) {
 		/*at_set(CMD); */er_eop(CMD);
-		io_set(IO_TTYPE);
+/*		io_set(IO_TTYPE);*/
 		for (i = clm._y0; i < lframe->maxli; i++) {
+			putc('\r', stdout);
 			putc('\n', stdout);
 		}
-		io_set(IO_VIDEO);
+/*		io_set(IO_VIDEO);*/
 	}
 	else    er_pag();
 }
@@ -522,7 +551,7 @@ int   size;     /* размер строки для ввода */
 		pmtline.flag = 0;
 
 	pmtline.size = size;
-	pmtline.colu = strlen(pmtstr) + 1; /*3;*/
+	pmtline.colu = strlen(pmtstr) + 4; /*1;*/
 	pmtline.line = lframe->maxli - 1;
 	pmtline.attr = LVAR|INP/*|PMT*/;
 	/*NOSTRICT*/
@@ -645,7 +674,7 @@ int mode_quote; /* 0 - простое экранирование каждого 
  * соответственно, нужна прямая и обратная функция окавычивания строки,
  * но можно обойтись только прямой функцией
  *
- * фозвращает 0, если имя было без метасимволов, 1 если пришлось экранировать
+ * возвращает 0, если имя было без метасимволов, 1 если пришлось экранировать
  */
 int sh_esc(outs, inps)
 register char *outs;
@@ -733,7 +762,7 @@ char *from;
  * пока реализовано два(три) варианта:
  * -@3          в примере третье поле (разделенное пробелами), номер поля задается числом
  * -@7$			седьмое поле и до конца строки (пробелы после 7 поля игнорируются)
- * -@20-32      вырезка всех знаков в строке между указанными колонками
+ * -@20-32      вырезка всех знаков в строке между указанными колонками включительно
  */
 static char out_str[800] = "";
 char *nmsubs(inps, s)

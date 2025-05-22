@@ -19,7 +19,7 @@
 #define USRATTR0 HDR|PAD
 
 #undef  LALT
-#define LALT ALT|MID|NED
+#define LALT ATT|MID|NED
 
 ---PAGE linem
 ---PORTS

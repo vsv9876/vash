@@ -22,10 +22,11 @@
 #define ITMBUF  2048    /* Размер буфера текста меню по умолчанию */
 #define ITMCNM 255
 #else
-	/* normal 64/32-bit commputers */
+	/* modern 64/32-bit commputers */
 #define ITMMAX  120000     /* Макс. количество пунктов меню */
 #define ITMLEN  MAXLICO /*16      // Длина строки пункта меню */
-#define ITMBUF  MAXLICO * ITMMAX /* 16384   // Размер буфера текста меню по умолчанию */
+#define ITMBUF  MAXLICO * ITMMAX /* 16384   *//* Размер буфера для главного меню */
+				/*NOTE: ITMBUF is controlled via options -b since vash-2.1.0 */
 #define ITMCNM 1024
 #endif
 
@@ -105,7 +106,7 @@ extern LINEMENU clm;    /* ТЕКУЩЕЕ МЕНЮ (current lines menu) */
 /*extern int     cmailf;*/
 /*extern int     loginf;*/
 
-/* flags */
+/* flags, see description in main.c -- vflag, pa[] */
 typedef struct {
 	int	scrolf;		/* = 1; // флаг: продвигать рулон, а не гасить экран */
 	int	oneitm;		/* = 0; // флаг: разрешено указать только один пункт меню */
@@ -117,10 +118,12 @@ typedef struct {
 	int	clockf;		/* = 1; // флаг: показывать часы */
 	int	cmailf;		/* = 1; // флаг: проверять почту */
 	int	loginf;		/* = 0; // флаг: главная оболочка, ppid() == 1 */
+	int	jobctl;		/* = 1; // JOB Control support */
+	int	jobshow;	/* = 1; // Job index show*/
 	int	exittrap;	/* trap on exit of command: 0 - modern, 1 - vash canonical */
 	int	novice;		/* = 1; novice prompter messages allowed */
 	int	shanyway;	/* = 1; shell -c 'cmd' in all cases anyway */
-	int	subatrc;	/* = 0; substitute '#@' from rc files */
+	int	subatrc;	/* = 0; substitute '#@' from rc files before cmd editor */
 	int	subshow;	/* = 0; substitute '#@' show position on main menu */
 	int predef;  	/* (readonly) rc style selector: 1 - BSD, 0 - other */
 } VASHFLAG;
@@ -130,7 +133,6 @@ extern int	predump;	/* print on stdout preprocessed profile then exit */
 /*extern VASHFLAG nu_vashflag; /* defined in main.c */
 
 typedef struct {
-	VASHFLAG 	flag;
 	pid_t       ppid;
 	pid_t       pid;
 	pid_t		pgrp;
@@ -148,6 +150,14 @@ typedef struct {
 } VASH_PROC;
 
 extern VASH_PROC v;
+extern VASHFLAG vflag;
+
+typedef struct {
+	int letter;
+	int  *flag;
+	const char *sdescr;
+	const char *ldescr;
+} PARSARGS;
 
 /*extern char   *envshell;*/
 /*extern char   *homedir;*/
@@ -271,6 +281,12 @@ extern void Signal(int, void *);
 #define ASH_NOFORK 010  /* заменить программу процесса */
 #define ASH_NOSH   020  /* не запускать дополнительный процесс sh */
 
+/* job indicator */
+#ifdef WSHOW_EDIT
+#define WSHOW_ITEM (WSHOW_EDIT  - 8)
+#define WSHOW_JOBS (WSHOW_ITEM - 8)
+#endif
+extern const char *jobshow();
 
 #endif
 /* assist_h_def */

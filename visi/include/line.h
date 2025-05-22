@@ -428,8 +428,7 @@ extern int	gtty_sz();
 	 */
 #define WSHOW_LI (lframe->maxli - 2)
 #define WSHOW_CO (lframe->maxco - 9)
-#define WSHOW_EDIT (WSHOW_CO    - 10)
-#define WSHOW_ITEM (WSHOW_EDIT  - 8)
 #define WSHOW_AT TXT|VEXT
+#define WSHOW_EDIT (WSHOW_CO    - 8)
 
 #endif /* line_h_def */

@@ -132,7 +132,7 @@ int msgat;
 			onexit(0); exit(0);
 			break;
 		default:
-			if (v.flag.exittrap) {
+			if (vflag.exittrap) {
 				if (cod == KB_NL || cod < ' ' || ISCTL(cod)) {
 					trapcod = 1;
 				}
@@ -144,7 +144,7 @@ int msgat;
 			break;
 		}
 		at_set(msgat);
-		if ( ! v.flag.exittrap && cod == KB_NL) {
+		if ( ! vflag.exittrap && cod == KB_NL) {
 			er_eol(CMD);
 			/*trapcod = 1;*/
 			if (wstatus) {
@@ -169,7 +169,7 @@ int msgat;
 		}
 #endif
 		if (trapcod) {
-			if (v.flag.novice) {
+			if (vflag.novice) {
           /*TODO:
            * w_hlp(TXT,
            * "main view: click :SP or :CA      get help: :HE"); */
@@ -203,7 +203,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 {
 	kbcod cod;
 	int wstatus;        /* wstatus (код возврата system) */
-	int jobno;         /* job number > 0 - return from reapw(), reapchk() */
+	int j;         /* job number > 0 - return from reapw(), reapchk() */
 	int codexit, codsig;
 
 	int cmdrun;             /* ФЛАГ: для воостановления глав.меню: КОМАНДА ЗАПУСКАЛАСЬ */
@@ -346,7 +346,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		case KB_AU:
 			/* пред. команда */
 			/* синхронизировать историю, если в буфере набираемой команды пусто */
-			if (v.flag.histsn && cmd0[0] == 0)
+			if (vflag.histsn && cmd0[0] == 0)
 				cmdghist();
 			if (!cmdprv(cmd0))
 				bell();
@@ -386,14 +386,14 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			}
 			/* сохранить команду, если ее редактировали */
 			if (cmd0cmp(cmd, cmd0, /*strlen*/wcslen(cmd0)) != 0) {
-				if (v.flag.histsn) {
+				if (vflag.histsn) {
 					cmdghist();
 				}
 
 				wcsu8s(tmpstr, cmd0);
 				cmdput(tmpstr/*cmd0*/);
 
-				if (v.flag.histsn) {
+				if (vflag.histsn) {
 					cmdphist();
 				}
 				/* заставить при повт.запуске снова сохранять: */
@@ -453,15 +453,15 @@ std_shell:
 			 * >0 command: resume or parsing cmd0, exit(trap)
 			 *
 			 * vsystem(),vexec() returns:
-			 *  0 - fg (wait a command)
-			 *  1 - bg (nowait)
+			 *  1 - fg (wait a job command)
+			 *  0 - bg (nowait)
 			 * -1 - errors
-			 *
 			 */
 			wstatus = -1;
-			jobno = 0;
+			j = 0;
 			/*int nn;*/
 			if ((inret = vin_chk(cmd0)) > 0) {
+				/* try internal command before shell regular command */
 				if (inret > 1) {
 					io_set(VT_OFF);
 
@@ -471,32 +471,33 @@ std_shell:
 					putchar('\r');
 					putchar('\n');
 				}
-				inret = vin_do(cmd0, tmpstr); {
-					/* internal command before regular shell command */
-					/*if (inret <= 0) {*/
-						switch(inret) {
-						case 0:
-						case 1:
-							return(inret); break;
-						case -1:	break;
-						case -4: 	jobno = 0; break;
-						case -5:	/*nn = vreap(&wstatus, 2);*/ break;
-						case -6:	jobno = 0; break;
-						case -7:
-							jobno = reapw(fgn_get());
-							Tpgrp(v.pid, "VASH", "vshcmd dialog"); /*may be in reapw()*/
-						break;
-						default:
-							printf("vash wrong vin_do() return(%-d)\n", inret);
-							break;
-						}
-						/*wstatus = 0;*/
-						trapwait = 1;
-					/*}*/
+				inret = vin_do(cmd0, tmpstr);
+				switch(inret) {
+				case 0:
+				case 1:
+					return(inret); break;
+				case -1:
+					break;
+				case -4: 	j = 0;
+					break;
+				case -5:	goto tty_cmd_;
+					break;
+				case -6:	j = 0;
+					break;
+				case -7:
+					j = reapw(fgn_get());
+					/* next command may be in reapw() */
+					Tpgrp(v.pid, "VASH", "vshcmd dialog");
+					break;
+				default:
+					printf("vash wrong vin_do() return(%-d)\n", inret);
+					break;
 				}
+				/*wstatus = 0;*/
+				trapwait = 1;
 			}
 			else {
-
+tty_cmd_:
 				/* starting or parse or continue an extra command
 				 * with exit/trap confirmation */
 				cmdrun = 1;
@@ -514,42 +515,59 @@ std_shell:
 					if      (jobnum <  0)
 						return (-1);
 					else if (jobnum > 0)
-						jobno = reapw(fgn_get());
+						j = reapw(fgn_get());
 					else
-						jobno = reapchk(0);
-				} else {
-					jobno = reapchk(0);
+						j = 0/*reapchk(0)*/;
+				/*} else {
+					j = reapchk(0);*/
 				}
 				/*io_set(VT_ON);*/
 /*				blk_on();*/
 			}
+/*			io_set(VT_ON);*/
 			blk_on();
 			blk_sigchld(0);
 
 			/*Tpgrp(v.pid, "VASH", "dialog");*/ /* may be in reapw() */
-			vj_notify(jobno);
-			io_set(VT_ON);
+			vj_notify(j);
+
+/*			io_set(VT_ON);*/
 
 			justrun = 0;
 			/*...*/
-			/*vj_notify();*/
-
 			scrldo();
 
 			msgat = 0;
-			sistat(tmpstr, jobno); /* get verbose status */
+			/* get verbose status */
+			strcpy(tmpstr, "[");
+			sistat(&tmpstr[1], j);
+			strcat(tmpstr, "]");
 			/*sprintf(tmpstr, pmtsh);*/
 
-			switch (vj[jobno].si.si_code) {
+			switch (vj[j].si.si_code) {
+			case 0:
+				if (vj[j].si.si_status == 0) {
+					sprintf(tmpstr, pmtsh);
+					msgat = CMD|INP;
+				}
+				break;
 			case CLD_EXITED:
-				if (vj[jobno].si.si_status)
+				if (vj[j].si.si_status)
 					msgat = ERR;
-				else
-					msgat = HDR;
+				else {
+					if (vflag.exittrap == 0) {
+						sprintf(tmpstr, pmtsh);
+						msgat = CMD|INP;
+					}
+					else {
+						msgat = HDR;
+						sprintf(tmpstr, "[ ok ]");
+					}
+				}
 				break;
 			case CLD_KILLED:
 			case CLD_DUMPED:
-				msgat = ERR|INP;
+				msgat = ERR;
 				break;
 			case CLD_STOPPED:
 				msgat = ATT|INP;
@@ -570,16 +588,23 @@ std_shell:
 				}
 			}
 #endif
-			if (vj[jobno].notify)
-				vj[jobno].notify = 0;
-			if (vj[jobno].done)
-				vj_clr(jobno);
+			if (vj[j].notify)
+				vj[j].notify = 0;
+			if (vj[j].done)
+				vj_clr(j);
 
+			setpgid(v.pid, v.pid);
+			fflush(stdout);
+			Tpgrp(v.pid, "VASH", "vshcmd before trapstop()");
+			io_set(VT_ON);
+
+			fflush(stdout);
 			at_set(msgat);
-			w_str(tmpstr); /*cp_sav();*/
+			w_str(tmpstr);
+			fflush(stdout);
 			at_set(CMD);
 #if 0
-			if ((jobno = reapchk(0)) /*!= jobno*/) {
+			if ((j = reapchk(0)) /*!= jobno*/) {
 				/*fgn_set(jobnum);  /* force vj_notify() to omit fg job */
 				vj_notify();
 				/*printf("\r");*/
@@ -587,11 +612,10 @@ std_shell:
 #endif
 			/*fgn_set(0);	/*forget to notify about current job*/
 
-			io_set(VT_ON);
-			Tpgrp(v.pid, "VASH", "vshcmd before trapstop()");
+/*			io_set(VT_ON);*/
 
 			if (trapwait == 1) {
-				cod = trapstop(vj[jobno].si.si_code, msgat);
+				cod = trapstop(vj[j].si.si_code, msgat);
 			} else {
 				cp_cret();
 				at_set(CMD);

@@ -56,7 +56,7 @@ kbcod cod;
 	register char **pp;
 
 	if (cod == ' '
-	|| (v.flag.oneitm && cod == KB_NL)
+	|| (vflag.oneitm && cod == KB_NL)
 	|| (cod == '<')
 	|| (cod == '>')) {
 		pp = (char **)line->varl;
@@ -330,7 +330,7 @@ const char *cmd;
 	kbcod cod;
 	int i, ilast;
 
-	cod = pmtrstr(" jump to pos: ", pattpos, 16);
+	cod = pmtrstr(" jump to pos: ", pattpos, 20);
 	if (strchr(pattpos, '*') || strchr(pattpos, '?'))
 		ispatt++;
 
@@ -401,7 +401,7 @@ register LINE *mainl;
 			keyreq = 1;
 		}
 		if (!ok_msg() && keyreq) {
-			keyshow(v.flag.panelf);
+			keyshow(vflag.panelf);
 			keyreq = 0;
 		}
 		showtime( 1 );  /* restore clock */

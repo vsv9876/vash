@@ -3,7 +3,7 @@ SHELL = /bin/sh
 
 #
 # Visual Assistant Shell
-# 1990-2024 (C) Sergey Vovk
+# 1990-2025 (C) Sergey Vovk <vsv>
 #
 # MIT License
 # 

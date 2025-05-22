@@ -1,5 +1,8 @@
 -- redesign parameters invocation, like vash +hS -w -l=max
 
+- export vash flags changed in setup, 
+  on execve() with VASH= environment
+
 - make clean rules with vexdir initialization
    see example in vtest/pmain.c
 
@@ -7,8 +10,7 @@
 
 - complete documenting and make code cleanup of wsobj_t (4k string)
 
+- markup sources with copyright headers
+
 - complete support for marker 'x' visual attributes
   (lbp, vcc, vlbp)
-
-- export vash flags changed in setup, 
-  on execve() with VASH= environment

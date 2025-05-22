@@ -31,9 +31,15 @@ char   *cwd;            /* текущий (рабочий) каталог */
 
 const char *pmtsh;
 
-VASHFLAG *vflag;
+/*VASHFLAG *vflag;*/
+/*static const VASHFLAG vf = { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0 };*/
+VASHFLAG vflag = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+/*PARSARGS pargs[];*/
+
 VASH_PROC v = {
-		{ 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0 },
+/*		{ 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0 },*/
+/*		vf,*/
 		0,
 		0,
 		0,
@@ -46,10 +52,63 @@ VASH_PROC v = {
 		"std.rc",
 };
 
-usage()
+/*const VASHFLAG vf = (v.flag);*/
+
+PARSARGS pa[] = {
+	{ 's', &vflag.scrolf,   "s,scroll",       "scrool vs clear screen" },			/* = 1; // флаг: продвигать рулон, а не гасить экран */
+	{ '0', &vflag.oneitm,   "0,1column",      "display main menu in 1 column" },			/* = 0; // флаг: разрешено указать только один пункт меню */
+	{ 'c', &vflag.clockf,   "c,clock",        "show clock" },			/* = 1; // флаг: показывать часы */
+	{ 'm', &vflag.cmailf,   "m,mail",         "notify about incoming mail" },			/* = 1; // флаг: проверять почту */
+	{ 'w', &vflag.whodirf,  "w,title",        "show title panel" },			/* = 1; // show whodir panel on screen */
+	{ 'x', &vflag.xtermf,   "x,X11 title",  "show title panel with window manager" },			/* = 0; // show whodir panel on window title using xterm escape sequence */
+	{ 'p', &vflag.panelf,   "p,panel/key",    "show panel with 10 keys help" },			/* = 1; // флаг: показывать панель подсказки */
+	{ 'H', &vflag.histf,    "H,history",      "save history cache on exit" },			/* = 0; // флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
+	{ 'S', &vflag.histsn,   "S,hist.sync",  "sync(save) history cache immediately on every command" },			/* = 0;	// флаг: синхронизировать историю после каждой команды */
+	{ 'T', &vflag.exittrap, "T,trap",         "trap \"[ ok ]\" on exited command" },			/* trap on exit of command: 0 - modern, 1 - vash canonical */
+	{ 'N', &vflag.novice,   "N,trap msg",     "display help message on trap" },			/* = 1; novice prompter messages allowed */
+	{ 'A', &vflag.shanyway, "A,sh -c",        "exec $SHELL -c 'command' anyway" },			/* = 1; shell -c 'cmd' in all cases anyway */
+	{ 'j', &vflag.jobctl,   "j,job control",  "job control support" },			/* = 0; // флаг: главная оболочка, ppid() == 1 */
+	{ 'J', &vflag.jobshow,  "J,job show",     "show job activity" },			/* = 0; // флаг: главная оболочка, ppid() == 1 */
+	{ 'R', &vflag.subatrc,  "R,subs in rc",   "substite #@ before command editing" },			/* = 0; substitute '#@' from rc files before cmd editor */
+	{ '@', &vflag.subshow,  "@,show #@",      "show mark '@' on item when command editing" },			/* = 0; substitute '#@' show position on main menu */
+	{ ' ', &vflag.loginf,   " login sh",       "(readonly) vash is login shell" },			/* = 0; // флаг: главная оболочка, ppid() == 1 */
+	{ ' ', &vflag.predef,   " rc-style",       "(readonly) rc-style" },			/* (readonly) rc style selector: 1 - BSD, 0 - other */
+	{ 0 },
+	};
+
+static void usage(int);
+static void usage(opt)
+int opt;
 {
-	fprintf(stderr, "Usage: vash [-1] [-bN] [-c] [-h] [-S] [-s] [-w] [-x] [-m] [-p]\n");
-	fprintf(stderr, "Usage: vash [any flags] -- command\n");
+	PARSARGS *p;
+	fprintf(stderr, "\n"
+		"Usage:\n"
+		"  vash [-bN] [-lN] [[+-]"
+		"["
+		);
+		for (p = &pa[0]; p->letter != 0; p++)
+			if (p->sdescr[0] != ' ')
+				fprintf(stderr, "%1.1s", p->sdescr/*p->letter*/);
+		fprintf(stderr,
+		"]"
+		"] [vashrc] [-- command]\n"
+/*		"or\n"*/
+		"  vash -P [vashrc]\n"
+		"  vash -h\n"
+		);
+	fprintf(stderr, "\n"
+		"    -h  - get help for +/- options\n"
+		"    -lN - get screen space for main menu: N lines, 0 if get maximum\n"
+		"    -bN - get storage for main menu: N in KiB (64 by default)\n"
+		"    -P - print vashrc with included rc-files than exit\n"
+		);
+	if (opt) {
+		fprintf(stderr, "\n"
+			"+/- options:\n");
+		for (p = &pa[0]; p->letter != 0; p++)
+			if (p->sdescr[0] != ' ')
+				fprintf(stderr, "\t%1.1s : %s\n", p->sdescr, p->ldescr);
+	}
 	exit(1);
 }
 
@@ -70,7 +129,7 @@ int ok;
 #ifdef RETRO
 	putchar('\n');
 #endif
-	if (ok == 0 && v.flag.histf && v.home != (char *)0 && v.flag.histsn == 0) {
+	if (ok == 0 && vflag.histf && v.home != (char *)0 && vflag.histsn == 0) {
 		cmdphist();
 	}
 
@@ -326,16 +385,101 @@ static void vash_ini()
 	if ((v.shell = getenv("SHELL")) == NULL /*(char *)0*/)
    		v.shell = "/bin/sh";
    	if ((v.home = getenv("HOME")) == NULL /*(char *)0*/)
-   		v.flag.histf = 0;
+   		vflag.histf = 0;
+}
+
+static int parsargs(mode, inp)
+int mode;
+char **inp;
+{
+	int i;
+	char *s;
+	PARSARGS *p;
+	char tmps[4];
+	char *arg;
+
+	arg = *inp;
+
+	if (*arg == 'l') {
+		/*** yy_max = 10; */
+		s = tmps;
+		arg++;
+		while (isdigit(*arg))
+			*s++ = *arg++;
+		*s = '\0';
+		clm._yy_max = atoi(tmps);
+		if (clm._yy_max < 2)
+			clm._yy_max = 2;
+		if (clm._yy_max > (lframe->maxli - 4))
+			clm._yy_max = lframe->maxli - 4;
+		*inp = --arg;
+		return (1);
+	}
+	if (*arg == 'b') {
+		s = tmps;
+		arg++;
+		while (isdigit(*arg))
+			*s++ = *arg++;
+		*s = '\0';
+		clm._itmbsz = atoi(tmps) * 1024;
+		if (clm._itmbsz <= 0) {
+			fprintf(stderr, "-b detected %d\n", clm._itmbsz);
+			usage(0);
+		}
+		*inp = --arg;
+		return(1);
+	}
+	for (p = &pa[0]; p->letter != 0; p++) {
+		if (*arg == p->letter) {
+			*p->flag = mode;
+			*inp = arg;
+			return(1);
+		}
+	}
+	return 0;
+}
+
+/* parse args: both precompiled and from environment */
+static void pars1(s)
+char *s;
+{
+	char linenoa[4];
+	int cmode, c;
+	char *envash;
+
+	envash = s;
+	cmode = 1;
+	while ((c = *s)) {
+		switch (c) {
+		case '-':
+			cmode = 0; s++; break;
+		case '+':
+			cmode = 1; s++; break;
+		case ' ':
+			break;
+		default:
+			if(parsargs(cmode, &s) == 0)
+				printf("env VASH= parse error: '%c' in \"%s\"\n",
+						c, envash);
+			break;
+		}
+		s++;
+	}
 }
 
 main(argc, argv)
 int argc;
 char **argv;
 {
-	char *envsup;   /* строка флагов из окружения */
+	static
+	const char *presup =  /* compiled options */
+			"+spwR@ l10 b64";
+	char *envsup;   /* environment VASH= options */
+	char *envash;
 	int c;
 	char *s;
+	int cmode;
+	char *args;
 
 #define VASH_DEBUG
 #ifdef VASH_DEBUG
@@ -353,6 +497,8 @@ char **argv;
 	} else {
 		mb_cur_max = MB_CUR_MAX;
 	}
+
+	envsup = envash = NULL;
 
 	vash_ini();
 
@@ -384,78 +530,14 @@ char **argv;
 		pmtsh = " $ ";
 	}
 
+	pars1(presup);
 	/*
-	 * environment setup parsed before command line args
+	 * environment setup parsing before command line args
+	 * NOTE: starting with precompiled defaults
 	 */
-	v.flag.exittrap = 0;
-	if ((envsup = getenv("VASH")) != (char *) 0) {
-		char linenoa[4];
-		char *p;
-
-		/* reset defaults in case environment setup is in use */
-		v.flag.scrolf =
-				v.flag.histf = v.flag.histsn = v.flag.panelf =
-						v.flag.whodirf = v.flag.xtermf = v.flag.clockf =
-								v.flag.cmailf = v.flag.exittrap = v.flag.novice =
-										v.flag.subatrc = v.flag.subshow = 0;
-		if(strcmp("BSD", VASHLIB)==0)
-			v.flag.predef = 1;
-#if 1
-		else
-			v.flag.predef = 0;
-#endif
-		/*** yy_max = 10; */
-
-		while ((c = *envsup++)) {
-			switch (c) {
-			case 'l':
-				p = linenoa;
-				while (isdigit(*envsup)) {
-					*p++ = *envsup++;
-				}
-				*p = '\0';
-				clm._yy_max = atoi(linenoa);
-				if (clm._yy_max < 2)
-					clm._yy_max = 2;
-				if (clm._yy_max > (lframe->maxli - 4))
-					clm._yy_max = lframe->maxli - 4;
-				break;
-			case 'p':
-				v.flag.panelf++;
-				break;
-			case 'x':
-				v.flag.xtermf++;
-				break;
-			case 'w':
-				v.flag.whodirf++;
-				break;
-			case 's':
-				v.flag.scrolf++;
-				break;
-			case 'h':
-				v.flag.histf++;
-				break;
-			case 'S':
-				v.flag.histsn++;
-				break;
-			case 'c':
-				v.flag.clockf++;
-				break;
-			case 'm':
-				v.flag.cmailf++;
-				break;
-			case 'T':
-				v.flag.exittrap++;
-				break;
-			case 'N':
-				v.flag.novice++;
-				break;
-			case 'A':
-				v.flag.shanyway++;
-				break;
-			}
-		}
-	}
+	envash = getenv("VASH");
+	if (envash != NULL)
+		pars1(envash);
 
 	/*Cfill_o = */u8o_init((u8sobj_t *)Cfill_o, CFILL_MAX); /*malloc*/
 	if (Cfill_o == NULL) {
@@ -465,59 +547,36 @@ char **argv;
 		Cfill = ((u8sobj_t *)Cfill_o)->u8s;
 
    	for (argc--, argv++; argc > 0; argc--, argv++) {
-		if (*argv[0] == '-') {
-			switch (argv[0][1]) {
-			default:
-				usage();
-				break;
-			case 'b':
-				clm._itmbsz = atoi(&argv[0][2]) * 1024;
-				if (clm._itmbsz <= 0) {
-					fprintf(stderr, "-b flag bad usage...");
-					usage();
+   		c = *argv[0];
+		if (c == '-' || c == '+') {
+			cmode = ((c == '+') ? 1 : 0);
+			for (args = &argv[0][1]; *args != '\0'; args++) {
+				/*c = *p;*/
+				switch (*args) {
+				case '-':	/*second one*/
+					/*				cfill(argc, argv); */
+					if ((args[1]) == '\0')
+						/* tail of agruments is fill command
+						 * replaced one from vashrc */
+						goto args_done;
+					break;
+				case 'h': usage(1);
+					break;
+				case '1':
+					clm._xx1 = 1;
+					break;
+				case 'P':
+					predump = 1;
+					break;
+				default:
+					if(parsargs(cmode, &args) == 0) {
+						fprintf(stderr,
+								"\nerror: unknown option '%c' in \"%s\"\n",
+								*args, argv[0]);
+						usage(0);
+					}
+					break;
 				}
-				continue;
-			case '1':
-				clm._xx1 = 1;
-				continue;
-			case 'p':
-				v.flag.panelf = 0;
-				continue;
-			case 'x':
-				v.flag.xtermf = 0;
-				continue;
-			case 'w':
-				v.flag.whodirf = 0;
-				continue;
-			case 's':
-				v.flag.scrolf = 0;
-				continue;
-			case 'h':
-				v.flag.histf = 0;
-				continue;
-			case 'S':
-				v.flag.histsn = 0;
-				continue;
-			case 'c':
-				v.flag.clockf = 0;
-				continue;
-			case 'm':
-				v.flag.cmailf = 0;
-				continue;
-			case 'T':
-				v.flag.exittrap = 0;
-				continue;
-			case 'A':
-				v.flag.shanyway = 1;
-				continue;
-			case 'P':
-				predump = 1;
-				continue;
-
-			case '-':
-/*				cfill(argc, argv);  tail of agruments is fill command replaced one from vashrc */
-				goto args_done;
-				break;
 			}
 		} else {
 			/* имя файла для интерпретации cmdset() */
@@ -533,6 +592,7 @@ args_done:
 		cmdghist(v.home);
 	}
 
+    /*TODO: убрать все про tmpflnm*/
     /*  tmpflnm = "/tmp/ash.tmp";        /* получить имя временного файла */
     tmpfd = mkstemp(tmpflnm);      /* получить имя временного файла */
     if (tmpfd >= 0) {
@@ -544,7 +604,12 @@ args_done:
 	printf("   Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
 #endif
 /*NOXSTR*/
-	if ( cmdset(v.rc) ) {
+	if ( ! cmdset(v.rc) ) {
+		/* fatal error detected */
+		/* scrlnl(); */
+		printf("\n");
+		exit(123);
+	} else {
 
 		if (predump)
 			exit(0);
@@ -584,10 +649,5 @@ args_done:
 
 			exit(0);
 		}
-	} else {
-		/* ошибки (плохо установлен ash, не читается реперный файл */
-		/* scrlnl(); */
-		printf("\n");
-		exit(1);
 	}
 }

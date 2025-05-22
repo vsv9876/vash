@@ -188,6 +188,7 @@ const char *emsg;
 		errno = err;
 		perror(emsg);
 	}
+	fflush(stdout);
 	return(ret);
 }
 
@@ -326,16 +327,16 @@ int jn;
 	int wpid;
 	struct termios ts;
 
-	/*blk_sigchld(1);*/
+	blk_sigchld(1);
 
 	errno = 0;
 	pid = vj[jn].pid;
 	si.si_pid = si.si_signo = si.si_status = si.si_code = 0;
 	ret = vj[jn].done = 0;
-	if ((ok = waitid(P_PID, pid, &si, WEXITED|WSTOPPED/*|WCONTINUED*/)) < 0) {
+	if ((ok = waitid(P_PID, pid, &si, WEXITED|WUNTRACED|WSTOPPED/*|WCONTINUED*/)) < 0) {
 		if (errno != ECHILD) {
-			perror("vash: reapw() waitid");
-			Tpgrp(v.pid, "reapw()", "reapw waitid()");
+			perror("vash: reapw waitid()");
+/*			Tpgrp(v.pid, "reapw(),Tpgrp()", "reapw Tpgrp waitid()");*/
 		}
 	} else {
 		ret = jn;/*si.si_code;*/
@@ -347,18 +348,20 @@ int jn;
 			/*vj_clr(jn);*/
 			vj[jn].done = 1;
 		}
-		if (si.si_code == CLD_STOPPED/* || si.si_code == CLD_CONTINUED*/) {
+		if (si.si_code == CLD_STOPPED && vj[jn].ts_saved == 0) {
 			/*
-			 * save tty mode -- will be restored by fg command
+			 * save tty mode of FG job -- will be restored by fg command
 			 */
 			fflush(stdout);
 			tcgetattr(STDOUT_FILENO, &ts);
 			memcpy(&(vj[jn].ts), &ts, sizeof(struct termios));
 			vj[jn].ts_saved = 1;
 		}
-		Tpgrp(v.pid, "reapw() return", "reapw return");
+/*		Tpgrp(v.pid, "reapw() return", "reapw return");*/
 	}
-	/*blk_sigchld(0);*/
+	Tpgrp(v.pid, "reapw(),Tpgrp()", "reapw Tpgrp waitid()");
+
+	blk_sigchld(0);
 	return (ret);
 }
 
@@ -431,6 +434,7 @@ int execmode;
 /*	void (*sigint)();*/
 	int i;
 	int ok;
+	struct termios ts;
 
 	forked = nowait = 0;
 
@@ -448,28 +452,29 @@ int execmode;
 		fprintf(stderr, "vash: can't fork\n");
 		return(-1);
 	}
+
 	if (chld == 0) {	/* child */
+
+		blk_new();
 
 		chld = getpid();
 		/*blk_new();*/
-		if ((ok = setpgid(chld, chld)) < 0)
+		if ((ok = setpgid(chld, 0 /*chld*/)) < 0)
 			perror("vash: child setpgid");
+
 		if (forked) {
-#if 1
 			if (0 == nowait) {
-				io_set(VT_OFF);
 				if ((Tpgrp(chld, "new.chld", "fg tcsetpgrp") >= 0))
 					/*io_set(VT_OFF)*/;
 			}
-#endif
 		}
+		io_set(VT_OFF);
 		/* canonical close files; 20 is a retro -- TODO a modernize */
 		for (i = 20; i > 2; i--) {
 			close(i);
 		}
-/*		kill(chld, SIGSTOP); /*cause to wait parent a launched child */
 		/**/
-		blk_new();
+
 		execve(argv0, argv, environ);
 		execvp(argv0, argv);
 		fprintf(stderr, "vash: launch failed: %s\n", argv0);
@@ -488,7 +493,7 @@ int execmode;
 			Tpgrp(chld, "new..chld", "fg tcsetpgrp");
 		}
 	}
-	/* complete launch - back set of setpgid+tcsetpgrp */
+	/* complete the launch: set setpgid+tcsetpgrp back to parent */
 	if ((ok = setpgid(v.pid, v.pgrp/*0*/)) < 0)
 		perror("vash: VASH setpgid");
 	if(v.pid != getpgrp() /*0 == nowait*/) {
@@ -496,7 +501,7 @@ int execmode;
 	}
 	/*}*/
 	/**/
-	/* fill child job passport */
+	/* fill child job registry record */
 	i = fgn_get();
 	vj[i].pid = chld;
 	vj_adv(i);
@@ -504,6 +509,8 @@ int execmode;
 	if(nowait) {
 		/*notify operator*/
 		printf("[%-d]  %6d\r\n", fgn_get(), chld);
+		vj[i].ts_saved = 0; /* no save tty mode: use io_set(VT_OFF) in fg */
+		io_set(VT_ON);
 		fflush(stdout);
 	}
 	/* временный файл menu2 удаляется после каждого запуска:
@@ -511,8 +518,10 @@ int execmode;
 	/*unlink(tmpflnm); */
 
 	if (nowait) {	/* bg & */
+		/*kill(chld, SIGCONT);*/
 		return (0);
 	}
+
 	return(i);  /* fg */
 }
 
@@ -723,9 +732,9 @@ int  execpref;
 	n = vj_new(bg); /* prevent vj table overflow */
 	if (n < 0) {
 		w_emsg("no more jobs configured, sorry...");
-		return(-1);
+		return(0/*-1*/);
 	}
-	strncpy(vj[n].cmd, cmdlbl, MAXLICO);
+	strncpy(vj[n].cmd, cmd2/*cmdlbl*/, MAXLICO);
 
 	/* выполнить команду */
 	if (execmode & ASH_NOSH) {
@@ -812,7 +821,7 @@ char *cmdlbl;   /* строка для индикации, как правило
 			break;
 		}
 	}
-	if (v.flag.shanyway) {
+	if (vflag.shanyway) {
 		execargv = 0; execpref = 0;
 	} else {
 		if (mark_i >= 0 || mark_o >= 0)

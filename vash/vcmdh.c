@@ -291,7 +291,7 @@ cmdghist()
 		return(0);
 	hftime = hfstat.st_mtime;
 
-	if (v.flag.histsn == 0) {
+	if (vflag.histsn == 0) {
 		if (hflast != 0) return(1);
 	}
 /*	if (hflast != 0 && hflast == hftime) return(1);*/
@@ -404,7 +404,7 @@ kbcod cod;
 			w_page(clm._vf);
 */
 			/* синхронизировать историю при удалении каждой команды */
-			if (v.flag.histsn) {
+			if (vflag.histsn) {
 				cmdphist();
 			} /*else {
 				cp_set(-1, -14, ATT|INP);
@@ -545,7 +545,7 @@ wchar_t  *cmd0;
 	ret = 0;
 
 	/* сначала синхронизация истории из файла? */
-	if (v.flag.histsn) {
+	if (vflag.histsn) {
 		cmdghist();
 	}
 
@@ -659,7 +659,7 @@ rebuild_help_menu:
 
 	w_cmd(cmd0);
 	if (clm._itms == cmdpsel) {
-		at_set(ATT|INP/*CMD|VEXT*//*ATT*/);
+		at_set(ATT/*|INP*//*CMD|VEXT*//*ATT*/);
 	} else {
 		at_set(CMD);
 	}
