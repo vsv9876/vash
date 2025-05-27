@@ -703,38 +703,22 @@ int  execpref;
 	if (cmdlbl == (char *)0) {
 		cmdlbl = cmd2;  /* саму команду и показать */
 	}
-#if 0
-	at_set(CMD); er_eop(CMD);
-	at_set(CMD|INP);
-	w_str(pmtsh);
-	er_eop(0);
-	fflush(vttout);
-
-	shprolog();
-
-/*	printf("%s", cmdlbl);*/
-	tty_cmd(NULL, cmdlbl);
-
-	/*vt_off();/*io_set(IO_TTYPE);*/
-#endif
 	/*Warning! no IO_VIDEO mode reasonable below this point */
-/*
-	if (execmode & ASH_NOWAIT) {
-		putchar(' ');
-		putchar('&');
-	}
-*/
-	putchar('\r');
-	putchar('\n');
-
-	fflush(stdout);
 
 	n = vj_new(bg); /* prevent vj table overflow */
 	if (n < 0) {
 		w_emsg("no more jobs configured, sorry...");
 		return(0/*-1*/);
 	}
+	/*give a name for new job*/
 	strncpy(vj[n].cmd, cmd2/*cmdlbl*/, MAXLICO);
+	/* show actual command after all substitutions */
+	tty_cmd(NULL, cmd2);
+	putchar('\r');
+	putchar('\n');
+
+	fflush(stdout);
+
 
 	/* выполнить команду */
 	if (execmode & ASH_NOSH) {
@@ -833,16 +817,7 @@ char *cmdlbl;   /* строка для индикации, как правило
 	/*shprolog();*/
 	jobnum = shexec(cmdp, cmdlbl, execmode, execpref);
 	fflush(stdout);
-#if 0
-    /*was moved to shexec() for readability, return back in place*/
-	fprintf(stdout, " "); fflush(stdout);
-	io_set(IO_VIDEO);
-#endif
-#if 0
-	/**execmp = execmode;*/
-	if (execmode & ASH_NOWAIT)
-		return(1);
-#endif
+
 	return(/*0*/ jobnum);
 }
 

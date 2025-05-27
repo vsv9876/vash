@@ -506,7 +506,7 @@ tty_cmd_:
 /*				io_set(VT_OFF);*/
 
 				wcsu8s(u8cmd0, cmd0);
-				tty_cmd(NULL, u8cmd0);
+				/*tty_cmd(NULL, u8cmd0);*/
 				if ( ! (wcscmp(cmd0, L"") == 0)) {
 					/*
 					 * vsystem returns: 0:fg; 1:bg; -1:errors

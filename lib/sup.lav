@@ -63,8 +63,8 @@ y0      = gc     -       "%3d"   -       -       y0
 yt      = gc     -       "%3d"   -       -       y0_top
 li      = gc     -       "%3d"   -       -       maxli
 co      = gc     -       "%3d"   -       -       maxco
-bli     = vip    -      "%3d"  -       -       baseli
-lli     = vip    -      "%3d"  -       -       lmaxli
+bli     = gc     -      "%3d"  -       -       baseli
+lli     = gc     -      "%3d"  -       -       lmaxli
 C       = ipv    -      "%1d"  -       -       SGR
 
 
