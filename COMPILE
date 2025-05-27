@@ -1,13 +1,14 @@
 
-Visual Assistant Shell COMPILE and history notes
+Visual Assistant Shell COMPILE
+ and history notes
 
 Notes:
-  *)  ./COMPILE.ru is obsolete
-  *) build requires standard libraries, plus low-level terminal support
-     functions which can be found in one of:
+  *) manual ./COMPILE.ru is totally obsoleted
+  *) now build requires standard libraries
+  *) low-level terminal support functions can be found in one of:
 	termcap, tinfo, ncurses
-  *) make sure '-devel' version installed, also '-static'
-     only if static linkage required (option)
+  *) make sure '-devel' version installed
+  *) static linkage allowed but not required as option (--static) 
 
 Compile vash-2.0.24 and later
 

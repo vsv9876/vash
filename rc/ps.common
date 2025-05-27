@@ -6,6 +6,9 @@
 # Thu Nov 21 21:19:01 MVT 1991
 
 # ps.main (this file) included from ps.rc and ps.all
+-p ps
+-: -s +pwR -l0
+
 #
 # preprocessed values:
 # parameter -@ is depended from command of fill main menu -f

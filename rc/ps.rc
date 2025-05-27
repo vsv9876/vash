@@ -1,6 +1,9 @@
 #!/usr/bin/vash
 #
 #
+#-: -l0 +spw1
+#
+#
 |+
 |# |-f ps -aud
 |$ |-f ps -udt `tty`

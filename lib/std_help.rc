@@ -5,7 +5,11 @@
 # Wed Sep 12 15:46:39 MSD 1990
 # 2022-01-23
 # 2024-03-13
+# 2025-05-26
 #
+-: +1o
+-p help
+
 -f< std_help.menu
 # workaround: any stable (never touched) file
 -i/.

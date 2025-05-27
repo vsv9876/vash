@@ -175,13 +175,13 @@
 :HE
 # show help
 #	* * _cmdset std_help.rc
-# obsolete, will be removed - use man vash instead, please
-	* * ;env VASH_LABEL='help! ' vash -1 std_help.rc
+	* * ;vash std_help.rc
 #	* * _help std_help.lb
 
 :&
 #       Программа (настройка) ash для работы с процессами
-	* *     ;env VASH=l20spw VASH_LABEL='ps ' vash -1 ps.rc
+#	* *     ;env VASH=l20spw VASH_LABEL='ps ' vash -1 ps.rc
+	* *     ;vash ps.rc
 #        * *     _cmdset ps.rc
 
 

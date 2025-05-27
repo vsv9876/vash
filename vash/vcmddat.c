@@ -134,6 +134,23 @@ int     n;              /* макс. кол-во слов, разд. пробе�
 	return(s);
 }
 
+char rcopts[50] = "";
+static char pmtbuf[30] = "";
+const char *pmtsh;
+static void pmtsetup()
+{
+	if (pmtbuf[0] == '\0') {
+		pmtbuf[0] = ' ';
+		pmtbuf[1] = '\0';
+	}
+	if (getuid() == 0) {
+		strcat(pmtbuf, "# ");
+	} else {
+		strcat(pmtbuf, "$ ");
+	}
+	pmtsh = pmtbuf;
+}
+
 /*
  * Установить умолчания.
  */
@@ -153,15 +170,11 @@ register char *s;
 		s = skipsp(s);
 		apndstr(s, 1);
 		break;
-	case 'f': case 'i': case 'o': case '@':
+	case 'f': case 'i': case 'o': case '@': case ':': case 'p':
 		switch (*s++) {
-		case 'f':
-			/* command line on start vash would be preferred */
-			/*if (*Cfill != '\0')
-				return(1);
-			else*/
-				p = Cfill;
-			break;
+		case ':': p = rcopts; break;
+		case 'p': p = pmtbuf; break;
+		case 'f': p = Cfill; break;
 		case 'i': p = Crepf; break;
 		case 'o': p = Coutf; break;
 		case '@': p = Csubs; break;
@@ -217,6 +230,8 @@ const char *file;
 
     fpix = 0;
     fname = file;
+
+    pmtbuf[0] = '\0';
 
     predef = vflag.predef;
 
@@ -357,6 +372,10 @@ skip:
 	/* Настроить индексы для таблицы клавиш, после чего
 	 * правильно отрабатываются синонимы */
 	kt1tune(kt1_ix);
+
+	parsopt(rcopts);
+
+	pmtsetup();
 
     return(1);
 }

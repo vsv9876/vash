@@ -29,8 +29,6 @@ int predump = 0;
 /*char   *homedir;        /* домашний каталог */
 char   *cwd;            /* текущий (рабочий) каталог */
 
-const char *pmtsh;
-
 /*VASHFLAG *vflag;*/
 /*static const VASHFLAG vf = { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0 };*/
 VASHFLAG vflag = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -50,13 +48,13 @@ VASH_PROC v = {
 		VASH_PATH,	/* .vapath */
 		VERSN,
 		"std.rc",
-};
+		};
 
 /*const VASHFLAG vf = (v.flag);*/
 
 PARSARGS pa[] = {
 	{ 's', &vflag.scrolf,   "s,scroll",       "scrool vs clear screen" },			/* = 1; // флаг: продвигать рулон, а не гасить экран */
-	{ '0', &vflag.oneitm,   "0,1column",      "display main menu in 1 column" },			/* = 0; // флаг: разрешено указать только один пункт меню */
+	{ 'o', &vflag.oneitm,   "o,one item",      "main menu allowed one item only" },			/* = 0; // флаг: разрешено указать только один пункт меню */
 	{ 'c', &vflag.clockf,   "c,clock",        "show clock" },			/* = 1; // флаг: показывать часы */
 	{ 'm', &vflag.cmailf,   "m,mail",         "notify about incoming mail" },			/* = 1; // флаг: проверять почту */
 	{ 'w', &vflag.whodirf,  "w,title",        "show title panel" },			/* = 1; // show whodir panel on screen */
@@ -76,7 +74,6 @@ PARSARGS pa[] = {
 	{ 0 },
 	};
 
-static void usage(int);
 static void usage(opt)
 int opt;
 {
@@ -84,7 +81,7 @@ int opt;
 	fprintf(stderr, "\n"
 		"Usage:\n"
 		"  vash [-bN] [-lN] [[+-]"
-		"["
+		"[1"
 		);
 		for (p = &pa[0]; p->letter != 0; p++)
 			if (p->sdescr[0] != ' ')
@@ -112,6 +109,29 @@ int opt;
 	exit(1);
 }
 
+int cvt_fd(LINE *line,
+		kbcod cod,
+		char *mod,
+		char *str)
+{
+	int size;
+	int *flag;   /* &vflag.{flag} */
+	PARSARGS *p;
+
+	if (*mod == 'w') {
+		size = line->size;
+		if (line->attr & PMT) size -= 1;
+		for (p = &pa[0]; p->letter != 0; p++) {
+			flag = (int *)line->varl;
+			if (flag == p->flag) {
+				u8snu8s(str, p->sdescr, size);
+				return(TRUE);
+			}
+		}
+	}
+	return(FALSE);
+}
+
 int     allcod = 1;
 
 void
@@ -134,7 +154,6 @@ int ok;
 	}
 
 	unlink(tmpflnm);
-
 
 /*	exit(ok);*/
 }
@@ -308,7 +327,14 @@ void sigwinch(signo)
 	if (0 != gtty_sz()) {
 		return;
 	}
-	lfmain.maxli  =  24; /* it is restriction for classic 24 lines */
+	if (clm._yy_max == 0)
+		clm._yy_max = hwframe.maxli;
+	if (clm._yy_max < 2)
+		clm._yy_max = 2;
+	if (clm._yy_max > (lframe->maxli - 4))
+		clm._yy_max = lframe->maxli - 4;
+	lfmain.maxli  =  24; /* it is restriction for classic VDT hardware */
+	/*lfmain.maxli  = hwframe.maxli;*/ /*TODO: separate frames... */
 	lfmain.baseli = hwframe.maxli - lfmain.maxli;
 	if (lfmain.baseli < 0) {
 		lfmain.maxli = hwframe.maxli;
@@ -400,6 +426,10 @@ char **inp;
 
 	arg = *inp;
 
+	if (*arg == '1') {
+		clm._xx1 = 1;
+		return(1);
+	}
 	if (*arg == 'l') {
 		/*** yy_max = 10; */
 		s = tmps;
@@ -408,10 +438,6 @@ char **inp;
 			*s++ = *arg++;
 		*s = '\0';
 		clm._yy_max = atoi(tmps);
-		if (clm._yy_max < 2)
-			clm._yy_max = 2;
-		if (clm._yy_max > (lframe->maxli - 4))
-			clm._yy_max = lframe->maxli - 4;
 		*inp = --arg;
 		return (1);
 	}
@@ -440,7 +466,7 @@ char **inp;
 }
 
 /* parse args: both precompiled and from environment */
-static void pars1(s)
+void parsopt(s)
 char *s;
 {
 	char linenoa[4];
@@ -459,7 +485,7 @@ char *s;
 			break;
 		default:
 			if(parsargs(cmode, &s) == 0)
-				printf("env VASH= parse error: '%c' in \"%s\"\n",
+				printf("option parse error: '%c' in \"%s\"\n",
 						c, envash);
 			break;
 		}
@@ -472,10 +498,10 @@ int argc;
 char **argv;
 {
 	static
-	const char *presup =  /* compiled options */
-			"+spwR@ l10 b64";
-	char *envsup;   /* environment VASH= options */
-	char *envash;
+	const char *stdopts =  /* default compiled options */
+			"+spwc HS R J l10 b64";
+	/*char *envsup;   /* environment VASH= options */
+	char *envopts;
 	int c;
 	char *s;
 	int cmode;
@@ -498,7 +524,7 @@ char **argv;
 		mb_cur_max = MB_CUR_MAX;
 	}
 
-	envsup = envash = NULL;
+	envopts = NULL;
 
 	vash_ini();
 
@@ -510,34 +536,20 @@ char **argv;
 	if ((s = getenv(VAPATH)) != (char *)0)
 		v.vapath = s;
 
-	/* main menu init. */
-	clm._itms   = itms1;
-	clm._ltmpl  = &tmplate;
-	clm._itmbsz = ITMBUF;
-	clm._yy_max = 10;
-
 #ifdef  VTTY
 	vtty();
 #endif
 	visini();
 	hw_set();
 
-	sigwinch(0); /* get initial sizes of screen */
-
-	if (getuid() == 0) {
-		pmtsh = " # ";
-	} else {
-		pmtsh = " $ ";
-	}
-
-	pars1(presup);
+	parsopt(stdopts);
 	/*
 	 * environment setup parsing before command line args
 	 * NOTE: starting with precompiled defaults
 	 */
-	envash = getenv("VASH");
-	if (envash != NULL)
-		pars1(envash);
+	envopts = getenv("VASH");
+	if (envopts != NULL)
+		parsopt(envopts);
 
 	/*Cfill_o = */u8o_init((u8sobj_t *)Cfill_o, CFILL_MAX); /*malloc*/
 	if (Cfill_o == NULL) {
@@ -562,9 +574,9 @@ char **argv;
 					break;
 				case 'h': usage(1);
 					break;
-				case '1':
+				/*case '1':
 					clm._xx1 = 1;
-					break;
+					break;*/
 				case 'P':
 					predump = 1;
 					break;
@@ -600,6 +612,15 @@ args_done:
     	unlink(tmpflnm);
     }
 
+	/* main menu init. */
+	clm._itms   = itms1;
+	clm._ltmpl  = &tmplate;
+	 /* get this from: stdopts, envopts */
+	/*clm._itmbsz = ITMBUF;
+	clm._yy_max = 10;*/
+
+	sigwinch(0); /* get initial sizes of screen */
+
 #ifdef DEBUG
 	printf("   Cfill=\"%s\" vashrc=\"%s\"\r\n", Cfill, vashrc);
 #endif
@@ -610,6 +631,8 @@ args_done:
 		printf("\n");
 		exit(123);
 	} else {
+
+/*		pars1(rcopts);*/ /* call it from cmdset */
 
 		if (predump)
 			exit(0);

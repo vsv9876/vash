@@ -159,6 +159,9 @@ typedef struct {
 	const char *ldescr;
 } PARSARGS;
 
+extern char rcopts[];  /* options from profile */
+extern void parsopt(char *);
+
 /*extern char   *envshell;*/
 /*extern char   *homedir;*/
 extern const char   *vexdir; /* visi/linlib extra files directory */
@@ -243,6 +246,7 @@ extern int vin_do(wchar_t *, char *);
 
 extern int cvt_vf(LINE *, kbcod, char *, char *);
 extern int cvt_s(LINE *, kbcod, char *, char *);
+extern int cvt_fd(LINE *, kbcod, char *, char *);
 
 extern int Tpgrp(pid_t, const char *, const char *);
 

@@ -1,6 +1,8 @@
 #!/usr/bin/vash
 # config preprocessor test
 
+-p test_rc .
+
 |+ # BSD stuff
 |# |-f :Fa
 |$ |-f :F
