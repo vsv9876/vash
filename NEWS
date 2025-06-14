@@ -1,5 +1,10 @@
 vash news (release notes)
 
+2.1.0.dev
+  * job control
+  * new design of invocation parameters
+  * resizing hwframe
+
 2.0.34
   * job conrtrol
 

@@ -202,21 +202,30 @@ static void vt_ini()
 	}
 
 	t_vton.c_iflag = (t_vton.c_iflag & (~(ICRNL|IGNCR)));
-	t_vton.c_oflag = (t_vton.c_oflag & (~(OPOST|ONLCR))); /* ~(|)*/
-	t_vton.c_lflag = ISIG;
-	t_vton.c_lflag = (t_vton.c_lflag | (t_vtoff.c_lflag & (TOSTOP)));
+/*	t_vton.c_oflag = (t_vton.c_oflag & (~(OPOST|ONLCR)));  ~(|)
+	t_vton.c_lflag = ISIG;*/
+	/*t_vton.c_lflag = (t_vton.c_lflag | (t_vtoff.c_lflag & (TOSTOP)));*/
+	t_vton.c_lflag = t_vtoff.c_lflag;
+	t_vton.c_lflag = (t_vton.c_lflag & (~(ISIG|ICANON|ECHO)));
+	t_vton.c_lflag |= (t_vtoff.c_lflag & TOSTOP);
 #ifndef CNUL
 #define CNUL '\0'
 #endif
 	/* special character processing */
 /*        new.c_cc[VINTR  ] = CNUL; */
 /*        new.c_cc[VQUIT  ] = CNUL; */
+/*
 	for ( i = 0; i <= NCCS; i++)
 		t_vton.c_cc[i] = CNUL;
 	t_vton.c_cc[VSTART] = t_vtoff.c_cc[VSTART];
 	t_vton.c_cc[VSTOP]  = t_vtoff.c_cc[VSTOP];
+*/
 	t_vton.c_cc[VMIN ]  = 1; /* TODO check, may be VMIN=VTIME=0 is better ? */
 	t_vton.c_cc[VTIME]  = 0;
+#if 0
+	t_vton.c_cc[VLNEXT]   = CNUL;
+	t_vton.c_cc[VDISCARD] = CNUL;
+#endif
 
 #if 0
 	vsignal(0);

@@ -1,5 +1,3 @@
--- redesign parameters invocation, like vash +hS -w -l=max
-
 - export vash flags changed in setup, 
   on execve() with VASH= environment
 

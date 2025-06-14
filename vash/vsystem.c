@@ -74,6 +74,12 @@ void blk_on(void) /*normal video mode */
 	}
 #endif
 /*	sigemptyset(&sblock);*/
+
+	Signal(SIGTSTP, SIG_IGN);
+	Signal(SIGTTOU, SIG_IGN);
+	Signal(SIGTTIN, SIG_IGN);
+	Signal(SIGTERM, SIG_IGN);
+
 	sigprocmask(SIG_BLOCK, NULL, &sblock);
 	sigaddset(&sblock, SIGTERM);
 	sigaddset(&sblock, SIGTTOU);
@@ -81,6 +87,7 @@ void blk_on(void) /*normal video mode */
 	sigaddset(&sblock, SIGTSTP);
 /*	sigaddset(&sblock, SIGCHLD);*/
 	sigprocmask(SIG_BLOCK, &sblock, NULL);
+
 #ifdef VISI_DEBUG
 	if (debug) {
 		printf("! ");
@@ -100,6 +107,14 @@ void blk_new(void) /*starting a child*/
 		fflush(stdout);
 	}
 #endif
+	Signal(SIGINT,  SIG_DFL);
+	Signal(SIGQUIT, SIG_DFL);
+	Signal(SIGTSTP, SIG_DFL);
+	Signal(SIGTTIN, SIG_DFL);
+	Signal(SIGTTOU, SIG_DFL);
+	Signal(SIGCHLD, SIG_DFL);
+	Signal(SIGWINCH, SIG_DFL);
+
 	sigemptyset(&sigs);
 /*	sigaction(SIG_DFL, NULL, &sa);*/
 	sigprocmask(SIG_SETMASK, NULL, &sigs);
@@ -111,13 +126,6 @@ void blk_new(void) /*starting a child*/
 	sigaddset(&sigs, SIGCHLD);
 	sigprocmask(SIG_UNBLOCK, &sigs, NULL);
 
-	Signal(SIGINT,  SIG_DFL);
-	Signal(SIGQUIT, SIG_DFL);
-	Signal(SIGTSTP, SIG_DFL);
-	Signal(SIGTTIN, SIG_DFL);
-	Signal(SIGTTOU, SIG_DFL);
-	Signal(SIGCHLD, SIG_DFL);
-	Signal(SIGWINCH, SIG_DFL);
 #ifdef VISI_DEBUG
 	if (debug) {
 		printf("! ");
@@ -138,7 +146,7 @@ void blk_off(void) /*unblock just before reap / do waiting*/
 #endif
 	sigemptyset(&sblock);
 /*	sigprocmask(SIG_UNBLOCK, NULL, &sblock);*/
-#if 0
+#if 1
 	sigdelset(&sblock, SIGTSTP);
 	sigdelset(&sblock, SIGCHLD);
 #endif
@@ -209,13 +217,17 @@ void on_onchld(void)
 {
 #if VISI_SIG_POSIX
 	struct sigaction sa;
-
+#if 1
 	sigaction(SIGCHLD, NULL, &sa);
 	sa.sa_handler = onchld;
 	sa.sa_flags = SA_RESTART /*| SA_NOCLDWAIT*/ /* | SA_SIGINFO*/;
 /*	sigemptyset(&sa.sa_mask);*/
 
 	sigaction(SIGCHLD, &sa, NULL);
+#else
+	Signal(SIGCHLD, onchld);
+#endif
+
 #else
 	signal( SIGCHLD, &onchld );
 #endif
@@ -441,17 +453,14 @@ int execmode;
 	nowait = ((execmode & ASH_NOWAIT)==0) ? 0 : 1;
 	forked = ((execmode & ASH_NOFORK)==0) ? 1 : 0;
 
-	blk_off();
-	blk_sigchld(1);
+/*	blk_off();*/
+/*	blk_sigchld(1);*/
+
+	io_set(VT_OFF);
+
+	chld = 0;
 	if (forked)
 		chld = fork();
-	else
-		chld = 0;
-
-	if (chld < 0) {
-		fprintf(stderr, "vash: can't fork\n");
-		return(-1);
-	}
 
 	if (chld == 0) {	/* child */
 
@@ -464,11 +473,11 @@ int execmode;
 
 		if (forked) {
 			if (0 == nowait) {
-				if ((Tpgrp(chld, "new.chld", "fg tcsetpgrp") >= 0))
+				if ((Tpgrp(chld, "new.chld", "fg tcsetpgrp 1") >= 0))
 					/*io_set(VT_OFF)*/;
 			}
 		}
-		io_set(VT_OFF);
+/*		io_set(VT_OFF);*/
 		/* canonical close files; 20 is a retro -- TODO a modernize */
 		for (i = 20; i > 2; i--) {
 			close(i);
@@ -482,22 +491,26 @@ int execmode;
 			return(-1);
 		exit(1);
 	}
-	/* parent (the vash itself) */
+	if (chld < 0) {
+		fprintf(stderr, "vash: can't fork\n");
+		return(-1);
+	}
 	/*else {*/
+	/* parent (the vash itself) */
 	blk_on();
 	if (forked) {
 		/*repeat setting for child in parent process */
 		if ((ok = setpgid(chld, chld)) < 0)
 			perror("vash: child setpgid");
 		if ((ok >= 0) && (0 == nowait)) {
-			Tpgrp(chld, "new..chld", "fg tcsetpgrp");
+			Tpgrp(chld, "new..chld", "fg tcsetpgrp 2");
 		}
 	}
-	/* complete the launch: set setpgid+tcsetpgrp back to parent */
-	if ((ok = setpgid(v.pid, v.pgrp/*0*/)) < 0)
-		perror("vash: VASH setpgid");
+	/* complete the launch: check if set setpgid+tcsetpgrp back to parent */
 	if(v.pid != getpgrp() /*0 == nowait*/) {
-		Tpgrp(v.pid, "new.chld", "fg tcsetpgrp");
+		if ((ok = setpgid(v.pid, v.pgrp/*0*/)) < 0)
+			/*perror("vash: VASH setpgid")*/;
+		Tpgrp(v.pid, "new.chld", "fg tcsetpgrp 3");
 	}
 	/*}*/
 	/**/
@@ -509,10 +522,13 @@ int execmode;
 	if(nowait) {
 		/*notify operator*/
 		printf("[%-d]  %6d\r\n", fgn_get(), chld);
+		fflush(stdout);
+		/*pause();*/
+		/*usleep(10000);*/
 		vj[i].ts_saved = 0; /* no save tty mode: use io_set(VT_OFF) in fg */
 		io_set(VT_ON);
-		fflush(stdout);
 	}
+/*	blk_sigchld(0);*/
 	/* временный файл menu2 удаляется после каждого запуска:
 	 *  TODO: убрать этот бред */
 	/*unlink(tmpflnm); */
