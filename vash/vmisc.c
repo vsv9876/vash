@@ -116,25 +116,6 @@ showclck()
 	}
 }
 
-/*independent from showclock stuff -- to be removed TODO*/
-static void showjob()
-{
-	return;
-
-	static time_t prevtme;
-	time_t curtime;
-	if (1) {
-		time(&curtime);
-		if (curtime != prevtme) {
-			prevtme = curtime;
-			cp_sav();
-			cp_set(WSHOW_LI, WSHOW_JOBS, WSHOW_AT);
-			w_str(jobshow());
-			cp_fet();
-		}
-	}
-}
-
 void
 showitem(on)
 /*
@@ -268,7 +249,6 @@ next_j()
 		cp_sav();
 #endif
 		showclck();
-		showjob();
 		chckmail();
 #ifdef CP_SAV
 		cp_fet();

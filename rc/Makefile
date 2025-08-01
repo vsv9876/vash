@@ -24,6 +24,7 @@ PROFILES        = \
 		rpm \
 		pp* \
 		ps \
+		pssig \
 		ps.* \
 		ll \
 		ls-av \

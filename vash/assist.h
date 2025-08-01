@@ -112,18 +112,22 @@ typedef struct {
 	int	oneitm;		/* = 0; // флаг: разрешено указать только один пункт меню */
 	int	panelf; 	/* = 1; // флаг: показывать панель подсказки */
 	int	whodirf;	/* = 1; // show whodir panel on screen */
+
 	int	xtermf;		/* = 0; // show whodir panel on window title using xterm escape sequence */
 	int	histf;		/* = 0; // флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
 	int	histsn;		/* = 0;	// флаг: синхронизировать историю после каждой команды */
 	int	clockf;		/* = 1; // флаг: показывать часы */
+
 	int	cmailf;		/* = 1; // флаг: проверять почту */
 	int	loginf;		/* = 0; // флаг: главная оболочка, ppid() == 1 */
 	int	jobctl;		/* = 1; // JOB Control support */
 	int	jobshow;	/* = 1; // Job index show*/
+
 	int	exittrap;	/* trap on exit of command: 0 - modern, 1 - vash canonical */
 	int	novice;		/* = 1; novice prompter messages allowed */
 	int	shanyway;	/* = 1; shell -c 'cmd' in all cases anyway */
 	int	subatrc;	/* = 0; substitute '#@' from rc files before cmd editor */
+
 	int	subshow;	/* = 0; substitute '#@' show position on main menu */
 	int predef;  	/* (readonly) rc style selector: 1 - BSD, 0 - other */
 } VASHFLAG;
@@ -290,7 +294,7 @@ extern void Signal(int, void *);
 #define WSHOW_ITEM (WSHOW_EDIT  - 8)
 #define WSHOW_JOBS (WSHOW_ITEM - 8)
 #endif
-extern const char *jobshow();
+extern char *jobshow();
 
 #endif
 /* assist_h_def */

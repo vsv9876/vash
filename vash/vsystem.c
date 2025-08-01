@@ -72,22 +72,22 @@ void blk_on(void) /*normal video mode */
 		printf(" !<on");
 		fflush(stdout);
 	}
+	sigemptyset(&sblock);
 #endif
-/*	sigemptyset(&sblock);*/
 
 	Signal(SIGTSTP, SIG_IGN);
 	Signal(SIGTTOU, SIG_IGN);
 	Signal(SIGTTIN, SIG_IGN);
 	Signal(SIGTERM, SIG_IGN);
-
+#if 0
 	sigprocmask(SIG_BLOCK, NULL, &sblock);
 	sigaddset(&sblock, SIGTERM);
 	sigaddset(&sblock, SIGTTOU);
 	sigaddset(&sblock, SIGTTIN);
 	sigaddset(&sblock, SIGTSTP);
 /*	sigaddset(&sblock, SIGCHLD);*/
+#endif
 	sigprocmask(SIG_BLOCK, &sblock, NULL);
-
 #ifdef VISI_DEBUG
 	if (debug) {
 		printf("! ");
@@ -524,7 +524,7 @@ int execmode;
 		printf("[%-d]  %6d\r\n", fgn_get(), chld);
 		fflush(stdout);
 		/*pause();*/
-		/*usleep(10000);*/
+		/*usleep(1000000);*/
 		vj[i].ts_saved = 0; /* no save tty mode: use io_set(VT_OFF) in fg */
 		io_set(VT_ON);
 	}
@@ -532,15 +532,19 @@ int execmode;
 	/* временный файл menu2 удаляется после каждого запуска:
 	 *  TODO: убрать этот бред */
 	/*unlink(tmpflnm); */
+	if (chld > 0) {
+		/*usleep(10000);*/
+		kill(chld, SIGCONT);
+		raise(SIGCONT);
+	}
 
 	if (nowait) {	/* bg & */
-		/*kill(chld, SIGCONT);*/
+/*		kill(chld, SIGCONT);*/
 		return (0);
 	}
 
 	return(i);  /* fg */
 }
-
 
 /*
  * Screen preamble of command before io_set(VT_OFF) while io_set(VT_ON)

@@ -378,6 +378,7 @@ extern  kbcod   k_pars(int);
 extern  void    bell();
 extern  void    cp_fet(), cp_sav();
 extern  void    cp_set(int, int, int), cp_abset(int, int, int), cp_cret();
+extern  void    cp_zero();
 extern  void    er_eol(int), er_eop(int), er_pag(), er_scr(int, int, int);
 extern  kbcod   r_line(LINE *, int *);
 extern  kbcod   r_page(LINE *, LINE**, int *);

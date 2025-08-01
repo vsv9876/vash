@@ -30,8 +30,18 @@ int predump = 0;
 char   *cwd;            /* текущий (рабочий) каталог */
 
 /*VASHFLAG *vflag;*/
+#if defined(PREDEF)
+#define V_PREDEF PREDEF
+#else
+#define V_PREDEF 1
+#endif
 /*static const VASHFLAG vf = { 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0 };*/
-VASHFLAG vflag = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+VASHFLAG vflag = {
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, V_PREDEF };
 
 /*PARSARGS pargs[];*/
 
@@ -51,8 +61,10 @@ VASH_PROC v = {
 		};
 
 /*const VASHFLAG vf = (v.flag);*/
+static int vdummy = 0; /* fake not used flag stub */
 
 PARSARGS pa[] = {
+	{ '1', &vdummy,         "1column",        "list main menu in 1 column" },
 	{ 's', &vflag.scrolf,   "s,scroll",       "scrool vs clear screen" },			/* = 1; // флаг: продвигать рулон, а не гасить экран */
 	{ 'o', &vflag.oneitm,   "o,one item",      "main menu allowed one item only" },			/* = 0; // флаг: разрешено указать только один пункт меню */
 	{ 'c', &vflag.clockf,   "c,clock",        "show clock" },			/* = 1; // флаг: показывать часы */
@@ -322,8 +334,6 @@ LFRAME lfmain = { 0 };
 /*ARGSUSED*/
 void sigwinch(signo)
 {
-	extern int rescan();
-
 	if (0 != gtty_sz()) {
 		return;
 	}
@@ -404,10 +414,12 @@ static void vash_ini()
 	v.pid = getpid();
 	v.pgrp = getpgrp();
 	v.sid = getsid(v.pid);
+#if 0
 	if (v.sid == v.pid)
 		printf("session leader;\n");
 	if (v.pgrp == v.pid)
 		printf("process group leader;\n");
+#endif
 	if ((v.shell = getenv("SHELL")) == NULL /*(char *)0*/)
    		v.shell = "/bin/sh";
    	if ((v.home = getenv("HOME")) == NULL /*(char *)0*/)
@@ -425,11 +437,11 @@ char **inp;
 	char *arg;
 
 	arg = *inp;
-
 	if (*arg == '1') {
 		clm._xx1 = 1;
 		return(1);
 	}
+#if 1
 	if (*arg == 'l') {
 		/*** yy_max = 10; */
 		s = tmps;
@@ -441,6 +453,7 @@ char **inp;
 		*inp = --arg;
 		return (1);
 	}
+#endif
 	if (*arg == 'b') {
 		s = tmps;
 		arg++;
@@ -478,9 +491,9 @@ char *s;
 	while ((c = *s)) {
 		switch (c) {
 		case '-':
-			cmode = 0; s++; break;
+			cmode = 0; break;
 		case '+':
-			cmode = 1; s++; break;
+			cmode = 1; break;
 		case ' ':
 			break;
 		default:
@@ -491,6 +504,11 @@ char *s;
 		}
 		s++;
 	}
+	/*fix yy_max*/
+/*	if (clm._yy_max == 0)
+		clm._yy_max = lfmain.maxli - 4;
+/*	lfmain.maxli  =  24; /* it is restriction for classic VDT hardware */
+	sigwinch(0);
 }
 
 main(argc, argv)
@@ -499,7 +517,7 @@ char **argv;
 {
 	static
 	const char *stdopts =  /* default compiled options */
-			"+spwc HS R J l10 b64";
+			"+spwc HS R J l8 b64";
 	/*char *envsup;   /* environment VASH= options */
 	char *envopts;
 	int c;
@@ -613,7 +631,7 @@ args_done:
     }
 
 	/* main menu init. */
-	clm._itms   = itms1;
+	clm._itms   = &itms1[0];
 	clm._ltmpl  = &tmplate;
 	 /* get this from: stdopts, envopts */
 	/*clm._itmbsz = ITMBUF;

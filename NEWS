@@ -4,6 +4,7 @@ vash news (release notes)
   * job control
   * new design of invocation parameters
   * resizing hwframe
+  * preprocessing rc-files against (predef=1 if BSD-like system)
 
 2.0.34
   * job conrtrol

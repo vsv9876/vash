@@ -11,7 +11,7 @@ extern  int     sup(), v_susp();
 extern  int     vshcmd(), menu2();
 extern  int     fsh(), fmenu2();
 extern  int     ffile(), fmsg(), fmsgerr();
-extern  int     rescan();
+/*extern  int     rescan();*/
 /* перенесены из встроенных фунций */
 extern  int		f_ls();	/* редактирование строки команды заполнения меню из .ashstd -@f */
 extern  int		f_mark(); /* пометка пунктов меню (имен файлов) + - > < */

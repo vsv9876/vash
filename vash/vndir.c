@@ -118,7 +118,7 @@ tstat1()
 	strcat(tstats, " -");
 	/* выяснить наличие пометки */
 	for (i=0; i < clm._itmmax; i++)
-		if (*clm._itms[i] == MONEY) {
+		if (clm._itms[i][0] == MONEY) {
 			tstats[4] = '+'; break;
 		}
 	return(tstats);
@@ -310,7 +310,7 @@ int vls()
     if (index(Cfill, 'a')) aflag = 1;*/
 
     len = clm._itmlen = clm._itmmax = 0;
-    clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
+    clm._itms[0 /*clm._itmmax*/] = itmbp = clm._itmbuf;
     *itmbp++ = ' '; /* 1st placeholder */
 
     if ((dirp = opendir(Crepf)) != NULL) {
@@ -848,7 +848,7 @@ int newflag;    /* если 0, то только обновить каталог
 	if (samedir) {
 		/* сохранить прежний номер и содержимое пункта меню */
 		itmci = clm._itm;
-		strcpy(itmcnm, &clm._itms[clm._itm][2]);
+		strcpy(itmcnm, &clm._itms[itmci /*clm._itm*/][2]);
 /*                cmdsub(itmcnm, "#@", itm, 0, 1);     */
 	}
 	else    {

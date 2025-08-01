@@ -1,6 +1,5 @@
+revise compiled vhset defaults
+
 fix regression: cmd editor suspends clock
 
-ps$ env D1=1 v +1 pssig.rc
-process group leader;
-option parse error: '0' in "-s +pwR -l0"
 

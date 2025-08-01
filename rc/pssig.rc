@@ -1,0 +1,32 @@
+#!/usr/bin/vash
+#
+#
+|+
+|# |-f ps -aud
+|$ |-f ps -udt `tty`
+-@2
+||
+#
+|# |-f ps f -t /dev/pts/$D1
+|$ |-f ps f -t /dev/pts/$D1
+-@1
+|-
+
+-6 CONT
+
+:U6
+:6
+    * -   kill -CONT #@
+    * +   kill -CONT ##
+
+
+-7 CHLD
+
+:U7
+:7
+    * -   kill -CHLD #@
+    * +   kill -CHLD ##
+
+@ps.common
+-i 
+#<<< pssig.rc

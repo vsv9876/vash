@@ -22,7 +22,9 @@ SHELL         = /bin/sh
 
 #       обработка при помощи xstr
 #       (см. правила .c.o:  .cv.o)
-
+#
+PREDEF = 0
+#
 #include		../conf/Makefile
 include		../BLD.cfg
 
@@ -46,7 +48,7 @@ DESTBIN       = $(DESTDIR)$(DEST)/bin
 #CFLAGS_ASH    =
 CFLAGS        = $(CFLAGS_ASH) \
 		-I$(VISI)/include \
-		-D'VASHLIB="$(ASHLIB)"' \
+		-D'PREDEF=$(PREDEF)' \
 		-D'DESTLIB="$(DESTLIB)"' \
 		-D'VERSN="$(VERSN)"' \
 		-D'VASH_PATH="$(VASH_PATH)"'

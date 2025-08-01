@@ -26,7 +26,6 @@ BLD	= $(TOPDIR)/BLD
 DESTDIR	= $(TOPDIR)/BLD
 VERSN	= "1."
 
-
 include $(BLDCFG)
 
 VISI  = visi
@@ -119,13 +118,12 @@ visi_lib: setup
 		"CC=$(CC)" "LINKER=$(LINKER)"
 
 # NOTE: at least FreeBSD's make requires PATH= specified explicitly
-compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib #/LIB-$(ASHLIB)
+compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib
 	cd $(VHSET); $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)"
-	cd $(VASH);   $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)" \
+	cd $(VASH);   $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)" "ASHLIB=$(ASHLIB)"\
 				"CFLAGS_ASH=$(CFLAGS_ASH)" "VERSN=$(VERSN)"
 	cd lib;               $(MAKE) "PATH=$(PATH)" "DEST=$(DEST)" all
 #	cd lib/LIB;           $(MAKE) "DEST=$(DEST)" all
-#	cd lib/LIB-$(ASHLIB); $(MAKE) "DEST=$(DEST)" all
 
 #install:   $(DESTDIR) $(DEST) termcap $(VISILIB)
 install: setup compile $(DESTDIR) $(DEST) $(VISILIB) docinstall maninstall
@@ -140,7 +138,6 @@ install: setup compile $(DESTDIR) $(DEST) $(VISILIB) docinstall maninstall
 	cd lib;	$(MAKE) install "PATH=$(PATH)" \
 		"DEST=$(DEST)" "DESTDIR=$(DESTDIR)" "PATH=$(PATH)"
 #	cd lib/LIB;	$(MAKE) install "DEST=$(DEST)"  "DESTDIR=$(DESTDIR)"
-#	cd lib/LIB-$(ASHLIB);	$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 #	cp -rp termcap/. $(VISILIB)
 #	cd visilib;			$(MAKE) install "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 
@@ -155,7 +152,6 @@ clean:
 	cd vtest; $(MAKE) clean
 	cd misc; $(MAKE) clean
 #	cd lib/LIB; $(MAKE) clean
-#	cd lib/LIB-$(ASHLIB); $(MAKE) clean
 	rm -rf $(BLD)
 
 distclean:	clean

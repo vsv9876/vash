@@ -7,7 +7,7 @@
 
 # ps.main (this file) included from ps.rc and ps.all
 -p ps
--: -s +pwR -l0
+-: -s1 +pwR -l0
 
 #
 # preprocessed values:
@@ -26,7 +26,7 @@
 -3 env
 -4 QUIT
 -5 TERM
--6 
+# -6 
 # -7 >ps.all
 -8 KILL
 -9 setup

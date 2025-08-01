@@ -350,7 +350,7 @@ ttyinp()
 		io_set(VT_ON);
 #endif
 		perror("\r\nread(vtti)");
-		fprintf(stderr, "\r\n-- tcsetpgrp missed ?--\n");
+		fprintf(stderr, "\r\n-- missed tcsetpgrp ?--\n");
 		raise(SIGSTOP/*TTIN*/);
 		/*exit(1);*/
 	}

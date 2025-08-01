@@ -211,6 +211,13 @@ cp_cret() /* set cursor at column=0 at the unknown(yet not synced) row */
 }
 
 void
+cp_zero() /* prevent output masking outside screen:
+  rare used to sync off_screen and on_screen writing position */
+{
+	scrn.sc_co = 0; /* not precise, sorry */
+}
+
+void
 cp_abset(li, co, at) /* absolute in hw screen coordinates */
 int li, co, at;
 {

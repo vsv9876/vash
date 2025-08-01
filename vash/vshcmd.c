@@ -598,7 +598,10 @@ tty_cmd_:
 			Tpgrp(v.pid, "VASH", "vshcmd before trapstop()");
 			io_set(VT_ON);
 
+			sigwinch(0);
 			fflush(stdout);
+			/* sync off_screen and on_screen writing position */
+			cp_zero();
 			at_set(msgat);
 			w_str(tmpstr);
 			fflush(stdout);
