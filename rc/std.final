@@ -38,10 +38,8 @@
 #	* *     ;echo # %s='#s' S='#S' *='#*' e='#e'
 # ------------
 # experiment: repeat last command
-#:@      repeat cmd
-#	* *	:@
 :@
-	* *	:_sh
+	* *	_shrpt
 
 :Z
 	* *	:exec vash

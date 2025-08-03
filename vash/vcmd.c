@@ -9,7 +9,7 @@
 /* встроенные функции */
 extern  int     sup(), v_susp();
 extern  int     vshcmd(), menu2();
-extern  int     fsh(), fmenu2();
+extern  int     fsh(), fshrpt(), fmenu2();
 extern  int     ffile(), fmsg(), fmsgerr();
 /*extern  int     rescan();*/
 /* перенесены из встроенных фунций */
@@ -28,6 +28,7 @@ extern  int     kshow();
 FUNTAB funtab[] = {
 	{ "read",       0 },
 	{ "sh",         fsh },
+	{ "shrpt",      fshrpt },
 	{ "menu2",      fmenu2 },
 	{ "cmdset",     cmdset },
 	{ "sup",        sup },
@@ -331,6 +332,16 @@ fsh(cmd)        /* команда sh */
 		/* vshcmd будет использовать старую команду */
 		cmd = NULL/*(char *)0*/;
 	ret = vexcmd(cmd, NULL/*(char *)0*/);
+	return(ret);
+}
+
+int
+fshrpt(cmd)       /* repeat command */
+/*register */char *cmd;
+{
+	int ret;
+	/**cmd = '@';*/
+	ret = vshcmd("@", NULL);
 	return(ret);
 }
 

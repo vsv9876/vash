@@ -7,7 +7,7 @@
 
 # ps.main (this file) included from ps.rc and ps.all
 -p ps
--: -s1 +pwR -l0
+-: -s1 +pw -l0
 
 #
 # preprocessed values:

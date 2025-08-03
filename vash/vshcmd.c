@@ -208,7 +208,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 
 	int cmdrun;             /* ФЛАГ: для воостановления глав.меню: КОМАНДА ЗАПУСКАЛАСЬ */
 	int justrun;            /* флаг: запускать, не редактировать */
-	int trapwait;             /* flag: wait ok after vsystem() */
+	int trapwait;           /* flag: wait '[ok]' after vsystem() */
 	int slsize;				/* количество возможных окончаний */
 
 	int trapcod;		/* flag: trap active, no return from exit indicator */
@@ -233,6 +233,13 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 	if (cmd == (char *)0) {
 	    /* используется последняя команда (уже в буфере) */
 	    ;
+	} else if (*cmd == '@') {
+		/* repeat the command which is in buffer */
+		cmd = (char *)0;
+		cmdlbl = NULL;
+		justrun = 1; trapwait = 0;
+		cod = KB_NL;
+		/*u8swcs(cmd0, cmd);*/
 	} else {
 		if (*cmd == ':' || *cmd == ';') {
 			trapwait = (*cmd == ';')? 0 : 1;
@@ -317,14 +324,14 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			w_cmd(cmd0);
 		}
 		/*cod = re_str((char *)&cmdbuf[0], cmdsize, 0, &pos);*/
-		showtime(0);
+		/*showtime(0);*/
 		showitem(1);
 
 		cod = re_str(cmdo, cmdsize, 0, &pos);
 	    wcuntrim(cmdo, &pos);
 
 	    showitem(0);
-		showtime(1);
+		/*showtime(1);*/
 	    }
 		switch(cod) {
 		default:

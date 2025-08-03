@@ -82,7 +82,7 @@ PARSARGS pa[] = {
 	{ 'R', &vflag.subatrc,  "R,subs in rc",   "substite #@ before command editing" },			/* = 0; substitute '#@' from rc files before cmd editor */
 	{ '@', &vflag.subshow,  "@,show #@",      "show mark '@' on item when command editing" },			/* = 0; substitute '#@' show position on main menu */
 	{ ' ', &vflag.loginf,   " login sh",       "(readonly) vash is login shell" },			/* = 0; // флаг: главная оболочка, ppid() == 1 */
-	{ ' ', &vflag.predef,   " rc-style",       "(readonly) rc-style" },			/* (readonly) rc style selector: 1 - BSD, 0 - other */
+	{ ' ', &vflag.predef,   " rc predef",      "(readonly) rc predef (rc-style)" },			/* (readonly) rc style selector: 1 - BSD, 0 - other */
 	{ 0 },
 	};
 
@@ -517,7 +517,7 @@ char **argv;
 {
 	static
 	const char *stdopts =  /* default compiled options */
-			"+spwc HS R J l8 b64";
+			"+spwc HS J l8 b64";
 	/*char *envsup;   /* environment VASH= options */
 	char *envopts;
 	int c;
