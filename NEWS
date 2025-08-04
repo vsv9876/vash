@@ -5,6 +5,7 @@ vash news (release notes)
   * new design of invocation parameters
   * resizing hwframe
   * preprocessing rc-files against (predef=1 if BSD-like system)
+  * support of repeat a last command
 
 2.0.34
   * job conrtrol
