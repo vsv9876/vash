@@ -4,10 +4,8 @@
 CFLAGS_VISI = -DUSE_TERMIOS
 CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX -DSTRVERSCMP
 
-TERMLIB     = -lncurses
-#TERMLIB     = -ltinfo
+#TERMLIB     = -lncurses
+TERMLIB     = -ltinfo
 
 CC          = gcc $(DEBUG) -std=gnu89 -Wwrite-strings
-##			-std=gnu89 -Wwrite-strings -Wno-implicit-int
-#
 LINKER      = gcc $(DEBUG) 

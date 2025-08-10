@@ -3,11 +3,10 @@
 # since lcc-1.23 most of gcc flags are supported
 CFLAGS_VISI = -DUSE_TERMIOS
 CFLAGS_ASH  = -DJCLsuspend -DSVR4 -DMGROUPS -DLUNIX -DSTRVERSCMP
-ASHLIB      = SVR4
+
 #TERMLIB     = -ltermcap
 TERMLIB     = -lncurses
 #TERMLIB     = -ltinfo
 
 CC          = gcc $(DEBUG) -std=gnu89 -Wwrite-strings
-#
 LINKER      = gcc $(DEBUG)

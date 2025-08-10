@@ -3,7 +3,8 @@
 #
 CFLAGS_VISI = -DUSE_TERMIOS
 CFLAGS_ASH  = -DJCLsuspend -DBSDmagic -DMGROUPS
-ASHLIB      = BSD
+# see ./FreeBSD
+PREDEF = 1
 CC          = cc -O
 LINKER      = cc
 

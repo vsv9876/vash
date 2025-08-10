@@ -6,10 +6,12 @@ CFLAGS_VISI = -DUSE_TERMIOS -DNO_ALLOCA_H
 CFLAGS_ASH    = -DJCLsuspend -DFbsd -DBSDpagesize -DBSDmagic -DMGROUPS \
 				-DNO_STRVERSCMP
 
-# is BSD-like PREDEF=1 else (SYSV,SVR4) PREDEF=0
+# if BSD-like      PREDEF=1
+# else (SYSV,SVR4) PREDEF=0 (omitted if not specified there)
 PREDEF       = 1
 
-TERMLIB     = -ltermcap
+#TERMLIB     = -ltermcap
+TERMLIB     = -ltinfo
 
 #CC          = gcc -traditional
 #LINKER      = gcc -traditional
