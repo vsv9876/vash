@@ -354,7 +354,7 @@ void sigwinch(signo)
 
 	lframe = &lfmain;
 
-	rescan(NULL);
+/*	rescan(NULL);*/
 
 	if (signo)
 		jkb_re();

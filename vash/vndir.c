@@ -45,7 +45,7 @@ char    itmcnm[ITMCNM+1] =      /* Current item's name (saved) */
 int     itmci = -1;             /* Current item's index */
 /*  YESXSTR*/
 
-struct  stat cwdstat;
+static struct  stat cwdstat;
 
 char    cwdpath[U8_STRBUF];   /* CURRENT working directory full name */
 char    lwdpath[U8_STRBUF];   /* LAST working directory full name */
@@ -53,8 +53,12 @@ char    lwdpath[U8_STRBUF];   /* LAST working directory full name */
 int rescan(cmd)
 const char *cmd;
 {
-/*     cwdstat.st_ino = (ino_t)0;   */
-    cwdstat.st_mtime = (time_t)0L;
+	cwdstat.st_dev = (dev_t)0;
+	cwdstat.st_ino = (ino_t)0;
+/*
+    cwdstat.st_mtime = (time_t)0;
+    cwdstat.st_ctime = (time_t)0;
+*/
     return(1);
 }
 
@@ -194,7 +198,7 @@ itmrestor()
 	for(clm._itm = 0; clm._itm < clm._itmmax; clm._itm++) {
 	    i = clm._itm;
 	    cmdsub(itmnnm, "#@", clm._itm, 0, 1);
-	    if (strcmp(itmcnm, itmnnm) == 0) {
+	    if (strncmp(itmcnm, itmnnm, ITMCNM) == 0) {
 		goto adjust;
 	    }
 	}
@@ -210,7 +214,7 @@ itmrestor()
 	    return;
 	}
 adjust:
-	/* имя осталось в меню, надо
+	/* имя осталось(найдено) в меню, надо
 	 * попытаться сохранить положение окна */
 	if (clm._itm >= clm._itmofs && clm._itm <  (clm._itmofs + (clm._xx * clm._yy)))
 	    return;
@@ -310,7 +314,7 @@ int vls()
     if (index(Cfill, 'a')) aflag = 1;*/
 
     len = clm._itmlen = clm._itmmax = 0;
-    clm._itms[0 /*clm._itmmax*/] = itmbp = clm._itmbuf;
+    clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
     *itmbp++ = ' '; /* 1st placeholder */
 
     if ((dirp = opendir(Crepf)) != NULL) {
@@ -820,12 +824,13 @@ int newflag;    /* если 0, то только обновить каталог
 
 	/*samedir = 1;*/
 	if (Crepf[0] == '\0' /*&& Cfill[0] != ':' && Cfill[0] != '-'*/) {
-		samedir = 0;
 		/*
-		 * надо отключить оптимизацию
+		 * отключить оптимизацию
 		 * чтения главного меню
 		 */
+		cwdstat.st_dev = (dev_t)0;
 		cwdstat.st_ino = (ino_t)0;
+		samedir = 0;
 	}
 	else {
 		stat(Crepf, &newstat);
@@ -835,10 +840,12 @@ int newflag;    /* если 0, то только обновить каталог
 				&& cwdstat.st_ino   == newstat.st_ino)
 			samedir = 1;
 
-		if (newflag == 0)
-			if (cwdstat.st_mtime == newstat.st_mtime && samedir) {
-				cwdstat = newstat;
-				return(0);
+		if (newflag == 0 && samedir)
+			if (cwdstat.st_mtime == newstat.st_mtime
+					/*workaround for bug storing cwdstat.st_mtime*/
+					|| cwdstat.st_ctime == newstat.st_ctime) {
+				/*cwdstat = newstat;*/
+				return (0);
 			}
 		cwdstat = newstat;
 	}
@@ -848,8 +855,9 @@ int newflag;    /* если 0, то только обновить каталог
 	if (samedir) {
 		/* сохранить прежний номер и содержимое пункта меню */
 		itmci = clm._itm;
-		strcpy(itmcnm, &clm._itms[itmci /*clm._itm*/][2]);
-/*                cmdsub(itmcnm, "#@", itm, 0, 1);     */
+		strncpy(itmcnm, &clm._itms[clm._itm][2], ITMCNM-1);
+		itmcnm[ITMCNM-1] = '\0';
+/*      TODO:          cmdsub(itmcnm, "#@", itm, 0, 1);     */
 	}
 	else    {
 		itmci = -1;

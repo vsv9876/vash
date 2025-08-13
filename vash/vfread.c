@@ -40,7 +40,7 @@ FILE *fpread;
 	/*signal(SIGINT, SIG_DFL);*/
 	io_set(IO_TTYPE);
 	len = clm._itmlen = clm._itmmax = 0;
-	clm._itms[0 /*clm._itmmax*/] = itmbp = clm._itmbuf;
+	clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
 	*itmbp++ = ' ';
 	*itmbp++ = ' ';
 	while ((c = getc(fpread)) != EOF && stopvfread == 0) {

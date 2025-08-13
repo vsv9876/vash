@@ -4,8 +4,6 @@
 - make clean rules with vexdir initialization
    see example in vtest/pmain.c
 
-- optimize rescan with md5sum
-
 - complete an full utf8 support on '_sh #k' key processing
 
 - complete documenting and make code cleanup of wsobj_t (4k string)

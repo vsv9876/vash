@@ -6,6 +6,7 @@ vash news (release notes)
   * resizing hwframe
   * preprocessing rc-files against (predef=1 if BSD-like system)
   * support of repeat a last command
+  * fix optimization of main menu rebuilding
 
 2.0.34
   * job conrtrol
