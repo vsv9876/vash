@@ -5,8 +5,9 @@ vash news (release notes)
   * new design of invocation parameters
   * resizing hwframe
   * preprocessing rc-files against (predef=1 if BSD-like system)
-  * support of repeat a last command
+  * support of repeat a last command with key macro
   * fix optimization of main menu rebuilding
+  * memory for main menu: auto allocation
 
 2.0.34
   * job conrtrol

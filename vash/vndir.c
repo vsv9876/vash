@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 #include <stdlib.h>
 /*#define _GNU_SOURCE 1*/
 #include <string.h>
@@ -294,8 +296,8 @@ static int     fflag;  /* флаг: не сортировать */
 
 int vls()
 /*
- * ВСТРОЕННАЯ КОМАНДА ls.
- * посчитать пункты, определить макс. длину пункта
+ * embedded variant of ls
+ * count number of items, determine VISIBLE item max length
  */
 {
     DIR *dirp;
@@ -304,7 +306,14 @@ int vls()
 #else
     struct direct *dp;
 #endif
-    register char *itmbp;
+    char *itmbp;  /* item buffer pointer */
+    int   itmbsz;
+    char *ibp_new; /* new item buffer pointer */
+
+    ptrdiff_t ibp_ofs; /* ofset for stored items */
+    int noext = 0;
+    int  itmbextn = 1;  /* extent total number */
+    int  i;
     short len;
     short vlen; /* length in codepoints */
     /*int     aflag;*/  /* флаг: показывать все файлы */
@@ -314,69 +323,70 @@ int vls()
     if (index(Cfill, 'a')) aflag = 1;*/
 
     len = clm._itmlen = clm._itmmax = 0;
-    clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
-    *itmbp++ = ' '; /* 1st placeholder */
 
     if ((dirp = opendir(Crepf)) != NULL) {
       for (dp = readdir(dirp); dp != NULL; dp = readdir(dirp))
       {
-/*              printf("%6ld %s\n", dp->d_ino, dp->d_name);
- */
-		if ( !aflag && dp->d_name[0] == '.'
-			    && strcmp(dp->d_name,"..") != 0)
-			/* skip hidden filenames */
-			continue;
+		/* skip hidden filenames but '..' entry will be passed */
+		if (dp->d_name[0] == '.')
+			if (strcmp(dp->d_name, "..") != 0)
+				if (!aflag)
+					continue;
 
-		/* internal length */
-		len = strlen(dp->d_name);
-		/* visible (on-screen) length  */
-		vlen = u8vsize(dp->d_name);
-
-		if (&clm._itmbuf[clm._itmbsz] <= &itmbp[len]) {
-			w_emsg("No mem for all menu items");
-			break;
-		}
 		fname = dp->d_name;
+		len = strlen(fname); /* internal length */
+		vlen = u8vsize(fname); /* visible (on-screen) length  */
 
-		*itmbp++ = ' '; /* 2nd placeholder */
+		/* initial allocation */
+		if (clm._itmbuf == NULL) {
+			itmbsz = 1 + clm._itmbsz;
+			if ((clm._itmbuf = malloc(itmbsz)) == NULL) {
+				w_emsg("malloc for main buffer: NO MEM... fatal");
+				onintr(1);
+			}
+			clm._itms[0] = itmbp = clm._itmbuf;
+		    /**itmbp++ = ' '; /* 1st placeholder */
+		}
+		/* try to extent item buffer if no room for current entry */
+		if (&clm._itmbuf[itmbsz] <= &itmbp[len]) {
+			itmbextn += 1;
+			itmbsz = 1 + (clm._itmbsz * itmbextn);
+			if ((ibp_new = realloc(clm._itmbuf, itmbsz)) == NULL) {
+				w_emsg("No mem for all menu items");
+				break;
+			}
+			ibp_ofs = ibp_new - clm._itmbuf;
+			clm._itmbuf = ibp_new;
+			/* fix stored pointers */
+			if (ibp_ofs != 0)
+				for (i = 0; i < clm._itmmax; i++)
+					clm._itms[i] += ibp_ofs;
+			itmbp += ibp_ofs;
+		}
 		/* store current item into the table (after 2 placeholders) */
+		clm._itms[clm._itmmax] = itmbp;
+	    *itmbp++ = ' '; /* 1st placeholder */
+		*itmbp++ = ' '; /* 2nd placeholder */
 		strcpy(itmbp, fname);
 		itmbp += len;
 		*itmbp++ = '\0';
-		if ( vlen > clm._itmlen ) clm._itmlen = vlen;
-		if (clm._itmmax >= ITMMAX)
-			break;  /* НО МОЖНО И ПРОСТО ОБРЕЗАТЬ */
-/*              if ((itmmax % 10) == 0) {
-			w_chr('#'); fflush(vttout);
-		}
- */
+		if ( vlen > clm._itmlen )
+			clm._itmlen = vlen;
 		clm._itmmax++;
-		clm._itms[clm._itmmax] = itmbp;
-		*itmbp++ = ' ';
+		if (clm._itmmax >= ITMMAX)
+			break;
 		}
         closedir(dirp);
     }
     else {
     	return(1); /* ERROR filling main menu */
     }
-    *itmbp++ = '\0';
-    if (clm._itmmax == 0) {
-	    strcpy(clm._itmbuf, " /..");
-	    vlen = 4;
-	    clm._itmmax++;
-    }
-    if ( vlen > clm._itmlen ) clm._itmlen = vlen;
-    clm._itmlen++;
-/*  w_str("sort..."); fflush(vttout);
- */
+
     if ( ! fflag ) {
-    	if (Vflag)
-        	qsort(clm._itms, clm._itmmax, sizeof(char *), vscomp);
-    	else
-    		qsort(clm._itms, clm._itmmax, sizeof(char *), scomp);
+    	if (Vflag) qsort(clm._itms, clm._itmmax, sizeof(char *), vscomp);
+    	else       qsort(clm._itms, clm._itmmax, sizeof(char *), scomp);
     }
-/*  w_str("done"); fflush(vttout);
- */
+
     return(0);  /* OK */
 }
 
@@ -400,6 +410,15 @@ char *file;
     char  *ip;
 
     /*if (index(Cfill, 'a')) aflag = 1;*/
+	/* in progress:TODO: автоматически подбирать размер itmbsz */
+	/*
+	 * this malloc/realloc must be inside of vls() and/or vfread();
+	 */
+
+	if ((clm._itmbuf = malloc(clm._itmbsz + 1)) == (char *)0) {
+		w_emsg("malloc a main buffer: no mem... fatal");
+		onintr(1);
+	}
 
     len = clm._itmlen = clm._itmmax = 0;
     clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
@@ -865,11 +884,7 @@ int newflag;    /* если 0, то только обновить каталог
 	}
 	if (clm._itmbuf != (char *)0)
 		free(clm._itmbuf);
-	/* можно и автоматически подбирать размер itmbsz */
-	if ((clm._itmbuf = malloc(clm._itmbsz + 1)) == (char *)0) {
-		w_emsg("No mem for main buffer...");
-		onintr(1);
-	}
+	clm._itmbuf = (char *)0;
 
 	if (fil_first) {
 		fil_first = 0;
@@ -934,7 +949,7 @@ int newflag;    /* если 0, то только обновить каталог
 	}
 	w_emsg("");
 
-	vlstag();		/* маркировать файлы подобно ls -F */
+	vlstag();		/* маркировать (items)файлы подобно ls -F */
 
 	itmini();       /* ПОСЧИТАТЬ ГАБАРИТЫ МЕНЮ */
 	itmrestor();

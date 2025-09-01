@@ -171,7 +171,7 @@ int ok;
 }
 
 /*ARGSUSED*/
-int onintr(signo)
+void onintr(signo)
 {
 	onexit(1);
 	printf("\n(%-d)bye\n", signo);
@@ -517,7 +517,7 @@ char **argv;
 {
 	static
 	const char *stdopts =  /* default compiled options */
-			"+spwc HS J l8 b64";
+			"+spwc HS J l8 b1";
 	/*char *envsup;   /* environment VASH= options */
 	char *envopts;
 	int c;

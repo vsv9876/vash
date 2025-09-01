@@ -254,6 +254,8 @@ extern int cvt_fd(LINE *, kbcod, char *, char *);
 
 extern int Tpgrp(pid_t, const char *, const char *);
 
+extern void onintr(int);
+
 /*extern  u8sobj_t *Cfill_o;*/
 extern  char Cfill_o[/*STR_OVRSZ+4*/];
 extern  char *Cfill;

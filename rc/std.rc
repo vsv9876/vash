@@ -14,7 +14,7 @@
 # syntax description and comments moved to ./std.SYNTAX
 
 #-1!sh
--2
+-2@rptsh
 -3?
 -4edit
 -5cp
@@ -53,10 +53,10 @@
 #
 # User menu (experimental status)
 #
-:2
-:U2
-	r?x ?   _menu2 std.menu
-#	* ?     _f_ls
+#:2
+#:U2
+#	r?x ?   _menu2 std.menu
+##	* ?     _f_ls
 
 # included co-profile for VIEW an object
 #
@@ -259,7 +259,7 @@
 # have to be moved into std.menu
 :U
 	* -     :du -sh
-	* *	:du -s ##
+	* *	:du -s #
 
 @std.final
 #<<< std.rc

@@ -39,6 +39,7 @@
 # ------------
 # experiment: repeat last command
 :@
+:2
 	* *	_shrpt
 
 :Z

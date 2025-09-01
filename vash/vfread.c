@@ -1,3 +1,7 @@
+
+#include <stddef.h>
+#include <stdlib.h>
+
 #include <sys/types.h>
 #include <stdio.h>
 #include <signal.h>
@@ -26,16 +30,33 @@ vfread(fpread)
 /* -- calling from vndir.c:fil_vf() */
 FILE *fpread;
 /*
- * Заполнить буфер пунктов меню через внешнюю команду:
+ * fill item buffer vith extra (shell) command
  * посчитать пункты, определить макс. длину пункта
  */
 {
-	register char *itmbp;
+    char *itmbp;  /* item buffer pointer */
+    int   itmbsz;
+    char *ibp_new; /* new item buffer pointer */
+
+    ptrdiff_t ibp_ofs; /* ofset for stored items */
+    int noext = 0;
+    int  itmbextn = 1;  /* extent total number */
+    int  i;
 	short len;
 	int c;
 
-	stopvfread = 0;
 	/*signal(SIGINT, sig_vfread);*/
+	/* initial allocation */
+	if (clm._itmbuf == NULL) {
+		itmbsz = 1 + clm._itmbsz;
+		if ((clm._itmbuf = malloc(itmbsz)) == NULL) {
+			w_emsg("malloc for main buffer: NO MEM... fatal");
+			onintr(1);
+		}
+		clm._itms[0] = itmbp = clm._itmbuf;
+	    /**itmbp++ = ' '; /* 1st placeholder */
+	}
+
 	vfr_fp = fpread;
 	/*signal(SIGINT, SIG_DFL);*/
 	io_set(IO_TTYPE);
@@ -44,8 +65,26 @@ FILE *fpread;
 	*itmbp++ = ' ';
 	*itmbp++ = ' ';
 	while ((c = getc(fpread)) != EOF && stopvfread == 0) {
+/*
 		if (&clm._itmbuf[clm._itmbsz] == itmbp)
 			break;
+*/
+		/* try to extent item buffer if no room for current entry */
+		if (&clm._itmbuf[itmbsz] <= &itmbp[1]) {
+			itmbextn += 1;
+			itmbsz = 1 + (clm._itmbsz * itmbextn);
+			if ((ibp_new = realloc(clm._itmbuf, itmbsz)) == NULL) {
+				w_emsg("No mem for all menu items");
+				break;
+			}
+			ibp_ofs = ibp_new - clm._itmbuf;
+			clm._itmbuf = ibp_new;
+			/* fix stored pointers */
+			if (ibp_ofs != 0)
+				for (i = 0; i < clm._itmmax; i++)
+					clm._itms[i] += ibp_ofs;
+			itmbp += ibp_ofs;
+		}
 
 		if (c == '\n') {
 			/* конец очередной строки */
@@ -69,7 +108,7 @@ FILE *fpread;
 	}
 	*itmbp++ = '\0';
 	if (clm._itmmax == 0) {
-		strcpy(clm._itmbuf, " /.."); /* finsh dummy list with ".." element */
+		strcpy(clm._itmbuf, " .."); /* finish dummy list with ".." element */
 		len = 4;
 		clm._itmmax++;
 	}

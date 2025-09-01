@@ -19,6 +19,7 @@ pre_vf()
 	register int j;
 	int yyxx, x0x;
 	unsigned msize, pagesize;
+	register char *p;
 
 	if (clm._vf != (LINE *)0)
 	    free((char *)clm._vf);
@@ -50,10 +51,17 @@ pre_vf()
 			clm._vf[i].size = clm._dx;
 			/* clm._vf[i].size = 20; /* test for hack */
 			/* keep attributes of items selected */
+			p = clm._itms[i + clm._itmofs];
+			if (*p == MONEY) {
+				clm._vf[i].attr = ATT|INP|NED|LFASTR;
+			} else if (*p == '<'
+					|| *p == '>') {
+/* replacement is above
 			if (*clm._itms[i + clm._itmofs] == MONEY) {
 				clm._vf[i].attr = ATT|INP|NED|LFASTR;
 			} else if (*clm._itms[i + clm._itmofs] == '<'
 					|| *clm._itms[i + clm._itmofs] == '>') {
+*/
 				clm._vf[i].attr = ATT|VEXT|INP|NED|LFASTR;
 			} else {
 				clm._vf[i].attr = clm._ltmpl->attr; /* TXT|INP|NED|LFASTR; */

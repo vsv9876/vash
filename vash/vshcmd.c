@@ -237,8 +237,17 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		/* repeat the command which is in buffer */
 		cmd = (char *)0;
 		cmdlbl = NULL;
-		justrun = 1; trapwait = 0;
-		cod = KB_NL;
+		trapwait = 0;
+		/*if buffer of prev command is NOT empty*/
+		if (cmd0[0] != L'\0') {
+			justrun = 1;
+			/*trapwait = 0;*/
+			cod = KB_NL;
+		} else {
+			/* else TODO */
+			justrun = 0;
+			cod = KB_AL;
+		}
 		/*u8swcs(cmd0, cmd);*/
 	} else {
 		if (*cmd == ':' || *cmd == ';') {
@@ -337,6 +346,13 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 		default:
 			bell();
 			continue;
+#if 0
+			/* this case does not working - re_str() above does not return on KB_SP*/
+		case ' ':
+			if (pos == 0 || cmd0[pos] == L'\0')
+				return(1);
+			break;
+#endif
 		case KB_HE:
 			/* similar as on KB_EX */
 			if (cmdvew(cmd0) >= 2) {
