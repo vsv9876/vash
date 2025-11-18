@@ -1,6 +1,12 @@
 /*
- * by vsv@st.simbirsk.su
+ * VASH - visual assistant for shell
+ * Copyright (c) 1990-2025 Sergey Vovk <vsv>
  *
+ * License: GPL and/or MIT,
+ * see files COPYING and LICENSE
+ */
+
+/*
  * проверка принадлежности пользователя к группе
  *
  * используется getgroups(3p)

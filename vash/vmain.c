@@ -1,3 +1,11 @@
+/*
+ * VASH - visual assistant for shell
+ * Copyright (c) 1990-2025 Sergey Vovk <vsv>
+ *
+ * License: GPL and/or MIT,
+ * see files COPYING and LICENSE
+ */
+
 #include <signal.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -330,7 +338,7 @@ const char *cmd;
 	kbcod cod;
 	int i, ilast;
 
-	cod = pmtrstr(" jump to pos: ", pattpos, 20);
+	cod = pmtrstr(" jump to : ", pattpos, 20);
 	if (strchr(pattpos, '*') || strchr(pattpos, '?'))
 		ispatt++;
 
