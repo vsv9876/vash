@@ -14,31 +14,32 @@ Source of this project may be found on
 
 Files and directory of distibution:
 
-README		this text
-COPYING		GPL.v2 license text
-LICENSE		MIT license text
-COMPILE		instructions how to build binaries including historical notes
-COMPILE.ru	obsoleted instruction in russian
-VERSION		version of distibution
-WISHES		noted an ideas for future enhancements
-PLAN		nearest plan of fixes (not in order)
-BUGS		fixes required
+README          this text
+COPYING         GPL.v2 license text
+LICENSE         MIT license text
+COMPILE         instructions how to build binaries including historical notes
+COMPILE.ru      obsoleted instruction in russian
+VERSION         version of distibution
+WISHES          noted an ideas for future enhancements
+PLAN            nearest plan of fixes (not in order)
+BUGS            fixes required
 
-MK-srpm.sh, DEBIAN, DEBIAN.sh	- scripts to build packages
+MK/*            scripts to build packages
+DEBIAN/         stuff to build debian package
 
-configure	script for configuring compiling (not a GNU toolchain but compatible)
-conf/		specs and configuration variants
-Makefile	main makefile
+configure       script for configuring compiling (not a GNU toolchain but compatible)
+conf/           specs and configuration variants
+Makefile        main makefile
 
-bin/		scripts to be installed with compiled binaries
-etc/		samples of terminal configs from vhset, installed as /etc/vhset
-lib/		source of help pages
-misc/		miscellaneous staff
-rc/		rc files and profiles
-vash/		sources of vash main binary
-vash.1		manual sources
-vhset/		vhset utility sources
-vhset.1		vhset manual
-visi/		embedded VISI project, included with with shortened docs
-vtest/		test program for debug VISI itself
+bin/            scripts to be installed with compiled binaries
+etc/            samples of terminal configs from vhset, installed as /etc/vhset
+lib/            source of help pages
+misc/           miscellaneous staff
+rc/             rc files and profiles
+vash/           sources of vash main binary
+vash.1          manual sources
+vhset/          vhset utility sources
+vhset.1         vhset manual
+visi/           embedded VISI project, included with with shortened docs
+vtest/          test program for debug VISI itself
 

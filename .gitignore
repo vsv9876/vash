@@ -6,6 +6,7 @@
 .kde*
 .git
 .log*
+.*.kate-swp
 buildd.h
 BLD
 BLD.cfg
