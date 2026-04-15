@@ -23,24 +23,32 @@ alt     = c  "alternate..."
 =LINLIB actions
 
 +.activa..........................                   .common.................   *
-+ start editing untouched .:SP... .VARi .VAR.         .:HE... help              *
-+       - cleaning before .:DE...                     .:EX... exit/close page   *
-+                                                     .:NL... commit,complete   *
-+ alter forward           .:SP... .ALTi .ALT.         .:CA... cancel            *
-+       - backward        .:DE...                     .:RE... refresh page      *
-+                                                                               *
-+ select item    .:NL...| .:SP... .MSEi .MSE.        .page_n..................  *  
++ .MSE. select item    .:NL...| .:SP... .MSEi         .:HE... help              *
++                                                     .:EX... exit/close page   *
++ .ALT. alter           forward .:SP... .ALTi         .:NL... commit,complete   *
++                      backward .:DE...               .:CA... cancel            *
++                                                     .:RE... refresh page      *
++ .VAR. edit start    untouched .:SP... .VARi                                   *
++                  clean before .:DE...              .page_n..................  *  
 +                                                     .:TA... next line         *
-+                                                     .:KH... jump to 1st line  *
-+.onedit..........................                    .:KE... jump to last line *
-+ .:DE... erase left from cursor  .alt..........      .:PD... next page/part    *
-+ .:KD... erase below cursor       .:PR .:DE...       .:PU... prev page/part    *
-+                erase up to end   .:PR .:SP...                                 *
-+ .:KH... jump to 1st symbol       .:PR .:AL...      .specia..................  *   
-+ .:KE... jump to end of text      .:PR .:AR...       .:KP... keypad on/off     *
-+ .:KI... toggle Ins/Ovr mode      .:PR .:PR...       .:PR... prefix            *
-  
++.onedit..........................                    .:KH... jump to 1st line  *
++ .:DE... erase left from cursor  .alt..........      .:KE... jump to last line *
++ .:KD... erase below cursor       .:PR .:DE...       .:PD... next page/part    *
++                erase up to end   .:PR .:SP...       .:PU... prev page/part    *
++ .:KH... jump to 1st symbol       .:PR .:AL...                                 *
++ .:KE... jump to end of text      .:PR .:AR...      .specia..................  *   
++ .:KI... toggle Ins/Ovr mode      .:PR .:PR...       .:KP... keypad on/off     *
+                                                      .:PR... prefix            *
+                                                                                *
                           VISI/LINLIB Copyright (C) 1986-1990 vsv & team
-                                      Copyright (C) 2020-2025 Sergey Vovk <vsv>
+                                      Copyright (C) 2020-2026 Sergey Vovk <vsv>
 
 ---END                          
++ .MSE. select item    .:NL...| .:SP... .MSEi   
++                                               
++ .ALT. alter           forward .:SP... .ALTi   
++                      backward .:DE...         
++                                               
++ .VAR. edit start    untouched .:SP... .VARi   
++                  clean before .:DE...         
++                                               

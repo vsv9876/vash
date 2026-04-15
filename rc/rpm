@@ -34,7 +34,7 @@
 -5depnds
 -6provds
 -7whtreq
--8erase
+-8remove
 -9SETUP
 -0quit
 #------------------------------------------
@@ -88,8 +88,8 @@
 
 :U8
 :8
-       * -   yum erase #@
-       * +   yum erase ##
+       * -   yum remove #@
+       * +   yum remove ##
 :U9
 :9
        * *   _sup

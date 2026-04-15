@@ -126,8 +126,9 @@ int msgat;
 		cod = r_cod(0);
 		switch (cod) {
 		case KB_HE:
-			w_help((LINE *)"excode_help.lb");
-			break;
+			/*unr_c(KB_AD);*/
+			unr_c('!');
+			/*NO BREAK*/
 		case KB_AU:
 		case KB_AD:
 		case KB_AL:
@@ -139,6 +140,11 @@ int msgat;
 			scrlnl();
 			onexit(0); exit(0);
 			break;
+#if 0
+		case KB_HE:
+			w_help((LINE *)"excode_help.lb");
+			break;
+#endif
 		default:
 			if (vflag.exittrap) {
 				if (cod == KB_NL || cod < ' ' || ISCTL(cod)) {

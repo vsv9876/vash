@@ -183,6 +183,7 @@ int signo;
 
 	/* this is restriction for lfmain to use classic 24 lines */
 	lfmain.maxli  =  24;
+	/*lfmain.maxli  =  hwframe.maxli; TODO complete hacking a limit 24 lines*/
 	lfmain.baseli = hwframe.maxli - lfmain.maxli;
 	if (lfmain.baseli < 0) {
 		lfmain.maxli = hwframe.maxli;

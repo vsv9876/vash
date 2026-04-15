@@ -1,26 +1,24 @@
 
-LINLIB
-- revive linlib/visi library as a separate project
-
-- man linlib (en) + actualize russian versions
-
-- return cursor moving on r_page() to simple wrap columns and rows (as in the past)
+	LINLIB
 
 - inheritance from stty cooked:
    intr, erase, werase, kill, eof, tstop
 
-VISI (LBP,VCC,VLBP)
-- filler character should be [~_#], not limited by [.]
+- revive linlib/visi library as a separate project
 
-VASH
+- man linlib (en) + actualize russian versions
+
+	VISI (LBP,VCC,VLBP)
+
+- filler/starter character of line should be [~_#], not limited by [.]
+
+	VASH
+
 - history:
 -- separate shorthand cache(history) and log(conduit) files;
 -- make the conduit compatible with .bash_history (timestamp support required)
 
 - substitution some metasymbols before internal commands
-
-- export vash flags (which was changed in setup page),
-  on execve() with VASH= environment
 
 -+ rescan dir: keep cursor position near last known item,
 -- keep last item name regarding -@ parameter (item name fragment)
@@ -33,13 +31,10 @@ VASH
  
 -- extended file attributes permissions check (<rwx> unsufficient) 
 
--- work with very big directories and inode numbers
+-? work with very big directories and inode numbers
    (realloc vs constant static allocation)
 
 -- more compact rendering of main menu - maximum width of item
    must be recalculated on every column
    (now common for all columns -- since 'comint'-compatible)
-
--- navigating of main menu: add functions __next, __prev, __pgup, etc...
-   and make links with them via rc files
 
