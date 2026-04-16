@@ -8,7 +8,9 @@
 
 - complete documenting and make code cleanup of wsobj_t (4k string)
 
-- markup sources with copyright headers
-
 - complete support for marker 'x' visual attributes
   (lbp, vcc, vlbp)
+
+- return cursor moving on r_page() to simple wrap columns and rows (as in the past)
+
+- fix limit 2..20 for linesmax

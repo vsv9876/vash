@@ -10,13 +10,14 @@ This software is free software, distributed with GPL License.
 File LICENSE applied. Please, keep copyright notice above.
 
 Source of this project may be found on
-    https://https://github.com/vsv9876/vash
+    https://sourceforge.net/projects/vash/
+    https://github.com/vsv9876/vash/
 
 Files and directory of distibution:
 
 README          this text
-COPYING         GPL.v2 license text
-LICENSE         MIT license text
+COPYING         GPL.v2 license
+LICENSE         MIT license
 COMPILE         instructions how to build binaries including historical notes
 COMPILE.ru      obsoleted instruction in russian
 VERSION         version of distibution

@@ -44,11 +44,3 @@ alt     = c  "alternate..."
                                       Copyright (C) 2020-2026 Sergey Vovk <vsv>
 
 ---END                          
-+ .MSE. select item    .:NL...| .:SP... .MSEi   
-+                                               
-+ .ALT. alter           forward .:SP... .ALTi   
-+                      backward .:DE...         
-+                                               
-+ .VAR. edit start    untouched .:SP... .VARi   
-+                  clean before .:DE...         
-+                                               

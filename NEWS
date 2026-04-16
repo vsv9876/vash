@@ -1,16 +1,13 @@
 vash news (release notes)
 
-2.1.0.dev
-  * job control
+2.1.1.dev
   * new design of invocation parameters
+  * job control
   * resizing hwframe
-  * preprocessing rc-files against (predef=1 if BSD-like system)
-  * support of repeat a last command with key macro
+  * preprocessing rc-files (predef=1 if BSD-like system)
+  * support of repeat a last command with single key macro
   * fix optimization of main menu rebuilding
   * memory for main menu: auto allocation
-
-2.0.34
-  * job conrtrol
 
 2.0.33
   * total rewrite source confirming ANSI syntax

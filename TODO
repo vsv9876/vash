@@ -1,7 +1,0 @@
-    LINLIB
-
-- return cursor moving on r_page() to simple wrap columns and rows (as in the past)
-
-    VASH
-
-fix limit 2..20 for linesmax
