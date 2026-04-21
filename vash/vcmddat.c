@@ -257,9 +257,11 @@ open_include:
 				w_msg(ERR, ws);
 				return(0);
 			}
+#ifdef RCDUMP
 			if (predump) {
-				printf("#+++ fpix=%d ------------------- <@%s> \n", fpix, fname);
+				printf("# >>> '%s' [%d]\n", fname, fpix);
 			}
+#endif
 		}
 skip:
 		while (fgets(ws, WSMAX, fp[fpix]) != NULL) {
@@ -295,10 +297,15 @@ skip:
 			if (noskip == 0) {
 				continue;
 			}
-
+#ifdef RCDUMP
 			if (predump && *p != '\0') {
+#if RCDUMP == 1
 				printf("%s", p);
+#else
+				printf("%s|%s", fname, p);
+#endif
 			}
+#endif
 			/* 1st symbol determins processing of rest of the string */
 			switch (*p) {
 			case '#':
@@ -368,10 +375,15 @@ skip:
 			}
 			/* TODO здесь мог быть анализ ошибок... */
 		}
+#ifdef RCDUMP
 		if (predump) {
-			printf("#--- fpix=%d -----------------------\n", fpix);
+			if (fname)
+				printf("# <<< '%s' [%d]\n", fname, fpix);
+			else
+				printf("# <<< EOF [%d]\n", fpix);
 		}
-		fclose(fp[fpix]); fp[fpix] = NULL;
+#endif
+		fclose(fp[fpix]); fp[fpix] = NULL; fname = NULL;
 		fpix--;
     }
 	kt2_ix++; kt1_ix++; /* ЗАКРЫТЬ ТАБЛИЦЫ: */

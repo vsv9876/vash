@@ -63,8 +63,8 @@
 :[*]
     rwx -   _msg rwx -
     rwx +   _msg rwx +
-    ?-? -   _msg --- -
-    ?-? +   _msg --- +
+#    ?-? -   _msg --- -
+#    ?-? +   _msg --- +
 
 :U5
 :5

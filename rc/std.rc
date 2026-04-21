@@ -1,9 +1,7 @@
 #!/usr/bin/vash
 #
-# NOTE:shebang used only for auto syntax colorize by text editors
-#
 # Visual Assistant Shell (vash)
-# 1990-2025 Sergey Vovk
+# 1990-2026 Sergey Vovk
 #
 # GPL license
 #
@@ -259,7 +257,6 @@
 # have to be moved into std.menu
 :U
 	* -     :du -sh
-	* *	:du -s #
+	* *	:du -s ## | sort -n
 
 @std.final
-#<<< std.rc

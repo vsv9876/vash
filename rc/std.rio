@@ -1,11 +1,9 @@
 #!/usr/bin/vash
 #
-#>>> std.rio
-#
 # mark for redirect stdin/stdout
 :>
 	* ?	_mark >#
 :<
 	* ?	_mark <#
 
-#<<< std.rio
+#

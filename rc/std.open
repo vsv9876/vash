@@ -1,7 +1,5 @@
 #!/usr/bin/vash
 #
-#>>> std.open
-#
 # file edit
 
 #-4open+w
@@ -78,4 +76,4 @@
 	r?? D *.exe     dos #@
 	??? * *		_err no action defined for '#@'
 
-#<<< std.open
+#

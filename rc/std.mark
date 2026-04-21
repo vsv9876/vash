@@ -1,7 +1,5 @@
 #!/usr/bin/vash
 #
-#>>> std.mark
-#
 # mark menu items (files) and unmark them
 #
 :+
@@ -26,4 +24,4 @@
 :[_]
         * ?     _f_ls
 
-#<<< std.mark
+#

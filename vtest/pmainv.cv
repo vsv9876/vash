@@ -79,8 +79,8 @@ bli     = vip    -      "%3d"  -       -       &lfmain.baseli
            .co          
         width1= .d1 .e_tst1.......        .'"'     e_str(3)
         width2= .d2 .e_tst2.......        .':;     e_str(5)
+
                     .m_exit.......
-                                    
                                     
                                     
 ---END                                            

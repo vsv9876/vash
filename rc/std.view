@@ -1,6 +1,6 @@
 #!/usr/bin/vash
 #
-#>>> std.view
+# std.view
 
 -3view
 
@@ -60,4 +60,4 @@
 #	??? ? *              _file #@
 	??? ? *              :file #@; ls -ld #@
 
-#<<< std.view
+#

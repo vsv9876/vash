@@ -1,7 +1,5 @@
 #!/usr/bin/vash
 #
-#>>> std.final
-#
 # last resort section,
 # may be used in any *.rc as a last included file
 #
@@ -57,4 +55,4 @@
 :*
 	* * _msg Please, switch keyboard to ASCII/Latin mode
 
-#<<< std.final
+#

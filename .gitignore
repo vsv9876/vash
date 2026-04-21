@@ -19,7 +19,9 @@ conf.cfg
 *.so
 vash
 vhset
+vtest
 pmain
+a
 a.out
 lbp
 vcc

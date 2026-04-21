@@ -22,4 +22,3 @@
     * *   :exec vash ps.all
 #    * *   _cmdset ps.all
 @ps.common
-#<<< ps.rc

@@ -1,8 +1,7 @@
 #!/usr/bin/vash
+#
 # this is vash rc profile
-
-#>>> std.cmd
-
+#
 # included sections:
 # shell (bash) command
 
@@ -29,4 +28,4 @@
 #        * *     :/bin/csh -cf "suspend; exit 0;"
 	* *     _sus
 
-#<<< std.cmd 
+#

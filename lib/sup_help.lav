@@ -25,19 +25,19 @@ ymax    = ipv   -       "%4d"   -       t_ymax  yy_max
  history/sync  history save on exit or sync on every command
  scroll        keep command listing or clear screen on every command
  panel/keybar  show action labels of keys 0...9 
- title(who)    title of vash session - depends on environment .'VASH_LABEL
- title on xterm if supported by X window manager
+ title(who)    title of vash session - depends on .'VASH_LABEL env
+ title on xterm if supported by window manager
  mail_biff     indicate new mail incoming
- clock         show clock, during screen mode only
+ clock         show clock
 
                ."readonly runtime parameters                                 ".
  maxli/maxco   maximum lines/columns (size of the screen)
- vexdir        search path for directories with configuration files
+ vexdir        searching path for directories of rc files .'VASH_EXDIR env
 
                ."debug of profiles                                           ".
-               NOTE: it's better to don't touch if not sure, read manual 1st
+          NOTE: it's better to don't touch if not sure, 1st read manual
  --:           command for fill of main menu
- -i:           input file - whatching it for new scan of main menu
+ -i:           input file: watching changes on it then refrech main menu
  -@:           substitution rule for items from main menu
 ---# -o:           parameter not used, reserved
 ---END
