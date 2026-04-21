@@ -137,7 +137,7 @@ typedef struct {
 } VASHFLAG;
 
 extern int	predump;	/* print on stdout preprocessed profile then exit */
-#define RCDUMP 0
+#define RCDUMP 1
 
 /*extern VASHFLAG nu_vashflag; /* defined in main.c */
 
