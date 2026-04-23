@@ -176,7 +176,8 @@ extern void parsopt(char *);
 extern const char   *vexdir; /* visi/linlib extra files directory */
 /*extern const char   *vapath; /* vash library search path */
 /*extern const char   *vashrc; /* vash runtime cmdset (rc, profile) */
-extern char   *cwd;
+/*extern char   *cwd;*/
+extern char   cwdpath[];
 extern int     t_file();
 
 extern int     /*maxli, maxco,*/ y0_top;
@@ -288,6 +289,7 @@ extern void blk_on(void);
 extern void blk_off(void);
 extern void blk_new(void);
 extern void blk_sigchld(int);
+extern void conduit(char *);
 
 extern void on_onchld(void);    /*set handler*/
 extern void Signal(int, void *);

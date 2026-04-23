@@ -35,7 +35,7 @@ int predump = 0;
 
 /*char   *envshell;		/* env SHELL= */
 /*char   *homedir;        /* домашний каталог */
-char   *cwd;            /* текущий (рабочий) каталог */
+/*char   *cwd;            /* текущий (рабочий) каталог */
 
 /*VASHFLAG *vflag;*/
 #if defined(PREDEF)

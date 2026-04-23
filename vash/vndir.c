@@ -940,6 +940,9 @@ int newflag;    /* если 0, то только обновить каталог
 	    	p++;
 	    }
 	}
+
+    conduit(NULL);
+
     if (fpopen) {
     	/*TODO substitution */
 		cmdsub(tmpbuf, p, 0, 0, 1);

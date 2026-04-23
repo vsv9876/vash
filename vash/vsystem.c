@@ -625,6 +625,42 @@ int  execmode;
 
 static char out_str[MAXLICO/*800*/] = "";
 
+/*
+ * write log file on every command executed
+ */
+static char *confile = NULL;
+void conduit(cmd)
+char *cmd;
+{
+	static char str[STRBUF];
+	char  buf[U8_STRBUF];
+	char *outstr;
+	FILE *logfp;
+
+	if (confile == NULL) {
+		str[0] = '\0';
+		confile = str;
+		if (v.home != NULL) {
+			strcpy(confile, v.home);
+			strcat(confile, "/.vash_log");
+		}
+	}
+	/* log rescan event in case dummy cmd string */
+	if (cmd == NULL) {
+		sprintf(buf, "cd %s; vash '%s' -- %s", cwdpath, v.rc, Cfill);
+		outstr = buf;
+	} else {
+		outstr = cmd;
+	}
+	if (confile != NULL && strlen(confile)) {
+		logfp = fopen(confile, "a");
+		if (logfp) {
+			fprintf(logfp, "%d# %s\n", v.pid, outstr);
+			fclose(logfp);
+		}
+	}
+}
+
 int shexec(cmd, cmdlbl, execmode, execpref)
 char *cmd;      /* собственно команда, которую надо выполнить */
 char *cmdlbl;   /* строка для индикации, как правило == cmd */
@@ -650,11 +686,13 @@ int  execpref;
 	p = cmd;
 	i = 0;
 	cmd2[i] = '\0';
+#if 0
 	if ( execpref ) {
 		/*VARARGS*/
 		sprintf(cmd2, "exec ");
 		i += 5;
 	}
+#endif
 	/* подставить пометку станд. ввода */
 	if (mark_i >= 0) {
 		strcat(&cmd2[i], "<");
@@ -747,6 +785,7 @@ int  execpref;
 
 	fflush(stdout);
 
+	conduit(cmd2);
 
 	/* выполнить команду */
 	if (execmode & ASH_NOSH) {
@@ -843,6 +882,8 @@ char *cmdlbl;   /* строка для индикации, как правило
 		execmode |= (execargv ? ASH_NOSH : 0);
 	}
 	/*shprolog();*/
+	/*conduit(cmd);*/
+
 	jobnum = shexec(cmdp, cmdlbl, execmode, execpref);
 	fflush(stdout);
 
