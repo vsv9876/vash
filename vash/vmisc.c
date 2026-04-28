@@ -790,7 +790,7 @@ char *s;        /* формат для подстановки */
 		if(toend) {
 			while (*inps != '\0') *p++ = *inps++;
 		} else {
-			while (isspace(*inps) == 0) *p++ = *inps++;
+			while (*inps != '\0' && isspace(*inps) == 0) *p++ = *inps++;
 		}
 		*p = '\0';
 	}

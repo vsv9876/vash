@@ -580,8 +580,7 @@ vlstag() {
 	}
 }
 
-int binpwd(cwd)
-char *cwd;
+void binpwd()
 {
 #ifdef  pdp11
 	if (cwdpath[0] == '\0' && getwd(cwdpath) == 0) {
@@ -785,7 +784,7 @@ cwdshow()
 	}
 	lblen += /*strlen*/u8vsize(mode_tmpstr);
 
-	binpwd(cwdpath);
+	binpwd();
 
 /*	sprintf(tmpstr, "[ %s ]", cwdpath); */
 	if (vflag.xtermf) {

@@ -628,34 +628,52 @@ static char out_str[MAXLICO/*800*/] = "";
 /*
  * write log file on every command executed
  */
-static char *confile = NULL;
 void conduit(cmd)
 char *cmd;
 {
-	static char str[STRBUF];
+	static char *logfile = NULL;
+	static char str[STRBUF] = "";
 	char  buf[U8_STRBUF];
 	char *outstr;
+	char *ep;
 	FILE *logfp;
+	time_t ontime;
 
-	if (confile == NULL) {
-		str[0] = '\0';
-		confile = str;
-		if (v.home != NULL) {
-			strcpy(confile, v.home);
-			strcat(confile, "/.vash_log");
+	if (logfile == NULL) {
+		logfile = str;
+		ep = getenv("VASH_LOG");
+		if (ep != NULL) {
+			if (ep[0] == '/')
+				strcpy(logfile, ep);
+			else {
+				if (v.home != NULL) {
+					strcpy(logfile, v.home);
+					strcat(logfile, "/");
+					if (ep[0] == '\0')
+						strcat(logfile, ".vash_log");
+					else {
+						strcat(logfile, ep);
+					}
+				}
+			}
 		}
 	}
-	/* log rescan event in case dummy cmd string */
-	if (cmd == NULL) {
-		sprintf(buf, "cd %s; vash '%s' -- %s", cwdpath, v.rc, Cfill);
-		outstr = buf;
-	} else {
-		outstr = cmd;
-	}
-	if (confile != NULL && strlen(confile)) {
-		logfp = fopen(confile, "a");
+	if (logfile != NULL && strlen(logfile)) {
+		ontime = time(NULL);
+		/* log rescan event in case dummy cmd string */
+		if (cmd != NULL) {
+			outstr = cmd;
+		} else {
+			binpwd(); /* 1st invocation is there */
+			outstr = buf;
+			/*sprintf(buf, "#%d\ncd '%s'; vash '%s' -- '%s'",
+					ontime, cwdpath, v.rc, Cfill);*/
+			sprintf(buf, "cd '%s'; vash '%s' -- '%s'",
+					cwdpath, v.rc, Cfill);
+		}
+		logfp = fopen(logfile, "a");
 		if (logfp) {
-			fprintf(logfp, "%d# %s\n", v.pid, outstr);
+			fprintf(logfp, "#%d\n%s\n", ontime/*v.pid*/, outstr);
 			fclose(logfp);
 		}
 	}
@@ -671,6 +689,7 @@ int  execpref;
 	 * макс. длина аргументов + длина префикса "exec "
 	 */
 	char cmd2[NCARGS + 6];
+	char *c2;
 	char *argv[7];
 	int jobnum;         /* starting job number */
 	int i;
@@ -686,13 +705,14 @@ int  execpref;
 	p = cmd;
 	i = 0;
 	cmd2[i] = '\0';
-#if 0
+	c2 = cmd2;
 	if ( execpref ) {
 		/*VARARGS*/
 		sprintf(cmd2, "exec ");
 		i += 5;
+		c2 = &cmd2[5]; /* to be logged without prefix */
 	}
-#endif
+
 	/* подставить пометку станд. ввода */
 	if (mark_i >= 0) {
 		strcat(&cmd2[i], "<");
@@ -779,13 +799,13 @@ int  execpref;
 	/*give a name for new job*/
 	strncpy(vj[n].cmd, cmd2/*cmdlbl*/, MAXLICO);
 	/* show actual command after all substitutions */
-	tty_cmd(NULL, cmd2);
+	tty_cmd(NULL, c2);
 	putchar('\r');
 	putchar('\n');
 
 	fflush(stdout);
 
-	conduit(cmd2);
+	conduit(c2);
 
 	/* выполнить команду */
 	if (execmode & ASH_NOSH) {

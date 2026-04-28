@@ -290,6 +290,7 @@ extern void blk_off(void);
 extern void blk_new(void);
 extern void blk_sigchld(int);
 extern void conduit(char *);
+extern void binpwd(void);
 
 extern void on_onchld(void);    /*set handler*/
 extern void Signal(int, void *);
