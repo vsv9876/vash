@@ -20,8 +20,9 @@ w       = ia    -       onoff   cvt_a   -       wF
 s       = ia    -       onoff   cvt_a   -       sF
 H       = ia    -       onoff   cvt_a   -       HF
 S       = ia    -       onoff   cvt_a   -       SF
-c       = ia    -       onoff   cvt_a   -       cF
+d       = ia    -       onoff   cvt_a   -       dF
 m       = ia    -       onoff   cvt_a   -       mF
+c       = ia    -       onoff   cvt_a   -       cF
 x       = ia    -       onoff   cvt_a   -       xF
 T       = ia    -       onoff   cvt_a   -       TF
 N       = ia    -       onoff   cvt_a   -       NF
@@ -37,6 +38,7 @@ wF      = gc    -       -       cvt_fd  -       wF
 sF      = gc    -       -       cvt_fd  -       sF
 HF      = gc    -       -       cvt_fd  -       HF
 SF      = gc    -       -       cvt_fd  -       SF
+dF      = gc    -       -       cvt_fd  -       dF
 cF      = gc    -       -       cvt_fd  -       cF
 mF      = gc    -       -       cvt_fd  -       mF
 xF      = gc    -       -       cvt_fd  -       xF
@@ -73,7 +75,7 @@ C       = ipv    -      "%1d"  -       -       SGR
 
 +   .H. .HF........ .s. .sF...........  .A. .AF...........  .R. .RF............
 +   .S. .SF........ .p. .pF...........  .J. .JF...........  .a. .aF............
-+   .m. .mF........ .w. .wF...........  .T. .TF...........  .P. .PP............
++   .d. .dF........ .w. .wF...........  .T. .TF...........  .P. .PP............
 +   .c. .cF........ .x. .xF...........  .N. .NF...........  .u8 only ASCII KBD
                                                       
 +."debug of profiles"..................                      .yt:y0_top      

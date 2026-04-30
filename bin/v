@@ -128,4 +128,9 @@ if [ x${VASH} = x ]; then
     export VASH
 fi
 
+# history log saving is disabled by default
+#if [ -z "$VASH_LOG" ]; then
+#    export VASH_LOG=
+#fi
+
 exec vash "$@"

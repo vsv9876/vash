@@ -26,14 +26,25 @@
 vash \- visual assistant shell
 
 .SH "SYNOPSIS"
-.HP \w'\fBvash\fR\ 'u
 .B vash
-[\-\fI\<flags\>\fR] [\fIconfig_file\fR] [\-\- \fIfill main menu command\fR]
-.HP \w\fBv\b\fR'\ 'u
-.B v
-[\fIargs\fR ...]
+[-bN]
+[-lN]
+[[+-][1socmwxpHSTNAjJR@]]
+[profile]
+[-- command]
+
+.B vash -P [profile]
+
+.B vash -h
+
+.\"  .HP \w'\fBvash\fR\ 'u
+.\"  .B vash
+.\"  [\-\fI\<flags\>\fR] [\fIvashrc\fR] [\-\- \fIcommand\fR]
+.\"  .HP \w\fBv\b\fR'\ 'u
+.\"  .B v
+.\"  [\fIargs\fR ...]
 .PP
-Please, see \fIargs\fR description in section
+Please, see args description in section
 .B OPTIONS AND SETUP
 below.
 
@@ -43,7 +54,7 @@ below.
 .B Vash
 is an interactive screen-oriented program
 with several features intended to simplify and to accelerate
-an interaction with unix shell via command string,
+an interaction with shell via command string,
 see section
 .B FEATURES.
 
@@ -52,6 +63,7 @@ see section
 is an interpreter which programmed with \fIconfig files\fR
 also named
 .I vash profiles\.
+
 Please, see section
 .B PROFILES
 for details\.
@@ -73,7 +85,7 @@ pages, see details in section
 below.
 .PP
 .B Vash
-does not work on dumb or printing (hardcopy) terminals and
+does not work on printing (hardcopy) or dumb terminals and
 in batch environments because requires
 .I screen terminal
 with
@@ -89,7 +101,7 @@ or modern terminal emulators like
 .SH "RELEASE NOTES"
 .PP
 This manual page is incomplete, still in progress. Please,
-refer to online pages, comments in config files and keep quiet.
+refer to online help pages and comments in config files.
 
 .\"  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .SH "OVERVIEW"
@@ -117,10 +129,10 @@ Command execution listing remains on screen belong with
 .B vash
 dialogue.
 .SS "editing and running a command"
-If operator types english lowercase letter in \fImain view\fR context,
+If operator types english any lowercase letter in \fImain view\fR context,
 .B vash
 switches context to \fIcommand editor\fR recognising
-beginning of unix command.
+beginning of command typing.
 .PP
 Every other keys may be used as 
 .I shortcuts
@@ -167,8 +179,7 @@ This will done by command editor.
 .B Vash
 provides own dialogue
 only on a part of a terminal screen which disappears from it during command execution.
-The rest of the screen leaves for 
-command output listing.
+The rest of the screen leaves for command output listing.
 
 \fBVash\fR switches keyboard between one of two modes:
 .IP * 2
@@ -605,10 +616,8 @@ config string specific for user session without root permissions
 contains flags similar to startup options.
 If this variable is not set, then default values are used.
 .br
-Using this variable reset defaults first,
-so using letter means corresponding feature is set.
-Omitted letters means feature not set.
 Flags on command string has an advantage.
+
 .PP
 Additionally, flag '\fBl\fR' followed by number
 means how many lines will be occupied
@@ -626,7 +635,7 @@ modem 2400 bps).
 .IP
 
 .SS VASH_LABEL
-This environment variable usually is prepared by starting script \fBv\fR and
+this environment variable usually is prepared by starting script \fBv\fR and
 contains the same as prompter \fBPS1\fR of most of shell.
 It can be changed  on you taste.
 .br
@@ -636,7 +645,18 @@ if last symbol of this string is ':' (colon), it will be dinamically
 replaced reflecting current directory.
 
 .SS VASH_PATH
-Contains column-separated list of directories where profile files resides, including sections. Actual value may be checked on \fIsetup page\fR.
+contains column-separated list of directories where profile files resides, including sections. Actual value may be checked on \fIsetup page\fR.
+
+.SS VASH_LOG
+if is set, then each command executed by the \fIvash\fR is logged
+in a separate file.
+This variable points to the file where commands will be logged.
+It may be full path name or name in HOME directory.
+An empty string means that
+.B .vash_log
+in home directory will be used.
+
+Logging is not performed if variable \fIVASH_LOG\fR is not set or log file is not accessible to append.
 
 .SH SEE ALSO
 \fBvhset\fR(1), \fBvisi\fR(3), \fBlinlib\fR(3), \fBterminfo\fR(5), \fBtermcap\fR(5), \fBxterm\fR(1)

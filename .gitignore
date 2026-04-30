@@ -7,6 +7,8 @@
 .git
 .log*
 .*.kate-swp
+.ashhist
+.vash_history
 buildd.h
 BLD
 BLD.cfg

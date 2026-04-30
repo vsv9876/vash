@@ -1011,5 +1011,8 @@ const char *cdarg;
 	}
 	strcpy(lwdpath, cwdpath);
 	strcpy(cwdpath, nwdpath);
+	if (vflag.histcd && (strcmp(nwdpath, lwdpath) != 0)) {
+		cmdhget(1);
+	}
 	return(0);
 }

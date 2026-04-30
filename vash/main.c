@@ -49,7 +49,7 @@ VASHFLAG vflag = {
 		0, 0, 0, 0,
 		0, 0, 0, 0,
 		0, 0, 0, 0,
-		0, V_PREDEF };
+		0, 0, V_PREDEF };
 
 /*PARSARGS pargs[];*/
 
@@ -74,15 +74,16 @@ static int vdummy = 0; /* fake not used flag stub */
 PARSARGS pa[] = {
 	{ '1', &vdummy,         "1column",        "list main menu in 1 column" },
 	{ 's', &vflag.scrolf,   "s,scroll",       "scrool vs clear screen" },			/* = 1; // флаг: продвигать рулон, а не гасить экран */
-	{ 'o', &vflag.oneitm,   "o,one item",      "main menu allowed one item only" },			/* = 0; // флаг: разрешено указать только один пункт меню */
+	{ 'o', &vflag.oneitm,   "o,one item",     "main menu allowed one item only" },			/* = 0; // флаг: разрешено указать только один пункт меню */
 	{ 'c', &vflag.clockf,   "c,clock",        "show clock" },			/* = 1; // флаг: показывать часы */
 	{ 'm', &vflag.cmailf,   "m,mail",         "notify about incoming mail" },			/* = 1; // флаг: проверять почту */
 	{ 'w', &vflag.whodirf,  "w,title",        "show title panel" },			/* = 1; // show whodir panel on screen */
-	{ 'x', &vflag.xtermf,   "x,X11 title",  "show title panel with window manager" },			/* = 0; // show whodir panel on window title using xterm escape sequence */
+	{ 'x', &vflag.xtermf,   "x,X11 title",    "show title panel with window manager" },			/* = 0; // show whodir panel on window title using xterm escape sequence */
 	{ 'p', &vflag.panelf,   "p,panel/key",    "show panel with 10 keys help" },			/* = 1; // флаг: показывать панель подсказки */
 	{ 'H', &vflag.histf,    "H,history",      "save history cache on exit" },			/* = 0; // флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
-	{ 'S', &vflag.histsn,   "S,hist.sync",  "sync(save) history cache immediately on every command" },			/* = 0;	// флаг: синхронизировать историю после каждой команды */
-	{ 'T', &vflag.exittrap, "T,trap",         "trap \"[ ok ]\" on exited command" },			/* trap on exit of command: 0 - modern, 1 - vash canonical */
+	{ 'S', &vflag.histsn,   "S,hist.sync",    "sync(save) history cache on every command immediately" },	/* = 0;	// флаг: синхронизировать историю после каждой команды */
+	{ 'd', &vflag.histcd,   "d,hist.home",    "save/sync history cache in current directory" },			/* = 0; */
+	{ 'T', &vflag.exittrap, "T,trap",         "trap \"[ ok ]\" on command reap" },			/* trap on exit of command: 0 - modern, 1 - vash canonical */
 	{ 'N', &vflag.novice,   "N,trap msg",     "display help message on trap" },			/* = 1; novice prompter messages allowed */
 	{ 'A', &vflag.shanyway, "A,sh -c",        "exec $SHELL -c 'command' anyway" },			/* = 1; shell -c 'cmd' in all cases anyway */
 	{ 'j', &vflag.jobctl,   "j,job control",  "job control support" },			/* = 0; // флаг: главная оболочка, ppid() == 1 */
@@ -101,23 +102,23 @@ int opt;
 	fprintf(stderr, "\n"
 		"Usage:\n"
 		"  vash [-bN] [-lN] [[+-]"
-		"[1"
+		"["
 		);
 		for (p = &pa[0]; p->letter != 0; p++)
 			if (p->sdescr[0] != ' ')
 				fprintf(stderr, "%1.1s", p->sdescr/*p->letter*/);
 		fprintf(stderr,
 		"]"
-		"] [vashrc] [-- command]\n"
+		"] [profile] [-- command]\n"
 /*		"or\n"*/
-		"  vash -P [vashrc]\n"
+		"  vash -P [profile]\n"
 		"  vash -h\n"
 		);
 	fprintf(stderr, "\n"
 		"    -h  - get help for +/- options\n"
 		"    -lN - get screen space for main menu: N lines, 0 if get maximum\n"
 		"    -bN - get storage for main menu: N in KiB (64 by default)\n"
-		"    -P - print vashrc with included rc-files than exit\n"
+		"    -P - print profile than exit\n"
 		);
 	if (opt) {
 		fprintf(stderr, "\n"
@@ -170,7 +171,7 @@ int ok;
 	putchar('\n');
 #endif
 	if (ok == 0 && vflag.histf && v.home != (char *)0 && vflag.histsn == 0) {
-		cmdphist();
+		cmdhput();
 	}
 
 	unlink(tmpflnm);
@@ -627,7 +628,7 @@ args_done:
 #endif
 
     if (v.home != NULL /*(char *)0*/) {
-		cmdghist(v.home);
+		cmdhget(1);
 	}
 
     /*TODO: убрать все про tmpflnm*/

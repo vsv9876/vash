@@ -78,62 +78,31 @@ int     _ofsy;           /* вверх/вниз */
 
 extern LINEMENU clm;    /* ТЕКУЩЕЕ МЕНЮ (current lines menu) */
 
-/*#define itms        clm._itms*/
-/*#define itmbuf      clm._itmbuf*/
-/*#define itmbsz      clm._itmbsz*/
-/*#define vf          clm._vf*/
-/*#define ltmpl       clm._ltmpl*/
-/*#define xx1         clm._xx1*/
-/*#define itm         clm._itm*/
-/*#define itmofs      clm._itmofs*/
-/*#define itmlen      clm._itmlen*/
-/*#define itmmax      clm._itmmax*/
-/*#define yy_max      clm._yy_max*/
-/*#define yy          clm._yy*/
-/*#define xx          clm._xx*/
-/*#define dx          clm._dx*/
-/*#define x0          clm._x0*/
-/*#define y0          clm._y0*/
-/*#define ofsx        clm._ofsx*/
-/*#define ofsy        clm._ofsy*/
-
-/*extern  char   *yesno[];*/
-
-/*extern int     scrolf;*/
-/*extern int     oneitm;*/
-/*extern int     panelf;*/
-/*extern int     whodirf;*/
-/*extern int     xtermf;*/
-/*extern int     histf;*/
-/*extern int     histsn;*/
-/*extern int     clockf;*/
-/*extern int     cmailf;*/
-/*extern int     loginf;*/
-
 /* flags, see description in main.c -- vflag, pa[] */
 typedef struct {
-	int	scrolf;		/* = 1; // флаг: продвигать рулон, а не гасить экран */
-	int	oneitm;		/* = 0; // флаг: разрешено указать только один пункт меню */
-	int	panelf; 	/* = 1; // флаг: показывать панель подсказки */
-	int	whodirf;	/* = 1; // show whodir panel on screen */
+	int	scrolf;
+	int	oneitm;
+	int	panelf;
+	int	whodirf;
 
-	int	xtermf;		/* = 0; // show whodir panel on window title using xterm escape sequence */
-	int	histf;		/* = 0; // флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
-	int	histsn;		/* = 0;	// флаг: синхронизировать историю после каждой команды */
-	int	clockf;		/* = 1; // флаг: показывать часы */
+	int	xtermf;
+	int	histf;
+	int	histsn;
+	int	histcd;
 
-	int	cmailf;		/* = 1; // флаг: проверять почту */
-	int	loginf;		/* = 0; // флаг: главная оболочка, ppid() == 1 */
-	int	jobctl;		/* = 1; // JOB Control support */
-	int	jobshow;	/* = 1; // Job index show*/
+	int	clockf;
+	int	cmailf;
+	int	loginf;
+	int	jobctl;
 
-	int	exittrap;	/* trap on exit of command: 0 - modern, 1 - vash canonical */
-	int	novice;		/* = 1; novice prompter messages allowed */
-	int	shanyway;	/* = 1; shell -c 'cmd' in all cases anyway */
-	int	subatrc;	/* = 0; substitute '#@' from rc files before cmd editor */
+	int	jobshow;
+	int	exittrap;
+	int	novice;
+	int	shanyway;
 
-	int	subshow;	/* = 0; substitute '#@' show position on main menu */
-	int predef;  	/* (readonly) rc style selector: 1 - BSD, 0 - other */
+	int	subatrc;
+	int	subshow;
+	int predef;
 } VASHFLAG;
 
 extern int	predump;	/* print on stdout preprocessed profile then exit */
@@ -204,7 +173,8 @@ extern void scrldo();
 extern void scrlarea();
 
 extern void cmdhreset();
-extern int cmdphist();
+extern int cmdhput();
+extern int cmdhget(int);
 
 extern int fil_vf(int);
 
@@ -215,7 +185,6 @@ extern void fatal();
 extern void clritm();
 
 extern void itmshow();
-extern int cmdghist();
 
 extern void u_menu(LINE */*, char **/);
 
@@ -277,7 +246,7 @@ kbcod pmtrobj(char *, u8sobj_t *, int);
 
 extern void vfread(FILE *);
 extern void showitem(int);
-extern int  cmdvew(wchar_t *);
+extern int  cmdview(wchar_t *);
 extern int  cmdprv(wchar_t *);
 extern int  cmdnxt(wchar_t *);
 extern void onexit(int);

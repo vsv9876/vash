@@ -369,7 +369,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 #endif
 		case KB_HE:
 			/* similar as on KB_EX */
-			if (cmdvew(cmd0) >= 2) {
+			if (cmdview(cmd0) >= 2) {
 				w_msg(TXT, " ");
 				w_msg(TXT, "");
 				if (cmdrun) {
@@ -384,7 +384,7 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			/* пред. команда */
 			/* синхронизировать историю, если в буфере набираемой команды пусто */
 			if (vflag.histsn && cmd0[0] == 0)
-				cmdghist();
+				cmdhget(0);
 			if (!cmdprv(cmd0))
 				bell();
 
@@ -424,14 +424,14 @@ char *cmdlbl;   /* вывеска для показа вместо команд�
 			/* сохранить команду, если ее редактировали */
 			if (cmd0cmp(cmd, cmd0, /*strlen*/wcslen(cmd0)) != 0) {
 				if (vflag.histsn) {
-					cmdghist();
+					cmdhget(0);
 				}
 
 				wcsu8s(tmpstr, cmd0);
 				cmdput(tmpstr/*cmd0*/);
 
 				if (vflag.histsn) {
-					cmdphist();
+					cmdhput();
 				}
 				/* заставить при повт.запуске снова сохранять: */
 				cmd = "";

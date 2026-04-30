@@ -70,6 +70,7 @@ const IN_PORTS inport[] = {
 	{ "sF",         &vflag.scrolf },
 	{ "HF",         &vflag.histf  },
 	{ "SF",         &vflag.histsn },
+	{ "dF",         &vflag.histcd },
 	{ "cF",         &vflag.clockf },
 	{ "mF",         &vflag.cmailf },
 	{ "TF",         &vflag.exittrap },

@@ -668,8 +668,8 @@ char *cmd;
 			outstr = buf;
 			/*sprintf(buf, "#%d\ncd '%s'; vash '%s' -- '%s'",
 					ontime, cwdpath, v.rc, Cfill);*/
-			sprintf(buf, "cd '%s'; vash '%s' -- '%s'",
-					cwdpath, v.rc, Cfill);
+			sprintf(buf, "vash '%s' -- '%s' # %s",
+					v.rc, Cfill, cwdpath);
 		}
 		logfp = fopen(logfile, "a");
 		if (logfp) {

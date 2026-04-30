@@ -197,7 +197,7 @@ u8char_t *newcmd;
 #if 0
 	/* сначала синхронизация истории в файл? */
 	/* при каждом изменении истории команд!!! */
-	if (v.flag.histsn == 1) cmdphist();
+	if (v.flag.histsn == 1) cmdhput();
 #endif
 	return(-1);
 }
@@ -246,7 +246,7 @@ wchar_t *cmd;
 /*
  * HISTORY support
  *
- * cmdphist() & cmdghist()
+ * cmdhput() & cmdhget()
  * put & get history file
  *
  * NOTE:
@@ -257,7 +257,7 @@ wchar_t *cmd;
  */
 
 /* history cache file*/
-const char *hfile = "/.ashhist";
+const char *hfile = ".vash_history";
 
 /*
  * flag: last timestamp of hfile known in this process of vash
@@ -280,19 +280,27 @@ static time_t hflast = (time_t)0; /* zero for fisrt time comparizon */
  * returns 1, if get commands from history file
  * returns 0, if no read done
  */
-cmdghist()
+cmdhget(fresh)
+int fresh;
 {
 
 	FILE *fp;
 	struct stat	hfstat;
 	time_t      hftime;
-	char filename[200];
+	char filename[STRBUF];
 	char cmdbuftmp[U8_STRBUF/*140*/]; /* one command from file, without trailing '\n' */
 	int c;
 	register char *p;
 	register int i;
 
-	strcpy(filename, v.home);
+	if(fresh)
+		hflast = 0;
+
+	strcpy(filename, "");
+	if (vflag.histcd == 0 && v.home != NULL) {
+		strcat(filename, v.home);
+		strcat(filename, "/");
+	}
 	strcat(filename, hfile);
 
 	if (stat(filename, &hfstat) < 0)
@@ -335,7 +343,7 @@ cmdghist()
 /*
  * put commands from buffer cmdb[] to file in home directory
  */
-cmdphist()
+cmdhput()
 {
 	char filename[STRBUF]; /*[200]*/
 	struct stat	hfstat;
@@ -346,7 +354,11 @@ cmdphist()
 
 	if (v.home == NULL/*(char *)0*/) return(0) ; /* history file is not defined */
 
-	strcpy(filename, v.home);
+	strcpy(filename, "");
+	if (vflag.histcd == 0 && v.home != NULL) {
+		strcat(filename, v.home);
+		strcat(filename, "/");
+	}
 	strcat(filename, hfile);
 
 	if ((fp = fopen(filename, "w")) == NULL)
@@ -413,7 +425,7 @@ kbcod cod;
 */
 			/* синхронизировать историю при удалении каждой команды */
 			if (vflag.histsn) {
-				cmdphist();
+				cmdhput();
 			} /*else {
 				cp_set(-1, -14, ATT|INP);
 				w_str("will not saved");
@@ -518,7 +530,7 @@ static  LINE tmplate =
  * returns 2, in case select of new content for Cfill
  */
 int
-cmdvew(cmd0)
+cmdview(cmd0)
 wchar_t  *cmd0;
 {
 	extern int  y0_top;     /* определено в vshcmd */
@@ -554,7 +566,7 @@ wchar_t  *cmd0;
 
 	/* сначала синхронизация истории из файла? */
 	if (vflag.histsn) {
-		cmdghist();
+		cmdhget(0);
 	}
 
 	if (cmdplast < 1) {
