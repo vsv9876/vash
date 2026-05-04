@@ -73,24 +73,24 @@ static int vdummy = 0; /* fake not used flag stub */
 
 PARSARGS pa[] = {
 	{ '1', &vdummy,         "1column",        "list main menu in 1 column" },
-	{ 's', &vflag.scrolf,   "s,scroll",       "scrool vs clear screen" },			/* = 1; // флаг: продвигать рулон, а не гасить экран */
-	{ 'o', &vflag.oneitm,   "o,one item",     "main menu allowed one item only" },			/* = 0; // флаг: разрешено указать только один пункт меню */
-	{ 'c', &vflag.clockf,   "c,clock",        "show clock" },			/* = 1; // флаг: показывать часы */
-	{ 'm', &vflag.cmailf,   "m,mail",         "notify about incoming mail" },			/* = 1; // флаг: проверять почту */
+	{ 's', &vflag.scrolf,   "s,scroll",       "scrool vs clear screen" },
+	{ 'o', &vflag.oneitm,   "o,one item",     "main menu allowed one item only" },
+	{ 'c', &vflag.clockf,   "c,clock",        "show clock" },
+	{ 'm', &vflag.cmailf,   "m,mail",         "notify about incoming mail" },
 	{ 'w', &vflag.whodirf,  "w,title",        "show title panel" },			/* = 1; // show whodir panel on screen */
 	{ 'x', &vflag.xtermf,   "x,X11 title",    "show title panel with window manager" },			/* = 0; // show whodir panel on window title using xterm escape sequence */
-	{ 'p', &vflag.panelf,   "p,panel/key",    "show panel with 10 keys help" },			/* = 1; // флаг: показывать панель подсказки */
-	{ 'H', &vflag.histf,    "H,history",      "save history cache on exit" },			/* = 0; // флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
-	{ 'S', &vflag.histsn,   "S,hist.sync",    "sync history cache on every command immediately" },	/* = 0;	// флаг: синхронизировать историю после каждой команды */
-	{ 'd', &vflag.histcd,   "d,hist.cwdir",   "sync history cache in current working directory" },			/* = 0; */
+	{ 'p', &vflag.panelf,   "p,panel/key",    "show panel with 10 keys help" },
+	{ 'H', &vflag.histf,    "H,history",      "save history cache on exit" },
+	{ 'S', &vflag.histsn,   "S,hist.sync",    "sync history cache on every command immediately" },
+	{ 'd', &vflag.histcd,   "d,hist.cdir",    "sync history cache in current directory" },
 	{ 'T', &vflag.exittrap, "T,trap",         "trap \"[ ok ]\" on command reap" },			/* trap on exit of command: 0 - modern, 1 - vash canonical */
 	{ 'N', &vflag.novice,   "N,trap msg",     "display help message on trap" },			/* = 1; novice prompter messages allowed */
-	{ 'A', &vflag.shanyway, "A,sh -c",        "exec $SHELL -c 'command' anyway" },			/* = 1; shell -c 'cmd' in all cases anyway */
+	{ 'A', &vflag.shanyway, "A,sh -c",        "exec $SHELL -c 'command' anyway" },
 	{ 'j', &vflag.jobctl,   "j,job control",  "job control support" },			/* = 0; // флаг: главная оболочка, ppid() == 1 */
 	{ 'J', &vflag.jobshow,  "J,job show",     "show job activity" },			/* = 0; // флаг: главная оболочка, ppid() == 1 */
-	{ 'R', &vflag.subatrc,  "R,subs in rc",   "substite #@ before command editing" },			/* = 0; substitute '#@' from rc files before cmd editor */
+	{ 'R', &vflag.subatrc,  "R,#@ in rc",     "substite #@ before command editing" },			/* = 0; substitute '#@' from rc files before cmd editor */
 	{ '@', &vflag.subshow,  "@,show #@",      "show mark '@' on item when command editing" },			/* = 0; substitute '#@' show position on main menu */
-	{ ' ', &vflag.loginf,   " login sh",       "(readonly) vash is login shell" },			/* = 0; // флаг: главная оболочка, ppid() == 1 */
+	{ ' ', &vflag.loginf,   " login sh",       "(readonly) vash is login shell" },
 	{ ' ', &vflag.predef,   " rc predef",      "(readonly) rc predef (rc-style)" },			/* (readonly) rc style selector: 1 - BSD, 0 - other */
 	{ 0 },
 	};
