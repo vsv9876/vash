@@ -81,8 +81,8 @@ PARSARGS pa[] = {
 	{ 'x', &vflag.xtermf,   "x,X11 title",    "show title panel with window manager" },			/* = 0; // show whodir panel on window title using xterm escape sequence */
 	{ 'p', &vflag.panelf,   "p,panel/key",    "show panel with 10 keys help" },			/* = 1; // флаг: показывать панель подсказки */
 	{ 'H', &vflag.histf,    "H,history",      "save history cache on exit" },			/* = 0; // флаг: сохранять историю команд при выходе из vash, если histsn != 1 */
-	{ 'S', &vflag.histsn,   "S,hist.sync",    "sync(save) history cache on every command immediately" },	/* = 0;	// флаг: синхронизировать историю после каждой команды */
-	{ 'd', &vflag.histcd,   "d,hist.home",    "save/sync history cache in current directory" },			/* = 0; */
+	{ 'S', &vflag.histsn,   "S,hist.sync",    "sync history cache on every command immediately" },	/* = 0;	// флаг: синхронизировать историю после каждой команды */
+	{ 'd', &vflag.histcd,   "d,hist.cwdir",   "sync history cache in current working directory" },			/* = 0; */
 	{ 'T', &vflag.exittrap, "T,trap",         "trap \"[ ok ]\" on command reap" },			/* trap on exit of command: 0 - modern, 1 - vash canonical */
 	{ 'N', &vflag.novice,   "N,trap msg",     "display help message on trap" },			/* = 1; novice prompter messages allowed */
 	{ 'A', &vflag.shanyway, "A,sh -c",        "exec $SHELL -c 'command' anyway" },			/* = 1; shell -c 'cmd' in all cases anyway */
