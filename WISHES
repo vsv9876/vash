@@ -14,10 +14,6 @@
 
 	VASH
 
-- history:
--- separate shorthand cache(history) and log(conduit) files;
--- make the conduit compatible with .bash_history (timestamp support required)
-
 - substitution some metasymbols before internal commands
 
 -+ rescan dir: keep cursor position near last known item,
@@ -29,10 +25,7 @@
 -- VASH_LABEL fill from header (1st line) of commands like ps, df, 
    then mark this line in main menu as read-only
  
--- extended file attributes permissions check (<rwx> unsufficient) 
-
--? work with very big directories and inode numbers
-   (realloc vs constant static allocation)
+-- extended file attributes permissions check, <rwx> unsufficient (is is not needed never)
 
 -- more compact rendering of main menu - maximum width of item
    must be recalculated on every column
