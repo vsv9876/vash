@@ -140,8 +140,8 @@ fnd_al (lni, page)
 	for(   ; lnj>=page; lnj--) {
 		if(0 == (INP & (lnj->attr)) )
 			continue;
-/*		if((lnj->line == lni->line))*/
-		if(lnj->line < lni->line)
+		if((lnj->line == lni->line)) /* cycle on the same row */
+/*		if(lnj->line < lni->line)*/ /* or shift to the upper line */
 			return(lnj);
 	}
 	return(lni);
@@ -181,7 +181,7 @@ fnd_au (lni, page)
 	}
 	/*
 	 * if the current place is on the beginning,
-	 * find to current place from page tail
+	 * find to current place from the end of page
 	 */
 	for(lnj=page; lnj->size != 0; lnj++) {
 		if (0 != (INP & (lnj->attr)) && lnj == lni && on_top == 0) {
@@ -194,7 +194,10 @@ fnd_au (lni, page)
 		for(   ; lnj>=page; lnj--) {
 			/* nearest from the tail but not in current row
 			 */			
-			if((INP & (lnj->attr)) && (lnj->line >= lni->line))
+			if((INP & (lnj->attr))
+					&& (lnj->line >= lni->line)
+						&& (lnj->colu == lni->colu))
+					/* && (lnj->line >= lni->line)) /* cycle from the end */
 				return(lnj);
 		}
 	}

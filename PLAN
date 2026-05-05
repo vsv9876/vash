@@ -11,6 +11,4 @@
 - complete support for marker 'x' visual attributes
   (lbp, vcc, vlbp)
 
-- return cursor moving on r_page() to simple wrap columns and rows (as in the past)
-
-- fix limit 2..20 for linesmax
+- fix limit 2..20 for linesmax (too hard to implement without linlib refactoring)
