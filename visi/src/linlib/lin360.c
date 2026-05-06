@@ -195,7 +195,7 @@ fnd_au (lni, page)
 			/* nearest from the tail but not in current row
 			 */			
 			if((INP & (lnj->attr))
-					&& (lnj->line >= lni->line)
+					&& (lnj->line != lni->line)
 						&& (lnj->colu == lni->colu))
 					/* && (lnj->line >= lni->line)) /* cycle from the end */
 				return(lnj);
