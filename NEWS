@@ -2,6 +2,7 @@ vash news (release notes)
 
 2.1.4
   * linlib: cursor moving on r_page(): simple wrap columns and rows
+  * linlib: more clear navigation on r_page()
 
 2.1.3
   * .vash_history is default vash history cache file

@@ -1,5 +1,4 @@
-- export vash flags changed in setup, 
-  on execve() with VASH= environment
+- searh or position dialog have to be shortened and helped online
 
 - make clean rules with vexdir initialization
    see example in vtest/pmain.c
@@ -10,5 +9,3 @@
 
 - complete support for marker 'x' visual attributes
   (lbp, vcc, vlbp)
-
-- fix limit 2..20 for linesmax (too hard to implement without linlib refactoring)

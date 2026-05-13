@@ -771,6 +771,7 @@ scan_s()
 /*--------------------------*/
 /* СКАНИРОВАТЬ ОБРАЗ ЭКРАНА */
 /*--------------------------*/
+#if 1
 {
 	register int li;        /* СТРОКА */
 	register int co;        /* ПОЗИЦИЯ */
@@ -780,16 +781,17 @@ scan_s()
 	/* СНАЧАЛА ЦИКЛ ПО СТРОКАМ */
 	for(li=0; vscan=0,li<cur_li; li++) {
 		lbeg = &scrp[ MAX_BUF_CO * li ];
-		if(*lbeg == L'+') {      /* ПРОСМОТР ПО ВЕРТИКАЛИ */
+
+		if(*lbeg == L'!') {      /* ПРОСМОТР ПО ВЕРТИКАЛИ */
 			vscan=1; vertli = li;
 			/* ЦИКЛ ПО ПОЗИЦИЯМ СТРОКИ */
 			for(co=1; co<MAX_BUF_CO/*80*/; co++) {
 				/* ЦИКЛ ПО СТРОКАМ */
 				for(li=vertli;
-						lbeg = &scrp[MAX_BUF_CO/*80*/*li], *lbeg == L'+';
+						lbeg = &scrp[MAX_BUF_CO/*80*/*li], *lbeg == L'!';
 							li++)
 				{
-					if(lbeg[co] != L' ')
+					if(lbeg[co] != 0 && lbeg[co] != L' ')
 						mk_lin(li, co);
 				}
 			}
@@ -797,12 +799,48 @@ scan_s()
 		} else {        /* НОРМ. ПРОСМОТР ПО СТРОКАМ */
 			/* ЦИКЛ ПО ПОЗИЦИЯМ СТРОКИ */
 			for(co=0; co<MAX_BUF_CO/*80*/; co++) {
-				if(scrp[MAX_BUF_CO/*80*/*li+co] != ' ')
+				/*lbeg = &scrp[MAX_BUF_CO80*li];*/
+				if(lbeg[co] != 0 && lbeg[co] != L' ')
 					mk_lin(li, co);
 			}
 		}
 	}
 }
+#else
+{
+	int li;        /* СТРОКА */
+	int tmpli;
+	int co;        /* ПОЗИЦИЯ */
+	wchar_t *lbeg;          /* НАЧ. СТРОКИ В БУФЕРЕ ЭКРАНА */
+	int     vli;         /* НАЧ. ВЕРТИКАЛЬНОГО ПРОСМОТРА (СТРОКА)*/
+
+	/* hacking in progress */
+	for(li = 0; li < cur_li; li++) {
+		lbeg = &scrp[ MAX_BUF_CO * li ];
+		if(*lbeg == L'+') {
+			vscan = 0;
+			for(co=1; co < MAX_BUF_CO/*80*/; co++) {
+				if(scrp[MAX_BUF_CO/*80*/*li+co] != ' ')
+					mk_lin(li, co);
+			}
+		} else {
+			vscan = 1; vli = li;
+			/* cycle by lines inside the frame (until '+' in zero position) */
+			for(tmpli = vli;
+					tmpli < MAX_BUF_LI && scrp[MAX_BUF_CO/*80*/*tmpli] != L'+';
+					tmpli++) {
+				lbeg = &scrp[MAX_BUF_CO/*80*/*tmpli];
+				/* ЦИКЛ ПО ПОЗИЦИЯМ СТРОКИ */
+				for(co = 0; co < MAX_BUF_CO/*80*/; co++) {
+						if(lbeg[co] != 0 && lbeg[co] != L' ')
+							mk_lin(tmpli, co);
+				}
+			/*li--;*/
+			}
+		}
+	}
+}
+#endif
 
 put_hs(s, hp)
 /*-----------------*/

@@ -22,24 +22,24 @@ alt     = c  "alternate..."
 ---SCREEN  
 =LINLIB actions
 
-+.activa..........................                   .common.................   *
-+ .MSE. select item    .:NL...| .:SP... .MSEi         .:HE... help              *
-+                                                     .:EX... exit/close page   *
-+ .ALT. alter           forward .:SP... .ALTi         .:NL... commit,complete   *
-+                      backward .:DE...               .:CA... cancel            *
-+                                                     .:RE... refresh page      *
-+ .VAR. edit start    untouched .:SP... .VARi                                   *
-+                  clean before .:DE...              .page_n..................  *  
-+                                                     .:TA... next line         *
-+.onedit..........................                    .:KH... jump to 1st line  *
-+ .:DE... erase left from cursor  .alt..........      .:KE... jump to last line *
-+ .:KD... erase below cursor       .:PR .:DE...       .:PD... next page/part    *
-+                erase up to end   .:PR .:SP...       .:PU... prev page/part    *
-+ .:KH... jump to 1st symbol       .:PR .:AL...                                 *
-+ .:KE... jump to end of text      .:PR .:AR...      .specia..................  *   
-+ .:KI... toggle Ins/Ovr mode      .:PR .:PR...       .:KP... keypad on/off     *
-                                                      .:PR... prefix            *
-                                                                                *
+!.activa..........................                   .common.................
+! .MSE. select item    .:NL...| .:SP... .MSEi         .:HE... help             
+!                                                     .:EX... exit/close page  
+! .ALT. alter           forward .:SP... .ALTi         .:NL... commit,complete  
+!                      backward .:DE...               .:CA... cancel           
+!                                                     .:RE... refresh page     
+! .VAR. edit start    untouched .:SP... .VARi                                  
+!                  clean before .:DE...              .page_n..................   
+!                                                     .:TA... next line        
+!.onedit..........................                    .:KH... jump to 1st line 
+! .:DE... erase left from cursor  .alt..........      .:KE... jump to last line
+! .:KD... erase below cursor       .:PR .:DE...       .:PD... next page/part   
+!                erase up to end   .:PR .:SP...       .:PU... prev page/part   
+! .:KH... jump to 1st symbol       .:PR .:AL...                                
+! .:KE... jump to end of text      .:PR .:AR...      .specia..................    
+! .:KI... toggle Ins/Ovr mode      .:PR .:PR...       .:KP... keypad on/off    
+!                                                     .:PR... prefix           
+                                                                               
                           VISI/LINLIB Copyright (C) 1986-1990 vsv & team
                                       Copyright (C) 2020-2026 Sergey Vovk <vsv>
 

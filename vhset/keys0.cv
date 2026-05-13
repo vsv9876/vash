@@ -10,7 +10,7 @@ static
 	t   = (void *)sizeof(KBL)
 
 ---PORTS
-KO_P    = kbl[0].t_knm
+KO_P    = &(kbl[0].t_knm)
 
 ---LINES
 KO      = ipv   -       -       cvt_s   -       KO_P
@@ -27,10 +27,10 @@ KO      = ipv   -       -       cvt_s   -       KO_P
     .t......   cursor down             press .:SP.... to cancel
     .t......   cursor left             
     .t......   cursor right
-				    step 2: edit key label:
+                                    step 2: edit key label:
     .t......   space                   press .:SP.... to edit label;
     .t......   Tab                     press .:NL.... when complete
-
+ 
     .t......   Enter/Return 
                                     step 3: when done,
                                        press Exit key .:EX....   

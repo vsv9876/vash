@@ -95,26 +95,26 @@
 ---#.lh........................................................................
 ---#
 =Video attributes 
-+
-+  .p0.......... .CMD.   .TXT.   .HDR.   .VAR.   .ALT.   .MSE.   .ERR.   .ATT.
-+  .p1...........   
-+
-+       prompt:  .P.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+   standout:so  .so     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+  underline:us  .us     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+        dim:mh  .mh     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+       bold:md  .md     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+    reverse:mr  .mr     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+ 
+!  .p0.......... .CMD.   .TXT.   .HDR.   .VAR.   .ALT.   .MSE.   .ERR.   .ATT.
+!  .p1...........   
+!
+!       prompt:  .P.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!   standout:so  .so     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!  underline:us  .us     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!        dim:mh  .mh     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!       bold:md  .md     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!    reverse:mr  .mr     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---#+ hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+     italic:mi  .mi     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!     italic:mi  .mi     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---#+		 .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+color:          .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+   FG intence:  .Bf     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+      FG code#  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+   BG intence:  .Bb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+      BG code#  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-+composer:fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!color:          .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!   FG intence:  .Bf     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!      FG code#  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!   BG intence:  .Bb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!      BG code#  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!composer:fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---#+.""...........................................................................
 
   settings mode: .sgrm..........    SGR: .sgrAT.....             help: .:HE....

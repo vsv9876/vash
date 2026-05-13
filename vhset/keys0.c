@@ -21,6 +21,10 @@ pag_mk()
 /*------------------*/
 /* Basic keys setup  /
 /*------------------*/
+/*
+ * this function still used for setting 1st key "keypad toggle" only -
+ * to be obsoleted...
+ */
 {
 	register int i;
 	register int j;
@@ -31,7 +35,7 @@ pag_mk()
 	er_pag();
 	w_page(pkeys0);
 
-	w_emsg("step 1: assign new value of every key");
+	w_msg(ATT, "step 1: assign new value of every key");
 	for(i=0; i<1/*8*/;    ) {
 		/* найти место для маркера */
 		for ( j= -1, line=pkeys0; line->size != 0; line++) {
@@ -48,8 +52,7 @@ pag_mk()
 		if(i == 1) {
 			if(kbl[0].t_key1 == cod) {
 				r_cod(cod);
-				w_emsg(
-				"Keypdad are toggled");
+				w_msg(ATT, "Keypdad are toggled");
 				continue;
 			}
 		}
@@ -61,7 +64,7 @@ pag_mk()
 
 		w_emsg("");
 	}
-	w_emsg("step 2: keys input finished, let's edit names");
+	w_msg(ATT, "step 2: keys input finished, let's edit names");
 
 	line = pkeys0;
 	while(r_page(pkeys0, &line, 0) != KB_EX) ;

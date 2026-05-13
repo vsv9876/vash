@@ -246,12 +246,27 @@ fnd_nxt(lni, page)
 	register LINE *lni;
 	register LINE *page ;
 {
-/*      register LINE *lnj;     */
-
 	lni++;
 	if(lni->size == 0)
 		lni = page;          /* cycle to begin */
 	return(lni);
+}
+
+/*----------------------------------------------------*/
+/* simple reverse search: previous line in page order */
+/*----------------------------------------------------*/
+static LINE *
+fnd_prv(lni, page)
+	register LINE *lni;
+	register LINE *page ;
+{
+	while(lni > page) {
+		lni--;
+		if (0 != (INP & lni->attr))
+			return(lni);
+	}
+	/* no cycle to begin */
+	return(page);
 }
 
 #ifndef W_PAGE_TAB
@@ -270,7 +285,7 @@ LINE *line_e;
 	saved = *scnd;
 	isleft = (saved.flag & SUSL) ? 1 : 0;
 	base = scnd;
-	while(base != line_e) {
+	while(base >= line_e) {
 		base--;
 		if(isleft == 1) {
 			if (base->colu <  saved.colu) {
@@ -338,9 +353,11 @@ LINE    *line_e;             /* page to be edited */
 LINE   **curline;             /* current line (status) */
 int    *posp;                /* cursor position during edit process */
 {
-	int     cod;             /* code returned from r_line() */
+	static kbcod cod;           /* code returned from r_line() */
+	static kbcod prvcod;		/* code returned last time */
 
 	register LINE *lni;      /* line index in pointer form */
+	LINE *cmplni;			 /* the lni before change retry */
 	register LINE *page;     /* pointer to page at all (array of lines) */
 
 	page = line_e;
@@ -357,6 +374,7 @@ int    *posp;                /* cursor position during edit process */
 			lni = line_e;
 	}
 
+	prvcod = cod;	/* 1st time zero is OK */
 	cod = r_line(lni, posp);
 
 	/* navigate to next read position on the page */
@@ -374,8 +392,11 @@ int    *posp;                /* cursor position during edit process */
 			lni = fnd_ar(lni, page) ;
 		break ;
 	case KB_AL :
+		cmplni = lni;
 		if ( (lni->flag & SUSL) == FALSE )
 			lni = fnd_al(lni, page) ;
+		if (cmplni == lni && prvcod == KB_AL)
+			lni = fnd_prv(lni, page);
 		break ;
 	case KB_AU :
 		if ( (lni->flag & SUSU) == FALSE )
