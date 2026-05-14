@@ -252,8 +252,8 @@ const char *file;
     while(fpix >= 0) {
 open_include:
 		if (fp[fpix] == NULL) {
-			if((fp[fpix]=dafopen(fname, v.vapath, "r")) == NULL) {
-				sprintf(ws, "can't read '%s' in vexdir='%s'", fname, v.vapath);
+			if((fp[fpix]=dafopen(fname, vexdir, "r")) == NULL) {
+				sprintf(ws, "can't read '%s' in vexdir='%s'", fname, vexdir);
 				w_msg(ERR, ws);
 				return(0);
 			}

@@ -399,7 +399,7 @@ int vls()
 }
 
 /*
- * встроенная команда (аналог cat), понимает vapath
+ * встроенная команда (аналог cat), понимает и учитывает vexdir
  * сделана копипастой из vls()
  */
 int vcat(file)
@@ -442,7 +442,7 @@ char *file;
     	s++;
     }
     *s = '\0';
-	if ((fp = dafopen(file, v.vapath, "r")) == NULL) {
+	if ((fp = dafopen(file, vexdir, "r")) == NULL) {
     	return(1); /* ERROR filling main menu */
 	} else {
 		ip = &itmname[0];
@@ -903,7 +903,7 @@ int newflag;    /* если 0, то только обновить каталог
     Lflag = Fflag = aflag = Vflag = fflag = 0;
 
     p = Cfill;
-    if(*p == '<') { /* список в файле по пути vapath */
+    if(*p == '<') { /* список в файле (в пути) vexdir */
 		if ( vcat(&p[1]) ) { /* возвращает 0, если все хорошо */
 			w_emsg(&p[1]); w_str(": vcat() failed");
 			return(0);

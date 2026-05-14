@@ -103,7 +103,6 @@ SRCS          = buildd.c\
 		vcoprt.c\
 		vdcanon.c\
 		vex.c\
-		vexdir.c\
 		vfread.c\
 		vjobs.c\
 		vmain.c\
@@ -129,7 +128,6 @@ OBJS	      = \
 		vcoprt.o\
 		vdcanon.o\
 		vex.o\
-		vexdir.o\
 		vfread.o\
 		vjobs.o\
 		vmain.o\

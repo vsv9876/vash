@@ -399,6 +399,10 @@ extern  void    w_lh_str(const char *);
 extern  int     cvt_hl(LINE *, int, char *, char *);
 extern  int     tst_m(LINE *, kbcod);
 
+/* lin5xx - external pages support functions */
+extern  const char   *vexdir; /* visi/linlib extra files directory */
+extern  void    w_help(const LINE *);
+
 extern  char   *argv0;
 extern  void    w_lbl(int, const char *);
 extern  void    w_msg(int, const char *);

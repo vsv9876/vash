@@ -63,7 +63,6 @@ VASH_PROC v = {
 		NULL, 	    /* .argv0 */
 		NULL,		/* $HOME */
 		"/bin/sh",	/* $SHELL */
-		VASH_PATH,	/* .vapath */
 		VERSN,
 		"std.rc",
 		};
@@ -560,8 +559,6 @@ char **argv;
 	/* setup extra directory for all working files library, vashrc will be found in that place */
 	if ((s = getenv(VEXDIR)) != (char *)0)
 		vexdir = s;
-	if ((s = getenv(VAPATH)) != (char *)0)
-		v.vapath = s;
 
 #ifdef  VTTY
 	vtty();

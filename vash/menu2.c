@@ -51,7 +51,7 @@ char *mfile;
 	/*extern FILE *afopen();*/
 
 	/* файлы меню выбираются из текущего каталога тоже */
-	if ((fpmenu = dafopen(mfile, v.vapath, "r")) == NULL)
+	if ((fpmenu = dafopen(mfile, vexdir, "r")) == NULL)
 		return(0);
 	/*
 	 * Читать строку из файла, запомнить ее начало,

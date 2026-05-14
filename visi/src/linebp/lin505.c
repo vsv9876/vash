@@ -21,7 +21,7 @@ extern  const char *phelp0;
 
 extern  IN_PORTS in_help[];
 
-extern char   *vexdir;  /* Каталог вынесенных описаний страниц */
+extern const char   *vexdir;  /* Каталог вынесенных описаний страниц */
 
 static hlppmt(i, phelp)
 int i;

@@ -2,7 +2,6 @@
 ---LINES
 versn	= gc   -       -       cvt_sp  -       versn
 ---#versn	= v    -       -       cvt_sp  -       versn
-vpath   = gc   -       -       cvt_sp  -       vpath
 vashrc  = gc   -       -       cvt_sp  -       vashrc
 vexdir  = gc   -       -       cvt_sp  -       vexdir
 buildd  = c    buildd
@@ -81,13 +80,12 @@ C       = ipv    n      "%1d"  -       -       SGR
  
 = debug & experimental
 !    rc: .vashrc................................................................
+!vexdir: .vexdir................................................................
 !-- .fo................................  .ym. linesmax  .y0 y0     .yt y0_top   
 !-@ .rs................................  .lli lmaxli    .li maxli       
 !-i .is................................  .bli baseli    .co maxco       
 ---#+ -o: .os........................................................          
 !                                        .C - color mode
- vapath: .vpath.................................................................
- vexdir: .vexdir................................................................
 
 = vash - Visual Assistant Shell
  .coprts......................................................................

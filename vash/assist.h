@@ -15,7 +15,7 @@
 #ifndef assist_h_def
 #define assist_h_def
 #define VEXDIR "VASH_EXDIR"
-#define VAPATH "VASH_PATH"
+/*#define VAPATH "VASH_PATH"*
 
 /* Основные константы внутренних таблиц меню */
 
@@ -118,7 +118,6 @@ typedef struct {
 	const char *argv0;
 	const char *home;
 	const char *shell;
-	const char *vapath; /* vash library search path */
 	const char *versn;  /* version */
 	const char *rc;		/* profile like std.rc */
 /*
@@ -140,11 +139,6 @@ typedef struct {
 extern char rcopts[];  /* options from profile */
 extern void parsopt(char *);
 
-/*extern char   *envshell;*/
-/*extern char   *homedir;*/
-extern const char   *vexdir; /* visi/linlib extra files directory */
-/*extern const char   *vapath; /* vash library search path */
-/*extern const char   *vashrc; /* vash runtime cmdset (rc, profile) */
 /*extern char   *cwd;*/
 extern char   cwdpath[];
 extern int     t_file();

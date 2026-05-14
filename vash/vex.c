@@ -55,7 +55,6 @@ const IN_PORTS inport[] = {
 	{ "buildd",     buildd },
 	{ "versn",      &v.versn },
 	{ "vexdir",     &vexdir },
-	{ "vpath",      &v.vapath },
 	{ "vashrc",     &v.rc },
 	{ "f_o",        &Cfill_o },
 	{ "f",          &Cfill },
