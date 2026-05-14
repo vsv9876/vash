@@ -349,16 +349,15 @@ r_page(line_e, curline, posp)
 /*---------------*/
 /* read the page */
 /*---------------*/
-LINE    *line_e;             /* page to be edited */
-LINE   **curline;             /* current line (status) */
-int    *posp;                /* cursor position during edit process */
+LINE    *line_e;            /* page to be edited */
+LINE   **curline;           /* current line (status) */
+int    *posp;               /* cursor position during edit process */
 {
-	static kbcod cod;           /* code returned from r_line() */
-	static kbcod prvcod;		/* code returned last time */
+	kbcod cod;           	/* code returned from r_line() */
 
-	register LINE *lni;      /* line index in pointer form */
-	LINE *cmplni;			 /* the lni before change retry */
-	register LINE *page;     /* pointer to page at all (array of lines) */
+	register LINE *lni;     /* line index in pointer form */
+	LINE *prv_lni;			/* the lni before change retry */
+	register LINE *page;    /* pointer to page at all (array of lines) */
 
 	page = line_e;
 	if(*curline != (LINE *)NULL)
@@ -366,24 +365,23 @@ int    *posp;                /* cursor position during edit process */
 	else
 		lni = line_e;
 
-	/* ПРОПУСТИТЬ ТО, ЧТО НЕЛЬЗЯ РЕДАКТИРОВАТЬ */
+	/* not editable lines will skip */
 	while( INP & ~(lni->attr)) {
 		lni++;
-		/* ЗАЦИКЛИТЬСЯ ЧЕРЕЗ НАЧАЛО */
+		/* a cycle circle from the end to 1st line */
 		if(lni->size == 0)
 			lni = line_e;
 	}
 
-	prvcod = cod;	/* 1st time zero is OK */
 	cod = r_line(lni, posp);
 
 	/* navigate to next read position on the page */
 	switch( cod ) {
-	case KB_PU :
+	/*case KB_PU :*/
 	case KB_KH :
 		lni = fnd_home(lni, page);
 		break;
-	case KB_PD :
+	/*case KB_PD :*/
 	case KB_KE :
 		lni = fnd_end(lni, page);
 		break;
@@ -392,10 +390,10 @@ int    *posp;                /* cursor position during edit process */
 			lni = fnd_ar(lni, page) ;
 		break ;
 	case KB_AL :
-		cmplni = lni;
+		prv_lni = lni;
 		if ( (lni->flag & SUSL) == FALSE )
 			lni = fnd_al(lni, page) ;
-		if (cmplni == lni && prvcod == KB_AL)
+		if (lni == prv_lni)
 			lni = fnd_prv(lni, page);
 		break ;
 	case KB_AU :

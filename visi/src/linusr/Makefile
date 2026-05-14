@@ -46,6 +46,7 @@ HDRS	      =
 
 # lin440.c - duplicates ../linebp/lin510.c, last one is newer
 # now reused filename lin440.c
+# obsoleted:		lin470.o
 OBJS	      = lin420.o \
 		lin425.o \
 		lin426.o \
@@ -53,13 +54,13 @@ OBJS	      = lin420.o \
 		lin450.o \
 		lin460.o \
 		lin461.o \
-		lin470.o \
 		lin471.o \
 		lin472.o \
 		lin475.o \
 		lin476.o \
 		lin490.o
 
+#		lin470.cv
 SRCS	      = lin420.c \
 		lin425.c \
 		lin426.c \
@@ -67,7 +68,6 @@ SRCS	      = lin420.c \
 		lin450.c \
 		lin460.c \
 		lin461.c \
-		lin470.cv \
 		lin471.c \
 		lin472.c \
 		lin475.c \
