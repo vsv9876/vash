@@ -1,8 +1,5 @@
 - searh or position dialog have to be shortened and helped online
 
-- make clean rules with vexdir initialization
-   see example in vtest/pmain.c
-
 - complete an full utf8 support on '_sh #k' key processing
 
 - complete documenting and make code cleanup of wsobj_t (4k string)

@@ -12,9 +12,11 @@
 
 - fix limit 2..20 for vash linesmax (too hard to implement without linlib refactoring)
 
+
 	VISI (LBP,VCC,VLBP)
 
 - filler/starter character of line should be [~_#], not limited by [.]
+
 
 	VASH
 
