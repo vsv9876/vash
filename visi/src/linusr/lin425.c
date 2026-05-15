@@ -66,13 +66,52 @@ const char *str;
 		strcpy(str, hlpcod + 1); /* if no code found */
 }
 
-void w_lh_str(hlpcod)
+/*
+ * write key label string
+ */
+void w_lh_lbl(hlpcod)
 const char *hlpcod;
 {
-	char out[10]; /* label is no more than 8 ascii symbols */
+	char out[10]; /* key label is no more than 8 ascii symbols */
 	get_lh(out, hlpcod);
 	at_set(HDR|VEXT);
 	w_str(out);
+}
+
+/*
+ * write help message with key label incorporated into
+ */
+void w_lh_msg(msg)
+const char *msg;
+{
+	char out[200]; /* short printable string */
+	char *p;
+	char *op;
+	int newlbl = 1;
+
+	op = out;
+	p = msg;
+	while ( *p ) {
+		if (*p == ':' && newlbl) { /* label */
+			newlbl = 0;
+			/*op = out;*/
+			while(*p && *p != ' ')
+				*op++ = *p++;
+			*op = '\0';
+			w_lh_lbl(out);
+			op = out;
+		} else if (*p == ' ') { /* continue simple string */
+			newlbl = 1;
+			*op++ = *p++;
+			*op = '\0';
+			at_set(TXT);
+			w_str(out);
+			op = out;	/* start collect next word */
+		} else {
+			newlbl = 0;
+			*op++ = *p++;
+		}
+	}
 }
 
 int cvt_lh(line, cod, mod, str)

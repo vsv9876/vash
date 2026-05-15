@@ -347,6 +347,18 @@ extern  int w_wcstrn(wchar_t *s, int n);
 extern  int w_wcstrv(wchar_t *s, int n);
 extern  int w_wcstr(wchar_t *s);
 
+/*
+ * current state of screen, point on screen before output of printable char(s)
+ */
+typedef struct {
+	bool    sc_li;  /* line */
+	bool    sc_co;  /* column */
+	int     sc_at;  /* attributes */
+/*	char   *sc_ac;     w_sgr() arg - ANSI color */
+} SCRN;
+
+
+
 	/*
 	 * library functions
 	 */
@@ -395,7 +407,8 @@ extern  int     cvt_s(LINE *, kbcod, char *, char*);
 extern  int     cvt_sp(LINE *, kbcod, char *, char*);
 extern  int     cvt_lh(LINE *, kbcod, char *, const char *);
 extern  void    get_lh(const char *, const char *);
-extern  void    w_lh_str(const char *);
+extern  void    w_lh_lbl(const char *);
+extern  void    w_lh_msg(const char *);
 extern  int     cvt_hl(LINE *, int, char *, char *);
 extern  int     tst_m(LINE *, kbcod);
 

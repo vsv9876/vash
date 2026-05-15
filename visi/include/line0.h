@@ -58,16 +58,6 @@ typedef struct {
 } LPA;
 #define LPASIZE 8
 
-/*
- * current state of screen, point on screen before output of printable char(s)
- */
-typedef struct {
-	bool    sc_li;  /* line */
-	bool    sc_co;  /* column */
-	int     sc_at;  /* attributes */
-/*	char   *sc_ac;     w_sgr() arg - ANSI color */
-} SCRN;
-
 extern int		sgrmode; /* runtime attributes setup mode */
 
 /*

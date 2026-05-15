@@ -56,9 +56,7 @@ const LINE    *page;
 				w_page(phelp);
 				d_page(phelp);
 				hlppmt(i, pages[i]);
-				at_set(TXT);
-				w_str("-- get next page: ");
-				w_lh_str(":HE");
+				w_lh_msg("-- get next page: :HE");
 			} else {
 				hlppmt(i, pages[i]);
 				at_set(ERR);

@@ -461,15 +461,14 @@ register char *str;
  */
 static
 kbcod
-r_pmt(pmtstr, line, savedf)
-char *pmtstr;
+r_pmt(line, savedf)
 LINE *line;
 int savedf;
 {
+	extern SCRN scrn;
 	kbcod cod;
 
 	for ( ;; ) {
-		w_msg(TXT, pmtstr);
 		savedf = edinff;
 		/*edinff = 0;     /* не показывать состояние редактора */
 		cod = r_line(line, 0);
@@ -519,19 +518,21 @@ int   size;     /* размер поля для ввода */
 	line.test = (void *)0;
 	line.varl = (void*)wobj;
 
-	cod = r_pmt(pmtstr, &line, savedf);
+	cod = r_pmt(&line, savedf);
 	return(cod);
 }
 
 kbcod
-pmtrstr(pmtstr, str, size)
+pmtrstr(pmtstr, str, size, hlpmsg)
 const char *pmtstr;   /* строка подсказки */
 char *str;      /* строка для ввода */
 int   size;     /* размер строки для ввода */
+const char *hlpmsg;	/* help message after string */
 {
 	kbcod cod;
 	LINE  pmtline;
 	int   savedf;
+	int lh_pos;
 
 	if(str[0] == U8O_SIG)
 		pmtline.flag = U8SOBJ;
@@ -550,7 +551,13 @@ int   size;     /* размер строки для ввода */
 	pmtline.test = (void *)0;  /* тип указатель на функцию, возвр. int */
 	pmtline.varl = str;
 
-	cod = r_pmt(pmtstr, &pmtline, savedf);
+	w_msg(TXT, pmtstr);
+
+	lh_pos = pmtline.colu + pmtline.size + 2;
+	cp_set(pmtline.line, lh_pos, TXT);
+	w_lh_msg(hlpmsg);
+
+	cod = r_pmt(&pmtline, savedf);
 	return(cod);
 
 }

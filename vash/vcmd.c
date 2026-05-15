@@ -430,9 +430,7 @@ char *file;
 	}
 
 	w_msg(TXT, ""); /* assumed cp_set(-1, 0, TXT) */
-	w_msg(TXT, "press ");
-	w_lh_str(":SP");
-	w_lbl(TXT, " to continue:");
+	w_lh_msg("press :SP to continue:");
 	cod = r_cod(0);
 	w_msg(TXT, "");
 	clm = savelm;

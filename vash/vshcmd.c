@@ -188,14 +188,8 @@ int msgat;
            * w_hlp(TXT,
            * "main view: click :SP or :CA      get help: :HE"); */
 				at_set(TXT);
-				w_str(" main view: click ");
-				w_lh_str(":SP");
-				at_set(TXT);
-				w_str(" or ");
-				w_lh_str(":CA");
-				at_set(TXT);
-				w_str("               help: ");
-				w_lh_str(":HE");
+				w_lh_msg(
+						" main view: click :SP or :CA                help: :HE");
 				/*at_set(TXT);*/
 				er_eol(TXT);
 			}

@@ -235,7 +235,7 @@ extern  char Csubs[];
 
 extern const char *pmtsh;
 
-kbcod pmtrstr(const char *, char *, int);
+kbcod pmtrstr(const char *, char *, int, const char *);
 kbcod pmtrobj(char *, u8sobj_t *, int);
 
 extern void vfread(FILE *);

@@ -49,6 +49,7 @@ void w_msg(vamode, str)
 int     vamode;        /* видеоатрибут */
 const char    *str ;         /* текст сообщения об ошибке */
 {
+	char buf[STRBUF];
 	int va;	/* attribute of message */
 	char *whatmsg = "*";
 
@@ -74,15 +75,15 @@ const char    *str ;         /* текст сообщения об ошибке 
 			cp_set(-1, 0, vamode);
 
 			switch (vamode & VIDEO) {
-			case ERR: whatmsg = "error"; break;
+			case ERR: whatmsg = "error!"; break;
 			case ATT: whatmsg = ">>>";   break;
 			case TXT: whatmsg = "";      break;
 			/*default:  whatmsg = "*";     break;*/
 			}
-			if (whatmsg[0] == '\0')
-				fprintf(vttout, "  ");
-			else
-				fprintf(vttout, " %s: ", whatmsg);
+			buf[0] = '\0';
+			if (whatmsg[0] != '\0')
+				sprintf(buf, " %s ", whatmsg);
+			w_str(buf);
 			at_set(va); w_chr(' ');
 			w_str(str);
 			at_set(TXT); er_eol(TXT);

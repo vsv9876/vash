@@ -159,7 +159,7 @@ const char *fill;
 {
 	kbcod cod;
 
-	extern kbcod pmtrstr(); /* ввод строки с промптером */
+	/*extern kbcod pmtrstr(); /* ввод строки с промптером */
 	char prompts[10];
 	int maxlen;
 
@@ -206,14 +206,14 @@ kbcod cod;
 	register char *p;
 	register LINE *line;
 	register int i;
-	extern kbcod pmtrstr(); /* ввод строки с промптером */
+	/*extern kbcod pmtrstr(); /* ввод строки с промптером */
 	char prompts[100];
 	int total, unvisible;
 
 	total = 0;
 	/* ввести шаблон пометки */
 	sprintf(prompts, " mark #%c ", cod);
-	switch(pmtrstr(prompts, pattfs, 40)) {
+	switch(pmtrstr(prompts, pattfs, 40, "select: :NL; cancel: :EX or :CA")) {
 	case KB_CA:
 	case KB_EX:
 		w_emsg("");
@@ -334,11 +334,15 @@ register int i; /* search start position */
 int itmpos(cmd)
 const char *cmd;
 {
-	extern kbcod pmtrstr(); /* ввод строки с промптером */
+	/*extern kbcod pmtrstr(); /* ввод строки с промптером */
 	kbcod cod;
 	int i, ilast;
 
-	cod = pmtrstr(" jump to : ", pattpos, 20);
+/*
+	cp_set(-1, 0, TXT); er_eol(TXT);
+	cp_set(-1, 40, TXT); w_str("continue: <Tab>");
+*/
+	cod = pmtrstr("item select:", pattpos, 20, ":EX cancel; get next: :TA ");
 	if (strchr(pattpos, '*') || strchr(pattpos, '?'))
 		ispatt++;
 
@@ -399,6 +403,7 @@ register LINE *mainl;
 
 	clm._itm = 0;
 
+	/* main loop of visual assistance */
 	for ( ;; ) {
 
 		if (refresh) {
