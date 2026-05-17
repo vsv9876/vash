@@ -89,6 +89,7 @@ const char *msg;
 	char *op;
 	int newlbl = 1;
 
+	out[0] = '\0';
 	op = out;
 	p = msg;
 	while ( *p ) {
@@ -111,6 +112,11 @@ const char *msg;
 			newlbl = 0;
 			*op++ = *p++;
 		}
+	}
+	if (out[0] != '\0') {
+		*op = '\0';
+		at_set(TXT);
+		w_str(out);
 	}
 }
 

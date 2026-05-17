@@ -207,13 +207,13 @@ kbcod cod;
 	register LINE *line;
 	register int i;
 	/*extern kbcod pmtrstr(); /* ввод строки с промптером */
-	char prompts[100];
-	int total, unvisible;
+	char prompts[STRBUF];
+	int total, invisible;
 
 	total = 0;
 	/* ввести шаблон пометки */
-	sprintf(prompts, " mark #%c ", cod);
-	switch(pmtrstr(prompts, pattfs, 40, "select: :NL; cancel: :EX or :CA")) {
+	sprintf(prompts, "# mark [%c]", cod);
+	switch(pmtrstr(prompts, pattfs, 24, "select: :NL; cancel: :EX or :CA")) {
 	case KB_CA:
 	case KB_EX:
 		w_emsg("");
@@ -251,7 +251,7 @@ kbcod cod;
 			total++;
 		}
 	}
-	unvisible = total;
+	invisible = total;
 	for(line=clm._vf; line->size != 0; line++) {
 		p = *(char **)line->varl;
 		switch(*p) {
@@ -264,19 +264,23 @@ kbcod cod;
 			break;
 		case MONEY:
 			line->attr = ATT|INP|NED|LFASTR;
-			unvisible--;
+			invisible--;
 			break;
 		}
 		w_line(line);
 	}
 	if (total) {
-		w_msg(TXT, " ");
-		fprintf(vttout, " # marked: %d ", total);
-		if (unvisible)
-			fprintf(vttout, ", not shown: %d ", unvisible);
+		w_msg(ATT, "#");
+		if (invisible)
+			sprintf(prompts, " marked items (shown+invisible): "
+					"%d (%d+%d)",
+					total, total-invisible, invisible);
+		else
+			sprintf(prompts, " marked items: %d", total);
+		w_str(prompts);
 	}
 	else {
-		w_msg(TXT, " # no mark ");
+		w_msg(ATT, "# no items marked ");
 	}
 	return 0;
 }
@@ -330,6 +334,13 @@ register int i; /* search start position */
 	return(i);
 }
 
+static int itm_on = 0; /* flag: dialog in active state */
+
+static void itm_next() {
+	w_msg(ATT, " "); w_lh_msg(":TA find the next ["); w_str(pattpos);
+			w_lh_msg("];   :EX cancel");
+}
+
 /* position cursor on first letter given in dialog */
 int itmpos(cmd)
 const char *cmd;
@@ -342,7 +353,12 @@ const char *cmd;
 	cp_set(-1, 0, TXT); er_eol(TXT);
 	cp_set(-1, 40, TXT); w_str("continue: <Tab>");
 */
-	cod = pmtrstr("item select:", pattpos, 20, ":EX cancel; get next: :TA ");
+
+	cod = KB_TA;	/* may be any legal code */
+	if (itm_on == 0)
+		cod = pmtrstr("find a match:", pattpos, 20,
+				" :NL jump;  :EX cancel");
+
 	if (strchr(pattpos, '*') || strchr(pattpos, '?'))
 		ispatt++;
 
@@ -356,8 +372,10 @@ const char *cmd;
 		ilast = clm._itm;
 		i = itmsel(ilast + 1);
 		if (i >= clm._itmmax) {
-			w_emsg("no more items: ");
+			w_msg(ERR|INP, "no more match [");
 			w_str(pattpos);
+			w_lh_msg("];    :TA edit new one");
+			itm_on = 0;
 			return -1;
 		}
 		if (ilast != clm._itm) {
@@ -365,6 +383,7 @@ const char *cmd;
 		}
 		break;
 	case KB_NL:
+		itm_on = 1;
 		ilast = clm._itm;
 		i = itmsel(0);
 		if (i >= clm._itmmax) {
@@ -375,6 +394,7 @@ const char *cmd;
 		if (ilast != clm._itm) {
 			itmadj(0);
 		}
+		itm_next();
 		break;
 	}
 	return 0;
@@ -421,10 +441,23 @@ register LINE *mainl;
 
 		i = clm._itm - clm._itmofs;
 
-		/* entry code of main menu */
+		/* entry code of main menu
+		 * r_line() used for cursor positioning only,
+         * parsing done via vcmd() below */
 		cod = r_line( &clm._vf[i], 0 );
 
-		if ( ok_msg() ) {
+		if (itm_on) {
+			switch (cod) {
+			case KB_CA:
+			case KB_EX:
+				itm_on = 0;
+				cod = 0;	/* flag to skip vcmd() below */
+				break;
+			default:
+				break;
+			}
+		}
+		if (itm_on == 0 && ok_msg() ) {
 			w_emsg("");
 			keyreq = 1;
 		}
@@ -439,8 +472,10 @@ register LINE *mainl;
 			i = itmadj(cod);
 			break;
 		default:
-			/*w_line( &clm._vf[i] );*/
-			cmdret = vcmd(/*i,*/ cod/*, clm._vf*/);
+			if (cod != 0)
+				cmdret = vcmd(cod);
+			else
+				cmdret = 0;
 			if (cmdret == 0)
 				keyreq = 1;
 			if (cmdret > 0) {
