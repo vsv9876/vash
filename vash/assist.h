@@ -14,7 +14,7 @@
 
 #ifndef assist_h_def
 #define assist_h_def
-#define VEXDIR "VASH_EXDIR"
+/*#define VEXDIR "VASH_EXDIR"*/
 /*#define VAPATH "VASH_PATH"*
 
 /* Основные константы внутренних таблиц меню */

@@ -518,6 +518,8 @@ int   size;     /* размер поля для ввода */
 	line.test = (void *)0;
 	line.varl = (void*)wobj;
 
+	w_msg(TXT, pmtstr);
+
 	cod = r_pmt(&line, savedf);
 	return(cod);
 }

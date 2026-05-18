@@ -72,7 +72,7 @@ static u8char_t lastkey[4];     /* код последней нажатой кл
 
 /*ARGSUSED*/
 int
-vcmd(/*j, */cod/*, mainl*/)
+vcmd(cod)
 /*
  * Интерпретировать клавишную команду
  *
@@ -112,7 +112,7 @@ kbcod   cod;    /* код нажатой клавиши */
 		 * workaround: any printable non-ascii but single-byte code;
 		 * normal solution may be to use wchar_t for patcmp()
 		 * and lastkey[] and so on;
-		 * anyway rc files are encoded ASCII-only
+		 * anyway rc files are encoded ASCII-only (must be encoded!)
 		 */
 		lastkey[0] = 0243 /*0xff & cod*/;
 		lastkey[1] = 0;

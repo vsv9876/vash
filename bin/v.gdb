@@ -3,7 +3,7 @@
 # vash -- Visual Assistant Shell
 
 # startup script for DEBUG unpackaged vash
-# sopy&paste from v.local, gdb as a prefix
+# copy&paste from v.local, gdb as a prefix
 
 # name of this script as regular file
 cmd=v.gdb
@@ -51,8 +51,6 @@ if [ -x $bintest ]; then
 	PATH=$BLD/usr/bin:$PATH;
 	export PATH
     fi
-    VASH_EXDIR="${BLD}/usr/lib/vash:/usr/lib/vash"
-    export VASH_EXDIR
     VASH_PATH="${BLD}/usr/lib/vash:/usr/lib/vash"
     export VASH_PATH
     VHSET="${vashdir}/etc/vhset"

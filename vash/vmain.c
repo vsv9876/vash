@@ -335,26 +335,49 @@ register int i; /* search start position */
 }
 
 static int itm_on = 0; /* flag: dialog in active state */
+static kbcod itm_kbcod = 0; /* the code calling itmpos(), may be not a KB_TA */
 
 static void itm_next() {
 	w_msg(ATT, " "); w_lh_msg(":TA find the next ["); w_str(pattpos);
 			w_lh_msg("];   :EX cancel");
 }
 
+static void itm_nomatch(cmd_cod)
+const char *cmd_cod;
+{
+	w_msg(ERR|INP, "no match [");
+	w_str(pattpos);
+	/*
+	w_lh_msg("];    :TA edit new one");*/
+	w_lh_msg("];   continue or ");
+		    w_lh_msg(cmd_cod);
+		    w_lh_msg(" to edit new one");
+}
+
 /* position cursor on first letter given in dialog */
 int itmpos(cmd)
 const char *cmd;
 {
+	char cmd_cod[4];
 	/*extern kbcod pmtrstr(); /* ввод строки с промптером */
 	kbcod cod;
 	int i, ilast;
 
-/*
-	cp_set(-1, 0, TXT); er_eol(TXT);
-	cp_set(-1, 40, TXT); w_str("continue: <Tab>");
-*/
+	cod = KB_TA;	/* may be any code excluding KB_NL, KB_EX, KB_CA */
+	cod = last_cod;
 
-	cod = KB_TA;	/* may be any legal code */
+	cmd_cod[0] = ':';
+
+	/* decode an cod for w_lh_msg() below */
+	if (ISCTL(cod)) {
+		cmd_cod[1] = cod0(cod);
+		cmd_cod[2] = cod1(cod);
+	} else if (cod < 0200) {
+		cmd_cod[1] = cod0(cod);
+		cmd_cod[2] = 0;
+	}
+	cmd_cod[3] = '\0';
+
 	if (itm_on == 0)
 		cod = pmtrstr("find a match:", pattpos, 20,
 				" :NL jump;  :EX cancel");
@@ -362,39 +385,41 @@ const char *cmd;
 	if (strchr(pattpos, '*') || strchr(pattpos, '?'))
 		ispatt++;
 
+	/*TODO cleanup: cp_set(-2, 50, ATT); w_str(' \''); w_str(cmd);*/
+
 	switch(cod) {
 	case KB_CA:
 	case KB_EX:
 		w_emsg("");
 		return 0;
 		break;
-	case KB_TA:
+	case KB_NL:
+		itm_on = 1;
 		ilast = clm._itm;
-		i = itmsel(ilast + 1);
+		i = itmsel(0);
 		if (i >= clm._itmmax) {
-			w_msg(ERR|INP, "no more match [");
-			w_str(pattpos);
-			w_lh_msg("];    :TA edit new one");
+			itm_nomatch(cmd_cod);
 			itm_on = 0;
 			return -1;
 		}
 		if (ilast != clm._itm) {
 			itmadj(0);
 		}
+		itm_next();
 		break;
-	case KB_NL:
-		itm_on = 1;
+	/* KB_TA: */
+	default:
 		ilast = clm._itm;
-		i = itmsel(0);
+		itm_kbcod = cod;
+		i = itmsel(ilast + 1);
 		if (i >= clm._itmmax) {
-			w_emsg("no such item: ");
-			w_str(pattpos);
+			itm_nomatch(cmd_cod);
+			itm_on = 0;
 			return -1;
 		}
 		if (ilast != clm._itm) {
 			itmadj(0);
 		}
-		itm_next();
 		break;
 	}
 	return 0;
@@ -447,14 +472,18 @@ register LINE *mainl;
 		cod = r_line( &clm._vf[i], 0 );
 
 		if (itm_on) {
-			switch (cod) {
-			case KB_CA:
-			case KB_EX:
-				itm_on = 0;
-				cod = 0;	/* flag to skip vcmd() below */
-				break;
-			default:
-				break;
+			if(cod != itm_kbcod) {
+				switch (cod) {
+/*				case KB_TA:
+					break;*/
+				case KB_CA:
+				case KB_EX:
+					cod = 0;	/* flag to skip vcmd() below */
+					/*NO BREAK*/
+				default:
+					itm_on = 0;
+					break;
+				}
 			}
 		}
 		if (itm_on == 0 && ok_msg() ) {

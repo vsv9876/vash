@@ -10,6 +10,8 @@ mypwd=`pwd`
 mydir=`basename $mypwd`
 #VERSN="$mydir"
 VERSN=`cat ./VERSION`
+# by default for all modern distro
+DEST=/usr
 
 #mandatory
 confdir="./conf"
@@ -32,16 +34,17 @@ usage () {
 
   usage:
 	$0 \\
-		[{-t|--termlib}=termlib]
-		[{-d|--debug}[=debug_opts]] \\
-		[{-S|--static} \\
+		[{-t|--termlib}=termlib] \\
 		[{-m|--machine}=arch] \\
-		[{-s|--system}=kernel]
+		[{-s|--system}=kernel] \\
+		[{-S|--static} \\
+		[{-d|--debug} \\
+		[{-l|--local} \\
 
 where
 	--termlib={termcap|ncurses|tinfo|unsup}
 	-m and -s recognized automatically from uname
-	
+	-l changes DEST= from default /usr to /usr/local
 
 
 EOF
@@ -73,6 +76,8 @@ case $opt in
 			;;
 -d|--debug)		DEBUG="$DEBUG_1"
 			;;        
+-l|--local)		DEST="/usr/local"
+			;;        
 -m=*|--machine=*)       MACHINE=$val
 			;;
 -s=*|--system=*)        SYSTEM=$val
@@ -93,7 +98,7 @@ VARIANT=$1
 # >> $BLDCONF	echo ''
  >> $BLDCONF	echo 'TOPDIR    = '`pwd`
 # >> $BLDCONF	echo ''
- >> $BLDCONF	echo 'DEST      = /usr'
+ >> $BLDCONF	echo 'DEST      = '$DEST''
 # >> $BLDCONF	echo ''
  >> $BLDCONF	echo 'VERSN     = '$VERSN''
 # >> $BLDCONF	echo ''

@@ -8,17 +8,21 @@
         * +     _mark -
 #       * *     _mark -
 
+# moving cursor jumping to position by the item pattern
 :TA
+:[*]
 #:^
+#:['"]
 	* ?	_itmpos
 #
-### :SP does not work as key recognizer, use [ ]
-### note: cursor advance to next item only on [ ] (space key hardcoded)
+### :SP does not work as key recognizer, use :[ ] instead
+### note: moving the cursor to the next item by pressing the space bar
+### is hard-coded inside vash
 :KI
 :[ ]
 	* ?	_mark x#
 #
-# edit fill command, the same as -- tail calling vash
+# edit fill main menu command
 # :_
 #       * ?     _mark _
 :[_]

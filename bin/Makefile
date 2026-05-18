@@ -1,18 +1,14 @@
 
 SHELL         = /bin/sh
 
-##
-##      +----------+    библиотека ввода-вывода
-##     (C) LINLIB  !    для алфавитно-цифровых
-##      +----------+    видеотерминалов
-##
-##      $Header$
-##      $Log$
-##
+#
+# vash scripts
+#
 
-#	(v)ash remix, additional scripts
+MAKEFILE      = Makefile
 
-DEST = /usr/local
+#DEST = /usr/local
+DEST = /usr
 
 #include		../conf/Makefile
 include		../BLD.cfg
@@ -25,21 +21,9 @@ SCRIPTS       = v
 #EXECMODE      =  711
 EXECMODE      =  755
 
-DESTDIR       =
-#DEST          = /usr/local
+DESTDIR       = ../BLD
+
 DESTBIN       = $(DESTDIR)$(DEST)/bin
-
-LIBS          =
-
-MAKEFILE      = Makefile
-
-EXTHDRS	      =
-
-HDRS	      =
-
-SRCS          = 
-
-OBJS	      =
 
 all:  $(SCRIPTS)
 
@@ -48,12 +32,6 @@ scripts:        $(SCRIPTS)
 clean:
 	rm -f $(SCRIPTS) *~ *.b *.bak
 
-otherclean:
-
-otherinst:
-#                cd ./ashrc; make DEST=$(DEST) install
-
-#install:        $(SCRIPTS) $(DESTBIN) otherinst
 install:        $(SCRIPTS) $(DESTBIN)
 		cp -p $(SCRIPTS) $(DESTBIN)
 
@@ -70,5 +48,7 @@ $(DEST):
 $(DESTDIR):
 	mkdir -p $(DESTDIR)
 
-###
+$(DESTBIN):
+	mkdir -p $(DESTBIN)
 
+###

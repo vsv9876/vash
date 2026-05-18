@@ -29,6 +29,12 @@ if [ -s $ddd/BLD.cfg ]; then
     $s
 EOF
     vashdir=`echo $v`
+    
+    s=`grep DEST $ddd/BLD.cfg`
+    IFS== read k v<< EOF
+    $s
+EOF
+    dest=`echo $v`
     ##exit 2
 else
     case $ddd in
@@ -41,28 +47,26 @@ fi
 # where 'make install' done
 BLD=$vashdir/BLD
 #bintest=vash/vash
-bintest=$BLD/usr/bin/vash
+bintest=$BLD$dest/bin/vash
 
 # debug env, reset my own regular setup
 if [ -x $bintest ]; then
-    onpath=`echo $PATH|grep -c $BLD/usr/bin`
+    onpath=`echo $PATH|grep -c $BLD$dest`
     if [ $onpath -eq 0 ]; then
-	PATH=$BLD/usr/bin:$PATH;
+	PATH=$BLD$dest/bin:$PATH;
 	export PATH
     fi
-    VASH_EXDIR="${BLD}/usr/lib/vash:/usr/lib/vash"
-    export VASH_EXDIR
-    VASH_PATH="${BLD}/usr/lib/vash:/usr/lib/vash"
+    VASH_PATH="${BLD}$dest/lib/vash:$dest/lib/vash"
     export VASH_PATH
     VHSET="${vashdir}/etc/vhset"
     export VHSET
-    VHSET_LIB="${BLD}/usr/lib/vhset:/usr/lib/vhset"
+    VHSET_LIB="${BLD}$dest/lib/vhset:$dest/lib/vhset"
     export VHSET_LIB
     echo ' *'
     echo " * Warning: this is LOCAL (unpackaged) version "
     echo " * from $vashdir ***"
     echo ' *'
-    . $BLD/usr/bin/v "$@"
+    . $BLD$dest/bin/v "$@"
     # exec $BLD/usr/bin/vash "$@"
 fi
 echo '   *** no compiled binaries found in:'

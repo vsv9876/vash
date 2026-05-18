@@ -51,8 +51,6 @@ if [ -x $bintest ]; then
 	PATH=$BLD/usr/bin:$PATH;
 	export PATH
     fi
-    VASH_EXDIR="${BLD}/usr/lib/vash:/usr/lib/vash"
-    export VASH_EXDIR
     VASH_PATH="${BLD}/usr/lib/vash:/usr/lib/vash"
     export VASH_PATH
     VHSET="${vashdir}/etc/vhset"

@@ -69,7 +69,7 @@ int on;
 	}
 	fflush(vttout);
 }
-
+kbcod last_cod; /* last code just returned from r_cod() */
 int lastchr; /* last parsed printable code - TODO: there will be stored full utf8 encoded symbol from input */
 char  r_chr() /* TODO: UTF8 support; wchar r_chr() */
 {
@@ -121,6 +121,7 @@ kbcod cod;
 		else       { kpadon = 1; w_raw(t_ks); }
 		fflush(vttout);
 	}
+	last_cod = cod;
 	return(cod);
 }
 

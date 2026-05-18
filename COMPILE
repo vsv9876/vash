@@ -7,10 +7,10 @@ Notes:
   *) now build requires standard libraries
   *) low-level terminal support functions can be found in one of:
 	termcap, tinfo, ncurses
-  *) make sure '-devel' version installed
-  *) static linkage allowed but not required as option (--static) 
+  *) make sure '-devel' version of libraries installed
+  *) static linkage allowed as option but not required
 
-Compile vash-2.0.24 and later
+Compile vash-2.1.0 and later
 
 1.
 unpack tarball and change directory on it:
@@ -25,19 +25,29 @@ run ./configure script or run 'make config':
 check BLD.conf:
         vi ./BLD.conf
 4.
-compile binaries in local subdirectory:
+compile binaries and install them in local subdirectory:
         make clean install
 NOTE: find resulting binaries under ./BLD
         
 5.
-How to use vash compiled locally or running for debug.
-Requires ~/bin in your PATH:
-      ln -s `pwd`/bin/v.debug.sh ~/bin/vd
-      vd
+How to use vash compiled locally:
+symlink 'v' to 'bin/v.local' may be used from source directory -
+	./v
+plase symlink to directory in your PATH as option
 
 6.
+Debug requires special flag '-d' for ./configure
+and optionally environment setup (see comments in './vv');
+then use 'connect to process' method of eclipse or gdb:
+	./configure -d
+	. ./vv
+	env | grep V
+	./v
+NOTE: vash will give an additional prompt allowing connect debugger
+
+7.
 Build installable binary packages (optional).
-    6.1 RPM build
+    7.1 RPM build
     Make sure rpmbuild package installed and working.
     NOTE: In Fedora resulting package will be in ~/rpmbuild/SRPMS
     (may be vary on a different systems)
@@ -47,13 +57,20 @@ Build installable binary packages (optional).
 	rpmbuild --rebuild ~/rpmbuild/SRPMS/vash-*.src.rpm
 
     find and install a package, in Fedora:
-	sudo yum install ~/rpmbuild/RPMS/*/vash-*.rpm
+	sudo yum -C install ~/rpmbuild/RPMS/*/vash-*.rpm
 
-    6.2. DEB build
+    7.2. DEB build
     Make sure required 'dpkg' and 'fakeroot' packages installed.
     Run script, installable package will be in parent directory:
        ./MK/DEBIAN.sh
        sudo dpkg -i ../vash_*.deb
+
+    7.3. PKG (FreeBSD) build
+    get compiled binaries then run script:
+	./configure
+	make clean install
+	./MK/pkg-fbsd.sh
+    
 
 
 HISTORICAL NOTEs
@@ -74,13 +91,14 @@ enhancements was added with port to SPARK Solaris in 1995 and DEC OSF-1
 Unix in 1996. Porting to SGI IRIX was done in that time.
 
 1st port to linux-based systems was done in 2004 since Fedora Core 2
-which was selected as nearest linux for RiP SGI O2..
+which was selected for workstation instead SGI O2 which RiP...
+
 
 In modern  time  project  development  was  reactivated  not  observing
 comparable tools. Then prepared for wide publication under free license.
 
 Finally, name VASH was assigned to this program avoiding confusion with
-/bin/ash, again shell.
+/bin/ash, again shell. (now 'again shell' named 'dash' jfyi)
 
 Most  of  previouse versions was adopted for 32-bit architectures and supported
 only 8-bit encoding charsets.  Native 64-bit support added since 2019.

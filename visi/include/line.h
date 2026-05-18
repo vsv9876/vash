@@ -379,6 +379,7 @@ extern  int     w_putc(int);
 extern  void    at_set(int p);
 extern  kbcod   r_cod(kbcod cod);
 extern  void    unr_c(kbcod cod);
+extern  kbcod   last_cod;
 extern  kbcod   r_key();
 extern  int     hw_set();
 extern  int     do_kbl();

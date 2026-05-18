@@ -34,6 +34,7 @@ VISILIB = $(DESTDIR)$(DEST)/lib/visi
 VHSET	= ./vhset
 VASH	= ./vash
 VASHLIB	= ./lib
+VEXDIR  = $(DEST)/lib/vash
 
 VASH_DOC = $(DESTDIR)$(DEST)/share/doc/$(VASH)
 
@@ -121,7 +122,7 @@ visi_lib: setup
 compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib
 	cd $(VHSET); $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)"
 	cd $(VASH);   $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)" "ASHLIB=$(ASHLIB)"\
-				"CFLAGS_ASH=$(CFLAGS_ASH)" "VERSN=$(VERSN)"
+				"CFLAGS_ASH=$(CFLAGS_ASH)" "VERSN=$(VERSN)" "VEXDIR=$(VEXDIR)"
 	cd lib;               $(MAKE) "PATH=$(PATH)" "DEST=$(DEST)" all
 #	cd lib/LIB;           $(MAKE) "DEST=$(DEST)" all
 
@@ -129,7 +130,7 @@ compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib
 install: setup compile $(DESTDIR) $(DEST) $(VISILIB) docinstall maninstall
 	cd $(VHSET);	$(MAKE) install "PATH=$(PATH)" \
 		CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
-	cd $(VASH);	$(MAKE) install "PATH=$(PATH)" \
+	cd $(VASH);	$(MAKE) install "PATH=$(PATH)" "VEXDIR=$(VEXDIR)" \
 		"CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd rc;	$(MAKE) install "PATH=$(PATH)" \
 		"DEST=$(DEST)" "DESTDIR=$(DESTDIR)" "PATH=$(PATH)"

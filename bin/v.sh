@@ -31,8 +31,6 @@
 #VASH=l10pshcm
 #VASH=
 
-# library stuff of vash:
-#VASH_EXDIR=/usr/lib/vash
 #debug:
 # make sure '~/bin' in PATH;
 # ln -s `pwd`/vashbin/v.debug.sh ~/bin/vd;

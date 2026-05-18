@@ -24,6 +24,9 @@ char    *tmpflnm = &tmpflss[0];
 int		tmpfd = -1;
 FILE   *tmpfp = NULL;
 /*YESXSTR*/
+
+/* defined via Makefile, othervise use default from linlib' variable */
+const char *vexdir = VASH_PATH;
 /*extern  char *mkstemp();*/
 
 /*extern  char *getenv();*/
@@ -557,7 +560,7 @@ char **argv;
 	v.argv0 = argv0 = *argv;
 
 	/* setup extra directory for all working files library, vashrc will be found in that place */
-	if ((s = getenv(VEXDIR)) != (char *)0)
+	if ((s = getenv("VASH_PATH")) != (char *)0)
 		vexdir = s;
 
 #ifdef  VTTY
