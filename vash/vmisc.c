@@ -374,8 +374,8 @@ register char *str;
 {
 	char bufpat[STRBUF];
 	register char *pat;
-	pat = bufpat;
 
+	pat = bufpat;
 	if (*wldpat == '^')
 		wldpat++;
 	else if (*wldpat == '*')

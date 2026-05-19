@@ -3,28 +3,23 @@ SHELL = /bin/sh
 
 #
 # Visual Assistant Shell
-# 1990-2025 (C) Sergey Vovk <vsv>
+# 1990-2026 (C) Sergey Vovk <vsv>
 #
-# MIT License
+# GPL and/or MIT License
 # 
 
-# this is permanent, other value not tested yet.
-#DEST  = /usr/local
-DEST  = /usr
-
-# redefined to full path of current directory via ./configure by make config
-#TOPDIR = /tmp
+#
+# main parameters defined by running script ./configure
+#
 TOPDIR = .
-
-# defined with script ./configure
-#MAKECONF   = ./conf/Makefile
-
-BLDCFG	= BLD.cfg
-
 BLD	= $(TOPDIR)/BLD
-#BLD	= .
 DESTDIR	= $(TOPDIR)/BLD
 VERSN	= "1."
+# distribution dependent (eg /usr/local for FreeBSD)
+DEST  = /usr
+
+# main config file (name hard-coded inside ./configure)
+BLDCFG	= BLD.cfg
 
 include $(BLDCFG)
 
@@ -56,21 +51,16 @@ MAN_DIR = $(DESTDIR)$(DEST)/share/man/man1
 
 all:	setup compile
 
-#SHOWCONFIG = showconfig
-SHOWCONFIG =
-
 help:
-	@echo	'Please, check and edit file '$(MAKECONF)', then'
+	@echo	'Please, check and edit file '$(BLDCFG)', then'
 	@echo	''
-	@echo	'    make config		# TOPDIR setup, create '$(BLDCFG)''
-	@echo	'    make all		# compile all binaries from source files'
-	@echo	' or'
-	@echo	'    make install	# install binaries without packaging'
-	@echo	'    make clean		# clean subproject directories'
-	@echo	'    make distclean	# cleanup distribution from garbage files'
-	@echo	'    make showconfig	# print configuration'
-	$(MAKE)	showconfig
-	#$(MAKE)	SHOWCONFIG=yes yes
+	@echo	'    make config        # create '$(BLDCFG)''
+	@echo	'    make install       # compile and prepare binaries for packaging'
+	@echo	'or'
+	@echo	'    make all           # compile only'
+	@echo	'    make clean         # cleanup sources tree'
+	@echo	'    make distclean     # cleanup distribution sources'
+	@echo	'    make showconfig    # print configuration'
 
 #@set -x;
 setup:
@@ -89,14 +79,9 @@ setup:
 $(BLDCFG):
 	touch $(BLDCFG)
 
-prep cfg config:;
+prep config:;
 	./configure
 
-#cfg:
-#	./configure
-#	$(MAKE) $(BLDCFG)
-
-#$(SHOWCONFIG):
 showconfig:
 	@echo '***** Make.conf variables configured:'
 	@echo PATH=$(PATH)
@@ -118,7 +103,8 @@ visi_lib: setup
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
 
-# NOTE: at least FreeBSD's make requires PATH= specified explicitly
+# NOTE:
+# at least FreeBSD's make requires PATH= specified explicitly
 compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib
 	cd $(VHSET); $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)"
 	cd $(VASH);   $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)" "ASHLIB=$(ASHLIB)"\

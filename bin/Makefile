@@ -33,7 +33,7 @@ clean:
 	rm -f $(SCRIPTS) *~ *.b *.bak
 
 install:        $(SCRIPTS) $(DESTBIN)
-		cp -p $(SCRIPTS) $(DESTBIN)
+		mv $(SCRIPTS) $(DESTBIN)
 
 .sh:	
 	cp -p $< $@

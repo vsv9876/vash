@@ -313,18 +313,25 @@ const char *cmd;
 }
 
 static char pattpos[20] = "";
-static matched, ispatt;
+static int matched, ispatt;
 /*void*/int itmsel(i)
 register int i; /* search start position */
 {
 	register char *p;
+	/* полагаем, что искать первым буквам имени пункта а не по шаблону [*?] */
+	if (strchr(pattpos, '*') == NULL && strchr(pattpos, '?') == 0)
+		ispatt = 0;
+	else
+		ispatt = 1;
 	for (/*i = 0*/; i < clm._itmmax; i++) {
 		p = clm._itms[i];
+		/* _itms[i] содержит первые 2 байта -- пометку и тип */
+		p += 2;
 		/* Проверять по совпадению или образцу */
 		matched = 0;
-		if (ispatt == 0 && strncmp(pattpos, &p[2], strlen(pattpos)) == 0)
+		if (ispatt == 0 && strncmp(pattpos, p, strlen(pattpos)) == 0)
 			matched++;
-		if (ispatt != 0 && /*wldcmp*/patcmp(pattpos, &p[2]) != 0)
+		if (ispatt != 0 && patcmp(pattpos, p) != 0)
 			matched++;
 		if (matched) {
 			clm._itm = i;
@@ -335,11 +342,17 @@ register int i; /* search start position */
 }
 
 static int itm_on = 0; /* flag: dialog in active state */
-static kbcod itm_kbcod = 0; /* the code calling itmpos(), may be not a KB_TA */
+/* actual code of the entry to itmpos() defined in rc, KB_TA is default */
+static kbcod itm_kbcod = 0;
 
-static void itm_next() {
-	w_msg(ATT, " "); w_lh_msg(":TA find the next ["); w_str(pattpos);
-			w_lh_msg("];   :EX cancel");
+static void itm_next(cmd_cod)
+const char *cmd_cod;
+{
+	w_msg(ATT, " ");
+	w_lh_msg(cmd_cod);
+	w_lh_msg(" find the next [");
+	w_str(pattpos);
+	w_lh_msg("];   :EX cancel");
 }
 
 static void itm_nomatch(cmd_cod)
@@ -363,8 +376,8 @@ const char *cmd;
 	kbcod cod;
 	int i, ilast;
 
-	cod = KB_TA;	/* may be any code excluding KB_NL, KB_EX, KB_CA */
-	cod = last_cod;
+	/* cod = KB_TA;	/* may be any code excluding KB_NL, KB_EX, KB_CA */
+	cod = itm_kbcod = last_cod;
 
 	cmd_cod[0] = ':';
 
@@ -405,10 +418,11 @@ const char *cmd;
 		if (ilast != clm._itm) {
 			itmadj(0);
 		}
-		itm_next();
+		itm_next(cmd_cod);
 		break;
 	/* KB_TA: */
 	default:
+		itm_on = 1;
 		ilast = clm._itm;
 		itm_kbcod = cod;
 		i = itmsel(ilast + 1);
@@ -474,14 +488,12 @@ register LINE *mainl;
 		if (itm_on) {
 			if(cod != itm_kbcod) {
 				switch (cod) {
-/*				case KB_TA:
-					break;*/
 				case KB_CA:
 				case KB_EX:
 					cod = 0;	/* flag to skip vcmd() below */
+					itm_on = 0; /* flag to terminate the chain of the dialog */
 					/*NO BREAK*/
 				default:
-					itm_on = 0;
 					break;
 				}
 			}
@@ -501,10 +513,9 @@ register LINE *mainl;
 			i = itmadj(cod);
 			break;
 		default:
+			cmdret = 0;
 			if (cod != 0)
 				cmdret = vcmd(cod);
-			else
-				cmdret = 0;
 			if (cmdret == 0)
 				keyreq = 1;
 			if (cmdret > 0) {
