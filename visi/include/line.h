@@ -123,10 +123,10 @@ typedef short  bool;  /* format for short numbers and flags */
 
 /* kbcod control prefix, outside Unicode space which is below 0x10ffffff */
 #define KBPRE 0x1f000000
-
-#define cod0(c)       ((c)  & 0xff)       /* extract 1st symbol */
-#define cod1(c)   (((c)>>8) & 0xff)       /* extract 2nd symbol */
-/* prepare 1st, 2nd symbol */
+/* extract 1st, 2nd symbol from a (kbcod) */
+#define cod0(c)       ((c)  & 0xff)       /* extract 1st char */
+#define cod1(c)   (((c)>>8) & 0xff)       /* extract 2nd char */
+/* prepare 1st, 2nd symbol of a kbcod  */
 #define tocod0(c)  (c       & 0xff)
 #define tocod1(c) ((c << 8) & 0xff00)
 

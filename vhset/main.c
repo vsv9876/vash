@@ -148,11 +148,20 @@ mkexit()
 				for (; i<8; i++)
 					putc(' ', ofp);
 				putc(':', ofp);
-				putc(cod0(kblp->t_key1), ofp);
-				putc(cod1(kblp->t_key1), ofp);
+
+				if(kblp->t_key1) {
+					putc(cod0(kblp->t_key1), ofp);
+					putc(cod1(kblp->t_key1), ofp);
+				} else {
+					putc(' ', ofp); putc(' ', ofp);
+				}
 				putc(':', ofp);
-				putc(cod0(kblp->t_key2), ofp);
-				putc(cod1(kblp->t_key2), ofp);
+				if (kblp->t_key2) {
+					putc(cod0(kblp->t_key2), ofp);
+					putc(cod1(kblp->t_key2), ofp);
+				} else {
+					putc(' ', ofp); putc(' ', ofp);
+				}
 				putc(':', ofp);
 				putc('\n', ofp);
 			}

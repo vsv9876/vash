@@ -9,7 +9,7 @@ ASHLIB      = SVR4
 #TERMLIB     = -lncurses
 TERMLIB     = -ltinfo
 
-CC          = clang $(DEBUG) -std=gnu89 -Wwrite-strings
+CC          = clang $(DEBUG) -O3 -std=gnu89 -Wwrite-strings
 ##			-std=gnu89 -Wwrite-strings -Wno-implicit-int
 #
 LINKER      = clang $(DEBUG) 
