@@ -83,7 +83,7 @@ prep config:;
 	./configure
 
 showconfig:
-	@echo '***** Make.conf variables configured:'
+	@echo '***** '$(BLDCFG)' variables configured:'
 	@echo PATH=$(PATH)
 	@echo DEST=$(DEST)
 	@echo DESTDIR=$(DESTDIR)

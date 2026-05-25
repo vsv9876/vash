@@ -476,7 +476,7 @@ int savedf;
 		switch (cod) {
 		default:
 			continue;
-		case KB_TA:
+		/*case KB_TA:*/
 		case KB_NL:
 		case KB_CA:
 		case KB_EX:
@@ -542,7 +542,7 @@ const char *hlpmsg;	/* help message after string */
 		pmtline.flag = 0;
 
 	pmtline.size = size;
-	pmtline.colu = strlen(pmtstr) + 4; /*1;*/
+	pmtline.colu = strlen(pmtstr) + 2; /*4;*/
 	pmtline.line = lframe->maxli - 1;
 	pmtline.attr = LVAR|INP/*|PMT*/;
 	/*NOSTRICT*/

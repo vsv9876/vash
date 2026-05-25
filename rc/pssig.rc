@@ -1,15 +1,17 @@
 #!/usr/bin/vash
 #
+# !NOT USED!
 #
+
 |+
 |# |-f ps -aud
 |$ |-f ps -udt `tty`
--@2
+-@ 2
 ||
 #
 |# |-f ps f -t /dev/pts/$D1
 |$ |-f ps f -t /dev/pts/$D1
--@1
+-@ 1
 |-
 
 -6 CONT
@@ -29,3 +31,4 @@
 
 @ps.common
 -i 
+### EOF

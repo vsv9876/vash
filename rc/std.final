@@ -1,7 +1,7 @@
 #!/usr/bin/vash
 #
 # last resort section,
-# may be used in any *.rc as a last included file
+# may be used in any zero-level rc file as a last included one
 #
 
 :[=]
@@ -9,35 +9,39 @@
 #        * *     :cd .
 
 #-------------------------------------------------------
-# obsoleted, not compatible with UTF-8 encoded input
+# obsoleted, not compatible with UTF-8 encoded input,
+# below at the end is a working rule - as a last resort of parsing process
 #
-#       Простое напоминание (так как работа идет в латинском регистре),
-#       но в принципе здесь возможна и другая точка зрения.
-# Диапазон зависит от кодовой таблицы, здесь КОИ-8
+# simple notify about wrong keyboard switch (normal working is in ascii),
+# it is a prevention of koi8r-encoded input
 #
+# assumed this file is in koi8r but now in UTF-8
 #:[Ю-Чю-ъ]
 #	* *   _msg please, switch keyboard to en/latin
 
 #-------------------------------------------------------
-:[%]
+:[{]
         * *     _file #@
-:[^]
+:[}]
         * *     _kshow
 
 #
-# Посмотреть подстановки ash (для отладки:
-#       #e - редактор (из переменной окружения EDITOR, или re)
-#       #@ - имя возле курсора (строка главного меню, обычно имя файла).
-#       #* - имя без суффикса
-#       #s - суффикс имени с точкой
-#       #S - суффикс имени без точки
+# View a substitution working in vash (for debug):
+# 	#m - pager (from env PAGER, else more)
+#       #e - editor (from env EDITOR, else vi)
+#       #@ - an item pointed by cursor, this is usually the file name
+#       #* - the name stripped from a suffix
+#       #s - the suffix with a 'dot' symbol
+#       #S - the suffix without a 'dot' symbol
 #:@
+:[%]
 ###	* *     ;_sh echo # s='#s' S='#S' *='#*' e='#e'
-#	* *     ;echo # %s='#s' S='#S' *='#*' e='#e'
+	* *     ;echo "#[?] m:[#m] e:[#e] *:[#*] s:[#s] S:[#S]"
 # ------------
-# experiment: repeat last command
-:@
+# not limited by shell comand
+-2 last
 :2
+:@
 	* *	_shrpt
 
 :Z
@@ -47,12 +51,10 @@
 :[ -~]
 	* * _msg key is not assigned to any command
 :^?
-# 	* * _msg undefined key (.ashstd || termcap)
  	* * _msg control key is not assigned
 :??
-# 	* * _msg undefined key (.ashstd || termcap)
  	* * _msg function key is not assigned
 :*
 	* * _msg Please, switch keyboard to ASCII/Latin mode
 
-#
+### EOF

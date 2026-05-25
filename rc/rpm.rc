@@ -7,7 +7,7 @@
 # release, tested on Fedora 33,34,35,36,37
 #
 #-----------------------------------------
--: +1 -b512
+-: +1 -l12 -b512
 -p rpm
 #
 # default menu: fill, from, to (not used), arg
@@ -38,58 +38,47 @@
 -9SETUP
 -0quit
 #------------------------------------------
+
 @std.mark
 
 #------------------------------------------
-:HE
-:[1!]
-	* *     _sh
-:[./a-z]
-#       любая клавиша нижнего регистра - начало ввода команды sh.
-	* *     _sh #k
 :U2
 :2
-       * -   :repoquery `rpm -q --qf '%{name}' #@`
-       * +   :repoquery `rpm -q --qf '%{name}' ##`
+       * *   :repoquery `rpm -q --qf '%{name}' #@`
 :R
-	* * :yum reinstall `rpm -q --qf '%{name}' #@`
+	* * :yum -C reinstall `rpm -q --qf '%{name}' #@`
 :S
-	* * :yum search --qf '%-50{nevra} %-20{distribution}\n' `rpm -q --qf '%{name}' #@`
+	* * :yum -C search --qf '%-50{nevra} %-20{distribution}\n' `rpm -q --qf '%{name}' #@`
 
 :L
 	* - :rpm -q --qf '%-50{nevra} %{installtime:date}  %-20{vendor}\n' #@
 	* + :rpm -q --qf '%-50{nevra} %{installtime:date}  %-20{vendor}\n' ##
 :U3
 :3
-       * -   :rpm -qi #@
-       * +   ;rpm -qi ## | #m
+       * *   :rpm -qi #@
 
 :U4
 :4
-       * -   ;rpm -ql #@ | #m
-       * +   ;rpm -ql ## | #m
+       * *   ;rpm -ql #@ | #m
 
 :U5
 :5
-       * -   ;rpm -qR #@ | #m
-#       * +   kill -15 ##
+       * *   ;rpm -qR #@ | #m
 
 :U6
 :6
-       * -   ;rpm -q --provides #@ | #m
-#       * +   kill -15 ##
+       * *   ;rpm -q --provides #@ | #m
 
 :U7
 :7
 #       * -   ;repoquery -i #@
 #	* -	:repoquery --whatrequires `rpm -q --qf '%{name}' #@`
-	* -	:rpm -q --whatrequires `rpm -q --qf '%{name}' #@`
-	* +	:rpm -q --whatrequires "`rpm -q --provides ##`"
+	* *	:rpm -q --whatrequires `rpm -q --qf '%{name}' #@`
 
 :U8
 :8
-       * -   yum remove #@
-       * +   yum remove ##
+       * -   yum -C remove #@
+       * +   yum -C remove ##
 :U9
 :9
        * *   _sup
@@ -102,5 +91,3 @@
 
 @std.cmd
 @std.final
-
-#------------------------------------------

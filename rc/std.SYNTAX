@@ -15,8 +15,8 @@
 # content of this file and included files can be changed by user,
 # which is responsible for any changes
 #
-# /usr/lib/vash/std.rc   - default (mandatory) place for std.rc
-# $HOME/.vash/std.rc     - customized by user version
+# /usr/lib/vash/std.rc   - default place for std.rc
+# other places may be declared by the env VASH_PATH
 #
 
 #-------------------------------------------------------
@@ -104,6 +104,7 @@ r?x ?	_sh #k		# begin new command
 * *	_mark +		# menu item (file) selection dialog
 * +	_mark -		# menu item clear selection
 * *	_f_ls		# fill command of main menu editing dialog
+* *     _itmpos		# start dialog for cursor positioning by pattern
 #
 * *	_err message	# error message (with attribute ERR)
 * * 	_msg message	# info message (with attribute TXT)
@@ -115,9 +116,9 @@ r?x ?	_sh #k		# begin new command
 * * 	_sus		# suspend process, switch to parent shell
 
 #-----------------------------------------
-# mode execution prefixes of command (both internal and external sh -c)
+# mode execution prefixes
 #
-#              	/ ask before Enter
+#              	/ ask (editing) before Enter
 #		|	/ wait dialog on exit
 #		|	|	
 #  <no prefix>	+	+	execution 

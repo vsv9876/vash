@@ -1,4 +1,8 @@
-- searh or position dialog have to be shortened and helped online
+- w_msg (_err & _msg) must be decode key labels and resolve #@ at least
+
+- keep panel with key help consistent as possible, refresh also
+
+- increase the accuracy of the navigation bar
 
 - complete an full utf8 support on '_sh #k' key processing
 

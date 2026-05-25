@@ -12,7 +12,7 @@
 -o.
 -@
 
-# НАЗВАНИЯ КЛАВИШ
+# labels on key panel
 -1-misc-
 -2compr
 -3
@@ -36,9 +36,9 @@
 :U0
 :0
     * *     _cmdset std.rc
-# Редактирование последней команды sh:
-:[1!]
-    r?x ?   _sh
+## edit last command:
+#:[1!]
+#    r?x ?   _sh
 
 :2
 :U2
@@ -89,13 +89,11 @@
     r-x *   +Cantw
 
 +cpiodir
-
     * d . find ./#@ -depth -print | grep -v '^\./\.\.cpio' | cpio -odv > ./#@.cpio
     * d * find ./#@ -depth -print | cpio -odv > ./#@.cpio
     * * * _msg please, point to directory or mark files
 
 +cpiofiles
-
     * ? * find ## -depth -print | cpio -odv > .cpio
 
 :U7

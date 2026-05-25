@@ -1,6 +1,6 @@
 
 Visual Assistant Shell (vash)
-Copyright (C) 1990,1996,2017,2020-2025
+Copyright (C) 1990-2026
 Author: Sergey Vovk, formerly known as:
     vsv@st.simbirsk.su
     vsv@Relcom.EU.net
@@ -41,6 +41,6 @@ vash/           sources of vash main binary
 vash.1          manual sources
 vhset/          vhset utility sources
 vhset.1         vhset manual
-visi/           embedded VISI project, included with with shortened docs
+visi/           embedded VISI project, included with shortened docs
 vtest/          test program for debug VISI itself
 

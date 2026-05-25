@@ -11,7 +11,7 @@
 #
 #----
 #	r?x d .         _msg Купите на Привозе селедку и крутите ей мозги - мы стоим на Дерибасовской!  :)
-#	r?x d .         _msg let You buy a fish on Privoz and screw a brain for him - we stay here on Deribasovskaja :)
+#	r?x d .         _msg Buy a herring at Privoz and screw her brains - we are standing on Deribasovskaja Street! :)
 #	r?x d .         _rescan
 #----
 	r?x d *              ;cd #$
@@ -63,7 +63,8 @@
 	r?? T .vashhist     _msg ./#@ Is not ash's program script
 	r?? T .vash*        _cmdset ./#@
 	r?? T *.rc          _cmdset ./#@
-# a.out ОС XENIX в SYSV выглядит как неопознанные данные...
+# foreign but runnable binaries may be look as unrecognized data
+# ag XENIX under SYSV ...
 	??x [TOD] *     ./#$
 	--x [-] *       ./#$
 #	r?? M *         mailx -f ./#@
@@ -76,4 +77,4 @@
 	r?? D *.exe     dos #@
 	??? * *		_err no action defined for '#@'
 
-#
+### EOF

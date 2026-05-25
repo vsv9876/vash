@@ -6,26 +6,25 @@
 # GPL license
 #
 # standard default profile std.rc (former .ashstd)
-# since Tue Jun  1 22:41:47 MVT 1993
 #
 
 # syntax description and comments moved to ./std.SYNTAX
 
-#-1!sh
--2@rptsh
--3?
--4edit
--5cp
--6mv
+#-1 !sh
+-2
+-3 ?
+-4 edit
+-5 cp
+-6 mv
 -7
--8rm
--9setup
--0exit
+-8 rm
+-9 setup
+-0 exit
 
--f:Fv
-#-f:F 2>/dev/null ls -vd .. *
--i.
--o.
+-f :Fv
+#-f :F 2>/dev/null ls -vd .. *
+-i .
+-o .
 -@
 
 @std.mark
@@ -69,15 +68,12 @@
 :U4
 	r?x ?   +ed
 #	r-x ?   +ed
-#	rwx ?   +edw
+# 	rwx ?   +edw
 +ed
 	rwx d *         ;cd #$
-# vi не создает нового файла в каталоге
-# а red, например, создает...
 	rw? [TE] *      #e ./#$
 #	rw? M *         elm -f ./#$
 	rw? M *         mutt -f ./#$
-#	r?? [OD] *      ;strings #@ | #m
 #+edw
 	rwx d *         ;cd #$
 |+|	r?? ? *.pkg ;pkg info -F ./#@ | #m
@@ -87,19 +83,8 @@
 	r?? ? *.deb     ;dpkg --contents ./#@ | #m
 #	rw? [TE] *      #e #@
 	r?? [TE] *      ;#m #$
-#	rw? M *         elm -f #@
-#	r?? * *      ;ls -ld #@
 	r?? * *      ;strings #@ | #m
 
-# Копирование файлов (требуется еще один аргумент)
-# это место в ash так и осталось недоделано...
-# как изврат, применяется так:
-#  помечаем клавишей пробел, что надо, редактируем строку,
-#  нажимаем клавишу Ввод.
-Если нажать Ввод, ничего не исправляя, то cp или mv изругается про
-# то, что файлы идентичны.
-# Оказалось очень удобно - быстро, и никаких лишних вопросов от ash.
-# можно поставить курсор перед суффиксом - еще удобнее
 :5
 :U5
 	rwx -   +CP
@@ -120,7 +105,6 @@
 #	* * *.[a-zA-Z0-9]* cp -av ./#@ #$ #1
 	* * *              cp -av ./#@ #$
 
-# Переименование/перенос файлов (требуется еще один аргумент)
 :6
 :U6
 	rwx -   +MV
@@ -142,19 +126,15 @@
 
 :7
 :U7
-# Еще одно субменю со сменой программы клавиш ash:
-# Создание файла/каталога/файлов.системы/формат.диска;
 
 	* * _cmdset misc.rc
 
-# Уничтожение файлов/каталогов
 :8
 :U8
 	r-x ?           _err write to this directory prohibited
 	rwx -           +Rmfile
 	rwx ?           rm -f ##
 +Rmfile
-# Не руби сук, на котором сидишь...
 	r?x d ..        _msg Please don't do this...
 	r?x d .         _msg Please stop chopping down the branch under you
 	rwx d *         rm -r -f ./#$
@@ -163,8 +143,6 @@
 #        rw? T *         rm -f #@
 	r-? ? *         rm -f ./#$  # caution! file is write-protected !
 
-
-# Настройка интерпретатора (флаги, команды)
 :9
 :U9
 	??? ?   _sup
@@ -177,20 +155,12 @@
 #	* * _help std_help.lb
 
 :&
-#       Программа (настройка) ash для работы с процессами
-#	* *     ;env VASH=l20spw VASH_LABEL='ps ' vash -1 ps.rc
 	* *     ;vash ps.rc
 #        * *     _cmdset ps.rc
 
 
 #-------------------------------------------------------
-#          Прочие часто используемые команды:
-#-------------------------------------------------------
-# Синонимы для перехода в другие каталоги
-#:[~]
-#       Перейти в домашний каталог (HOME)
-#	* *     :cd
-#:[U]
+
 ::
 	* *     ;cd ..
 
@@ -198,7 +168,6 @@
 # vash's library archive, from 'char *vexdir' internal constant
 	* *     ;cd #A
 
-# Сравнение файлов
 :D
 	* +   +diff
 	* -   _msg exact two files must be selected to diff
@@ -206,14 +175,11 @@
 	* * * :diff -br ##
 
 :M
-#       Посмотреть раздел оперативного руководства по компоненте,
-#       правильно работает в каталоге с файлами man
-#       (/usr/catman, /usr/local/man.
-#       Может работать в каталогах /bin, /lib /include)
+#       get manual for an item - it works in /bin /lib /usr/catman/ etc..
 	* *.*   :man #*
 	* *     :man #@
 :R
-# repeat a command (echo as example)
+# repeat a command (echo as template)
 	* *     for i in ## ;do echo $i; done
 
 :F

@@ -2,7 +2,7 @@
 #
 # std.view
 
--3view
+-3 view
 
 :3
 :U3
@@ -60,4 +60,4 @@
 #	??? ? *              _file #@
 	??? ? *              :file #@; ls -ld #@
 
-#
+### EOF

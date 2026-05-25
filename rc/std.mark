@@ -6,13 +6,11 @@
         * ?     _mark +
 :-
         * +     _mark -
-#       * *     _mark -
+# note: unmark allowed if any file selected only
 
 # moving cursor jumping to position by the item pattern
 :TA
 :[*]
-#:^
-#:['"]
 	* ?	_itmpos
 #
 ### :SP does not work as key recognizer, use :[ ] instead
@@ -23,9 +21,7 @@
 	* ?	_mark x#
 #
 # edit fill main menu command
-# :_
-#       * ?     _mark _
 :[_]
         * ?     _f_ls
 
-#
+### EOF

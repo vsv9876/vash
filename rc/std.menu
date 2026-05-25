@@ -34,4 +34,4 @@ esac
     x*)  echo 'Please, tag one directory first...\c'; exit 1;;
     esac
 	
-### EOF .ashmenu
+### EOF

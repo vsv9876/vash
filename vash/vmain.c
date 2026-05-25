@@ -212,8 +212,11 @@ kbcod cod;
 
 	total = 0;
 	/* ввести шаблон пометки */
-	sprintf(prompts, "# mark [%c]", cod);
-	switch(pmtrstr(prompts, pattfs, 24, "select: :NL; cancel: :EX or :CA")) {
+	if (cod == '-')
+		sprintf(prompts, " [%c] unselect:", cod);
+	else
+		sprintf(prompts, " [%c] select:", cod);
+	switch(pmtrstr(prompts, pattfs, 24, ":NL do it;  :EX cancel")) {
 	case KB_CA:
 	case KB_EX:
 		w_emsg("");
@@ -270,17 +273,17 @@ kbcod cod;
 		w_line(line);
 	}
 	if (total) {
-		w_msg(ATT, "#");
+		w_msg(ATT, " ");
 		if (invisible)
-			sprintf(prompts, " marked items (shown+invisible): "
+			sprintf(prompts, " items selected (shown+invisible): "
 					"%d (%d+%d)",
 					total, total-invisible, invisible);
 		else
-			sprintf(prompts, " marked items: %d", total);
+			sprintf(prompts, " items selected: %d", total);
 		w_str(prompts);
 	}
 	else {
-		w_msg(ATT, "# no items marked ");
+		w_msg(ATT, " no items selected ");
 	}
 	return 0;
 }
@@ -318,16 +321,15 @@ static int matched, ispatt;
 register int i; /* search start position */
 {
 	register char *p;
-	/* полагаем, что искать первым буквам имени пункта а не по шаблону [*?] */
+	/* искать по первым буквам имени пункта а не по выражению [*?] */
 	if (strchr(pattpos, '*') == NULL && strchr(pattpos, '?') == 0)
 		ispatt = 0;
 	else
 		ispatt = 1;
 	for (/*i = 0*/; i < clm._itmmax; i++) {
 		p = clm._itms[i];
-		/* _itms[i] содержит первые 2 байта -- пометку и тип */
+		/* _itms[i] первые 2 байта специальные (пометка и тип) */
 		p += 2;
-		/* Проверять по совпадению или образцу */
 		matched = 0;
 		if (ispatt == 0 && strncmp(pattpos, p, strlen(pattpos)) == 0)
 			matched++;
@@ -352,7 +354,7 @@ const char *cmd_cod;
 	w_lh_msg(cmd_cod);
 	w_lh_msg(" find the next [");
 	w_str(pattpos);
-	w_lh_msg("];   :EX cancel");
+	w_lh_msg("] ;   :EX cancel;");
 }
 
 static void itm_nomatch(cmd_cod)
@@ -362,9 +364,9 @@ const char *cmd_cod;
 	w_str(pattpos);
 	/*
 	w_lh_msg("];    :TA edit new one");*/
-	w_lh_msg("];   continue or ");
+	w_lh_msg("] ;  ");
 		    w_lh_msg(cmd_cod);
-		    w_lh_msg(" to edit new one");
+		    w_lh_msg(" edit new one;");
 }
 
 /* position cursor on first letter given in dialog */
@@ -392,8 +394,8 @@ const char *cmd;
 	cmd_cod[3] = '\0';
 
 	if (itm_on == 0)
-		cod = pmtrstr("find a match:", pattpos, 20,
-				" :NL jump;  :EX cancel");
+		cod = pmtrstr("jump to item:", pattpos, 20,
+				" :NL do it;  :EX cancel");
 
 	if (strchr(pattpos, '*') || strchr(pattpos, '?'))
 		ispatt++;
