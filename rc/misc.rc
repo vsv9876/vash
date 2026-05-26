@@ -43,8 +43,10 @@
 :2
 :U2
 	rwx +   _menu2 compr.menu
-	rwx -   _err please, mark files using spacebar
+	rwx -   _err please, mark files using :SP
 	r-x *   +Cantw
+
+@std.view
 
 :U4
 :4
@@ -89,12 +91,12 @@
     r-x *   +Cantw
 
 +cpiodir
-    * d . find ./#@ -depth -print | grep -v '^\./\.\.cpio' | cpio -odv > ./#@.cpio
-    * d * find ./#@ -depth -print | cpio -odv > ./#@.cpio
+    * d . find ./#@ -depth -print | grep -v '^\./\.\.cpio' | cpio -ov > ./#@.cpio
+    * d * find ./#@ -depth -print | cpio -ov > ./#@.cpio
     * * * _msg please, point to directory or mark files
 
 +cpiofiles
-    * ? * find ## -depth -print | cpio -odv > .cpio
+    * ? * find ## -depth -print | cpio -ov > .cpio
 
 :U7
 :7

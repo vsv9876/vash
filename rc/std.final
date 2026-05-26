@@ -36,10 +36,12 @@
 #:@
 :[']
 ###	* *     ;_sh echo # s='#s' S='#S' *='#*' e='#e'
-	* *     ;echo '1? #[##] @[#@] $[#$]'
+#	* *     ;echo 'substr1? #[##] @[#@] $[#$]'
+	* *     _msg '# 1  @[#@]  $[#$]'
 :["]
 ###	* *     ;_sh echo # s='#s' S='#S' *='#*' e='#e'
-	* *     ;echo '2? m[#m] e[#e] *[#*] s[#s] S[#S]'
+#	* *     ;echo '2? m[#m] e[#e] *[#*] s[#s] S[#S]'
+	* *     _msg '# 2  m[#m]  e[#e]  *[#*]  s[#s]  S[#S]'
 # ------------
 # not limited by shell comand
 -2 last
@@ -52,12 +54,12 @@
 	
 # last resort keys
 :[ -~]
-	* * _msg key is not assigned to any command
+	* * _att key is not assigned to any command
 :^?
- 	* * _msg control key is not assigned
+ 	* * _att control key is not assigned
 :??
- 	* * _msg function key is not assigned
+ 	* * _att function key is not assigned
 :*
-	* * _msg Please, switch keyboard to ASCII/Latin mode
+	* * _att Please, switch keyboard to ASCII/Latin mode
 
 ### EOF

@@ -32,32 +32,25 @@ CMD     = hx "[A-Z0-9]"
 !                                             
 !.mainvk............................... please, see 'man vash' for more details                                       
 ! .'lowercase,dot,slash                                                    
-!     type a command from scratch  .a       .:HE... - help            
-! .'uppercase,digit                         .:EX... - exit,return           
-!     edit a command from template .b       .:CA    - cancel                
+!     type a command from scratch  .a                   .:HE... help            
+! .'uppercase,digit                                     .:EX... exit,return           
+!     edit a command from template .b                   .:CA    cancel                
 !     execute predefined command   .c        
-! .:CA switch between editor and main       .mainv............................. 
-!                                            ^ .:CA       ^    .cmd... .CMD....
-!.histk................................      :   :     .X.:         :    :   : 
-! .:CA    return to editor untouched         :   : .hist.......... .a    :   :
-! .:NL... take a command to editor           :   :    ^     .:NL... :   .b   :
-!                                            :   :    :        :    :    :  .c
-!.cmdedk...............................      : .:CA .:HE...    :    :    :   :
-! .:HE... switch to history view             : .cmded....................... :  
-! .:NL... run a command, sync history        :        ^            .:NL...   :
+!                                           .mainv............................. 
+! .:CA switch editor <--> main view          ^ .:CA    ^       .cmd... .CMD....
+!                                            :   :     :            :    :   : 
+!.cmdedk...............................      :   :  .X.:           .a    :   : 
+! .:HE... switch to history view             :   : .hist..........  :   .b   :
+! .:NL... run a command                      :   :    ^     .:NL... :    :  .c
+!                                            :   :    :        :    :    :   :
+!.histk................................      : .:CA .:HE...    :    :    :   :  
+! .:NL... take a command to editor           : .cmded....................... :  
+! .:CA    back to editor untouched           :        ^            .:NL...   :    
 !                                            :       .a              :       :    
 !.exitk................................     .:CA      :              :       :    
-! .:SP...| .:CA return to main view         .:SP... .cmd...    .runcmd.........   
+! .:SP...| .:CA return to main view         .:SP... .cmd...    .runcmd.........  
 ! .'lovercase  return to editor             .exit.......... <--                  
-                                        
-
+                                       
 ---END                                                                         
 +  .:NL...  - defencive trap for mistakes   
-+                                     .m. see 'man vash' for details
-
-  .'lowercase                        
-      type a command from scratch  .a
-  .'uppercase                        
-      edit a command from template .b
-      execute predefined command   .c
-  .:CA switch between editor and main
+                                      

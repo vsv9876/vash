@@ -18,7 +18,7 @@
 extern  int     sup(), v_susp();
 extern  int     vshcmd(), menu2();
 extern  int     fsh(), fshrpt(), fmenu2();
-extern  int     ffile(), fmsg(), fmsgerr();
+extern  int     ffile(), fmsg(), fmsgerr(), fmsgatt();
 /*extern  int     rescan();*/
 /* перенесены из встроенных фунций */
 extern  int		f_ls();	/* редактирование строки команды заполнения меню из .ashstd -@f */
@@ -47,6 +47,7 @@ FUNTAB funtab[] = {
 	{ "rchelp",		rchelp },
 	{ "msg",        fmsg },
 	{ "err",        fmsgerr },
+	{ "att",        fmsgatt },
 	{ "rescan",     rescan },
 	{ "f_ls",		f_ls },
 	{ "mark",		f_mark },
@@ -495,7 +496,9 @@ int
 fmsg(s)
 /*register*/ const char *s;
 {
-	w_msg(TXT, s);
+	char tmp[U8_STRBUF];
+    cmdsub(tmp, s, clm._itm, 0, 1/*vflag.subatrc*/);
+	w_msg(TXT, tmp);
 	return(0);
 }
 
@@ -503,7 +506,19 @@ int
 fmsgerr(s)
 /*register*/ const char *s;
 {
-	w_msg(ERR, s);
+	char tmp[U8_STRBUF];
+    cmdsub(tmp, s, clm._itm, 0, 1/*vflag.subatrc*/);
+	w_msg(ERR, tmp);
+	/*w_lh_msg(s);*/
+	return(0);
+}
+
+int
+fmsgatt(s)
+/*register*/ const char *s;
+{
+	w_msg(ATT|INP, " ");
+	w_lh_msg(s);
 	return(0);
 }
 
