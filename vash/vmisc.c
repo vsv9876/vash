@@ -761,7 +761,7 @@ char *from;
  * -@7$			седьмое поле и до конца строки (пробелы после 7 поля игнорируются)
  * -@20-32      вырезка всех знаков в строке между указанными колонками включительно
  */
-static char out_str[800] = "";
+static char out_str[U8_STRBUF] = "";
 char *nmsubs(inps, s)
 char *inps;
 char *s;        /* формат для подстановки */
@@ -770,7 +770,9 @@ char *s;        /* формат для подстановки */
 	register int i;
 	register char *p;
 	char tmps[20];
-	int toend = 0;
+	int toend;
+
+	toend = 0;
 
 	while (isspace(*s)) s++;
 	if (*s == '\0') goto no_subs;
@@ -788,18 +790,22 @@ char *s;        /* формат для подстановки */
 
 	while (isspace(*s)) s++;
 	if (*s == '\0') {
-		/* подставить номер слова из inps */
+		/* пропустить a слов без подстановки */
 		while(a>1) {
-			while (   isspace(*inps) ) inps++;
-			while ( ! isspace(*inps) ) inps++;
+			while (*inps && isspace(*inps) ) inps++;
+			while (*inps && ! isspace(*inps) ) inps++;
 			a -= 1;
 		}
-		while (   isspace(*inps) ) inps++;
+		while (*inps && isspace(*inps) ) inps++;
 		p = out_str;
-		if(toend) {
-			while (*inps != '\0') *p++ = *inps++;
+		if(toend == 0) {
+			/* подставить номер слова из inps */
+			while (*inps && ! isspace(*inps))
+				*p++ = *inps++;
 		} else {
-			while (*inps != '\0' && isspace(*inps) == 0) *p++ = *inps++;
+			/* подставить до конца строки */
+			while (*inps)
+				*p++ = *inps++;
 		}
 		*p = '\0';
 	}

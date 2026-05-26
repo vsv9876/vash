@@ -1,4 +1,6 @@
-- w_msg (_err & _msg) must be decode key labels and resolve #@ at least
+- cleanup an error of substitution for #* #s #S (rule n works as n$)
+ 
+- _err&_msg must be decode key labels and #@/#$
 
 - keep panel with key help consistent as possible, refresh also
 

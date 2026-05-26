@@ -34,9 +34,12 @@
 #       #s - the suffix with a 'dot' symbol
 #       #S - the suffix without a 'dot' symbol
 #:@
-:[%]
+:[']
 ###	* *     ;_sh echo # s='#s' S='#S' *='#*' e='#e'
-	* *     ;echo "#[?] m:[#m] e:[#e] *:[#*] s:[#s] S:[#S]"
+	* *     ;echo '1? #[##] @[#@] $[#$]'
+:["]
+###	* *     ;_sh echo # s='#s' S='#S' *='#*' e='#e'
+	* *     ;echo '2? m[#m] e[#e] *[#*] s[#s] S[#S]'
 # ------------
 # not limited by shell comand
 -2 last

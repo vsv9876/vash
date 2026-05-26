@@ -33,13 +33,13 @@ extern  char  **environ;
 extern  char    Csubs[];
 
 extern  char  *nmsubs();
-extern  char  *tmpflnm;
+/*extern  char  *tmpflnm;*/
 
 extern  int     mark_i;
 extern  int     mark_o;
 
-/*static int n; 	/* vj slot table index, moved to vjobs.c  */
-static reapsig = 1;		/* reapchk on SIGCHLD if == 1 */
+/*static int n; 	*//* vj slot table index, moved to vjobs.c  */
+/*static reapsig = 1;		*//* reapchk on SIGCHLD if == 1 */
 
 #ifdef VISI_DEBUG
 static int debug = 0;
@@ -835,7 +835,7 @@ int  execpref;
 int vsystem(cmd, cmdlbl/*, execmp*/)
 char *cmd;      /* собственно команда, которую надо выполнить */
 char *cmdlbl;   /* строка для индикации, как правило == cmd */
-/* int  *execmp;	/* pointer to execmode */
+/* int  *execmp;	*//* pointer to execmode */
 {
 	int execmode;   /* флаги запуска команды */
 	int execpref;   /* флаг: дописать впереди команды префикс "exec " */
@@ -868,22 +868,22 @@ char *cmdlbl;   /* строка для индикации, как правило
 				continue;
 			}
 			/*NO BREAK*/
-		/* разделители процессов как метасимволы sh */
-		case '|': case ';':
+
+		case '|': case ';': /* разделители процессов как метасимволы sh */
 		case '(': case ')':
 		case '{': case '}':
 			execpref = 0;
 			/*NO BREAK*/
-		/* другие метасимволы sh */
-		case '[': case ']':
+
+		case '[': case ']': /* другие метасимволы sh */
 		case '<': case '>':
 		case '*': case '@': case '?':
 		case '!': case '$': case '^':
 		case '\'': case '"': case '`': case '~': case '\\':
 			execargv = 0;
 			break;
-		/*подстановки, обрабатываемые на следующем шаге*/
-		case MONEY:
+
+		case MONEY: /*подстановки, обрабатываемые на следующем шаге*/
 			if (p[1] == MONEY || p[1] == '\'') {
 				p++; p++;
 				continue;

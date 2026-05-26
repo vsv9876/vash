@@ -283,13 +283,13 @@ int subatrc;		/* substitution of #@ required */
 		strcpy(ptmp, s);
 		break;
 	    case '*':   /* имя файла до последнего суффикса */
-		fnsplit(ptmp, &clm._itms[i][2], 0);
+		fnsplit(ptmp, nmsubs(&clm._itms[i][2], Csubs), 0);
 		break;
 	    case 's':   /* последний суффикс имени файла, с точкой */
-		fnsplit(ptmp, &clm._itms[i][2], 1);
+		fnsplit(ptmp, nmsubs(&clm._itms[i][2], Csubs), 1);
 		break;
 	    case 'S':   /* последний суффикс имени файла, без точки */
-		fnsplit(ptmp, &clm._itms[i][2], 2);
+		fnsplit(ptmp, nmsubs(&clm._itms[i][2], Csubs), 2);
 		break;
 #ifdef DEVELOPE_NEVER_USED
 	    case 'n':   /* новое имя для создания/переименования */
