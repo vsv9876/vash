@@ -43,7 +43,7 @@
 :2
 :U2
 	rwx +   _menu2 compr.menu
-	rwx -   _err please, mark files using :SP
+	rwx -   _att please, mark files using :SP 1st
 	r-x *   +Cantw
 
 @std.view

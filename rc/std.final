@@ -43,15 +43,22 @@
 #	* *     ;echo '2? m[#m] e[#e] *[#*] s[#s] S[#S]'
 	* *     _msg '# 2  m[#m]  e[#e]  *[#*]  s[#s]  S[#S]'
 # ------------
-# not limited by shell comand
--2 last
-:2
-:@
-	* *	_shrpt
 
+#
+:RE
+	* * ;clear
 :Z
 	* *	:exec vash
 	
+:^Z
+#        * *     :/bin/csh -cf "suspend; exit 0;"
+	* *     _sus
+
+-9 setup
+:U9
+:9
+    * *   _sup
+
 # last resort keys
 :[ -~]
 	* * _att key is not assigned to any command

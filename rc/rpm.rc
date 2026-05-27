@@ -79,9 +79,7 @@
 :8
        * -   yum -C remove #@
        * +   yum -C remove ##
-:U9
-:9
-       * *   _sup
+
 :EX
 :U0
 :0

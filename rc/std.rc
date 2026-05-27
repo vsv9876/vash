@@ -48,7 +48,7 @@
     * * exit
 
 #
-# User menu (experimental status)
+# User menu (experiment)
 #
 #:2
 #:U2
@@ -142,10 +142,6 @@
 	rw? [AODETM] *    rm -f ./#$
 #        rw? T *         rm -f #@
 	r-? ? *         rm -f ./#$  # caution! file is write-protected !
-
-:9
-:U9
-	??? ?   _sup
 
 :[?]
 :HE

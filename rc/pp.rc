@@ -34,16 +34,12 @@
 | | -7||
 | - -7|-
 
--9setup
+##-9setup
 -0exit
 
 @ std.mark
 
 @ std.cmd
-
-:U9
-:9
-    * *   _sup
 
 :^D
 :EX

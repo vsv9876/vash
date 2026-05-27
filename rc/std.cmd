@@ -1,14 +1,17 @@
 #!/usr/bin/vash
 #
 # this is vash rc profile included sections:
-# shell (bash) command
+# shell command
 #
 |# -1 #
 |$ -1 $
 
-#
-:RE
-	* * ;clear
+# repeat last command performed not limited by shell comand
+##-@ repeat last cmd
+##:2
+:@
+	* *	_shrpt
+
 ###
 ### experiment...
 #:$
@@ -18,11 +21,9 @@
 :CA
 :[1!]
 	* * _sh
-# begin an unix command from scratch
+	* * 
+# begin new command from scratch
 :[./a-z]
 	* *     _sh #k
-:^Z
-#        * *     :/bin/csh -cf "suspend; exit 0;"
-	* *     _sus
 
 ### EOF
