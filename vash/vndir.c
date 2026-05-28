@@ -347,7 +347,7 @@ int vls()
 
 		/* initial allocation */
 		if (clm._itmbuf == NULL) {
-			itmbsz = 1 + clm._itmbsz;
+			itmbsz = clm._itmbsz;
 			if ((clm._itmbuf = malloc(itmbsz)) == NULL) {
 				w_emsg("malloc for main buffer: NO MEM... fatal");
 				onintr(1);
@@ -358,7 +358,7 @@ int vls()
 		/* try to extent item buffer if no room for current entry */
 		if (&clm._itmbuf[itmbsz] <= &itmbp[len]) {
 			itmbextn += 1;
-			itmbsz = 1 + (clm._itmbsz * itmbextn);
+			itmbsz = (clm._itmbsz * itmbextn);
 			if ((ibp_new = realloc(clm._itmbuf, itmbsz)) == NULL) {
 				w_emsg("No mem for all menu items");
 				break;
@@ -389,6 +389,8 @@ int vls()
     else {
     	return(1); /* ERROR filling main menu */
     }
+
+    itmbsz_ex = itmbsz; /*export*/
 
     if ( ! fflag ) {
     	if (Vflag) qsort(clm._itms, clm._itmmax, sizeof(char *), vscomp);

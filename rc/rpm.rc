@@ -4,10 +4,11 @@
 # Sat Oct 31 18:31:00 MSK 2020
 #
 # status:
-# release, tested on Fedora 33,34,35,36,37
+# release, tested on Fedora 33..43
 #
 #-----------------------------------------
--: +1 -l12 -b512
+#-: +1 -l12 -b512
+-: +1 -l12 
 -p rpm
 #
 # default menu: fill, from, to (not used), arg

@@ -28,6 +28,8 @@ void sig_vfread(signo)
 		stopvfread = 1;
 		ungetc('\0', vfr_fp);
 }
+
+int itmbsz_ex = -1;
 /*
 signal(SIGINT, SIG_DFL);
 signal(SIGQUIT, SIG_DFL);
@@ -55,7 +57,7 @@ FILE *fpread;
 	/*signal(SIGINT, sig_vfread);*/
 	/* initial allocation */
 	if (clm._itmbuf == NULL) {
-		itmbsz = 1 + clm._itmbsz;
+		itmbsz = clm._itmbsz;
 		if ((clm._itmbuf = malloc(itmbsz)) == NULL) {
 			w_emsg("malloc for main buffer: NO MEM... fatal");
 			onintr(1);
@@ -79,7 +81,7 @@ FILE *fpread;
 		/* try to extent item buffer if no room for current entry */
 		if (&clm._itmbuf[itmbsz] <= &itmbp[1]) {
 			itmbextn += 1;
-			itmbsz = 1 + (clm._itmbsz * itmbextn);
+			itmbsz = (clm._itmbsz * itmbextn);
 			if ((ibp_new = realloc(clm._itmbuf, itmbsz)) == NULL) {
 				w_emsg("No mem for all menu items");
 				break;
@@ -113,6 +115,9 @@ FILE *fpread;
 			*itmbp++ = c;
 		}
 	}
+
+	itmbsz_ex = itmbsz; /* export */
+
 	*itmbp++ = '\0';
 	if (clm._itmmax == 0) {
 		strcpy(clm._itmbuf, " .."); /* finish dummy list with ".." element */

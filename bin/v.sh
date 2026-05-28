@@ -98,7 +98,7 @@ fi
 PS1='vash % '; export PS1
 
 if [ x${VASH} = x ]; then
-    VASH=swHS
+    VASH=swHST
 
     # X11 window manager decoration on xterm window
     onxterm=0

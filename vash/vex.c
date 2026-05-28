@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/resource.h>
 #include <ctype.h>
 #include "line.h"
 #include "linebp.h"
@@ -16,13 +17,15 @@
 
 extern  char    coprts[];
 extern  char    buildd[];
-extern  char   *versn;
+
 extern  int     y0_top;
 
 extern int sgrmode;
 
 /*const char   *onoff[] = { "[ ]", "[X]", 0 };*/
 const char   *onoff[] = { "[ ]", "[*]", 0 };
+
+static int maxrss;
 
 /*ARGSUSED*/
 int
@@ -86,6 +89,9 @@ const IN_PORTS inport[] = {
 	{ "maxco",     	&hwframe.maxco },
 	{ "lmaxli",     &lfmain.maxli },
 	{ "baseli",     &lfmain.baseli },
+	{ "maxrss",     &maxrss },
+	{ "ibsz",       &clm._itmbsz },
+	{ "ibszex",     &itmbsz_ex },
 	{ "u8nopa",     &u8nopass },
 	{ "SGR",        &sgrmode },
 	{ 0,            0       },
@@ -113,6 +119,12 @@ sup(cmd)
 const char *cmd;
 {
 	LINE *supm;
+	struct rusage resusg;
+
+	maxrss = 0;
+	if (getrusage(RUSAGE_SELF, &resusg) == 0) {
+		maxrss = resusg.ru_maxrss;
+	}
 
 	if ((supm = getvex("sup.lb")) == NULL)
 		return(FALSE);

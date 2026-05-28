@@ -19,9 +19,10 @@
 
 :U7
 :7
-    * *   :exec vash -1 ps.rc
-#    * *   _cmdset ps.rc
-#
+##  * *   _cmdset ps.rc
+# automatic main menu rebuild:
+    * *   :exec vash ps.rc
+
 @ps.common
 
 ### EOF

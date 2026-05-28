@@ -67,7 +67,10 @@ co      = gc     -       "%3d"   -       -       maxco
 bli     = gcp     -      "%3d"  -       -       baseli
 lli     = gcp     -      "%3d"  -       -       lmaxli
 C       = ipv    n      "%1d"  -       -       SGR
-
+---# DEBUG only!!! TODO delete
+maxrss  = gc     -      "%8d"    -       -      maxrss
+ibsz    = gc     -      "%6d"    -       -      ibsz
+ibszex  = gc     -      "%8d"    -       -      ibszex
 
 ---SCREEN
 ."settings".                                    help: .:HE....  exit: .:EX....
@@ -85,7 +88,7 @@ rc: .vashrc................................................................
 !-@ .rs................................  .lli lmaxli    .li maxli       
 !-i .is................................  .bli baseli    .co maxco       
 ---#+ -o: .os........................................................          
-!                                        .C - color mode
+!   .ibsz. ibsz,ex .ibszex... maxrss .maxrss..               .C - color mode           
 
 = vash - Visual Assistant Shell
  .coprts......................................................................

@@ -172,7 +172,7 @@ fnd_au (lni, page)
 			return(lnj);
 		/*
 		 * lower and left - on the vertically organized page part -
-		 * defined with '+' sign an the begin of strings
+		 * defined with '!' sign on the begin of the strings
 		 * in .lav/.cv code
 		 */
 		if((lnj->line >  lni->line)
@@ -397,8 +397,11 @@ int    *posp;               /* cursor position during edit process */
 			lni = fnd_prv(lni, page);
 		break ;
 	case KB_AU :
+		prv_lni = lni;
 		if ( (lni->flag & SUSU) == FALSE )
 			lni = fnd_au(lni, page) ;
+		if (lni == prv_lni)
+			lni = fnd_prv(lni, page);
 		break ;
 	case KB_AD :
 		if ( (lni->flag & SUSD) == FALSE )
