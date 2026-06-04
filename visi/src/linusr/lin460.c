@@ -29,8 +29,8 @@
 /* ВЫВОД СООБЩЕНИЯ ОБ ОШИБКЕ */
 /*---------------------------*/
 
-static  int msgflg ;    /* На экране есть сообщение */
-static  int msgflg;
+static  int msgflg;    /* На экране есть сообщение */
+/*static  int msgflg;*/
 
 int     ok_msg()
 {
@@ -87,7 +87,8 @@ const char    *str ;         /* текст сообщения об ошибке 
 			at_set(va); w_chr(' ');
 			w_str(str);
 			at_set(TXT); er_eol(TXT);
-		}
+		} else
+			msgflg = 0;
 	}
 }
 

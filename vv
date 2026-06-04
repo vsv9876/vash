@@ -5,7 +5,7 @@
 #echo ./v?
 
 # regular vash options (may be vary)
-export VASH=+xpsw
+#export VASH=+xpswT
 
 # step trace of linlib output:
 # additional fflash(stdout) on every fputs()

@@ -1,7 +1,5 @@
 
-- keep panel with key help consistent as possible, refresh also
-
-- increase the accuracy of the navigation bar
+- is is need to refactor all the bottom panel messaging
 
 - complete an full utf8 support on '_sh #k' key processing
 

@@ -343,37 +343,44 @@ register int i; /* search start position */
 	return(i);
 }
 
-static int itm_on = 0; /* flag: dialog in active state */
+static int itm_on = 0; /* flag: dialog of itmpos() in active state */
 /* actual code of the entry to itmpos() defined in rc, KB_TA is default */
 static kbcod itm_kbcod = 0;
 
-static void itm_next(cmd_cod)
-const char *cmd_cod;
+static char cmd_cod[4];
+
+static void itm_next()
 {
-	w_msg(ATT, " ");
+	cp_set(-1, 0, TXT);	w_str(" >>> ");
+	/*w_msg(ATT, "   ");*/
 	w_lh_msg(cmd_cod);
 	w_lh_msg(" find the next [");
 	w_str(pattpos);
 	w_lh_msg("] ;   :EX cancel;");
+	er_eol(TXT);
 }
 
 static void itm_nomatch(cmd_cod)
 const char *cmd_cod;
 {
-	w_msg(ERR|INP, "no match [");
+	/*cp_set(-1, 0, ATT|INP);
+	w_str(" ! ");*/
+	w_msg(ATT|INP, " ");
+	w_lh_msg(" ");
+	w_str("no match [");
 	w_str(pattpos);
 	/*
 	w_lh_msg("];    :TA edit new one");*/
 	w_lh_msg("] ;  ");
 		    w_lh_msg(cmd_cod);
 		    w_lh_msg(" edit new one;");
+	er_eol(TXT);
 }
 
 /* position cursor on first letter given in dialog */
 int itmpos(cmd)
 const char *cmd;
 {
-	char cmd_cod[4];
 	/*extern kbcod pmtrstr(); /* ввод строки с промптером */
 	kbcod cod;
 	int i, ilast;
@@ -400,8 +407,6 @@ const char *cmd;
 	if (strchr(pattpos, '*') || strchr(pattpos, '?'))
 		ispatt++;
 
-	/*TODO cleanup: cp_set(-2, 50, ATT); w_str(' \''); w_str(cmd);*/
-
 	switch(cod) {
 	case KB_CA:
 	case KB_EX:
@@ -420,7 +425,7 @@ const char *cmd;
 		if (ilast != clm._itm) {
 			itmadj(0);
 		}
-		itm_next(cmd_cod);
+		itm_next();
 		break;
 	/* KB_TA: */
 	default:
@@ -450,17 +455,19 @@ void u_menu(mainl)
 register LINE *mainl;
 {
 	extern int keyshow();
-	int i;
+	int i, ok;
 	kbcod cod;
-	int   keyreq;   /* flag: keyshow() required */
+	int   panel_req;   /* flag: panel with keyshow() or itm_next() required */
+	int   itm_d;	/* item_next meesage is on display */
+	int	  refresh;  /* flag: refresh all panels required */
 	int   cmdret;
-	int	  refresh;  /* flag: itmshow() required */
 
 	/* 1st show before main loop */
 	cp_set(clm._y0, 0, TXT);
 	er_eop(TXT);
 	cmdret = 1;
-	refresh = keyreq = 1;
+	refresh = 1;
+	itm_d = 0;
 
 	clm._itm = 0;
 
@@ -470,13 +477,24 @@ register LINE *mainl;
 		if (refresh) {
 			cwdshow();
 			itmshow();
+			er_eop(TXT);
 			w_page(clm._vf);
-			refresh = 0;
-			keyreq = 1;
+			panel_req = 1;
+			itm_d = refresh = 0;
 		}
-		if (!ok_msg() && keyreq) {
-			keyshow(vflag.panelf);
-			keyreq = 0;
+		ok = ok_msg();
+			if (ok && itm_on)
+				panel_req = 0;
+
+		if (panel_req) {
+			if (itm_on) {
+				if (! itm_d) {
+					itm_next();
+					itm_d = 1;
+				}
+			} else
+				keyshow(vflag.panelf);
+			panel_req = 0;
 		}
 		showtime( 1 );  /* restore clock */
 
@@ -500,50 +518,55 @@ register LINE *mainl;
 				}
 			}
 		}
-		if (itm_on == 0 && ok_msg() ) {
+		ok = ok_msg();
+		if (ok) {
 			w_emsg("");
-			keyreq = 1;
+			panel_req = 1;
+			itm_d = 0;
 		}
 
 		switch (cod) {
 		case KB_RE:
-			er_pag();
+			/*er_pag();*/
 			refresh = 1;
+			continue;
 			break;
 		case KB_KH: case KB_KE: case KB_PU: case KB_PD:
 		case KB_AD: case KB_AR: case KB_AL: case KB_AU:
 			i = itmadj(cod);
+			continue;
 			break;
 		default:
-			cmdret = 0;
-			if (cod != 0)
-				cmdret = vcmd(cod);
-			if (cmdret == 0)
-				keyreq = 1;
-			if (cmdret > 0) {
-				refresh = 1;
-				scrlst();
-				cp_sav();
-				if (fil_vf(0)) {
-					cp_fet();
-					scrlnl(); /* set new y0... */
-				}
-				er_eop(TXT);
-			}
-			if (cod == ' ') {
-				/* hint after space key: advance next line */
-				/* click a space key was at current line!!! */
-				cod = KB_AD;
-				i = itmadj(cod);
-				cod = ' ';
-			}
-
-			/* syncronize y0 and y0_top */
-			if (clm._y0 < y0_top)
-				y0_top = clm._y0;
-
 			break;
 		}
+		cmdret = 0;
 
+		if (cod != 0)
+			cmdret = vcmd(cod);
+
+		if (cmdret == 0 && ! ok_msg())
+			panel_req = 1;
+
+		if (cmdret > 0) {
+			refresh = 1;
+			scrlst();
+			cp_sav();
+			if (fil_vf(0)) {
+				cp_fet();
+				scrlnl(); /* set new y0... */
+			}
+			er_eop(TXT);
+		}
+		if (cod == ' ') {
+			/* hint after space key: advance next line */
+			/* click a space key was at current line!!! */
+			cod = KB_AD;
+			i = itmadj(cod);
+			cod = ' ';
+		}
+
+		/* syncronize y0 and y0_top */
+		if (clm._y0 < y0_top)
+			y0_top = clm._y0;
 	}
 }
