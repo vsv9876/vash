@@ -377,6 +377,7 @@ extern  int     w_putc(int);
 
 /* lin2xx - phisical level of terminal control */
 extern  void    at_set(int p);
+extern  int     at_get();
 extern  kbcod   r_cod(kbcod cod);
 extern  void    unr_c(kbcod cod);
 extern  kbcod   last_cod;

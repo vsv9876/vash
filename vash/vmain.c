@@ -349,13 +349,26 @@ static kbcod itm_kbcod = 0;
 
 static char cmd_cod[4];
 
+/*static void dis_patt();*/
+static void dis_patt()
+{
+	int aw;
+
+	if (pattpos[0] != '\0') {
+		aw = at_get();
+		at_set(VAR|INP);
+		w_str(pattpos);
+		at_set(aw);
+	}
+}
+
 static void itm_next()
 {
 	cp_set(-1, 0, TXT);	w_str(" >>> ");
 	/*w_msg(ATT, "   ");*/
 	w_lh_msg(cmd_cod);
-	w_lh_msg(" find the next [");
-	w_str(pattpos);
+	w_lh_msg(" jump to the next [");
+	dis_patt();
 	w_lh_msg("] ;   :EX cancel;");
 	er_eol(TXT);
 }
@@ -365,10 +378,10 @@ const char *cmd_cod;
 {
 	/*cp_set(-1, 0, ATT|INP);
 	w_str(" ! ");*/
-	w_msg(ATT|INP, " ");
+	w_msg(ERR|INP, " ");
 	w_lh_msg(" ");
 	w_str("no match [");
-	w_str(pattpos);
+	dis_patt();
 	/*
 	w_lh_msg("];    :TA edit new one");*/
 	w_lh_msg("] ;  ");
@@ -510,10 +523,12 @@ register LINE *mainl;
 				switch (cod) {
 				case KB_CA:
 				case KB_EX:
+				case KB_NL:
 					cod = 0;	/* flag to skip vcmd() below */
 					itm_on = 0; /* flag to terminate the chain of the dialog */
 					/*NO BREAK*/
-				default:
+				case KB_KI: case KB_RE: case ' ': case KB_SP:
+				default:        /* TODO a flag for termination variants */
 					break;
 				}
 			}

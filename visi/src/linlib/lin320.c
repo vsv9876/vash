@@ -80,6 +80,12 @@ char *sgr;
 	}
 }
 
+int
+at_get()
+{
+	return scrn.sc_at;
+}
+
 void
 at_set(aw_new)
 /*

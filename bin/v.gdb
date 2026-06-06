@@ -67,7 +67,7 @@ if [ -x $bintest ]; then
     echo " * Warning: this is LOCAL (unpackaged) version "
     echo " * from $vashdir ***"
     echo ' *'
-    exec gdb $BLD$dest/vash "$@"
+    exec gdb $BLD$dest/bin/vash "$@"
 fi
 echo '   *** no compiled binaries found in:'
 echo '          "'$BLD'"'

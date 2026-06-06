@@ -7,8 +7,11 @@
 # release, tested on Fedora 33..43
 #
 #-----------------------------------------
-#-: +1 -l12 -b512
--: +1 -l12 
+
+-: +1 -l12 -b512
+## use -b until itmbsz bug will be removed
+##-: +1 -l12 
+
 -p rpm
 #
 # default menu: fill, from, to (not used), arg

@@ -5,8 +5,9 @@
 :+
         * ?     _mark +
 :-
+#        * ?     _mark -
+# unmark allowed if any file selected only
         * +     _mark -
-# note: unmark allowed if any file selected only
 
 # moving cursor jumping to position by the item pattern
 :TA
