@@ -12,7 +12,7 @@
  */
 
 /*
- * definitions of video attributes bits for phisical level
+ * definitions of video attributes bits for physical level
  */
 
 #define A_SO    0001

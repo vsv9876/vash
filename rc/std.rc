@@ -135,8 +135,8 @@
 	rwx -           +Rmfile
 	rwx ?           rm -f ##
 +Rmfile
-	r?x d ..        _msg Please don't do this...
-	r?x d .         _msg Please stop chopping down the branch under you
+	r?x d ..        _err Please don't do this...
+	r?x d .         _err Please stop chopping down the branch under you
 	rwx d *         rm -r -f ./#$
 	??? * -*          rm -f ./#$
 	rw? [AODETM] *    rm -f ./#$
@@ -166,7 +166,7 @@
 
 :D
 	* +   +diff
-	* -   _msg exact two files must be selected to diff
+	* -   _err exact two files must be selected to diff
 +diff
 	* * * :diff -br ##
 
@@ -195,7 +195,7 @@
     r?? [TMD] *       :cat #@
 +targz
     r?x [d] *         tar cvzf #$.tar.gz ##
-    ??? * *           _msg #@ marked: ##
+    ??? * *           _att #@ marked: ##
 
 :X
 # set execution permissions

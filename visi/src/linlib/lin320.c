@@ -51,7 +51,7 @@ extern  int sgrmode;
 /* old attributes and color sgr */
 static    int awstate = AW_INIT_STATE;
 static  char *acstate = NOCOLOR;
-static    int aixstate = 0;
+/*static    int aixstate = 0;*/
 
 #define COLOR_ANSI
 #ifdef COLOR_ANSI
@@ -104,7 +104,7 @@ int aw_new;        /* ИНДЕКС И ФЛАГИ АТРИБУТОВ */
 	/* dumb mode, without attributes at all - in some cases its wrong - vt52+ has so/se attribute */
 	if (sgrmode == 0) return;
 
-	aw = (aw_new & VIDEOM); /* disable garbage from old code */
+	aw = (aw_new & VIDEOM); /* disable any garbage from old code */
 
 	ac =
 	ac_old = acstate;

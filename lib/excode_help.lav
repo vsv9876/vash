@@ -11,22 +11,22 @@ err	= ge - - - - "[ exit= 1 ]"
 ---SCREEN
 =command run & exit trap
 
-  when command is done, You get a prompt in one of form:
+  When command is done, You will receive the indicator in the form below:
 
-  .ok...       -- on success
+  .ok...       - execution completed without errors
 
-  .err........ -- if a command terminated with error or on a signal
+  .err........ - execution terminated with an error or on a signal
 
-  note about protective trap:
-  pressing .:NL... does nothing preventing unexpected action
 
-  Pass codes:
-  .:SP... or .:CA...        return to main menu
-  .:HE...                   get this page then returns to main menu
-  .:AU... .:AD... .:AR...   return to command editor, cursor at the end 
-  .:AL...                   return to command editor, cursor at last position
+  Switch context pressing a key:
+  
+  .:SP... or .:CA...      - return to main menu
+  .:HE...                 - get this page then returns to main menu
+  .:AU... .:AD... .:AR... - return to command editor, cursor at the end 
+  .:AL...                 - return to command editor, cursor at last position
+  .'any_printable         - type another command from scratch
 
-  other printable:          type another command from scratch
-
+  Note about protective trap:
+    pressing .:NL... does nothing preventing unexpected action
 
 ---END

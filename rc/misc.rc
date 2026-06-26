@@ -63,8 +63,8 @@
     * * *   _err Can't write this directory
 
 :[*]
-    rwx -   _msg rwx -
-    rwx +   _msg rwx +
+    rwx -   _att rwx -
+    rwx +   _att rwx +
 #    ?-? -   _msg --- -
 #    ?-? +   _msg --- +
 
@@ -78,12 +78,12 @@
 +tardir
 
     * d * tar -cvf ./#@.tar ./#@
-    * * * _msg please, point with coursor to directory or mark files
+    * * * _att please, point with coursor to directory or mark files
 
 +tarfiles
 
     * ? * tar -cvf .tar ##
-    * * * _msg err in .ashmisc
+    * * * _err error in misc.rc
 :U6
 :6
     rwx -   +cpiodir
@@ -93,7 +93,7 @@
 +cpiodir
     * d . find ./#@ -depth -print | grep -v '^\./\.\.cpio' | cpio -ov > ./#@.cpio
     * d * find ./#@ -depth -print | cpio -ov > ./#@.cpio
-    * * * _msg please, point to directory or mark files
+    * * * _att please, point to directory or mark files
 
 +cpiofiles
     * ? * find ## -depth -print | cpio -ov > .cpio

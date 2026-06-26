@@ -28,7 +28,9 @@ int i;
 LINE *phelp;
 {
 	char tmps[80];
-	sprintf(tmps, "%s (%d/2) ", phelp, i);
+	sprintf(tmps,
+			/*"%s (%d/2) ", phelp, i);*/
+			"page #%d ", i);
 	w_msg(HDR, tmps);
 	er_eol(TXT);
 }
@@ -56,7 +58,7 @@ const LINE    *page;
 				w_page(phelp);
 				d_page(phelp);
 				hlppmt(i, pages[i]);
-				w_lh_msg("-- get next page: :HE");
+				w_lh_msg("   :HE get next help");
 			} else {
 				hlppmt(i, pages[i]);
 				at_set(ERR);

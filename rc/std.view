@@ -39,29 +39,29 @@
 	r?? [DT] *.rpm       ;rpm -qivp #@ | #m
 	r?? [DT] *.deb       ;dpkg --info #@ | #m
 |-
-	r?? [AD] *.a         :ar tv #@ | #m
-	r?? O *.o            :nm -np #@ | #m
-	r?? O *.so           :nm -np #@ | #m
-	r?? O *              :nm -np #@ | #m
-	r?? D *.tar          :tar -tvf #@ | #m
-	r?? D *.[wj]ar       :unzip -l #@ | #m
-	r?? D *.jpg	     :display #@
-	r?? D *.JPG	     :display #@
-	r?? D *.png	     :display #@
-	r?? D *.PNG	     :display #@
-	r?? D *.dng	     :display #@
-	r?? D *.DNG	     :display #@
-	r?? D *.tiff         :display #@
-	r?? D *.TIFF         :display #@
+	r?? [AD] *.a         ;ar tv #@ | #m
+	r?? O *.o            ;nm -np #@ | #m
+	r?? O *.so           ;nm -np #@ | #m
+	r?? O *              ;nm -np #@ | #m
+	r?? D *.tar          ;tar -tvf #@ | #m
+	r?? D *.[wj]ar       ;unzip -l #@ | #m
+	r?? D *.jpg	     ;display #@
+	r?? D *.JPG	     ;display #@
+	r?? D *.png	     ;display #@
+	r?? D *.PNG	     ;display #@
+	r?? D *.dng	     ;display #@
+	r?? D *.DNG	     ;display #@
+	r?? D *.tiff         ;display #@
+	r?? D *.TIFF         ;display #@
 	r?? D *              ;od -a #@ | #m
 	r?? T *              ;#m #@
 # 	r?? E *              _msg file empty, zero length
 # interface files in /dev, /sys,: stat(2) show them as zero length regular files
-	r?? E *              :cat #@ | tr '\0' ' '
-	r?x d *              :ls -aCF #@/.
+	r?? E *              ;cat #@ | tr '\0' ' '
+	r?x d *              ;ls -aCF #@/.
 #	r?? M *              frm -n #@
 	r?? M *              mutt -Rf #@
 #	??? ? *              _file #@
-	??? ? *              :file #@; ls -ld #@
+	??? ? *              ;file #@; ls -ld #@
 
 ### EOF

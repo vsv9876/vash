@@ -28,7 +28,8 @@ BUGS            fixes required
 MK/*            scripts to build packages
 DEBIAN/         stuff to build debian package
 
-configure       script for configuring compiling (not a GNU toolchain but compatible)
+configure       script for compile configuring
+		 (it is not a GNU toolchain but compatible)
 conf/           specs and configuration variants
 Makefile        main makefile
 
@@ -38,9 +39,9 @@ lib/            source of help pages
 misc/           miscellaneous staff
 rc/             rc files and profiles
 vash/           sources of vash main binary
-vash.1          manual sources
+vash.1          vash manual source
 vhset/          vhset utility sources
-vhset.1         vhset manual
+vhset.1         vhset manual source
 visi/           embedded VISI project, included with shortened docs
-vtest/          test program for debug VISI itself
+vtest/          test program for debug VISI library itself
 

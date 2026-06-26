@@ -188,8 +188,8 @@ typedef struct  {
 #define NED    04000    /* do not edit the string of line */
 #define EDT    02000    /* input check function connected during editing */
 #define FLO    06000    /* format conversion and editor are blocked */
-#define VEXT   01000    /* on output use a video atrribute for input */
-#define LFASTR  0400    /* only the 1st symbol of a line is overwitten */
+#define VEXT   01000    /* on output use a video attribute for input */
+#define LFASTR  0400    /* only the 1st symbol of a line is changed on input */
 
 #define VIDEOM (VIDEO|INP|VEXT)       /* visual attributes mask */
 

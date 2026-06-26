@@ -197,7 +197,8 @@ extern int vcmd(kbcod);
 extern void w_cmd(wchar_t *);
 extern void cwdshow();
 
-extern int ok_msg();
+extern int on_msg();
+extern void off_msg();
 
 extern int gidchk(int);
 extern int filetype(char *);

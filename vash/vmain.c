@@ -356,7 +356,7 @@ static void dis_patt()
 
 	if (pattpos[0] != '\0') {
 		aw = at_get();
-		at_set(VAR|INP);
+		at_set(HDR/*VAR|INP*/);
 		w_str(pattpos);
 		at_set(aw);
 	}
@@ -364,12 +364,13 @@ static void dis_patt()
 
 static void itm_next()
 {
-	cp_set(-1, 0, TXT);	w_str(" >>> ");
+	cp_set(-1, 0, TXT);	at_set(ATT); w_str(" >>> "); at_set(TXT);
 	/*w_msg(ATT, "   ");*/
+	w_str(" ");
 	w_lh_msg(cmd_cod);
 	w_lh_msg(" jump to the next [");
 	dis_patt();
-	w_lh_msg("] ;   :EX cancel;");
+	w_lh_msg("]  :EX cancel");
 	er_eol(TXT);
 }
 
@@ -378,15 +379,13 @@ const char *cmd_cod;
 {
 	/*cp_set(-1, 0, ATT|INP);
 	w_str(" ! ");*/
-	w_msg(ERR|INP, " ");
-	w_lh_msg(" ");
-	w_str("no match [");
+	w_msg(ERR/*|INP*/, "no jump/no match [");
 	dis_patt();
 	/*
 	w_lh_msg("];    :TA edit new one");*/
-	w_lh_msg("] ;  ");
+	w_lh_msg("]  ");
 		    w_lh_msg(cmd_cod);
-		    w_lh_msg(" edit new one;");
+		    w_lh_msg(" edit new one");
 	er_eol(TXT);
 }
 
@@ -440,7 +439,7 @@ const char *cmd;
 		}
 		itm_next();
 		break;
-	/* KB_TA: */
+	/* case KB_TA: */
 	default:
 		itm_on = 1;
 		ilast = clm._itm;
@@ -468,10 +467,10 @@ void u_menu(mainl)
 register LINE *mainl;
 {
 	extern int keyshow();
-	int i, ok;
+	int i, om;
 	kbcod cod;
 	int   panel_req;   /* flag: panel with keyshow() or itm_next() required */
-	int   itm_d;	/* item_next meesage is on display */
+	int   itm_d;	/* item_next message is on display */
 	int	  refresh;  /* flag: refresh all panels required */
 	int   cmdret;
 
@@ -495,19 +494,21 @@ register LINE *mainl;
 			panel_req = 1;
 			itm_d = refresh = 0;
 		}
-		ok = ok_msg();
-			if (ok && itm_on)
-				panel_req = 0;
-
+		om = on_msg();
+		if (om /*&& itm_on*/) {
+			panel_req = 0; /* a message has priority*/
+			itm_d = 0;
+		}
 		if (panel_req) {
+			panel_req = 0; /* panel is displayed once */
 			if (itm_on) {
 				if (! itm_d) {
-					itm_next();
+					itm_next(); /* item position variant of panel */
 					itm_d = 1;
 				}
-			} else
+			} else {
 				keyshow(vflag.panelf);
-			panel_req = 0;
+			}
 		}
 		showtime( 1 );  /* restore clock */
 
@@ -518,12 +519,13 @@ register LINE *mainl;
          * parsing done via vcmd() below */
 		cod = r_line( &clm._vf[i], 0 );
 
+		/* termination a chain of positioning dialog */
 		if (itm_on) {
 			if(cod != itm_kbcod) {
 				switch (cod) {
 				case KB_CA:
 				case KB_EX:
-				case KB_NL:
+				/*case KB_NL:*/
 					cod = 0;	/* flag to skip vcmd() below */
 					itm_on = 0; /* flag to terminate the chain of the dialog */
 					/*NO BREAK*/
@@ -533,11 +535,12 @@ register LINE *mainl;
 				}
 			}
 		}
-		ok = ok_msg();
-		if (ok) {
-			w_emsg("");
-			panel_req = 1;
+		om = on_msg(); /* r_line can display a message over panel */
+		if (om /*&& ! itm_on*/) {
+			off_msg(); om = 0;
 			itm_d = 0;
+			/*if (! itm_on)*/
+				panel_req = 1;
 		}
 
 		switch (cod) {
@@ -554,12 +557,12 @@ register LINE *mainl;
 		default:
 			break;
 		}
-		cmdret = 0;
 
+		cmdret = 0;
 		if (cod != 0)
 			cmdret = vcmd(cod);
 
-		if (cmdret == 0 && ! ok_msg())
+		if (cmdret == 0)
 			panel_req = 1;
 
 		if (cmdret > 0) {

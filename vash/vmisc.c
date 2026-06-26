@@ -531,6 +531,7 @@ char *str;      /* строка для ввода */
 int   size;     /* размер строки для ввода */
 const char *hlpmsg;	/* help message after string */
 {
+	extern SCRN scrn;
 	kbcod cod;
 	LINE  pmtline;
 	int   savedf;
@@ -541,8 +542,10 @@ const char *hlpmsg;	/* help message after string */
 	else
 		pmtline.flag = 0;
 
+	w_msg(TXT, pmtstr); /* scrn.sc_co defined there */
+
 	pmtline.size = size;
-	pmtline.colu = strlen(pmtstr) + 2; /*4;*/
+	pmtline.colu = scrn.sc_co /*+ strlen(pmtstr)*/ + 1;/*4;*/
 	pmtline.line = lframe->maxli - 1;
 	pmtline.attr = LVAR|INP/*|PMT*/;
 	/*NOSTRICT*/
@@ -552,8 +555,6 @@ const char *hlpmsg;	/* help message after string */
 	/*NOSTRICT*/
 	pmtline.test = (void *)0;  /* тип указатель на функцию, возвр. int */
 	pmtline.varl = str;
-
-	w_msg(TXT, pmtstr);
 
 	lh_pos = pmtline.colu + pmtline.size + 2;
 	cp_set(pmtline.line, lh_pos, TXT);

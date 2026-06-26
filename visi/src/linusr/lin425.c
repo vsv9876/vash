@@ -88,10 +88,12 @@ const char *msg;
 	char *p;
 	char *op;
 	int newlbl = 1;
+	int cur_aw; /* current attribute */
 
 	out[0] = '\0';
 	op = out;
 	p = msg;
+	cur_aw = at_get();
 	while ( *p ) {
 		if (*p == ':' && newlbl) { /* label */
 			newlbl = 0;
@@ -105,7 +107,7 @@ const char *msg;
 			newlbl = 1;
 			*op++ = *p++;
 			*op = '\0';
-			at_set(TXT);
+			at_set(cur_aw/*TXT*/);
 			w_str(out);
 			op = out;	/* start collect next word */
 		} else {
@@ -115,8 +117,9 @@ const char *msg;
 	}
 	if (out[0] != '\0') {
 		*op = '\0';
-		at_set(TXT);
+		at_set(cur_aw/*TXT*/);
 		w_str(out);
+		er_eol(cur_aw);
 	}
 }
 

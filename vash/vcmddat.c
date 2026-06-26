@@ -69,7 +69,7 @@ int yes;
 					base += ofs, i++, k++) {
 			if ( i ) {
 				/* right down corner is "dangerouse", so all labels shown shifted left */
-				at_set(TXT);
+				at_set(/*TXT*//*LKEY*/HDR);
 				w_chr(' ');
 			}
 			cp_set(-1, base, /*TXT*/LKEY);
@@ -79,6 +79,7 @@ int yes;
 			w_str(tmpstr);
 		}
 		/*er_eol(HDR);*//* does not work for monochrome attributes*/
+		/*er_eop(HDR);*//*does not also*/
 		for (i=base; i < lframe->maxco; i++) {
 			w_chr(' ');
 		}
