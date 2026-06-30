@@ -283,7 +283,7 @@ kbcod cod;
 		w_str(prompts);
 	}
 	else {
-		w_msg(ATT, " no items selected ");
+		w_msg(ATT, " no any item selected ");
 	}
 	return 0;
 }

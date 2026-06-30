@@ -31,3 +31,4 @@ do
 	fi
     done
 done
+exit

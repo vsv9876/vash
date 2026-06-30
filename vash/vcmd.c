@@ -497,7 +497,7 @@ fmsg(s)
 /*register*/ const char *s;
 {
 	char tmp[U8_STRBUF];
-    cmdsub(tmp, s, clm._itm, 0, 1/*vflag.subatrc*/);
+	cmdsub(tmp, s, clm._itm, 0, 1/*vflag.subatrc*/);
 	w_msg(TXT, tmp);
 	return(0);
 }
@@ -507,7 +507,7 @@ fmsgerr(s)
 /*register*/ const char *s;
 {
 	char tmp[U8_STRBUF];
-    cmdsub(tmp, s, clm._itm, 0, 1/*vflag.subatrc*/);
+	cmdsub(tmp, s, clm._itm, 0, 1/*vflag.subatrc*/);
 	w_msg(ERR, tmp);
 	/*w_lh_msg(s);*/
 	return(0);
@@ -517,8 +517,10 @@ int
 fmsgatt(s)
 /*register*/ const char *s;
 {
+	char tmp[U8_STRBUF];
+	cmdsub(tmp, s, clm._itm, 0, 1/*vflag.subatrc*/);
 	w_msg(ATT|INP, " ");
-	w_lh_msg(s);
+	w_lh_msg(tmp);
 	return(0);
 }
 

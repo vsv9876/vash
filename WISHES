@@ -20,10 +20,12 @@
 
 	VASH
 
+- substituition check before command execution
+
+- substitution some metasymbols before some internal commands
+
 - export vash flags changed in setup, 
   on execve() with VASH= environment
-
-- substitution some metasymbols before internal commands
 
 -+ rescan dir: keep cursor position near last known item,
 -- keep last item name regarding -@ parameter (item name fragment)

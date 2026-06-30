@@ -8,15 +8,17 @@
 #        * ?     _mark -
 # unmark allowed if any file selected only
         * +     _mark -
+        * *	_err no selected items
 
 # moving cursor jumping to position by the item pattern
 :TA
 :[*]
 	* ?	_itmpos
 #
-### :SP does not work as key recognizer, use :[ ] instead
-### note: moving the cursor to the next item by pressing the space bar
-### is hard-coded inside vash
+# :SP does not work as key recognizer, use :[ ] instead
+# note:
+# moving the cursor to the next item by pressing the space bar
+# is hard-coded inside vash
 :KI
 :[ ]
 	* ?	_mark x#

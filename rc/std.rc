@@ -171,9 +171,14 @@
 	* * * :diff -br ##
 
 :M
-#       get manual for an item - it works in /bin /lib /usr/catman/ etc..
-	* *.*   :man #*
-	* *     :man #@
+	* * +Man
+# get manual for an item - it works in /bin /lib /usr/catman/ etc..
++Man
+	* [DT] *.1.gz :man `basename #@ .1.gz`
+	* [DT] *.3.gz :man `basename #@ .3.gz`
+	* [DT] *.8.gz :man `basename #@ .8.gz`
+	* [DT] *.*   :man #*
+	* [DT] *     :man #@
 :R
 # repeat a command (echo as template)
 	* *     for i in ## ;do echo $i; done

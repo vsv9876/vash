@@ -1,6 +1,4 @@
 
-- it is need to refactor all the bottom panel messaging
-
 - complete an full utf8 support on '_sh #k' key processing
 
 - complete documenting and make code cleanup of wsobj_t (4k string)
