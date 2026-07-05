@@ -19,24 +19,9 @@ static char fmti[10] = "%d";
 
 ---PAGE linem
 ---LINES
-m_exit      = ipm      -   -    mkexit  tst_m    " quit "
----#e_tst1  = ipm      -   "7"  e_tst   m_test   " edit1 "
----#e_tst2  = ipm      -   "18" e_tst   m_test   " edit2 "
-e_tst1      = ipm      -   dim1 e_tst   m_test   " edit1 "
-e_tst2      = ipm      -   dim2 e_tst   m_test   " edit2 "
-
----# wcso, u8so; wcoptr, u8optr 
-o_tst1      = iv       w   -    -       -        &wcso
-o_u8        = iv       o   -    -       -        &u8so
-op_tst1     = ipv      w   -    -       -        &wcso
-op_u8       = ipv      o   -    -       -        &u8so
-
-d1      = ipv   -   -           -       -   dim1
-d2      = ipv   -   -           -       -   dim2
-
-s_raw   = ipv   -   -           -       -   u8s
-s_var   = ipv   -   -           cvt_s   -   u8s
-s_tst   = ipv   -   -           cvt_s   -   u8s
+m_exit      = ipm      -   -    mkexit     tst_m    " quit "
+m_navi      = ipm      n   -    p_navi     tst_m    " navi "
+m_sutf      = ipm      n   -    p_suputf8  tst_m    " utf8 "
 
 fd      = iv    -   -           -       -   fmtd
 ff      = iv    -   -           -       -   fmtf
@@ -49,38 +34,31 @@ fi      = iv    -   -           -       -   fmti
 ---#s_vl	= ipv   -   "%ld"       -       -   &vl
 ---#s_vh	= ipv   -   "%hd"       -       -   &vh
 ---#s_vi	= ipv   -   "%d"        -       -   &vi
-s_vd	= ipv   -   fmtd        -       -   &vd
-s_vf	= ipv   -   fmtf        -       -   &vf
-s_vl	= ipv   -   fmtl        -       -   &vl
-s_vh	= ipv   -   fmth        -       -   &vh
-s_vi	= ipv   -   fmti        -       -   &vi
+s_vd		= ipv   -   fmtd        -       -   &vd
+s_vf		= ipv   -   fmtf        -       -   &vf
+s_vl		= ipv   -   fmtl        -       -   &vl
+s_vh		= ipv   -   fmth        -       -   &vh
+s_vi		= ipv   -   fmti        -       -   &vi
 
 li      = gc     -      "%3d"   -       -      &hwframe.maxli
 co      = gc     -      "%3d"   -       -      &hwframe.maxco
 bli     = vip    -      "%3d"  -       -       &lfmain.baseli
 
----# unsupported
 ---SCREEN
 =testing VISI/LINLIB V4-Unicode library + runtime
 
----#56789-1234567890
-                    .m_exit.......         .:HE.... get help
-                                                            
-  s_double .fd..... .s_vd................  .'+=    dump numbers
-  s_float  .ff..... .s_vf..........       
-  s_long   .fl..... .s_vl.....          123456789-123456789-123456789-123456789
-  s_short  .fh..... .s_vh.....          ."中文素养".         ."国际站".
-  s_int    .fi..... .s_vi.                                          
-  str_raw           .s_raw.               .'?/     show str object
-  str_var           .s_var..              .'|\     dump str with byte hex
-  str_tst           .s_tst...             
-          .bli      .o_tst1..  .op_tst1....
-           .li      .o_u8....  .op_u8......
-           .co          
-        width1= .d1 .e_tst1.......        .'"'     e_str(3)
-        width2= .d2 .e_tst2.......        .':;     e_str(5)
+           .m_exit....... .m_sutf....... .m_navi.......
 
-                    .m_exit.......
-                                    
-                                    
+                                   .'+=    dump numbers
+          .li.x .co .bli  
+
+  s_double .fd..... .s_vd................
+  s_float  .ff..... .s_vf..........       
+  s_long   .fl..... .s_vl.....
+  s_short  .fh..... .s_vh.....
+  s_int    .fi..... .s_vi.                                          
+
+           .m_exit.......
+
+  .:HE.... get help
 ---END                                            

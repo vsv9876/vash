@@ -17,8 +17,8 @@
 #include "line0.h"
 
 allcod = 1;	/* linlib behaviour flag: open to edit with any key; default: space only */
-/* should be big anouth */
-#define STRSIZE 128
+
+static  int ex_flg = 0;     /* exit flag */
 
 static double vd = 7.68123456789012345678;
 static float  vf = 3.14;
@@ -26,23 +26,9 @@ static int	  vi = 54321;
 static short  vh = 123;
 static long   vl = 99999999;
 
-/* wide unicode char support */
-volatile static wcsobj_t wcso =
-    const_wcsobj( 30, L"1234567中文素养АБВгдё7890abcdefghij1234567" );
-wcsobj_t *wcoptr = &wcso;
+extern void p_navi();
+extern void p_suputf8();
 
-volatile static u8sobj_t u8so =
-    const_u8sobj( 22, "-123456789-123456789-" );
-u8sobj_t *u8optr = &u8so;
-
-/*0123456789-123456789-123456789-123456789-1 */
-
-static int dummy0=-1,dummy1=-1,dummy2=-1,dummy3=-1;
-static /*const*/ char u8s[STRSIZE] = "а国际站бвгдежзиклмн...  ";
-
-static  u8char_t tmps[4 * STRSIZE] = "";
-
-static  int ex_flg = 0;     /* exit flag */
 mkexit()
 {
 	ex_flg = 1;
@@ -84,20 +70,6 @@ kbcod cod;
 
 }
 
-#define TXT_CO 20
-
-static sout()
-{
-	unsigned char *s;
-
-	cp_sav();
-	cp_set(-6, TXT_CO, HDR/*ATT|VEXT*/);
-	fprintf(vttout, " s_raw=\"%s\" " , u8s);
-	for (s = u8s; *s != '\0'; s++)
-		fprintf(vttout, "%2x ", (int)*s);
-	er_eol(TXT);
-	cp_fet();
-}
 
 static sout2()
 {
@@ -114,97 +86,7 @@ static sout2()
 	cp_fet();
 }
 
-static sout3()
-{
-	extern SCRN scrn;
-/*	char *wcs;*/
-	char *wcs;
-
-	cp_sav();
-
-	cp_set(-3, TXT_CO, TXT);
-	w_str("0123456789-123456789-123456789-123456789-12345");
-	wcs = (void *)&wcso.wcs;
-
-	cp_set(-6, TXT_CO-1,  HDR/*ATT*/);
-	sprintf(tmps, "'%ls'", wcs);
-	w_str(tmps);
-/*
-	sprintf(tmps, " scrn.sc_co=%d ", scrn.sc_co);
-	w_str(tmps);
-*/
-	er_eol(TXT);
-	cp_fet();
-
-}
-
-static e_tst(size)
-int size;
-{
-	static int curpos = 0;
-	int refresh = 1;
-	kbcod cod;
-	int i;
-
-	while(1) {
-		cp_set(-4, TXT_CO-10, TXT);
-
-		sprintf(tmps, "e_str(%2d)", size);
-		w_str(tmps);
-		cp_set(-4, TXT_CO, VAR|VEXT);
-		if (refresh) {
-			refresh = 0;
-			sout3();
-			cp_set(-4, TXT_CO, ERR);
-			er_eol(ERR);
-		}
-		cod = e_str(&wcso, size, 0, &curpos);
-
-		switch (cod) {
-		case 0:
-		case KB_AD:
-		case KB_AU:
-		case KB_HE:
-		case KB_CA:
-		case KB_EX:
-			for (i = -6; i <= -3; i++) {
-				cp_set(i, 0, TXT); er_eol(TXT);
-			}
-			return cod;
-			break;
-		case KB_RE:
-		case KB_NL:
-			refresh = 1;
-			break;
-		default:
-			continue;
-			break;
-		}
-	}
-	return cod;
-}
-
-int m_test(line, cod)
-register LINE *line;
-	 kbcod cod;
-{
-	int size;
-	size = atoi(line->cvts);
-
-	if(cod == ' ' || cod == KB_NL) {
-/*
-		if(line->cvtf) {
-			(*line->cvtf)(size);
-		}
-*/
-		e_tst(size);
-	}
-	return(TRUE);   /* last resort */
-}
-
 LFRAME lfmain = { 0 };
-
-#include "pmainv.i"
 
 /*ARGSUSED*/
 void sigwinch(signo)
@@ -228,6 +110,8 @@ int signo;
 		jkb_re();
 }
 
+#include "pmainv.i"
+
 int vmain()
 /*------------*/
 /* VIDEO MAIN */
@@ -249,19 +133,16 @@ int vmain()
 		if(ex_flg) return 0;
 
 		switch(cod) {
-/*
-		case ' ' :
+
+		case KB_NL:
+		case ' ':
 			if((cline->attr & LMSE) == LMSE) {
 				er_pag();
 				w_page(linem);
 			}
 			break;
-*/
-		case '"': case '\'': cod = e_tst(3); break;
-		case ':': case ';':  cod = e_tst(5); break;
-		case '|': case '\\': sout(); break;
+
 		case '+': case '=':  sout2(); break;
-		case '?': case '/':  sout3(); break;
 		case KB_HE:
 /*			w_help("no_help.lb"); w_page(linem);*/
 			w_emsg("no_help.lb"); w_page(linem);

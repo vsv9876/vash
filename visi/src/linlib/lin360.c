@@ -166,17 +166,17 @@ fnd_au (lni, page)
 			continue;
 		if(0 == (INP & (lnj->attr)) )
 			continue;
-		/* on the same column and upper */
+		/* upper and not right */
 		if((lnj->line <  lni->line)
-		 &&(lnj->colu == lni->colu))
+		 &&(lnj->colu <= lni->colu))
 			return(lnj);
 		/*
-		 * lower and left - on the vertically organized page part -
+		 * lower and not right - on the vertically organized part of a page -
 		 * defined with '!' sign on the begin of the strings
-		 * in .lav/.cv code
+		 * in .lav/.cv section ---SCREEN
 		 */
 		if((lnj->line >  lni->line)
-		 &&(lnj->colu <  lni->colu))
+		 &&(lnj->colu <=  lni->colu))
 			return(lnj);
 	}
 	/*

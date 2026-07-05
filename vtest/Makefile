@@ -61,16 +61,24 @@ EXTHDRS	      = $(VISI)/include/line.h \
 
 HDRS	      = 
 
-IPAGES	      = pmainv.i
+IPAGES	      = pmainv.i navi.i suputf8.i
 
 #VPAGES        = pmainv.cv
 
-SRCS          = pmainv.cv \
+SRCS          = \
+		pmainv.cv \
 		pmainv.c \
-		pmain.c
+		pmain.c \
+		navi.cv \
+		navi.c \
+		suputf8.cv \
+		suputf8.c
 
-OBJS	      = pmain.o \
-		pmainv.o
+OBJS	      = \
+		pmainv.o \
+		pmain.o \
+		navi.o \
+		suputf8.o
 
 SUFFIX        = .cv:sC
 
@@ -162,5 +170,9 @@ $(DESTBIN):
 pmain.o: pmain.c
 
 pmainv.o: pmainv.c pmainv.i
+
+navi.o: navi.c navi.i
+
+suputf8.o: suputf8.c suputf8.i
 
 #pmainv.c: pmainv.i
