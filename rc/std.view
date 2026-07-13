@@ -2,6 +2,13 @@
 #
 # std.view
 
+# 2026-06... reading manuals...
+:B
+  * * ;bat -p --paging always #@
+:S
+  * * ;less #@
+
+# since 1990:
 -3 view
 
 :3
@@ -9,6 +16,7 @@
 	r?x ?   +View
 
 +View
+	r?? D *.[12345678]*.gz   ;gzip -d < #@ | nroff -man | #m
 	r?? D *.tar.[zCp]    ;gzip -d < #@ | tar -tvf - | #m
 	r?? D *.tar.bz2      ;bzip2 -cd < #@ | tar -tvf - | #m
 	r?? D *.tar.gz       ;gzip -d < #@ | tar -tvf - | #m
@@ -34,7 +42,7 @@
 	r?? [DT] *.gz        ;gzip -d < #@ | #m
 #	r?? [DT] *.gz-*      ;gzip -d < #@ | #m
 	r?? [DT] *.xz        ;xz -d < #@ | #m
-|+| r?? [DT] *.pkg       ;pkg info -F #@ | #m
+|+|	r?? [DT] *.pkg       ;pkg info -F #@ | #m
 |||	r?? [DT] *.src.rpm   ;rpm -qivp #@ | #m
 	r?? [DT] *.rpm       ;rpm -qivp #@ | #m
 	r?? [DT] *.deb       ;dpkg --info #@ | #m
@@ -54,14 +62,15 @@
 	r?? D *.tiff         ;display #@
 	r?? D *.TIFF         ;display #@
 	r?? D *              ;od -a #@ | #m
+	r?? T *.[12345678]   ;nroff -man #@ | #m
 	r?? T *              ;#m #@
 # 	r?? E *              _msg file empty, zero length
-# interface files in /dev, /sys,: stat(2) show them as zero length regular files
+# interface files in /dev, /sys - stat(2) showes them as zero length regular files
 	r?? E *              ;cat #@ | tr '\0' ' '
-	r?x d *              ;ls -aCF #@/.
+	r?x d *              ;ls -aCF #@/. | #m
 #	r?? M *              frm -n #@
 	r?? M *              mutt -Rf #@
 #	??? ? *              _file #@
-	??? ? *              ;file #@; ls -ld #@
+	??? ? *              ;file #@; ls -ld #@ | #m
 
 ### EOF

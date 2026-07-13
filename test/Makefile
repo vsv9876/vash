@@ -175,4 +175,3 @@ navi.o: navi.c navi.i
 
 suputf8.o: suputf8.c suputf8.i
 
-#pmainv.c: pmainv.i

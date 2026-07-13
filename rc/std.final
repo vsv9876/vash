@@ -36,19 +36,15 @@
 #:@
 :[']
 ###	* *     ;_sh echo # s='#s' S='#S' *='#*' e='#e'
-#	* *     ;echo 'substr1? #[##] @[#@] $[#$]'
 	* *     _att 1#  '@[#@]  $[#$]'
 :["]
 ###	* *     ;_sh echo # s='#s' S='#S' *='#*' e='#e'
-#	* *     ;echo '2? m[#m] e[#e] *[#*] s[#s] S[#S]'
 	* *     _att 2#  'm[#m]  e[#e]  *[#*]  s[#s]  S[#S]'
 # ------------
 
 #
 :RE
-	* * ;clear
-:Z
-	* *	:exec vash
+	* * :clear
 	
 :^Z
 #        * *     :/bin/csh -cf "suspend; exit 0;"

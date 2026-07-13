@@ -9,8 +9,6 @@
  *      $Log$
  */
 
-static char dim1[4] = "18";
-static char dim2[4] = " 7";
 static char fmtd[10] = "%.20lf";
 static char fmtf[10] = "%.5f";
 static char fmtl[10] = "%ld";
@@ -47,10 +45,7 @@ bli     = vip    -      "%3d"  -       -       &lfmain.baseli
 ---SCREEN
 =testing VISI/LINLIB V4-Unicode library + runtime
 
-           .m_exit....... .m_sutf....... .m_navi.......
-
-                                   .'+=    dump numbers
-          .li.x .co .bli  
+           .m_sutf....... .m_navi....... .m_exit....... 
 
   s_double .fd..... .s_vd................
   s_float  .ff..... .s_vf..........       
@@ -58,7 +53,11 @@ bli     = vip    -      "%3d"  -       -       &lfmain.baseli
   s_short  .fh..... .s_vh.....
   s_int    .fi..... .s_vi.                                          
 
+                          
+
+          .li.x .co .bli          .'+=    dump numbers
+
            .m_exit.......
 
-  .:HE.... get help
+                                  .:HE.... get help
 ---END                                            

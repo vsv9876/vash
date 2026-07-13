@@ -1,4 +1,9 @@
 
+known bugs...
+
+* using ':Fv ls -a' as fill main menu command corrupts some filenames,
+  replacing with garbage from parsing rc string chunck
+
 * extra reading main menu, for sample std_help.rc
   (but 3rd does not...)
 

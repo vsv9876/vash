@@ -175,7 +175,12 @@
 # get manual for an item - it works in /bin /lib /usr/catman/ etc..
 +Man
 	* [DT] *.1.gz :man `basename #@ .1.gz`
+	* [DT] *.2.gz :man `basename #@ .2.gz`
 	* [DT] *.3.gz :man `basename #@ .3.gz`
+	* [DT] *.4.gz :man `basename #@ .4.gz`
+	* [DT] *.5.gz :man `basename #@ .5.gz`
+	* [DT] *.6.gz :man `basename #@ .6.gz`
+	* [DT] *.7.gz :man `basename #@ .7.gz`
 	* [DT] *.8.gz :man `basename #@ .8.gz`
 	* [DT] *.*   :man #*
 	* [DT] *     :man #@
@@ -201,6 +206,10 @@
 +targz
     r?x [d] *         tar cvzf #$.tar.gz ##
     ??? * *           _att #@ marked: ##
+
+# restart default
+:Z
+    * * :exec vash
 
 :X
 # set execution permissions

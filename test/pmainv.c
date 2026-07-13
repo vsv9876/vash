@@ -16,7 +16,7 @@
 #include "line.h"
 #include "line0.h"
 
-allcod = 1;	/* linlib behaviour flag: open to edit with any key; default: space only */
+/*allcod = 1;	/* linlib behaviour flag: open to edit with any key; default: space only */
 
 static  int ex_flg = 0;     /* exit flag */
 
@@ -26,8 +26,8 @@ static int	  vi = 54321;
 static short  vh = 123;
 static long   vl = 99999999;
 
-extern void p_navi();
-extern void p_suputf8();
+extern int p_navi();
+extern int p_suputf8();
 
 mkexit()
 {
