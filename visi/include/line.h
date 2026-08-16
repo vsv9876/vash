@@ -17,14 +17,14 @@
 #include <stdio.h>
 #include <wchar.h>
 
-#define VISI_SIG_POSIX 1	/* =1 use sigaction() for signals; =0 signal() */
+#define VISI_SIG_POSIX 1	/* =1 use sigaction() for signals; =0 use signal() */
 
 
 #if _POSIX_C_SOURCE >= 200112L
 /* need for nanosleep() used in place of sleep();
  * not used in productive version of visi/library */
 
-#define VISI_DEBUG		/* trace messages for VISI internals */
+/*#define VISI_DEBUG		/* trace messages for VISI internals */
 
 #endif
 

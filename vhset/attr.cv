@@ -108,17 +108,17 @@
 !      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---#+ hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !     italic:mi  .mi     .t.     .t.     .t.     .t.     .t.     .t.     .t.
----#+		 .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!color:          .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!		 .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+---#!color:          .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!compose: fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !   FG intence:  .Bf     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !      FG code#  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !   BG intence:  .Bb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !      BG code#  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!composer:fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---#+.""...........................................................................
 
-  settings mode: .sgrm..........    SGR: .sgrAT.....             help: .:HE....
-                                                              set r/w: .:KI....
+    mode: .sgrm..........       SGR: .sgrAT.....            .:HE.... help
+							    .:KI.... r/w: toggle
 
 ---# debug garbage below...
 ---#+         vs:vs  .vs.    .t.     .t.     .t.     .t.     .t.     .t.     .t.

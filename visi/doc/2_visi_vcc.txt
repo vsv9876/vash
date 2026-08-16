@@ -26,20 +26,20 @@ menu item (switch case) m               -       proc_m  tst_m   name_m   (3
 (4 WCSOBJ/U8SOBJ must be used in "flag" field if "varl" points to object
 
 char    s[];            /* string in UTF-8 */
-float   v;              /* any type variable, eg float */- float */
-int     tst();          /* input check function, optional */обязательно */
-int     cvt();          /* convert format function */зования */
+float   v;              /* any type variable, eg float */
+int     tst();          /* input check function, optional */
+int     cvt();          /* convert format function */
 int     idxv;           /* index controlled by alterator, also:         */
 char   *idxp[];         /* - textual representation of every index value; */
-int     cvt_a();        /* - supporting function from library; */ */
+int     cvt_a();        /* - supporting function from library; */
 
-int     proc_m();       /* function to be called if */ать, если    */
+int     proc_m();       /* function to be called if */
 char    name_m[];       /*        pointed this item */
-int     tst_m();        /* library testing function for menu */блиотеки */
+int     tst_m();        /* library testing function for menu */
 
 vmain() {
 	LINE *cline;    /* pointer to current line (pointed by cursor) */
-	int   cpos;     /* current position on editing start */ТОР СТРОКИ */
+	int   cpos;     /* current position on editing start */
 
 	w_line( &line);   r_line( &line, &cpos );
 	w_page( page );   r_page( page, &cline, &cpos );
@@ -47,6 +47,6 @@ vmain() {
 
 tst(line, cod)
 LINE *line;  kbcod cod; {
-	return(TRUE);   /* if input check is OK */ение */
+	return(TRUE);   /* if input check is OK */
 	return(FALSE);  /* smth wrong, request for input again */	
 }

@@ -16,7 +16,6 @@
 	r?x ?   +View
 
 +View
-	r?? D *.[12345678]*.gz   ;gzip -d < #@ | nroff -man | #m
 	r?? D *.tar.[zCp]    ;gzip -d < #@ | tar -tvf - | #m
 	r?? D *.tar.bz2      ;bzip2 -cd < #@ | tar -tvf - | #m
 	r?? D *.tar.gz       ;gzip -d < #@ | tar -tvf - | #m
@@ -27,15 +26,15 @@
 	r?? D *.zip          ;zipinfo -m #@ | #m
 	r?? D *.arj          ;unarj l #@ | #m
 	r?? D *.zoo          ;zoo l #@ | #m
-	r?? D *.gz           ;gzip -d < #@ | #m
-	r?? D *.bz2          ;bzip2 -d < #@ | #m
-	r?? D *.xz           ;xz -d < #@ | #m
-	r?? ? *.C            ;ccat #@ | #m
 #----
 	r?? [DT] *.cpio      ;cpio -itv -I#@ | #m
 	r?? [DT] *.cpio.[Z]  ;zcat < #@ | cpio -itv | #m
 	r?? [DT] *.cpio.gz   ;gzip -d < #@ | cpio -itv | #m
 	r?? [DT] *.cpio.[zpC] ;gzip -d < #@ | cpio -itv | #m
+#
+	r?? D *.[12345678].gz   ;gzip -d < #@ | nroff -man -K utf-8 | #m
+#
+##	r?? ? *.C            ;ccat #@ | #m
 	r?? [DT] *.[zCp]     ;gzip -d < #@ | #m
 	r?? [DT] *.[Z]       ;zcat < #@ | #m
 	r?? [DT] *.bz2       ;bzip2 -cd < #@ | #m

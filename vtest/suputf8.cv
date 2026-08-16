@@ -37,8 +37,8 @@ s_tst   = ipv   -   -           cvt_s   -   u8s
           wcso:     .o_tst1..< .op_tst1....<
           u8so:     .o_u8....< .op_u8......<
                         
-     e_str(d1): .d1 .e_tst1.......              .'"'  e_str(3)
-     e_str(d2): .d2 .e_tst2.......              .':;  e_str(5)
+     e_str(d1): .d1 .e_tst1...                  .'"'  e_str(3)
+     e_str(d2): .d2 .e_tst2...                  .':;  e_str(5)
                                                 
                                                    .:EX.... done,return             
   中文素养  国际站  Привет

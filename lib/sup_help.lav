@@ -32,7 +32,7 @@ ymax    = ipv   -       "%4d"   -       t_ymax  yy_max
 
                ."readonly runtime parameters                                 ".
  maxli/maxco   maximum lines/columns (size of the screen)
- vexdir        searching path for directories of rc files .'VASH_EXDIR env
+ vexdir        searching path for directories of rc files .'VASH_PATH env
 
                ."debug of profiles                                           ".
           NOTE: it's better to don't touch if not sure, 1st read manual

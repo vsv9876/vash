@@ -105,7 +105,7 @@ int size;
 			refresh = 0;
 			sout3();
 			cp_set(-4, TXT_CO, ERR);
-			er_eol(ERR);
+			/*er_eol(ERR);*/
 		}
 		cod = e_str(&wcso, size, 0, &curpos);
 
@@ -117,7 +117,7 @@ int size;
 		case KB_CA:
 		case KB_EX:
 			for (i = -6; i <= -3; i++) {
-				cp_set(i, 0, TXT); er_eol(TXT);
+				cp_set(i, 0, TXT); /*er_eol(TXT);*/
 			}
 			return cod;
 			break;
@@ -194,7 +194,7 @@ int p_suputf8()
 			/*NOBREAK*/
 			return(1);
 			break;
-		default:   w_emsg("");     /* clear err msg */
+		default:   /* w_emsg("");     /* clear err msg */
 		}
     }
     return(1);

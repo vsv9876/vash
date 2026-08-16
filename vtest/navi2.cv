@@ -1,0 +1,43 @@
+/*
+**      +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
+**     (c) linlib  !    ДЛЯ АЛФАВИТНО-ЦИФРОВЫХ
+**      +----------+    ВИДЕОТЕРМИНАЛОВ
+**/
+
+/*
+ *      $Header$
+ *      $Log$
+ */
+
+/*static char ss2[20] = "zzz";*/
+
+---PAGE navi2
+---LINES
+---#oo      = iv      -   -    -       -        " * "
+oo          = im     -   -    -       -        ss
+xx          = iv     -   -    -       -        ss
+
+---SCREEN
+=cursor moving (navi2)
+ 
+
+   horisontal
+         
+         .xx  .oo  | .oo  |   .oo|   .oo|  .oo |    .oo   .oo|   
+         .oo|  .oo |  .oo |  .oo |   .oo|  .oo |    .oo   .oo|   
+         .oo|   .oo|   .oo| .oo  |   .oo|  .oo |    .oo   .oo|   
+            |      |      |      |      |      |      |      |  .oo
+            |      |      |      |      |      |      |      |    |
+ 
+
+   single vertical row  
+    
+!!       .oo| .oo  |   .oo| .oo  |   .oo|  .oo |    .oo    .oo    |    .oo  |     
+                                                                  |    |    |
+                                                                   .oo |    |
+
+                        .:KI.... draw a cross   .:PU.... toggle navi2
+                        .:KD.... clear a cross  .:PD.... toggle navi3
+                        .:RE.... refresh        .:EX.... done,return
+
+---END                                            

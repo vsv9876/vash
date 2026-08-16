@@ -11,8 +11,6 @@
 .vash_history
 buildd.h
 BLD
-BLD.cfg
-conf.cfg
 *.o
 *.i
 *.lb
@@ -28,4 +26,5 @@ lbp
 vcc
 vlpb
 visi/src/.*
-visi/bin
+visi/bin/*
+visi/lib/*

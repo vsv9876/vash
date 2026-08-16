@@ -14,10 +14,11 @@ BuildRequires:  ncurses-devel
 Visual Assistant Shell, interactive supershell over sh/bash.
 Features visual assistance for typing command line parameters, editing a command string, parameterized command history, hotkey scripting, etc.
 
+%define source_date_epoch_from_changelog   0
 %define debug_package %{nil}
 
 %prep
-#%autosetup
+#%autosetupdpkg --print-architecture
 %setup -q
 
 %build
@@ -32,6 +33,7 @@ mkdir -p %{buildroot}/etc/vhset
 mkdir -p %{buildroot}/usr/share/doc/%{name}
 mkdir -p %{buildroot}/%{_mandir}/man1/
 cp -rd ./etc/vhset/* %{buildroot}/etc/vhset/
+cd %{buildroot}/etc/vhset; ln -sf xterm-256color-std xterm-256color
 
 %clean
 rm -rf %{buildroot}
@@ -45,5 +47,3 @@ rm -rf %{buildroot}
 %config(noreplace) /etc/vhset/*
 
 %changelog
-* Fri Aug  5 2016 Sergey Vovk <s.vovk>
-- initial build for Fedora

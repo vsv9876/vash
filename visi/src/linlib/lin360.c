@@ -24,7 +24,10 @@
 #endif W_PAGE_TAB
  */
 
+#include <unistd.h>
 #include <stdio.h>
+#include <string.h>
+
 #include "line.h"
 #include "line0.h"
 
@@ -50,6 +53,81 @@
  *      никто не пользовался.
  */
 
+#ifdef VISI_DEBUG
+#define NAVI_TRACE
+#endif
+
+#ifdef NAVI_TRACE
+#define ntrace(str)		w_msg(ATT|VEXT, str)
+/*if(strcmp(s, ""))
+		usleep(400000);*/
+#else
+#define ntrace(str) ;
+#endif
+
+static LINE *fnd_nxt(LINE *, LINE *);
+static LINE *fnd_prv(LINE *, LINE *);
+
+static int ovrcolu(LINE *i, LINE *j);
+static int ovrcolu(i, j)
+register LINE *i; /*current*/
+register LINE *j; /*next*/
+{
+	if ((j->colu == i->colu)
+		||
+		((j->colu > i->colu) && ((i->colu + i->size) > j->colu))
+		||
+		((j->colu < i->colu) && ((j->colu + j->size) > i->colu))
+		)
+		return 1;
+	else
+		return 0;
+}
+
+/*------------------------------------------*/
+/* simplest search: next line in page order */
+/*------------------------------------------*/
+static LINE *
+fnd_nxt(lni, page)
+	register LINE *lni;
+	register LINE *page ;
+{
+	LINE *lnj;
+	lnj = lni;
+	while(lni->size != 0) {
+		lni++;
+		if (0 != (INP & lni->attr)) {
+			/*ntrace(" Next in order ");*/
+			return(lni);
+		}
+	}
+	lnj = page; /* loop, no while(to INP line) which will be done in r_page() */
+	return(lnj);
+}
+
+/*----------------------------------------------------*/
+/* simple reverse search: previous line in page order */
+/*----------------------------------------------------*/
+static LINE *
+fnd_prv(lni, page)
+	register LINE *lni;
+	register LINE *page ;
+{
+	LINE *lnj;
+	lnj = lni;
+	while(lni > page) {
+		lni--;
+		if (0 != (INP & lni->attr)) {
+			/*ntrace(" Prev. ");*/
+			return(lni);
+		}
+	}
+	/* no loop */
+	return(lnj/*page*/);
+}
+
+
+
 static LINE *
 fnd_home(lni, page)
 /* 
@@ -61,7 +139,7 @@ register LINE *page ;
 	register LINE *lnj;
 
 	for(lnj=page; lnj->size!=0; lnj++) {
-		if(0 != (INP & (lnj->attr)) )
+		if(0 != (INP & lnj->attr))
 			return(lnj);
 	}
 	return(lni);
@@ -87,6 +165,48 @@ register LINE *page ;
 }
 
 /*
+ * find on arrow left
+ */
+static LINE *
+fnd_al (lni, page)
+	register LINE *lni;
+	register LINE *page ;
+{
+	register LINE *lnj;
+	int nprev = 0;
+
+	/* find on the same row */
+	for(lnj=lni; lnj>=page; lnj--) {
+		if(0 == (INP & (lnj->attr)) ) {
+			continue;
+		}
+		if (lnj->line == lni->line)
+			nprev++;
+		if((lnj->line == lni->line) && (lnj->colu < lni->colu))
+			return(lnj);
+	}
+	/* find from the end of the page, also keep in mind vertical orientation */
+	for(lnj=lni; lnj->size != 0; lnj++ )
+		;
+	for(   ; lnj > lni/*>= page*/; lnj--) {
+		if(0 == (INP & lnj->attr) ) {
+			continue;
+		}
+		if (lnj->line == lni->line)
+			nprev++;
+		if((lnj->line == lni->line)) /* loop back in the same row */
+		{
+			if (nprev == 1)
+				break;
+			ntrace("loop back in row");
+			return (lnj);
+		}
+	}
+	ntrace("previous (arrow LEFT)");
+	return(fnd_prv(lni, page));
+}
+
+/*
  * find on arrow right
  */
 static LINE *
@@ -99,8 +219,8 @@ fnd_ar (lni, page)
 	for(lnj=lni; lnj->size != 0; lnj++) {
 		if( (INP & ~(lnj->attr)) )
 			continue;
-		if(((int)lnj->line == (int)lni->line)
-		&& ((int)lnj->colu > (int)lni->colu))
+		if(((int)lnj->line == (int)lni->line) &&
+		   ((int)lnj->colu > (int)lni->colu))
 			return(lnj);
 	}
 	/* ЗАЦИКЛИТЬ В ЭТОЙ ЖЕ СТРОКЕ */
@@ -110,99 +230,10 @@ fnd_ar (lni, page)
 		if(((int)lnj->line == (int)lni->line))
 			return(lnj);
 	}
+	lni = fnd_nxt(lni, page);
 	return(lni);
 }
-/*
- * find on arrow left
- */
-static LINE *
-fnd_al (lni, page)
-	register LINE *lni;
-	register LINE *page ;
-{
-	register LINE *lnj;
 
-	/* find on the same row */
-	for(lnj=lni; lnj>=page; lnj--) {
-		if(lnj == lni)
-			continue;
-		if(0 == (INP & (lnj->attr)) )
-			continue;
-		if((lnj->line == lni->line)
-		&& (lnj->colu < lni->colu))
-			return(lnj);
-		/*if((lnj->line < lni->line)
-		&& (lnj->colu != lnj->colu))
-				return(lnj);*/
-	}
-	/* find from end of page */
-	for(lnj=lni; lnj->size != 0; lnj++ ) ;
-	for(   ; lnj>=page; lnj--) {
-		if(0 == (INP & (lnj->attr)) )
-			continue;
-		if((lnj->line == lni->line)) /* cycle on the same row */
-/*		if(lnj->line < lni->line)*/ /* or shift to the upper line */
-			return(lnj);
-	}
-	return(lni);
-}
-/*
- * find on arrow UP
- */
-LINE *
-fnd_au (lni, page)
-	register LINE *lni;
-	register LINE *page ;
-{
-	register LINE *lnj;
-	int     nxt_line ;
-	int		on_top = 0;
-
-	/*
-	 * find to back from current place
-	 */
-	for(lnj=lni; lnj>=page; lnj--) {
-		if(lnj == lni)
-			continue;
-		if(0 == (INP & (lnj->attr)) )
-			continue;
-		/* upper and not right */
-		if((lnj->line <  lni->line)
-		 &&(lnj->colu <= lni->colu))
-			return(lnj);
-		/*
-		 * lower and not right - on the vertically organized part of a page -
-		 * defined with '!' sign on the begin of the strings
-		 * in .lav/.cv section ---SCREEN
-		 */
-		if((lnj->line >  lni->line)
-		 &&(lnj->colu <=  lni->colu))
-			return(lnj);
-	}
-	/*
-	 * if the current place is on the beginning,
-	 * find to current place from the end of page
-	 */
-	for(lnj=page; lnj->size != 0; lnj++) {
-		if (0 != (INP & (lnj->attr)) && lnj == lni && on_top == 0) {
-			on_top = 1;
-			break;
-		}
-	}
-	if (on_top) {
-		for(lnj=lni; lnj->size != 0; lnj++) ; /* find the tail */
-		for(   ; lnj>=page; lnj--) {
-			/* nearest from the tail but not in current row
-			 */			
-			if((INP & (lnj->attr))
-					&& (lnj->line != lni->line)
-						&& (lnj->colu == lni->colu))
-					/* && (lnj->line >= lni->line)) /* cycle from the end */
-				return(lnj);
-		}
-	}
-	return(lni);
-}
 /*
  * find on arrow down
  */
@@ -215,13 +246,13 @@ fnd_ad (lni, page)
 	int     nxt_line ;
 
 	if((nxt_line = (int)lni->line ) < lframe->maxli ) { /* forward if possible */
-		for(lnj=lni; lnj->size!=0; lnj++) {     
+		for(lnj=lni; lnj->size!=0; lnj++) {
 			if((lnj->line <= lni->line))
 				continue;
 			else if(0 == (INP & (lnj->attr)) )
 				continue;
-			else {                       /* row is below */
-				if((lnj->colu + lnj->size) >= lni->colu)
+			else {                       /* the line below is overlapped */
+				if (ovrcolu(lni, lnj))
 					return(lnj); /* field under cursor */
 				else
 					continue; /* all field is on the left */
@@ -232,42 +263,65 @@ fnd_ad (lni, page)
 	for(lnj=page; lnj->size!=0; lnj++) {
 		if( (INP & ~(lnj->attr)) )
 			continue;
-		else if(lnj->colu >= lni->colu)
+		else if	(ovrcolu(lni,lnj))
 			return(lnj);
 	}
 	return(lni);      /* last resort */
 }
 
-/*------------------------------------------*/
-/* simplest search: next line in page order */
-/*------------------------------------------*/
-static LINE *
-fnd_nxt(lni, page)
+/*
+ * find on arrow UP
+ */
+LINE *
+fnd_au (lni, page)
 	register LINE *lni;
 	register LINE *page ;
 {
-	lni++;
-	if(lni->size == 0)
-		lni = page;          /* cycle to begin */
-	return(lni);
+	register LINE *lnj;
+	LINE *lprv;
+	LINE *lnxt;
+	int		nprev = 0; /* count inp lines from current */
+
+	for(lnj=lni; lnj>=page; lnj--) {
+		if(0 == (INP & (lnj->attr)) ) {
+			if(lnj->line == lni->line)
+				nprev++;
+			continue;
+		}
+		if(lnj == lni)
+			continue;
+		/* upper and on the same column /* or overlapped *//*not to the right */
+		if(lnj->line < lni->line
+			&& ((lnj->colu == lni->colu) /*|| ovrcolu(lni, lnj)*/))
+		{
+			return(lnj);
+		}
+		/*lprv = fnd_ad(lnj, page); /* from the begin */
+		if (/*lnj->colu == lni->colu*/
+				ovrcolu(lnj, lni)
+				&& lnj->line != lni->line) { /* compare to orig!!*/
+				ntrace("previous (arrow UP)");
+			return (lnj);
+		}
+	}
+	for(lnj=lni; lnj->size != 0; lnj++)
+		; /* find the tail */
+	while(lnj > lni/*>= page*/) {
+		lnj--;
+		if(0 == (INP & (lnj->attr)))
+			continue;
+		if (ovrcolu(lnj, lni) && lnj->line != lni->line) {
+				ntrace("loop back in column");
+				return (lnj);
+		}
+	}
+	ntrace("previous (in page order)");
+	return(fnd_prv(lni, page));
 }
 
-/*----------------------------------------------------*/
-/* simple reverse search: previous line in page order */
-/*----------------------------------------------------*/
-static LINE *
-fnd_prv(lni, page)
-	register LINE *lni;
-	register LINE *page ;
-{
-	while(lni > page) {
-		lni--;
-		if (0 != (INP & lni->attr))
-			return(lni);
-	}
-	/* no cycle to begin */
-	return(page);
-}
+/*
+ * check if the fields of the lines overlapped
+ */
 
 #ifndef W_PAGE_TAB
 void
@@ -375,6 +429,9 @@ int    *posp;               /* cursor position during edit process */
 
 	cod = r_line(lni, posp);
 
+#ifdef NAVI_TRACE
+	ntrace("");
+#endif
 	/* navigate to next read position on the page */
 	switch( cod ) {
 	/*case KB_PU :*/
@@ -393,15 +450,11 @@ int    *posp;               /* cursor position during edit process */
 		prv_lni = lni;
 		if ( (lni->flag & SUSL) == FALSE )
 			lni = fnd_al(lni, page) ;
-		if (lni == prv_lni)
-			lni = fnd_prv(lni, page);
 		break ;
 	case KB_AU :
 		prv_lni = lni;
 		if ( (lni->flag & SUSU) == FALSE )
 			lni = fnd_au(lni, page) ;
-		if (lni == prv_lni)
-			lni = fnd_prv(lni, page);
 		break ;
 	case KB_AD :
 		if ( (lni->flag & SUSD) == FALSE )
@@ -422,6 +475,9 @@ int    *posp;               /* cursor position during edit process */
 		break;
 	}
 
+
+	if(curline != (LINE *)NULL)
+		/**curline = lni;*/
 	*curline = lni;    /* save pointer to current line!!! */
 	return(cod);
 }

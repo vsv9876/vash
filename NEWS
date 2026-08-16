@@ -1,5 +1,11 @@
 vash news (release notes)
 
+2.1.5
+  * new design of test&demo application for visi/linlib
+  * vhset help refresh
+  * refresh precompiled visi defaults and vhset profiles
+  * linlib: smarter navigation on r_page() 
+
 2.1.4
   * linlib: cursor moving on r_page(): simple wrap columns and rows
   * linlib: more clear navigation on r_page()

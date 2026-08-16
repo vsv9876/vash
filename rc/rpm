@@ -1,6 +1,10 @@
 #!/usr/bin/vash
 #
 
+|+
+@pkg.rc
+||
 @rpm.rc
+|-
 
 ### EOF

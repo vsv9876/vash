@@ -95,7 +95,7 @@ fi
 
 #stty kill '^u'
 
-PS1='vash % '; export PS1
+#PS1='vash % '; export PS1
 
 if [ x${VASH} = x ]; then
     VASH=swHST

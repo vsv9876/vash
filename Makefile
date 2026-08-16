@@ -100,6 +100,8 @@ showconfig:
 
 # $(BLDCFG) $(VISI)/include/line.h $(VISILIB_LIST)
 visi_lib: setup
+	mkdir -p $(VISI)/lib
+	mkdir -p $(VISI)/bin
 	cd $(VISI)/src;        $(MAKE) install "CFLAGS_VISI=$(CFLAGS_VISI)"\
 		"CC=$(CC)" "LINKER=$(LINKER)"
 

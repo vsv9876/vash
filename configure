@@ -18,7 +18,7 @@ confdir="./conf"
 
 #defaults
 DEBUG=
-DEBUG_1='-g -O0'
+DEBUG_1='-g -O0 -DVISI_DEBUG' 
 #TERMLIB=-ltermcap
 #TERMLIB=-lncurses
 #TERMLIB=-ltinfo

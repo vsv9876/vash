@@ -10,13 +10,13 @@
 static
 ---PAGE mainm
 ---LINES
-m_m  = ipm      n   -   pag_mk  tst_m   " Basic keyboard setup "
-m_k  = ipm      n   -   pag_k   tst_m   " Keys & codes setup "
-m_a  = ipm      n   -   pag_a   tst_m   " Video setup "
-m_qu = ipm      n   -   mkquit  tst_m   " Quit (discard changes) "
-m_ex = ipm      n   -   mkexit  tst_m   " Exit (save settings) "
+m_m    = ipm      n   -   pag_mk  tst_m   " Basic keyboard setup "
+m_k    = ipm      n   -   pag_k   tst_m   " Keys & codes setup "
+m_a    = ipm      n   -   pag_a   tst_m   " Video setup "
+m_quit = ipm      n   -   mkquit  tst_m   " Quit "
+m_save = ipm      n   -   saveon  tst_m   " Save settings "
 lh   = g        -   -   -       -       namelh
-sp   = gv       -   -   -       -       "spacebar"
+---#sp   = gv       -   -   -       -       "spacebar"
 
 ---SCREEN
 =VHSET - video-display hardware setup
@@ -25,19 +25,16 @@ sp   = gv       -   -   -       -       "spacebar"
     .lh......................................................................
 
 
----#  LINLIB V3.4
-
----#  Exit from setup:
-        .m_qu......................
+        .m_quit....................
 
 ---#    .m_m.......................
         .m_a.......................
         .m_k.......................
 
-        .m_ex......................
+        .m_save....................
 
 
-  get help:    .:HE....
+                                     .:HE....  get help
 
 
 ---END

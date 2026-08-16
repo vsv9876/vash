@@ -38,6 +38,7 @@ mkexit()
 	return(TRUE);
 }
 
+void keydump(int li, int co, kbcod cod);
 void keydump(li, co, cod)
 int li;
 int co;
@@ -112,7 +113,7 @@ int signo;
 
 #include "pmainv.i"
 
-int vmain()
+void vmain()
 /*------------*/
 /* VIDEO MAIN */
 /*------------*/
@@ -128,9 +129,10 @@ int vmain()
 
 	for( ;; ) {
 		cod = r_page(linem, &cline, 0);
+
 		keydump(1, 2/*40*/, cod);
 
-		if(ex_flg) return 0;
+		if(ex_flg) return;
 
 		switch(cod) {
 
@@ -144,15 +146,14 @@ int vmain()
 
 		case '+': case '=':  sout2(); break;
 		case KB_HE:
-/*			w_help("no_help.lb"); w_page(linem);*/
-			w_emsg("no_help.lb"); w_page(linem);
+			w_help("no_help.lb"); w_page(linem);
+			/*w_emsg("no_help.lb"); w_page(linem);*/
 			break;
 		case KB_EX :
 			bell();
 			w_msg(ERR, "Please, use menu - quit");
 			break;
 		default :
-			w_emsg("");
 			break;
 		}
 

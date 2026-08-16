@@ -42,10 +42,12 @@ static  int ex_flg = 0; /* флаг: пора заканчивать */
 
 mkquit()
 {
+/*
 	er_pag();
 	cp_set(0, 0, ATT);
 	printf("%s", "New setup is lost");
 	cp_set(2, 0, CMD);
+*/
 	ex_flg = 1;
 	return(TRUE);
 }
@@ -92,7 +94,7 @@ static int kbl_std()
 
 }
 
-mkexit()
+saveon()
 {
 	FILE *ofp;
 	register int i;
@@ -102,14 +104,14 @@ mkexit()
 	char *s;
 
 	if( namelh[0] && (ofp=fopen(namelh, "w")) != NULL ) {
-		/*------сохраняем настройку: */
+		/*------save settings: */
 
-		/*---- доп. клавиатура. */
+		/* additional keypad */
 		fprintf(ofp, "%c", (kpadon ? '+' : '-'));
-		/*---- color mode */
+		/* color mode */
 		fprintf(ofp, "%1d\n", sgrmode);
 
-		/*---- атрибуты */
+		/* attributes */
 		for(i=0; i<8; i++) {
 			if (	(lpaout[i].lpa_p != kblstd.lpaout[i].lpa_p) ||
 					(lpainp[i].lpa_p != kblstd.lpainp[i].lpa_p) ||
@@ -126,7 +128,7 @@ mkexit()
 			}
 		}
 
-		/*---- клавиши */
+		/*---- key settings */
 		for(kblp=kbl, kbls=kblstd.kbl; kblp->t_cod; kblp++, kbls++) {
 			if (
 					(kblp->t_cod != kbls->t_cod) ||
@@ -166,14 +168,17 @@ mkexit()
 				putc('\n', ofp);
 			}
 		}
-		cp_set(-1, 0, CMD);
+		if (fclose(ofp) == 0) {
+			w_msg(HDR, "OK, new settings are saved");
+
+		} else {
+			w_msg(ERR, "settings are not saved, file may be corrupted...");
+		}
 	} else {
-		er_pag();
-		cp_set(2, 0, ERR); fflush(vttout);
-		printf("%s", "cannot save file, setup data lost"); fflush(stdout);
+		w_msg(ERR, "cannot open file for save settings");
 	}
-	ex_flg = 1;
-	return(TRUE);
+	/*ex_flg = 1;*/
+	return(FALSE/*TRUE*/);
 }
 
 #include "mainp.i"
@@ -231,7 +236,10 @@ vmain()
 		cod = r_page(mainm, &cline, 0);
 
 		/* exit flag was raised */
-		if(ex_flg) return 0;
+		if(ex_flg) {
+			cp_set(0,0,TXT); er_pag();
+			return 0;
+		}
 
 		switch(cod) {
 		case '0' :

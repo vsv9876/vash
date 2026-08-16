@@ -1,0 +1,43 @@
+/*
+**      +----------+    БИБЛИОТЕКА ВВОДА-ВЫВОДА
+**     (c) linlib  !    ДЛЯ АЛФАВИТНО-ЦИФРОВЫХ
+**      +----------+    ВИДЕОТЕРМИНАЛОВ
+**/
+
+/*
+ *      $Header$
+ *      $Log$
+ */
+
+static char ss[4] = "zzz";
+
+---PAGE navi
+---LINES
+---#oo      = iv      -   -    -       -        " * "
+oo          = im     -   -    -       -        ss
+xx          = iv     -   -    -       -        ss
+
+---SCREEN
+=cursor moving (navi)
+
+
+   horisontal
+         
+         .xx  .oo  | .oo  |   .oo|   .oo|  .oo |    .oo   .oo|   
+         .oo|  .oo |  .oo |  .oo |   .oo|  .oo |    .oo   .oo|   
+         .oo|   .oo|   .oo| .oo  |   .oo|  .oo |    .oo   .oo|   
+            |      |      |      |      |      |      |      |  .oo
+            |      |      |      |      |      |      |      |    |
+!! vertical |      |      |      |   .oo|      |      |      |    |
+!!          |      |      |      |      |      |      |      |    |
+!!       .oo|   .oo|  .oo |   .oo|   .oo|   .oo|   .oo|  .oo |    |
+!!        .oo  .oo |   .oo|  .oo |   .oo|  .oo |    .oo   .oo|    |         .oo
+!!       .oo| .oo  |   .oo| .oo  |   .oo|  .oo |    .oo    .oo    |    .oo  |     
+                                                                  |    |    |
+   horisontal                                                      .oo |    |
+
+                        .:KI.... draw a cross   .:PU.... toggle navi2
+                        .:KD.... clear a cross  .:PD.... toggle navi3
+                        .:RE.... refresh        .:EX.... done,return
+
+---END                                            

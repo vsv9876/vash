@@ -1,21 +1,21 @@
 ---SCREEN
 =LINLIB/visi preferences setup
 
-  Full explanation of this program accessible, see man vhset;
-  Please, use arrow keys or .:TA... then .:NL... or .:SP... to make menu choice 
+  use arrow keys or .:TA... then .:NL... or .:SP... to make menu choice 
 
-  On quit, profile will be untouched and settings are dropped.
-  On exit, settings will be saved to profile, depending on write permission.
-
-."profiles in order".                	
-					1st found will patch compiled defaults;
-    personal:    $VHSET/$TERM		no profile means no savings anyway
+  the profile that was found first will fix the compiled default settings:
+    personal:    $VHSET/$TERM		
     system-wide: /etc/vhset/$TERM	
 
-."How to create personal profile from bash:".
+  do the following to create personal profile:
 
-  export VHSET=~/.vhset; mkdir -p $VHSET; touch $VHSET/$TERM
+    export VHSET=~/.vhset ; 
+    mkdir -p $VHSET ; 
+    touch $VHSET/$TERM
 
+  Please,
+  refer to 'man vhset' for full explanation of this program
+  
 =
 There is one hidden page called with .'0 key. It allows to change
 keypad activation key and labels for arrow keys which usually are never changed.

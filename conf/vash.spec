@@ -24,8 +24,6 @@ Features visual assistance for typing command line parameters, editing a command
 %build
 #%%make_build
 make config
-# core dump if compiled with optimization
-#./configure -d=-O3
 make
 
 %install

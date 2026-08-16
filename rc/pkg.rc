@@ -1,0 +1,112 @@
+#!/usr/bin/vash
+#
+# FreeBSD's pkg management
+# Sun Aug  2 21:12:07 MSK 2026
+#
+# status:
+# experimental, tested on FreeBSD 15.1-RELEASE
+# INCOMPLETE!!!
+# made from rpm.rc (copy&paste)
+#
+#-----------------------------------------
+
+-: +1 -l12 -b512
+## use -b until itmbsz bug will be removed
+##-: +1 -l12 
+
+-p pkg
+#
+# default menu: fill, from, to (not used), arg
+#
+#-frpm -qa --qf '%11{installtime} %-30{name}\n'|sort -nr| colrm 1 12
+
+|+
+-fpkg query -a '%t %n-%v'|sort -nr
+-i/var/db/pkg/local.sqlite
+-@2
+
+||
+-frpm -qa --qf '%11{installtime} %-30{name} %-50{nevra} %20{distribution}\n'|sort -nr| colrm 1 12
+-i/var/lib/rpm/rpmdb.sqlite
+-@2
+|-
+
+#------------------------------------------
+
+# keyboard legend
+-1#
+-2-repqry
+-3info
+-4files
+-5depnds
+-6provds
+-7-whtreq
+-8remove
+-9SETUP
+-0quit
+#------------------------------------------
+
+@std.mark
+
+#------------------------------------------
+
+:R
+	* * :yum -C reinstall `rpm -q --qf '%{name}' #@`
+:S
+	* * :yum -C search --qf '%-50{nevra} %-20{distribution}\n' `rpm -q --qf '%{name}' #@`
+
+:L
+	* - :rpm -q --qf '%-50{nevra} %{installtime:date}  %-20{vendor}\n' #@
+	* + :rpm -q --qf '%-50{nevra} %{installtime:date}  %-20{vendor}\n' ##
+#------------------------------------------
+:U2
+:2
+       * *   :repoquery `rpm -q --qf '%{name}' #@`
+:U3
+:3
+|+| * * ;pkg info #@ |#m
+||| * * ;rpm -qi #@ |#m
+|-
+
+:U4
+:4
+|+| * * ;pkg list #@ |#m
+||| * * ;rpm -ql #@ |#m
+|-
+
+:U5
+:5
+|+| * * ;pkg required-depends #@ |#m
+||| * * ;rpm -qR #@ | #m
+|-
+
+:U6
+:6
+|+| * * ;pkg provided-depends #@ |#m
+||| * * ;rpm -q --provides #@ |#m
+|-
+
+:U7
+:7
+#       * -   ;repoquery -i #@
+#	* -	:repoquery --whatrequires `rpm -q --qf '%{name}' #@`
+	* *	:rpm -q --whatrequires `rpm -q --qf '%{name}' #@`
+
+:U8
+:8
+|+
+    * * pkg delete -R #@
+||
+    * -   yum -C remove #@
+    * +   yum -C remove ##
+|-
+
+:EX
+:U0
+:0
+	* *     exit
+
+#------------------------------------------
+
+@std.cmd
+@std.final

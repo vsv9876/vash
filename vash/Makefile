@@ -43,9 +43,6 @@ DESTLIB       = $(DESTDIR)$(DEST)/lib/$(PROGRAM)
 VASH_PATH     = $(DESTDIR)$(DEST)/lib/$(PROGRAM)
 DESTBIN       = $(DESTDIR)$(DEST)/bin
 
-#CFLAGS_ASH    = -DJCLsuspend -DSYSV -DSVR4 -DMGROUPS
-#CFLAGS_ASH    = -DJCLsuspend -DFbsd -DBSDpagesize -DBSDmagic
-#CFLAGS_ASH    =
 CFLAGS        = $(CFLAGS_ASH) \
 		-I$(VISI)/include \
 		-D'PREDEF=$(PREDEF)' \

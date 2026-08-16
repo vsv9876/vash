@@ -2,6 +2,13 @@
 #
 # Setup environment for debug vash
 #
+# binaries and libraries must be compiled with
+#define VISI_DEBUG
+# see visi/src/line.h
+# this flag is not necessary for productive use
+#
+
+
 # check scipt name (may be symlinked)
 #echo ./v?
 

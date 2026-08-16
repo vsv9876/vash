@@ -969,7 +969,7 @@ LINE *phline;           /* pointer to instant page with help screen */
 			/*w_page(page);*/
 			repage();
 			break;
-		default:   w_emsg("");     /* clear message string */
+		default:   /* w_emsg("");     /* clear message string */
 		}
     }
 }

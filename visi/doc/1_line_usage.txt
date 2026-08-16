@@ -4,7 +4,7 @@
 
 #include "line.h"
 
- ------------------------- 1...79       field size occupied on a screen
+ ------------------------- 1...80       field size occupied on a screen
 /        ----------------- 0...23       line number
 |       /        --------- 0...79       column
 |       |       /        - suspenders and object flags

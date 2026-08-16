@@ -61,7 +61,7 @@ EXTHDRS	      = $(VISI)/include/line.h \
 
 HDRS	      = 
 
-IPAGES	      = pmainv.i navi.i suputf8.i
+IPAGES	      = pmainv.i navi.i navi2.i navi3.i suputf8.i
 
 #VPAGES        = pmainv.cv
 
@@ -70,6 +70,8 @@ SRCS          = \
 		pmainv.c \
 		pmain.c \
 		navi.cv \
+		navi2.cv \
+		navi3.cv \
 		navi.c \
 		suputf8.cv \
 		suputf8.c
@@ -88,7 +90,7 @@ SUFFIX        = .cv:sC
 #	$(VCC) -o $@ $<
 
 .cv.i:
-	rm -f $@
+	-rm -f $@
 	$(VCC) -o $@ $<
 	chmod a-w $@
 
@@ -171,7 +173,7 @@ pmain.o: pmain.c
 
 pmainv.o: pmainv.c pmainv.i
 
-navi.o: navi.c navi.i
+navi.o: navi.c navi.i navi2.i navi3.i
 
 suputf8.o: suputf8.c suputf8.i
 

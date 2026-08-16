@@ -47,7 +47,7 @@ const LINE    *page;
     LINE *phelp = (LINE *)NULL;
     register int i;
 
-    pages[1] = page != (LINE *)0 ? (void *)page : "";
+    pages[1] = page != (LINE *)0 ? (void *)page : phelp0;
     pages[2] = phelp0;
 
     for (i = 1; i> 0; ) {
