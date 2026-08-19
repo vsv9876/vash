@@ -8,11 +8,11 @@
 #
 #-----------------------------------------
 
--: +1 -l12 -b512
+-: +1T -l12 -b512
 ## use -b until itmbsz bug will be removed
 ##-: +1 -l12 
 
--p rpm
+-p rpm-
 #
 # default menu: fill, from, to (not used), arg
 #

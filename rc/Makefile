@@ -22,6 +22,7 @@ MAKEFILE      = Makefile
 PROFILES        = \
 		std \
 		rpm \
+		pkg \
 		pp* \
 		ps \
 		pssig \

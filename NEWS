@@ -4,7 +4,11 @@ vash news (release notes)
   * new design of test&demo application for visi/linlib
   * vhset help refresh
   * refresh precompiled visi defaults and vhset profiles
-  * linlib: smarter navigation on r_page() 
+  * linlib: smarter navigation on r_page()
+  * 1st experimental support of FreeBSD's pkg in rc
+  * slight cleanup of rc files
+  * cleanup git archive on origin from huge mistake with missing files 
+  * repaire main Makefile: 'clean' target
 
 2.1.4
   * linlib: cursor moving on r_page(): simple wrap columns and rows

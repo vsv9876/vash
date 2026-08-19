@@ -36,6 +36,7 @@ VASH_DOC = $(DESTDIR)$(DEST)/share/doc/$(VASH)
 DOC_FILES = \
 	COPYING \
 	COMPILE \
+	LICENSE \
 	README \
 	WISHES \
 	NEWS \

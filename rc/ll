@@ -3,7 +3,7 @@
 # long listing as main menu
 #
 -: +1
--p ls -la
+-p ll-
 
 @std.rc
 -1!ls-l

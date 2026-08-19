@@ -356,7 +356,7 @@ static void dis_patt()
 
 	if (pattpos[0] != '\0') {
 		aw = at_get();
-		at_set(HDR/*VAR|INP*/);
+		at_set(VAR);
 		w_str(pattpos);
 		at_set(aw);
 	}

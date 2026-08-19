@@ -6,8 +6,8 @@
 # Thu Nov 21 21:19:01 MVT 1991
 
 # ps.main (this file) included from ps.rc and ps.all
--p ps
--: -1 +pw -l0
+-p ps-
+-: -1T +pw -l0
 
 #
 # preprocessed values:
