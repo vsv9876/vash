@@ -82,6 +82,9 @@ $(BLDCFG):
 prep config:;
 	./configure
 
+debug:;
+	./configure -d
+
 showconfig:
 	@echo '***** '$(BLDCFG)' variables configured:'
 	@echo PATH=$(PATH)
@@ -132,15 +135,15 @@ install: setup compile $(DESTDIR) $(DEST) $(VISILIB) docinstall maninstall
 
 # rc contains nothing to be clean
 clean:
-	cd $(VISI)/bin; rm -f *
-	cd $(VISI)/lib; rm -f *
-	cd $(VISI)/src; $(MAKE) clean
-	cd $(VHSET); $(MAKE) clean
-	cd $(VASH); $(MAKE) clean
-	cd lib; $(MAKE) clean
-	cd vtest; $(MAKE) clean
-	cd misc; $(MAKE) clean
-#	cd lib/LIB; $(MAKE) clean
+	-cd $(VISI)/bin && rm -f *
+	-cd $(VISI)/lib && rm -f *
+	cd $(VISI)/src && $(MAKE) clean
+	cd $(VHSET) && $(MAKE) clean
+	cd $(VASH) && $(MAKE) clean
+	cd lib && $(MAKE) clean
+	cd vtest && $(MAKE) clean
+	cd misc && $(MAKE) clean
+#	cd lib/LIB && $(MAKE) clean
 	rm -rf $(BLD)
 
 distclean:	clean

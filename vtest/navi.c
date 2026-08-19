@@ -20,7 +20,7 @@
 static void w_cell(int mode, int li, int co)
 {
 	if (mode == 1) {
-		cp_set(li, co, CMD|VEXT);
+		cp_set(li, co, TXT|VEXT);
 		w_chr('.');
 	} else {
 		cp_set(li, co, TXT);

@@ -27,3 +27,4 @@ ifndef CP_SAV
 -?	filelh
 	MSELINE_FUNCTION
 	fastmenu
+-	vbell/bell

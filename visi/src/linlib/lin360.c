@@ -429,9 +429,8 @@ int    *posp;               /* cursor position during edit process */
 
 	cod = r_line(lni, posp);
 
-#ifdef NAVI_TRACE
 	ntrace("");
-#endif
+
 	/* navigate to next read position on the page */
 	switch( cod ) {
 	/*case KB_PU :*/
