@@ -17,9 +17,7 @@ BLD
 *,v
 *.a
 *.so
-vash
-vhset
-vtest
+.a-*
 a
 a.out
 lbp

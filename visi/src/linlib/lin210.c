@@ -169,7 +169,7 @@ KBL kbl[KBLSIZE] = {
 { KB_EX, "^D|F2  ", KBCOD('k','2'), KBCTL(    'D') },
 { KB_CA, "^C     ", KBCTL(    'C'), KB_EMPTY       },
 { KB_RE, "^L     ", KBCTL(    'L'), KB_EMPTY       },
-{ KB_PR, "^\\     ", KBCTL(    '\\'), KB_EMPTY     },
+{ KB_PR, "^]     ", KBCTL(    ']'), KB_EMPTY       },
                                                    
 { KB_KI, "^O|Ins ", KBCOD('k','I'), KBCTL(    'O') },
 { KB_KD, "^X|Del ", KBCOD('k','D'), KBCTL(    'X') },
