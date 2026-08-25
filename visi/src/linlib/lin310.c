@@ -33,7 +33,7 @@
 extern  int     ttyinp();
 extern  KBF     kbf[];
 
-extern int mb_cur_max;
+/*extern int mb_cur_max;*/
 
 /*------------------------------------------------------*/
 /* ВЕРНУТЬ cod, ЕСЛИ НИЧЕГО НЕ СОВПАЛО, ЛИБО КОД linlib */
@@ -100,7 +100,7 @@ kbcod cod;
 	mbstate_t ps = { 0 };
 	u8char_t s[1];
 
-	if(mb_cur_max == 1) {
+	if(linctl.mb_cur_max == 1) {
 		s[0] = 0xff & cod;
 		mbrtowc(&cod, s, 1, &ps);
 		return cod;

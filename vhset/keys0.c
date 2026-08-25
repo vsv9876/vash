@@ -35,7 +35,7 @@ pag_mk()
 	er_pag();
 	w_page(pkeys0);
 
-	w_msg(ATT, "step 1: assign new value of every key");
+	w_msg(SEL, "step 1: assign new value of every key");
 	for(i=0; i<1/*8*/;    ) {
 		/* найти место для маркера */
 		for ( j= -1, line=pkeys0; line->size != 0; line++) {
@@ -43,7 +43,7 @@ pag_mk()
 			if( j == i ) break;
 		}
 
-		cp_set(li=line->line, 0, ATT);
+		cp_set(li=line->line, 0, SEL);
 		w_str("->");    /* показать маркер */
 
 		cp_set(li, 0, TXT);
@@ -52,7 +52,7 @@ pag_mk()
 		if(i == 1) {
 			if(kbl[0].t_key1 == cod) {
 				r_cod(cod);
-				w_msg(ATT, "Keypdad are toggled");
+				w_msg(SEL, "Keypdad are toggled");
 				continue;
 			}
 		}
@@ -64,7 +64,7 @@ pag_mk()
 
 		w_emsg("");
 	}
-	w_msg(ATT, "step 2: keys input finished, let's edit names");
+	w_msg(SEL, "step 2: keys input finished, let's edit names");
 
 	line = pkeys0;
 	while(r_page(pkeys0, &line, 0) != KB_EX) ;

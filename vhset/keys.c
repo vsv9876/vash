@@ -135,10 +135,10 @@ char *str;
 		str[2] = '\0';
 	}
 	else if ( *mod == 'r' && cod == ' ' ) {
-		cp_set(line->line, line->colu, ATT|INP);
+		cp_set(line->line, line->colu, SEL|INP);
 		w_strn(">>>", line->size);
 
-		w_msg(ATT|VEXT, "Please, press key to be assigned: ");
+		w_msg(SEL|VEXT, "Please, press key to be assigned: ");
 		tmpcod = r_key();
 		if (tmpcod == 0)
 			w_msg(ERR, "Unknown key");
@@ -148,7 +148,7 @@ char *str;
 		else if ((skey == '2' && kblp->t_key2 == tmpcod)
 			  || (skey == '1' && kblp->t_key1 == tmpcod))
 		{
-			w_msg(ATT, "Key code was not changed!");
+			w_msg(SEL, "Key code was not changed!");
 		} else {
 			if (skey == '2') {
 				kblp->t_key2 = tmpcod;

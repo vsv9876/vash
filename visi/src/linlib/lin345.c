@@ -24,4 +24,4 @@
  *       (ПО УМОЛЧАНИЮ ТОЛЬКО ПРОБЕЛ/DEL).
  */
 
-int     allcod = 0;
+/*int     allcod = 0;*//* moved to linctl */

@@ -43,7 +43,7 @@ esac
 version=`cat ./VERSION`
 pkgname="$prog-$version"
 
-make distclean
+make distclean || exit
 #set -x
 
 # pkgname actually is symlink to sources dir
@@ -60,9 +60,11 @@ ln -s $pwd $where/$pkgname && \
 # prepare spec from template
 #src_specfile=$(find $where -name $spec)
 src_specfile=$(find . -name $spec)
+test -n $src_specfile || exit
 echo src_specfile=$src_specfile
 #
 specfile=$(basename $src_specfile)
+
 #
 rm -f $SPECS/$specfile || exit
 cat $src_specfile | sed "s/^Version:.*\$/Version:    $version/g" \

@@ -1,22 +1,23 @@
 ---SCREEN
-=LINLIB/visi preferences setup
+=vhset (linlib/visi) preferences setup
 
-  use arrow keys or .:TA... then .:NL... or .:SP... to make menu choice 
-
-  the profile that was found first will fix the compiled default settings:
-    personal:    $VHSET/$TERM		
-    system-wide: /etc/vhset/$TERM	
-
-  do the following to create personal profile:
-
-    export VHSET=~/.vhset ; 
-    mkdir -p $VHSET ; 
-    touch $VHSET/$TERM
-
-  Please,
-  refer to 'man vhset' for full explanation of this program
+  use arrow keys or .:TA... then .:NL... or .:SP... to make menu choice
   
-=
-There is one hidden page called with .'0 key. It allows to change
-keypad activation key and labels for arrow keys which usually are never changed.
+  The .'vhset utility configures the behavior and appearance of all programs
+  linked with the linlib library. Customization is performed by reading
+  a profile file that is edited here.
+
+  The profile that was found first will fix the compiled default settings:
+    .'/etc/vhset/$TERM	(system-wide)
+    .'$VHSET/$TERM	(personal)
+  
+  Do the following to create personal profile:
+
+    $ export VHSET=~/.vhset ; 
+    $ mkdir -p $VHSET ; 
+    $ touch $VHSET/$TERM
+
+NOTE:
+  There is one hidden page called with .'0 key. It allows to change keypad
+  activation key and labels for arrow keys which usually are never changed.
 ---END

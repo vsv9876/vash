@@ -17,4 +17,7 @@
 extern  LPA lpainp[];
 extern  LPA lpaout[];
 extern  KBL kbl[];
-extern  int cvt_sp();
+/*extern  int cvt_sp();*/
+
+/* vhset private formatter of attributes */
+extern  int cvt_atr(LINE *line, kbcod cod, char *mod, char *str);

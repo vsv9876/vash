@@ -226,7 +226,7 @@ int c;
 	oc &= 0xFF;
 #endif
 	/* if byte is a part of UTF-8, advance cursor position only on 1st one */
-	if (mb_cur_max == 1) {
+	if (linctl.mb_cur_max == 1) {
 		/* single-byte encoding is active */
 		scrn.sc_co += 1;
 	} else {

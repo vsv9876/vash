@@ -328,7 +328,7 @@ register char *lbps;
 		case  'X':
 		case  'x': strcpy(os, "VEXT"); os += 4; break;
 		case  'N':
-		case  'n': strcpy(os, "ATT"); os += 4; break;
+		case  'n': strcpy(os, "SEL"); os += 4; break;
 		case  'M':
 		case  'm': strcpy(os, "LMSE"); os += 4; break;
 		case  '1':
@@ -1080,7 +1080,7 @@ char *argv[];
 			"Check LANG, LC_CTYPE, LC_ALL.\n");
 		return 1;
 	} else {
-		mb_cur_max = MB_CUR_MAX;
+		linctl.mb_cur_max = MB_CUR_MAX;
 	}
 
 	if (argc <  2) {

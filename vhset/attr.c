@@ -19,8 +19,6 @@ extern LPA lpaout[];
 extern int cvt_co(); /* color */
 extern int cvt_cb(); /* bright mode */
 
-extern char namelh[];
-
 int     wamask[10] = {
 	A_SO,   A_US,   A_VS,   A_MD,	A_MR,   A_MB,   A_MH/*A_MK*/,	A_ZH,      0,      0,
 	};
@@ -30,30 +28,40 @@ LPA     *lpa_p[2] = {
 	lpaout,         lpainp
 	};
 
+#if 0
 static const char *pimmsg[] = {
 	"/set \"w\"/ ->  ",
 	"/set \"r\"/ --->",
-	"               " /* string for wipe on screen */
+	"                " /* string for wipe on screen */
 };
+#else
+static const char *pimmsg[] = {
+	".*...",
+	"...*.",
+	"     " /* string for wipe on screen */
+};
+#endif
 
-/* Color support for attr.cv page */
+/* Color support description TODO move to linlib */
 const char   *sgrms[] = {
-		"#0-dumb       ",
-		"#1-mono (b/w) ",
-		"#2-color      ",
-		"#3-color + bw ",
+		"#0 dumb (prompter)",
+		"#1 monochrome (b&w)  ",
+		"#2 color (16+16)     ",
+		"#3 color + b&w       ",
 /*		"#4-color256   ",*/
 /*		"#5-color256+bw",*/
 		0 };
 extern int		sgrmode; /*global LINLIB mode*/
 
-extern  LINE linem[];
+LINE linem[];
+
 LINE *linesgr = (LINE *)0;
 
 /*char *sgra = "";*/
 char *sgra = lpaout[0].lpa_sgr; /* SGR code, common (global) pointer, between cvt_sgr, cvt_co, cvt_csel */
 
 char sgrats[20] = ""; /* SGR attrib temporary string */
+
 extern int cvt_sg();
 
 LINE *getlsgr(line, varl)
@@ -61,7 +69,7 @@ register LINE *line;
 char *varl;
 /*вернуть указатель на линию редактирования атрибутов цвета (SGR editor) */
 {
-	register LINE *lsgr;
+	LINE *lsgr;
 
 	if (linesgr != (LINE *)0)
 		return (linesgr);
@@ -106,7 +114,7 @@ char   *str;
 		attr = line->attr & VIDEO;
 		strcpy(str, line->varl);
 
-		/* couple of lines shown with ofset between them */
+		/* couple of lines will shown with ofset between them */
 		cp_set(line->line + 1, line->colu/* + 2*/, attr|INP);
 
 		/* emulate prompt behavior for input mode - find prompt symbol, show it at 1st position */
@@ -152,8 +160,6 @@ kbcod cod;
 	case ('1'):
 	case ('2'):
 	case ('3'):
-	case ('4'):
-	case ('5'):
 	case (' '):
 	case(KB_DE):
 
@@ -174,19 +180,38 @@ kbcod cod;
 	return(TRUE);
 }
 
-reline(vai)
-{
-	LINE *l;
-	l = attrpg;
-	for (l = linem; l->size > 0; l++) {
-		if ((l->attr & VIDEO) == vai)
-			w_line (l);
-	}
-}
 
-repage()
+void repage()
 {
 	sgrtst(linem, KB_NL);
+}
+/*
+ * refresh (drow from scratch) any lines with
+ * attribute pointed by vai;
+ * keep in mind value of lpa_pi in runtime and that TXT is the base for each other
+ */
+void reline(lbase)
+LINE *lbase;
+{
+	LINE *l;
+	short mask;
+	short lattr;
+
+	mask = lbase->attr & (VIDEOM);
+	if (mask == TXT && sgrmode > 1 && lpa_pi == 0) {
+		repage(); /* hint to total redraw because TXT is the base for other colors */
+		return;
+	}
+	for (l = linem; l->size != 0; l++) {
+		lattr = (l->attr & (VIDEOM));
+		if ((lpa_pi == 0) && ((lattr & (INP | VEXT)) != 0))
+			continue;
+		if ((lpa_pi == 1) && ((lattr & (INP | VEXT)) == 0))
+			continue;
+		if ((lattr & (VIDEO)) == (mask & (VIDEO)))
+			w_line(l);
+	}
+	w_line(lbase);
 }
 
 /* копипаста из cvt_va... */
@@ -202,7 +227,7 @@ char *str;
 	char outstr[20];	/* строка для формирования вывода */
 	int i;
 	int posp;
-	register LINE *line4;	/* указатель на базовую линию в 4-й строке */
+	LINE *line4;	/* указатель на базовую линию в 4-й строке */
 	register LPA *lpap;
 	char *sgr_v;
 
@@ -220,7 +245,8 @@ char *str;
 			strcpy(str, "   ");
 		}
 	} else {
-		strcpy(outstr, ".?.");
+/*		strcpy(outstr, ".?.");*/
+		strcpy(outstr, ". .");
 		strcpy(str, outstr);
 		if (sgrmode < 2) return(TRUE);
 
@@ -229,11 +255,11 @@ char *str;
 			/*выбрать, где будет настроен результат */
 			switch (lpa_pi) {
 			case 0:
-				outstr[0] = '#'; /*lpap = lpa_p[0];*/ /*'%';*/
+				outstr[0] = '?'/*'#'*/; /*lpap = lpa_p[0];*/ /*'%';*/
 				sgr_v = &lpaout[i].lpa_sgr[0];
 				break;
 			case 1:
-				outstr[2] = '#'; /*lpap = lpa_p[1];*/
+				outstr[2] = '?'/*'#'*/; /*lpap = lpa_p[1];*/
 				sgr_v = &lpainp[i].lpa_sgr[0];
 				break;
 			}
@@ -246,11 +272,14 @@ char *str;
 				if (!sgr_csel(line, cod, sgra))
 					return(FALSE);
 			}
-			w_line(line4); /* вызов был перенесен в sgr_ed(), но теперь на месте, здесь */
+			/*w_line(line4); /* вызов был перенесен в sgr_ed(), но теперь на месте, здесь */
 			ref_co(line, cod);
 			w_line(linesgr);
 			/*if (i == TXT)*/
-				repage();
+/*				repage();*/
+			/* w_line(line4); /* TODO remove after ok on reline() */
+			reline(line4);
+
 		} else {
 			if (linesgr != NULL) {
 				sgrats[0] = 0;
@@ -261,30 +290,140 @@ char *str;
 	return (TRUE);
 }
 
-static char fgbg[]     =    "012345679";
-static char fgbg_cod[] = "9- 01234567";
-int showcs(fgbg, cp, ci)
+static char fgbg_list[] =    "012345679";
+static char fgbg_cod[]  = "9- 01234567+";
+
+int showcs(fgbg, cp, br, ci)
 /* show color strip */
 char *fgbg; /* clear show area if NULL */
 char cp;	/* color pointer */
+int br; 	/* bright color */
 int ci;    /* stripe color mode index 0 - for foreground, 2 - for background*/
 {
 	int i;	char *s;
-	char gp[2] = { '0', '7' }; /* black and white background for color sample strip */
-	char iFG[4] = { '3', '4', '4', '3' };
+	/* black and white background codes for sample strip */
+	char gp[4] = { '7', '0', '7', '0' };
+	char *nFG[4] = { "3", "4", "3", "4" };
+	char *bFG[4] = { "3", "10", "4", "9" };
+	char **iFG;
 
 	for (i=0; i<2; i++) {
 		cp_set(linesgr->line + i /* +1 */, linesgr->colu/* - 4 */, ERR);
 		if (fgbg != NULL) {
+			if(br) iFG = bFG;
+			else   iFG = nFG;
 			w_raw("\033[0m");
 			for (s = fgbg; *s != '\0'; s++) {
 				w_raw("\033[");
-				w_putc(iFG[ci]);
+				w_raw(iFG[ci]);
 				w_putc(gp[i]);
 				w_putc(';');
-				w_putc(iFG[ci + 1]);
+				w_raw(iFG[ci + 1]);
 				w_putc(*s);
 				w_putc('m');
+				if (*s != cp)	{ w_chr(' '); }
+				else			{ w_chr('>'); }
+								  w_chr(*s);
+				if (*s != cp)	{ w_chr(' '); }
+				else 			{ w_chr('<'); }
+			}
+		}
+		er_eol(TXT);
+	}
+}
+
+/* 1st color */
+void showc1(color_list, cp, br)
+char *color_list; /* clear show area if NULL */
+char cp;	/* color */
+int br; 	/* bright color */
+/*int rev;    /* stripe mode: 0 == normal, 1 == reverse video */
+{
+	char tmps[30];
+	char *fmt;
+	char *s;
+	/*int mode; /* stripe mode as function of rev&i below */
+
+	int i;
+
+	for (i=0; i<2; i++) {
+		cp_set(linesgr->line + i, linesgr->colu, ERR);
+		if (color_list != NULL) {
+			w_raw("\033[0m"); /* reset before draw the row of the samples */
+			/*mode = (i == 0 ? 1 : 0);*/
+			if(br == 0) {
+				switch(i /*mode*/) {
+				case 0: fmt = "\033[3%c;40m"; break;
+				case 1: fmt = "\033[4%c;37m"; break;
+				}
+			} else {
+				switch(i /*mode*/) {
+				case 0: fmt = "\033[9%c;40m"; break;
+				case 1: fmt = "\033[10%c;97m"; break;
+				}
+			}
+			for (s = color_list; *s != '\0'; s++) {
+				sprintf(tmps, fmt, *s);
+				w_raw(tmps);
+				if (*s != cp)	{ w_chr(' '); }
+				else			{ w_chr('>'); }
+								  w_chr(*s);
+				if (*s != cp)	{ w_chr(' '); }
+				else 			{ w_chr('<'); }
+			}
+		}
+		er_eol(TXT);
+	}
+}
+
+/* 1st color sample with 1st color */
+void showc2(color_list, cp, br, /*rev, */bg2s, br_bg2)
+char *color_list; /* clear show area if NULL */
+char cp;	/* color pointer */
+int br; 	/* bright color */
+/*int rev;    /* stripe mode: 0 == normal, 1 == reverse video first row */
+char bg2s;
+int br_bg2;
+{
+	char tmps[30];
+	char *fmt;
+	char *s;
+	/* int mode; /* stripe mode as function of rev&i below */
+	char bg2;;
+
+	int i;
+	char FG[5];
+	char BG[5];
+	char *p;
+
+	if (bg2s == '\0') bg2 = '9';
+	else				bg2 = bg2s;
+	if (br_bg2) {
+		sprintf(FG, "9%c", bg2);
+		sprintf(BG, "10%c", bg2);
+	} else {
+		sprintf(FG, "3%c", bg2);
+		sprintf(BG, "4%c", bg2);
+	}
+	for (i=0; i<2; i++) {
+		cp_set(linesgr->line + i, linesgr->colu, ERR);
+		if (color_list != NULL) {
+			w_raw("\033[0m"); /* reset before draw the row of the samples */
+			/*mode = (i == 0 ? 1 : 0);*/
+			if(br == 0) {
+				switch(i /*mode*/) {
+				case 0: fmt = "\033[4%c;%sm"; p = FG; break;
+				case 1: fmt = "\033[3%c;%sm"; p = BG; break;
+				}
+			} else {
+				switch(i /*mode*/) {
+				case 0: fmt = "\033[10%c;%sm"; p = FG; break;
+				case 1: fmt = "\033[9%c;%sm";  p = BG; break;
+				}
+			}
+			for (s = color_list; *s != '\0'; s++) {
+				sprintf(tmps, fmt, *s, p);
+				w_raw(tmps);
 				if (*s != cp)	{ w_chr(' '); }
 				else			{ w_chr('>'); }
 								  w_chr(*s);
@@ -317,7 +456,7 @@ int *bribgp;
 	while (*s != '\0') {
 		c = *s;
 		if (cptrok) {
-			if (strchr(fgbg, c) != NULL)
+			if (strchr(fgbg_list, c) != NULL)
 				*cptr = c;
 			cptrok = 0;
 		} else {
@@ -336,7 +475,7 @@ int *bribgp;
 }
 
 /*
- * format SGR sctring with new parameters
+ * format SGR string with new parameters
  */
 sgr_encode(s, fgp, bgp, brifg, bribg)
 char *s; /* output string */
@@ -387,7 +526,7 @@ char   *str;
 	/* row on screen page: 'fg' or 'bg' 1st char significant only, see attr.cv */
 	char    fbx;
 
-	register LINE *line4;   /* pointer to base LINE in 4th row */
+	LINE *line4;   /* pointer to base LINE in 4th row */
 	int vai;				/*video attribute index on sample row*/
 	char *Rsgr;
 	char *Wsgr;
@@ -450,11 +589,13 @@ char   *str;
 				sgr_encode(Rsgr, &Rfg, &Rbg, &Rbrifg, &Rbribg);
 			}
 			/* actualize new view of page */
+#if 0
 			w_line(line4);
 			if (lpax == TXT && sgrmode > 1 && lpa_pi == 0)/* && cod == ' ')*/
 				repage();
 			else
-				reline(lpax);
+#endif
+				reline(line4/*lpax*/);
 		}
 	}
 
@@ -475,7 +616,8 @@ char   *str;
 	const char *s;
 	int		gv;
 	int		i;
-	register LINE *line4;   /* указатель на базовую линию в 4-й строке */
+
+	LINE *line4;   /* указатель на базовую линию в 4-й строке */
 	register LPA *lpap;
 
 	char *Wsgr;
@@ -570,12 +712,13 @@ char   *str;
 				sgrtst(line, KB_NL); /*cod);*//*may be better to refresh all the page*/
 			else
 				w_line(line4);
-#endif
-			/*w_line(line4);*/
+/* тут был endif */
+			w_line(line4);
 			if (lpax == TXT && sgrmode > 1 && lpa_pi == 0)/* && cod == ' ')*/
 				repage();
 			else
-				reline(lpax);
+#endif
+				reline(line4/*lpax*/);
 		}
 	}
 	if(*mod == 'w') {
@@ -598,6 +741,13 @@ char   *str;
 	return(TRUE);
 }
 
+static void err_csel()
+{
+	w_msg(SEL|INP, "please, use key from list:");
+	at_set(SEL|VEXT);
+	w_str(fgbg_cod);
+}
+
 sgr_csel(line, cod, out)
 /*редактор атрибутов цвета (SGR composer-selector)*/
 LINE *line;
@@ -605,16 +755,16 @@ kbcod cod;
 char *out;
 {
 	kbcod ed_cod;
-	register LINE *line4;	/* указатель на базовую линию в 4-й строке */
+	LINE *line4;	/* указатель на базовую линию в 4-й строке */
 	int posp;
 
 	char c;
 	char fg = 0;	/* scan SGR indexes - BG, FG, and iterators */
 	char bg = 0;
-	int brifg, bribg;
+	int br_fg, br_bg;	/*bright indicators */
 	int i;
 
-	sgr_decode(sgra, &fg, &bg, &brifg, &bribg);
+	sgr_decode(sgra, &fg, &bg, &br_fg, &br_bg);
 
 	if ((getlsgr(line, sgrats)) == (LINE *)0) {
 		return(FALSE);
@@ -623,30 +773,68 @@ char *out;
 	strcpy(sgrats, sgra);
 	w_line(linesgr);
 
-	/* show foreground samples colors */
-	showcs(fgbg, fg, 2);
-	c = ed_cod = r_cod(0);
-	if (ed_cod == KB_CA) return(TRUE);
-	if (strchr(fgbg_cod, c) == NULL) {
-		w_msg(ATT|INP, "please, use key from list:"); at_set(ATT|VEXT); w_str(fgbg_cod);
-		return(FALSE);
+	w_msg(TXT, "key for FG: ");
+	w_lh_msg(":0..9 select  :- clear  :+ bright        :SP next(BG)  :CA cancel");
+	while(1) {
+		/* show foreground samples colors */
+		/*showcs(fgbg_list, fg, br_fg, 2);*/
+		showc1(fgbg_list, fg, br_fg);
+		c = ed_cod = r_cod(0);
+		if (ed_cod == KB_CA) return(TRUE);
+		if (ed_cod == KB_EX) return(TRUE);
+		if (strchr(fgbg_cod, c) == NULL) {
+			/*err_csel();*/
+			/*return(FALSE);*/
+			continue;
+		}
+		if (c == '+') {
+			br_fg = (br_fg ? 0 : 1);
+			continue;
+		}
+		if (c == ' ')
+			break;
+		if (c == '-') {
+			fg = '\0'; /* clear color */
+			continue;
+		}
+		fg = c;
 	}
-	w_msg(TXT, "");
-	if (c == '-') fg = '\0'; /* clear color */
-	else if (c != ' ') fg = c; /* remain the same color */
-	showcs(NULL, 0, 0);
+	w_emsg("");
+	showcs(NULL, 0, 0, 0);
 
-	/* show background sample colors */
-	showcs(fgbg, bg, 0);
-	c = ed_cod = r_cod(0);
-	if (ed_cod == KB_CA) return(TRUE);
-	if (strchr(fgbg_cod, c) == NULL)
-		return(FALSE);
-	if (c == '-') bg = '\0';
-	else if (strchr(fgbg, c) != NULL) bg = c;
-	showcs(NULL, 0, 0);
+	w_msg(TXT,
+			" BG: ");
+	w_lh_msg(":0..9 select  :- clear  :+ bright     :SP complete  :CA cancel");
+	while(1) {
+		/* show background sample colors */
+		showc2(fgbg_list, bg, br_bg, fg, br_fg);
+	/*	showc1(fgbg_list, bg, br_bg, 1);*/
+		c = ed_cod = r_cod(0);
+		if (ed_cod == KB_CA) return(TRUE);
+		if (ed_cod == KB_EX) return(TRUE);
+		if (strchr(fgbg_cod, c) == NULL) {
+			/*err_csel();*/
+			/*return(FALSE);*/
+			continue;
+		}
+		if (c == '+') {
+			br_bg = ( br_bg ? 0 : 1);
+			continue;
+		}
+		if (c == '-') {
+			bg = '\0';
+			continue;
+		}
+		if (c == ' ')
+			break;
+		bg = c;
+	}
+	showcs(NULL, 0, 0, 0);
+
+	w_emsg("");
 
 	/* prepare new result of SGR */
+#if 0
 	if (fg && bg) {
 		sprintf(sgrats, "3%c;4%c", fg, bg);
 	} else if (fg) {
@@ -656,12 +844,16 @@ char *out;
 	} else {
 		sgrats[0] = '\0';
 	}
+#else
+	sgr_encode(sgrats, &fg, &bg, &br_fg, &br_bg);
+#endif
 
 	/* store new SGR (no check for changes done) */
 	strcpy(out, sgrats);
 	return(TRUE);
 }
 
+#if 0
 sgr_ed_notused(line, cod)
 /*редактор атрибутов цвета (SGR composer)*/
 LINE *line;
@@ -684,6 +876,7 @@ kbcod cod;
 /*	}*/
 	return(TRUE);
 }
+#endif
 
 cvt_va(line, cod, mod, str)
 /*---------------------*/
@@ -698,7 +891,7 @@ char   *str;
 	int     i;
 	int     va;             /* видеоатрибуты ( флаги ) */
 	register int *ap;       /* указатель на атрибут */
-	register LINE *line4;   /* указатель на базовую линию в 5-й строке */
+	LINE *line4;   /* указатель на базовую линию в 5-й строке */
 	register LPA *lpap;
 	
 	char *smask;
@@ -714,8 +907,8 @@ char   *str;
 			} else {
 				strcpy(outstr, ".  ");
 			}
-			if(lpainp[i].lpa_a & va) outstr[2] = 'x';
-			if(lpaout[i].lpa_a & va) outstr[0] = 'x';
+			if(lpainp[i].lpa_a & va) outstr[2] = '+';
+			if(lpaout[i].lpa_a & va) outstr[0] = '+';
 			strcpy(str, outstr);
 		} else {
 		    strcpy(str, "   "); /*blank is default*/
@@ -738,12 +931,13 @@ char   *str;
 				/* do toggle modification */
 				if((*ap) & va) { (*ap) = (*ap) & (~va); }
 				else           { (*ap) = (*ap) | ( va); }
-
+#if 0
 				w_line(line4);
 				if (i == TXT && sgrmode > 1 && lpa_pi == 0)/* && cod == ' ')*/
 					repage();
 				else
-					reline(i);
+#endif
+					reline(line4/*i*/);
 			}
 	    }
 	}
@@ -804,7 +998,7 @@ char   *str;
 		lpaout[i].lpa_p, lpainp[i].lpa_p);
 	} else {
 		if (cod == ' ' || cod == KB_DE) {
-			w_msg(ATT, "Please, type a prompt symbol");
+			w_msg(SEL, "Please, type a prompt symbol");
 			if (lpa_pi)
 				w_str(" on input: ");
 			else

@@ -39,10 +39,10 @@
 
 extern SCRN scrn;
 
-int     edinsm = 1;     /* флаг: режим вставки 1, замены 0 */
+/*int     edinsm = 1;     /* флаг: режим вставки 1, замены 0 */
 /* extern  int edinff;  */
-int     edinff = 1;     /* флаг: показывать состояние редактора строки */
-int     edshow = 1;     /* флаг: показывать строку до редактирования */
+/*int     edinff = 1;     /* флаг: показывать состояние редактора строки */
+/*int     edshow = 1;     /* флаг: показывать строку до редактирования */
 
 /*static int edbak = 0;	/* флаг: копировать буфер редактирования обратно при выходе из e_str */
 
@@ -104,7 +104,7 @@ register int infflg;
 		} else {           s[1] = ' ';
 		}
 		s[2]             = ':'; /*w_str("-");*/
-		if ( edinsm ) {
+		if ( linctl.edinsm ) {
 			strcpy(&inf_new[3], "Ins");
 		} else {
 			strcpy(&inf_new[3], "Ovr");
@@ -401,7 +401,7 @@ kbcod cod;		/* kbcod() pressed */
 
 	vshift = v_shift(size, vsize, i);
 
-	if(edinsm) {
+	if(linctl.edinsm) {
 		i_end = fnd_lend(wc_s, i, size);
 		i_end = i_end < i ? i : i_end;
 	}
@@ -420,7 +420,7 @@ kbcod cod;		/* kbcod() pressed */
 		i = --i_chged;
 		/*wc_init(wcs, size);*/
 		w = wcwidth(wc_s[i_chged]);
-		if(edinsm) {
+		if(linctl.edinsm) {
 			for(j = i_chged; j < i_end; j++)
 				wc_s[j] = wc_s[j+1];
 			wc_s[j++] = L' ';
@@ -433,7 +433,7 @@ kbcod cod;		/* kbcod() pressed */
 	}
 	else if (!ISCTL(cod)) {
 		/* printable, including ' ' */
-		if (edinsm) {
+		if (linctl.edinsm) {
 			/*Ins*/
 			for (j = size; --j > i_chged;)
 				wc_s[j] = wc_s[j - 1]; /*Ins*/
@@ -472,15 +472,15 @@ int    *ofsp;       /* указатель на величину смещения
 	kbcod cod;
 	int     _edshow, _edinff, _edinsm;
 
-	_edshow = edshow; edshow = 1; /* 0 */
-	_edinff = edinff; edinff = 0; /* 0 */
-	_edinsm = edinsm; edinsm = 1;
+	_edshow = linctl.edshow; linctl.edshow = 1; /* 0 */
+	_edinff = linctl.edinff; linctl.edinff = 0; /* 0 */
+	_edinsm = linctl.edinsm; linctl.edinsm = 1;
 
 	cod = e_str(wcso/*buf*/, vsize, ctst, ofsp);
 
-	edshow = _edshow;
-	edinff = _edinff;
-	edinsm = _edinsm;
+	linctl.edshow = _edshow;
+	linctl.edinff = _edinff;
+	linctl.edinsm = _edinsm;
 
 	return cod;
 }
@@ -605,7 +605,7 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 	vshift = v_shift(size, vsize, i);
 	v = wc_iv[i];
 
-	if (edshow) {
+	if (linctl.edshow) {
 		/* 1st show if required on start editing  */
 		cp_abset(linenu, column, attrib);
 		/* j = 0; while(j<size) w_wchr(wc_s[j++]); */
@@ -689,7 +689,7 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 					i = chgstr(/*wc_s*/wcsobj, vsize, i, cod);
 					break;
 				case KB_PR:
-					edinsm=(edinsm ? 0 : 1); /* toggle Ins/Ovr*/
+					linctl.edinsm=(linctl.edinsm ? 0 : 1); /* toggle Ins/Ovr*/
 					edinfo(1);
 					break;
 				default:
@@ -710,7 +710,7 @@ int     *ofsp;          /* index pointer for editing position (cursor position) 
 				i = wc_iv[size - 1];
 				break;
 			case KB_KI:
-				edinsm=(edinsm ? 0 : 1); /* toggle Ins/Ovr*/
+				linctl.edinsm=(linctl.edinsm ? 0 : 1); /* toggle Ins/Ovr*/
 				edinfo(1);
 				break;
 			case KB_KD:

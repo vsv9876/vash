@@ -39,7 +39,6 @@ typedef struct {
 
 #define  LH_MAGIC 000477
 
-extern  const char   *v_dir;
 extern  const char   *phelp0;         /* file name of common help page */
 extern  IN_PORTS in_help[];     /* LINLIB library ports */
 

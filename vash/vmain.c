@@ -73,7 +73,7 @@ kbcod cod;
 			switch (cod) {
 			case ' ':
 				*p = MONEY;
-				line->attr = ATT|INP|NED|LFASTR;
+				line->attr = SEL|INP|NED|LFASTR;
 				break;
 			case '>':
 			case '<':
@@ -81,7 +81,7 @@ kbcod cod;
 					*p = cod;
 				else    return(FALSE);
 				if(*p == '>' || *p == '<')
-					line->attr = ATT|VEXT|INP|NED|LFASTR;
+					line->attr = SEL|VEXT|INP|NED|LFASTR;
 				break;
 			}
 		}
@@ -260,20 +260,20 @@ kbcod cod;
 		switch(*p) {
 		case '>':
 		case '<':
-			line->attr = ATT|VEXT|INP|NED|LFASTR;
+			line->attr = SEL|VEXT|INP|NED|LFASTR;
 			break;
 		case ' ':
 			line->attr = TXT|INP|NED|LFASTR;
 			break;
 		case MONEY:
-			line->attr = ATT|INP|NED|LFASTR;
+			line->attr = SEL|INP|NED|LFASTR;
 			invisible--;
 			break;
 		}
 		w_line(line);
 	}
 	if (total) {
-		w_msg(ATT, " ");
+		w_msg(SEL, " ");
 		if (invisible)
 			sprintf(prompts, " items selected (shown+invisible): "
 					"%d (%d+%d)",
@@ -283,7 +283,7 @@ kbcod cod;
 		w_str(prompts);
 	}
 	else {
-		w_msg(ATT, " no any item selected ");
+		w_msg(SEL, " no any item selected ");
 	}
 	return 0;
 }
@@ -364,7 +364,7 @@ static void dis_patt()
 
 static void itm_next()
 {
-	cp_set(-1, 0, TXT);	at_set(ATT); w_str(" >>> "); at_set(TXT);
+	cp_set(-1, 0, TXT);	at_set(SEL); w_str(" >>> "); at_set(TXT);
 	/*w_msg(ATT, "   ");*/
 	w_str(" ");
 	w_lh_msg(cmd_cod);
@@ -379,7 +379,7 @@ const char *cmd_cod;
 {
 	/*cp_set(-1, 0, ATT|INP);
 	w_str(" ! ");*/
-	w_msg(ERR/*|INP*/, "no jump/no match [");
+	w_msg(ERR/*|INP*/, "no more matches [");
 	dis_patt();
 	/*
 	w_lh_msg("];    :TA edit new one");*/

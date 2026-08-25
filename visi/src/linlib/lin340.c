@@ -48,7 +48,7 @@ extern int wcwidth();
 extern LPA lpainp[];
 extern LPA lpaout[];
 
-extern int allcod;
+/*extern int allcod;*/
 
 #define FLOAT_CVT /*not supported, use line->cvtf instead, please*//*TODO WTF comment about */
 
@@ -399,7 +399,7 @@ string_simple:
 		 * after calling editor and after KB_NL only;
 		 */
 		if((attr & NED) == 0) {
-			if(allcod && ISCTL(cod) == 0) { /*&& cod1(cod) == 0) {*/
+			if(linctl.allcod && ISCTL(cod) == 0) { /*&& cod1(cod) == 0) {*/
 				unr_c(cod);     /* unread a code back */
 				clrwcs = 1;
 				*wcsptr/**editptr*/ = L'\0';    /* clean string */

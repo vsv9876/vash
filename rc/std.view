@@ -61,7 +61,7 @@
 	r?? D *.tiff         ;display #@
 	r?? D *.TIFF         ;display #@
 	r?? D *              ;od -a #@ | #m
-	r?? T *.[12345678]   ;nroff -man #@ | #m
+	r?? T *.[12345678]   ;nroff -man -K utf8 #@ | #m
 	r?? T *              ;#m #@
 # 	r?? E *              _msg file empty, zero length
 # interface files in /dev, /sys - stat(2) showes them as zero length regular files

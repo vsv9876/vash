@@ -35,7 +35,7 @@ main()
 			"Check LANG, LC_CTYPE, LC_ALL.\n");
 		return 1;
 	} else {
-		mb_cur_max = MB_CUR_MAX;
+		linctl.mb_cur_max = MB_CUR_MAX;
 	}
 	printf("VTEST>"); fflush(stdout); fscanf(stdin, "%c", &ch);
     visini();

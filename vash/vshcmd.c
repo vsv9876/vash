@@ -601,7 +601,7 @@ tty_cmd_:
 				msgat = ERR;
 				break;
 			case CLD_STOPPED:
-				msgat = ATT|INP;
+				msgat = SEL|INP;
 				trapwait = 1;
 				break;
 			default:

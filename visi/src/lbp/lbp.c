@@ -141,7 +141,7 @@ FILE   *i_fp;
 		    break;
 		case 'N' :                  /* МЕНЮ */
 		case 'n' :
-		    line->attr |= ATT;
+		    line->attr |= SEL;
 		    break;
 		case 'X' :                  /* МЕНЮ */
 		case 'x' :

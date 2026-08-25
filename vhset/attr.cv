@@ -14,13 +14,14 @@
 #define USRATTR4 ALT|PAD|NED
 #define USRATTR5 MSE|PAD|NED
 #define USRATTR6 ERR|PAD|NED
-#define USRATTR7 ATT|PAD|NED
+#define USRATTR7 SEL|PAD|NED
 
 #define USRATTR0 HDR|PAD
 
 #undef  LALT
 /*#define LALT ATT|MID|NED*/
-#define LALT MSE|MID|NED
+/*#define LALT MSE|MID|NED*/
+#define LALT TXT|MID|NED
 
 ---PAGE linem
 ---PORTS
@@ -45,14 +46,15 @@
 	t = (void *)1;
 ---LINES
 	P       = ia - -      cvt_pmt - LPA_B
-	CMD     = g8p - -      cvt_atr - "CMD "
-	TXT     = g1p - -      cvt_atr - "TXT "
-	HDR     = g2p - -      cvt_atr - "HDR "
-	VAR     = g3p - -      cvt_atr - "VAR "
-	ALT     = g4p - -      cvt_atr - "ALT "
-	MSE     = g5p - -      cvt_atr - "MSE "
-	ERR     = g6p - -      cvt_atr - "ERR "
-	ATT     = g7p - -      cvt_atr - "ATT "
+	C       = g8p - -      cvt_atr - " $  "
+	T       = g1p - -      cvt_atr - " txt"
+	H       = g2p - -      cvt_atr - " hdr"
+	V       = g3p - -      cvt_atr - " 123"
+	A       = g4p - -      cvt_atr - " [*]"
+	M       = g5p - -      cvt_atr - " off"
+	E       = g6p - -      cvt_atr - " msg"
+	S       = g7p - -      cvt_atr - " <<<"
+
 	so      = ia - W_so   cvt_va  - LPA_B
 	us      = ia - W_us   cvt_va  - LPA_B
 ---#	vs      = ia - W_vs   cvt_va  - LPA_B
@@ -62,6 +64,7 @@
 	mb      = ia - W_mb   cvt_va  - LPA_B
 	mk      = ia - W_mk   cvt_va  - LPA_B
 	mi	= ia - W_zh   cvt_va  - LPA_B
+
 	hl      = g1  - -     cvt_hl  - "."
 
 	sgrAT   = g  - -      -       - SGRAT 
@@ -75,7 +78,7 @@
 	fg      = ia - "f"   cvt_co  - LPA_B
 	bg      = ia - "b"   cvt_co  - LPA_B
 	sgr     = ia - -     cvt_sgr - LPA_B
-	M       = g1 - "| "  cvt_pi  - LPA_B
+	M1      = g1 - "| "  cvt_pi  - LPA_B
 	p0      = g1 - "0"   cvt_pim - -
 	p1      = g1 - "1"   cvt_pim - -
 	lh      = g  - -     -       - namelh
@@ -85,41 +88,44 @@
 ---SCREEN
 ---#
 ---# WARNING! please, keep in mind that
----# column of elements in string 3 (which contains .TXT. .HDR. ...)
+---# column of elements in string 3 (which contains .CMD. .TXT. .HDR. ...)
 ---# must be equal a column of corresponding element in the matrox of
 ---# attribute selectors (which contains .t) because
 ---# format conversion function for selector depends on screen coordinates of it.
 ---# for example, columns of fields .t and .HDR must be the same
 ---# 
----# place of .sgrAT line must be below .sgr line
+---# place of '.sgrAT' line must be below '.sgr' line
 ---#.lh........................................................................
 ---#
-=Video attributes 
- 
-!  .p0.......... .CMD.   .TXT.   .HDR.   .VAR.   .ALT.   .MSE.   .ERR.   .ATT.
-!  .p1...........   
-!
-!       prompt:  .P.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+---#=video attributes
+---#line type: ." CMD     TXT     HDR     VAR     ALT     MSE     ERR     SEL ".        
+."line type:".. ."CMD". ."TXT". ."HDR". ."VAR". ."ALT". ."MSE". ."ERR". ."SEL".         
+---#        .p0....  
+---#        .p1....
+                
+                 .C...   .T...   .H...   .V...   .A...   .M...   .E...   .S... 
+
+ ."attribute"..                                                                 
+!     prompter:  .P.     .t.     .t.     .t.     .t.     .t.     .t.     .t.    
 !   standout:so  .so     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !  underline:us  .us     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !        dim:mh  .mh     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !       bold:md  .md     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!    reverse:mr  .mr     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
----#+ hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!     italic:mi  .mi     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!		 .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
----#!color:          .M.     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!compose: fg,bg  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!   FG intence:  .Bf     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!      FG code#  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!   BG intence:  .Bb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
-!      BG code#  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.
----#+.""...........................................................................
+!    reverse:mr  .mr     .t.     .t.     .t.     .t.     .t.     .t.     .t. 
+!      blink:mb  .mb     .t.     .t.     .t.     .t.     .t.     .t.     .t. 
+---#+ hidden:mk  .mk.    .t.     .t.     .t.     .t.     .t.     .t.     .t. 
+!     italic:mi  .mi     .t.     .t.     .t.     .t.     .t.     .t.     .t. 
+!."color"......							     
+! foreground #:  .fg     .t.     .t.     .t.     .t.     .t.     .t.     .t. 
+!    fg bright:  .Bf     .t.     .t.     .t.     .t.     .t.     .t.     .t. 
+! background #:  .bg     .t.     .t.     .t.     .t.     .t.     .t.     .t.  
+!    bg bright:  .Bb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
+!FG+BG compose:  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
+ ."mode".......
+   .sgrm...............         SGR: .sgrAT.....        .:HE.... help
+							.:KI.... switch the set
 
-    mode: .sgrm..........       SGR: .sgrAT.....            .:HE.... help
-							    .:KI.... r/w: toggle
-
+---#!."color"......	.M1    .t.    .t.    .t.    .t.    .t.    .t.    .t.
 ---# debug garbage below...
 ---#+         vs:vs  .vs.    .t.     .t.     .t.     .t.     .t.     .t.     .t.
 ---#+       code edit:  .hl... .hl... .hl... .hl... .hl... .hl... .hl... .hl...

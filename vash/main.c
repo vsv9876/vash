@@ -90,7 +90,7 @@ PARSARGS pa[] = {
 	{ 'A', &vflag.shanyway, "A,sh -c",        "exec $SHELL -c 'command' anyway" },
 	{ 'j', &vflag.jobctl,   "j,job control",  "job control support" },			/* = 0; // флаг: главная оболочка, ppid() == 1 */
 	{ 'J', &vflag.jobshow,  "J,job show",     "show job activity" },			/* = 0; // флаг: главная оболочка, ppid() == 1 */
-	{ 'R', &vflag.subatrc,  "R,#@ in rc",     "substite #@ before command editing" },			/* = 0; substitute '#@' from rc files before cmd editor */
+	{ 'R', &vflag.subatrc,  "R,#@ in rc",     "substitute #@ before command editing" },			/* = 0; substitute '#@' from rc files before cmd editor */
 	{ '@', &vflag.subshow,  "@,show #@",      "show the '@' mark on the item when editing the command" },			/* = 0; substitute '#@' show position on main menu */
 	{ ' ', &vflag.loginf,   " login sh",       "(readonly) vash is login shell" },
 	{ ' ', &vflag.predef,   " rc predef",      "(readonly) rc predef (rc-style)" },			/* (readonly) rc style selector: 1 - BSD, 0 - other */
@@ -156,7 +156,7 @@ int cvt_fd(LINE *line,
 	return(FALSE);
 }
 
-int     allcod = 1;
+/*int     allcod = 1;*/
 
 void
 onexit(ok)
@@ -551,7 +551,7 @@ char **argv;
 			"Check LANG, LC_CTYPE, LC_ALL.\n");
 		return 1;
 	} else {
-		mb_cur_max = MB_CUR_MAX;
+		linctl.mb_cur_max = MB_CUR_MAX;
 	}
 
 	envopts = NULL;

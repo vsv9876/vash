@@ -58,11 +58,11 @@
 #endif
 
 #ifdef NAVI_TRACE
-#define ntrace(str)		w_msg(ATT|VEXT, str)
+#define navitrace(str)		w_msg(SEL|VEXT, str)
 /*if(strcmp(s, ""))
 		usleep(400000);*/
 #else
-#define ntrace(str) ;
+#define navitrace(str) ;
 #endif
 
 static LINE *fnd_nxt(LINE *, LINE *);
@@ -198,11 +198,11 @@ fnd_al (lni, page)
 		{
 			if (nprev == 1)
 				break;
-			ntrace("loop back in row");
+			navitrace("loop back in row");
 			return (lnj);
 		}
 	}
-	ntrace("previous (arrow LEFT)");
+	navitrace("previous (arrow LEFT)");
 	return(fnd_prv(lni, page));
 }
 
@@ -300,7 +300,7 @@ fnd_au (lni, page)
 		if (/*lnj->colu == lni->colu*/
 				ovrcolu(lnj, lni)
 				&& lnj->line != lni->line) { /* compare to orig!!*/
-				ntrace("previous (arrow UP)");
+				navitrace("previous (arrow UP)");
 			return (lnj);
 		}
 	}
@@ -311,11 +311,11 @@ fnd_au (lni, page)
 		if(0 == (INP & (lnj->attr)))
 			continue;
 		if (ovrcolu(lnj, lni) && lnj->line != lni->line) {
-				ntrace("loop back in column");
+				navitrace("loop back in column");
 				return (lnj);
 		}
 	}
-	ntrace("previous (in page order)");
+	navitrace("previous (in page order)");
 	return(fnd_prv(lni, page));
 }
 
@@ -429,8 +429,6 @@ int    *posp;               /* cursor position during edit process */
 
 	cod = r_line(lni, posp);
 
-	ntrace("");
-
 	/* navigate to next read position on the page */
 	switch( cod ) {
 	/*case KB_PU :*/
@@ -442,20 +440,24 @@ int    *posp;               /* cursor position during edit process */
 		lni = fnd_end(lni, page);
 		break;
 	case KB_AR :
+		navitrace("");
 		if ( (lni->flag & SUSR) == FALSE )
 			lni = fnd_ar(lni, page) ;
 		break ;
 	case KB_AL :
+		navitrace("");
 		prv_lni = lni;
 		if ( (lni->flag & SUSL) == FALSE )
 			lni = fnd_al(lni, page) ;
 		break ;
 	case KB_AU :
+		navitrace("");
 		prv_lni = lni;
 		if ( (lni->flag & SUSU) == FALSE )
 			lni = fnd_au(lni, page) ;
 		break ;
 	case KB_AD :
+		navitrace("");
 		if ( (lni->flag & SUSD) == FALSE )
 			lni = fnd_ad(lni, page) ;
 		break ;

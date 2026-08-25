@@ -1,20 +1,25 @@
 ---LINES
 ---SCREEN
-=video attributes help
+=attributes (video) settings
+                                  
+  ." logical type of lines: "................    
+                                                                        
+  CMD - initial text mode (restored on exit)      change a focus of editing               
+  TXT - text (comment)                            betwwen 2 sets of attributes
+  HDR - header                                    (write/out and read/in):              
+* VAR - variable                                    .:KI.... or a key          
+* ALT - alterator                                            from list: .'rwio 
+* MSE - menu selection point                                                   
+  ERR - error message                             change an value:                
+  SEL - selecttion                                                .:SP....
+-------                                                           .:DE....                                        
+* - active lines, navigated
+    with cursor keys
+                                                  change mode: 
+                                                              any key                
+                                                              from list: .'0123
+  Please,
+  refer to 'man vhset' for full description
 
-  change an value:              ." logical type of lines: ".................
-               .:SP...            CMD - initial text mode (restored on exit)
-               .:DE...            TXT - text                                
-                                  HDR - header                              
-  change focus of input:          VAR - variable                            
-  switch w/r : .:KI....           ALT - alterator
-     set "w" : .'w or .'o         MSE - menu selection point                
-     set "r" : .'r or .'i         ERR - error message                       
-                                  ATT - attention (warning message)         
-  change setting mode:          
-          .'0 .'1 .'2 .'3         /set "w"/
-                                            used when write/display lines
-                                  /set "r"/ 
-                                            active line in focus
 ---END
 * line is a thing which links data and representation in variety of aspects

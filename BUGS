@@ -1,6 +1,10 @@
 
 known bugs...
 
+# zombie in redirect selection: colors not cleaned
+
+* progress indicator 'fill cmd -- ####' dumps a core if huge list
+
 * using ':Fv ls -a' as fill main menu command corrupts some filenames,
   replacing with garbage from parsing rc string chunck
 

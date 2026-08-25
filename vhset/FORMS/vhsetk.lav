@@ -2,23 +2,23 @@
 ---SCREEN
 =keyboard settings
 
-how to ."assign". a key to action:
+to ."assign". a key to action:
     1) move cursor to column "key" or "key2"
     2) press .:SP... key
     3) press control key
     NOTE: pressing printable key not allowed
 
-how to ."clear assigned key:".
+to ."clear assigned key:".
     1) move cursor to wanted position
     2) press .:DE... key
 
-How to change ."key labels:".
+to change ."key labels:".
     1) move cursor to label column
     2) press .:SP... or .:DE... to start editing
     3) press .:NL... to commit changes
 
-    ."notes:".
+    NOTEs:
     - some keys cannot be reassigned
-    - key labels are terminated by <space> symbol (not shown after)
+    - key labels are terminated by <space> symbol
 
 ---END

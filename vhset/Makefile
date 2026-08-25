@@ -26,11 +26,13 @@ EXECMODE      =  755
 #DEST          = /usr/local
 DESTDIR       =
 DEST          = /usr
+VERSN         = 1.
 
 DESTBIN       = $(DESTDIR)$(DEST)/bin
 DESTLIB       = $(DESTDIR)$(DEST)/lib
 
 CFLAGS        = -I$(VISI)/include \
+		-D'VERSN="$(VERSN)"' \
 		-D'VEXDIR="$(DESTLIB)/$(PROGRAM)"'
 
 #CC            = cc -O

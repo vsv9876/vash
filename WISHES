@@ -1,7 +1,7 @@
 
 	LINLIB
 
-- v.attribute on r_line & r_page must be visualize the cursor in correct way
+- v.attribute on r_line & r_page must to visualize the cursor in correct way
 
 - inheritance from stty cooked:
    intr, erase, werase, kill, eof, tstop
@@ -24,12 +24,11 @@
 
 - substitution some metasymbols before some internal commands
 
-- export vash flags changed in setup, 
+- export vash flags changed in setup page,
   on execve() with VASH= environment
 
 -+ rescan dir: keep cursor position near last known item,
--- keep last item name regarding -@ parameter (item name fragment)
-   after new rescan
+-- after new rescan keep last item name regarding -@ parameter (item name fragment)
    // this feature requires more sofisticated comparizon of menu items
    // (ex., after 'rm -f ##')
 
@@ -40,5 +39,5 @@
 
 -- more compact rendering of main menu - maximum width of item
    must be recalculated on every column
-   (now common for all columns -- since 'comint'-compatible)
+   (now common(equal) for all columns since 'comint'-compatible)
 

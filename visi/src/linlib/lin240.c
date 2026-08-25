@@ -64,7 +64,6 @@
 extern  LPA     lpainp[];
 extern  LPA     lpaout[];
 extern  KBL     kbl[];      /* ОПИСАНИЕ ВОЗМОЖНОСТЕЙ ТЕРМИНАЛА */
-extern  char   *filelh;    /* УКАЗАТЕЛЬ НА ИМЯ ФАЙЛА С ОПИСАНИЕМ */
 extern  int     kpadon;    /* ФЛАГ: ДОПОЛНИТЕЛЬНАЯ КЛАВИАТУРА ВКЛЮЧЕНА */
 extern int		sgrmode;   /* initial monochrome */
 
@@ -90,8 +89,8 @@ do_kbl()
 	register LPA *lpap;
 	LPA *lpapset[2]; /*0-lpaout, 1-lpainp*/
 	register char *s;
-	register int c;
 	register int   i;
+	int c;
 		int lpa_o;
 		int lpa_i;
 		 int ibeg;
@@ -150,13 +149,14 @@ cont1:
 	}
 #endif
 
-	/* СОХРАНИМ ИМЯ ФАЙЛА, ЕСЛИ ЕСТЬ ГДЕ */
-	if (filelh) strcpy(filelh, name);
+	/* save name of lhfp if the storage is defined  */
+	if (vhfile) strcpy(vhfile, name);
 
 	ibeg = 0;
 	/* ЧИТАЕМ НАСТРОЙКУ... */
 	while( fgets(s=str, 98, lhfp), feof(lhfp) == 0) {
-		if(isspace(*s))
+		/* skip dummy and comment */
+		if(isspace(*s) || *s == '#')
 			continue;
 
 		/* keypad mode (+/-), SGR mode (0,1,2,3) */
@@ -236,8 +236,8 @@ cont1:
 			goto cont;
 #endif
 		} else
-		if(isdigit(*s)) {     /* АТРИБУТ И ПОДСКАЗКА */
-			lpap = &lpaout[*s++ & 07];  /* ASCII-КОИ7-КОИ8-depend! */
+		if(isdigit(*s)) {     /* prompt and attributes in OLD fasion */
+			lpap = &lpaout[*s++ & 07];  /* lpa*[] index is ASCII-depended! */
 			lpap->lpa_p  =  *s++;
 			lpap->lpa_a  = (*s++ & 07) << 6;
 			lpap->lpa_a |= (*s++ & 07) << 3;
@@ -260,6 +260,26 @@ cont1:
 				}
 			}
 
+		}
+		else if((*s == 'r' || *s == 'w')
+				&& (isdigit(s[1]))) { /* prompt and attrib in NEW fasion */
+			c = *s++;
+			switch(c) {
+				case 'w': lpap = &lpaout[*s++ & 07]; break;
+				case 'r': lpap = &lpainp[*s++ & 07]; break;
+			}
+			lpap->lpa_p = *s++;
+			if (*s++ == '\t') {
+				lpap->lpa_a = (*s++ & 07) << 6;
+				lpap->lpa_a |= (*s++ & 07) << 3;
+				lpap->lpa_a |= (*s++ & 07);
+				/* ANSI Color GSR, after <TAB> separator */
+				if (*s++ == '\t') {
+					for(os = lpap->lpa_sgr; *s != '\0' && *s != '\n' && *s != '\t'; *os++,*s++) {
+						*os = *s;
+					}
+					*os = '\0';				}
+			}
 		}
 cont:
 		;

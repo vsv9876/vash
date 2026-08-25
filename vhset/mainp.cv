@@ -4,37 +4,68 @@
 **      +----------+    видеотерминалов
 **/
 
-/* #undef  LVAR */
-/* #define LVAR TXT */
+#define USRATTR8 CMD|PAD|NED
+#define USRATTR1 TXT|PAD|NED
+/*#define USRATTR2 HDR|PAD|NED|MID*/
+#define USRATTR2 HDR|PAD|NED
+#define USRATTR3 VAR|PAD|NED
+#define USRATTR4 ALT|PAD|NED
+#define USRATTR5 MSE|PAD|NED
+#define USRATTR6 ERR|PAD|NED
+#define USRATTR7 SEL|PAD|NED
 
 static
----PAGE mainm
+---PAGE mainp
 ---LINES
 m_m    = ipm      n   -   pag_mk  tst_m   " Basic keyboard setup "
-m_k    = ipm      n   -   pag_k   tst_m   " Keys & codes setup "
-m_a    = ipm      n   -   pag_a   tst_m   " Video setup "
+m_k    = ipm      n   -   pag_k   tst_m   " Keyboard setup "
+m_a    = ipm      n   -   pag_a   tst_m   " Attributes setup "
 m_quit = ipm      n   -   mkquit  tst_m   " Quit "
-m_save = ipm      n   -   saveon  tst_m   " Save settings "
-lh   = g        -   -   -       -       namelh
----#sp   = gv       -   -   -       -       "spacebar"
+m_s    = ipm      -   -   saveon  tst_m   " Save "
+m_cmp  = ipm      n   -   mkcomp  tst_m   " reset to default "
+m_undo = ipm      n   -   mkundo  tst_m   " restore last saved "
+vh     = g1       -   -   -       -       vhname
+versn  = g1       -   -   -       -       VERSN
 
+	CMD     = g8p - -      cvt_atr - "CMD "
+	TXT     = g1p - -      cvt_atr - "TXT "
+	HDR     = g2p - -      cvt_atr - "HDR "
+	VAR     = g3p - -      cvt_atr - "VAR "
+	ALT     = g4p - -      cvt_atr - "ALT "
+	MSE     = g5p - -      cvt_atr - "MSE "
+	ERR     = g6p - -      cvt_atr - "ERR "
+	SEL     = g7p - -      cvt_atr - "SEL "
 ---SCREEN
-=VHSET - video-display hardware setup
+=VHSET - preferences
 
- profile:
-    .lh......................................................................
+                            .CMD. .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .SEL.
+                            
+  stored profile:
+    .vh......................................................................
 
-
-        .m_quit....................
-
+    .m_quit.
+    
 ---#    .m_m.......................
-        .m_a.......................
-        .m_k.......................
+    .m_k........................... 
+    .m_a...........................
+      
+    .m_undo.......................
+    .m_cmp........................
 
-        .m_save....................
+    .m_s....
 
 
-                                     .:HE....  get help
+    .:TA.... next menu item                             .:HE....  get help
 
-
+---#    ."check for the attributes"....................
+    version .versn......................
 ---END
+#if 0
+
+=check of attributes
+
+    .CMD. .TXT. .HDR. .VAR. .ALT. .MSE. .ERR. .ATT.
+
+
+    .:TA.... next menu item                             .:HE....  get help
+#endif

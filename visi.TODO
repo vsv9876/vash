@@ -28,3 +28,5 @@ ifndef CP_SAV
 	MSELINE_FUNCTION
 	fastmenu
 -	vbell/bell
+runtime settings
+	keypad sgrmode bell

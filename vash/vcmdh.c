@@ -679,7 +679,7 @@ rebuild_help_menu:
 
 	w_cmd(cmd0);
 	if (clm._itms == cmdpsel) {
-		at_set(ATT/*|INP*//*CMD|VEXT*//*ATT*/);
+		at_set(SEL);
 	} else {
 		at_set(CMD);
 	}

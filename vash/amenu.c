@@ -61,7 +61,7 @@ pre_vf()
 			/* keep attributes of items selected */
 			p = clm._itms[i + clm._itmofs];
 			if (*p == MONEY) {
-				clm._vf[i].attr = ATT|INP|NED|LFASTR;
+				clm._vf[i].attr = SEL|INP|NED|LFASTR;
 			} else if (*p == '<'
 					|| *p == '>') {
 /* replacement is above
@@ -70,7 +70,7 @@ pre_vf()
 			} else if (*clm._itms[i + clm._itmofs] == '<'
 					|| *clm._itms[i + clm._itmofs] == '>') {
 */
-				clm._vf[i].attr = ATT|VEXT|INP|NED|LFASTR;
+				clm._vf[i].attr = SEL|VEXT|INP|NED|LFASTR;
 			} else {
 				clm._vf[i].attr = clm._ltmpl->attr; /* TXT|INP|NED|LFASTR; */
 			}

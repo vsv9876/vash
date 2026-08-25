@@ -14,6 +14,7 @@
 #ifndef line_h_def
 #define line_h_def
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <wchar.h>
 
@@ -176,9 +177,10 @@ typedef struct  {
 #define ALT 04      /* alterator */
 #define MSE 05      /* menu selector */
 #define ERR 06      /* an error message */
-#define ATT 07      /* an "attention", marked line for further motion */
+/*#define ATT 07      /* an "attention", marked line for further motion */
+#define SEL 07      /* selected (marked) line for further motion */
 
-#define VIDEO  0177  /* space 0177 was reserved for future use since epoch */
+#define VIDEO  07  /* space 0177 was reserved for future use since epoch */
 
 /*---- common generic masks -- общие битовые маски атрибутов ----*/
 #define PMT  0100000    /* line with prompter in 1st position */
@@ -334,7 +336,7 @@ extern int wcsnu8s(const u8char_t *, const wchar_t *, int); /*TODO check above *
 extern int vsize(wchar_t *);
 extern int u8vsize(char *);
 /* unicode utf-8 limited support */
-extern  int mb_cur_max;
+/* extern  int mb_cur_max; /* moved to linctl */
 extern  int u8nopass;
 extern  int u8slen(char *);
 extern  int u8swcs(wchar_t *, char *);
@@ -401,7 +403,7 @@ extern  void    w_line(LINE */*, int **/);
 extern  void    w_page(LINE */*, kbcod*/);
 extern  kbcod   e_str(wcsobj_t *, int vsize, kbcod (*)(), int *);
 extern  kbcod   re_str(wcsobj_t *, int vsize, kbcod (*)(), int *);
-extern  int     allcod, edinff;
+/*extern  int     allcod, edinff; /* moved to linctl */
 
 /* lin4xx - user level functions */
 extern  int     cvt_a(LINE *, kbcod, char *, char *);
@@ -451,5 +453,23 @@ extern int	gtty_sz();
 #define WSHOW_CO (lframe->maxco - 9)
 #define WSHOW_AT TXT|VEXT
 #define WSHOW_EDIT (WSHOW_CO    - 8)
+
+/*#define    DEBUG_R_LINE 1*/
+extern char      *vhfile; /* optional vh/hw_set() settings */
+
+typedef struct {
+    int edshow;
+    int edinff;
+    int edinsm;
+    int allcod;
+    int mb_cur_max;
+#if 0
+    /* MSELINE_FUNCTION */
+    int fastmenu;
+/*-       vbell/bell */
+#endif
+} LINCTL;
+
+extern LINCTL linctl;
 
 #endif /* line_h_def */

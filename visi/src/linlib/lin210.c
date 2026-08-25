@@ -216,7 +216,7 @@ LPA lpaout[LPASIZE] = {
 	{       ' ',    A_MR,       "90;107" },             /* ALT  4*/
 	{       '*',    A_MD,       ""      },              /* MSE  5*/
 	{       ' ',    A_MR,       "31;107"},              /* ERR  6*/
-	{       ' ',    A_MR,       ""      },              /* ATT  7*/
+	{       ' ',    A_MR,       ""      },              /* SEL(ATT)  7*/
 };
 
 LPA lpainp[LPASIZE] = {
@@ -227,7 +227,7 @@ LPA lpainp[LPASIZE] = {
 	{      '\'',    A_US,       "30;106" },             /* ALT  4*/
 	{       '>',    A_MR,       "92;40" },              /* MSE  5*/
 	{       ' ',    A_MH|A_MD,  "31;47" },              /* ERR  6*/
-	{       '!',    A_MD,       "30;103" },             /* ATT  7*/
+	{       '!',    A_MD,       "30;103" },             /* SEL(ATT)  7*/
 };
 
 int		sgrmode = 1; /* initial monochrome, not a dumb :) */

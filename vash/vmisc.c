@@ -235,7 +235,7 @@ chckmail()
 			else {
 			    /* есть непрочитанная почта */
 			    CURSOR_SAVE;
-			    cp_set(-2, -7, ATT);
+			    cp_set(-2, -7, SEL);
 			    w_str(" mail ");
 			    CURSOR_FETCH;
 			}
@@ -461,18 +461,19 @@ register char *str;
  */
 static
 kbcod
-r_pmt(line, savedf)
+r_pmt(line)
 LINE *line;
-int savedf;
+
 {
 	extern SCRN scrn;
 	kbcod cod;
+/*	int savedf;*/
 
 	for ( ;; ) {
-		savedf = edinff;
-		/*edinff = 0;     /* не показывать состояние редактора */
+		/*savedf = linctl.edinff;*/
+		/*linctl.edinff = 0;     /* не показывать состояние редактора */
 		cod = r_line(line, 0);
-		edinff = savedf;
+		/*linctl.edinff = savedf;*/
 		switch (cod) {
 		default:
 			continue;
@@ -498,7 +499,6 @@ int   size;     /* размер поля для ввода */
 {
 	kbcod cod;
 	LINE  line;
-	int   savedf;
 	wcsobj_t *wobj;
 
 	wobj = (wcsobj_t*)obj;
@@ -520,7 +520,7 @@ int   size;     /* размер поля для ввода */
 
 	w_msg(TXT, pmtstr);
 
-	cod = r_pmt(&line, savedf);
+	cod = r_pmt(&line);
 	return(cod);
 }
 
@@ -534,7 +534,6 @@ const char *hlpmsg;	/* help message after string */
 	extern SCRN scrn;
 	kbcod cod;
 	LINE  pmtline;
-	int   savedf;
 	int lh_pos;
 
 	if(str[0] == U8O_SIG)
@@ -560,7 +559,7 @@ const char *hlpmsg;	/* help message after string */
 	cp_set(pmtline.line, lh_pos, TXT);
 	w_lh_msg(hlpmsg);
 
-	cod = r_pmt(&pmtline, savedf);
+	cod = r_pmt(&pmtline);
 	return(cod);
 
 }

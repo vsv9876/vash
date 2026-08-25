@@ -63,7 +63,7 @@ const char    *str ;         /* текст сообщения об ошибке 
 	if(!io_get(IO_VIDEO)) {
 		switch (vamode & VIDEO) {
 		case ERR: whatmsg = "[error]";   break;
-		case ATT: whatmsg = "[warning]"; break;
+		case SEL: whatmsg = "[warning]"; break;
 		case TXT: whatmsg = "";          break;
 		}
 		if (*str)
@@ -87,7 +87,7 @@ const char    *str ;         /* текст сообщения об ошибке 
 		case ERR:
 			whatmsg = "error:";
 			break;
-		case ATT:
+		case SEL:
 			whatmsg = ">>>";
 			break;
 		case TXT:

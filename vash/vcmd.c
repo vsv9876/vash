@@ -519,7 +519,7 @@ fmsgatt(s)
 {
 	char tmp[U8_STRBUF];
 	cmdsub(tmp, s, clm._itm, 0, 1/*vflag.subatrc*/);
-	w_msg(ATT|INP, " ");
+	w_msg(SEL|INP, " ");
 	w_lh_msg(tmp);
 	return(0);
 }

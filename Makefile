@@ -112,7 +112,7 @@ visi_lib: setup
 # NOTE:
 # at least FreeBSD's make requires PATH= specified explicitly
 compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib
-	cd $(VHSET); $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)"
+	cd $(VHSET); $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)" "VERSN=$(VERSN)" 
 	cd $(VASH);   $(MAKE) all "PATH=$(PATH)" "DEST=$(DEST)" "ASHLIB=$(ASHLIB)"\
 				"CFLAGS_ASH=$(CFLAGS_ASH)" "VERSN=$(VERSN)" "VEXDIR=$(VEXDIR)"
 	cd lib;               $(MAKE) "PATH=$(PATH)" "DEST=$(DEST)" all
@@ -120,7 +120,7 @@ compile: setup visi_lib $(BLDCFG) $(VISI)/include/line.h lib
 
 #install:   $(DESTDIR) $(DEST) termcap $(VISILIB)
 install: setup compile $(DESTDIR) $(DEST) $(VISILIB) docinstall maninstall
-	cd $(VHSET);	$(MAKE) install "PATH=$(PATH)" \
+	cd $(VHSET);	$(MAKE) install "PATH=$(PATH)" "VERSN=$(VERSN)" \
 		CFLAGS_VISI="$(CFLAGS_VISI)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
 	cd $(VASH);	$(MAKE) install "PATH=$(PATH)" "VEXDIR=$(VEXDIR)" \
 		"CFLAGS_ASH=$(CFLAGS_ASH)" "DEST=$(DEST)" "DESTDIR=$(DESTDIR)"
