@@ -56,6 +56,7 @@ LINE *phline;           /* ИМЯ ФАЙЛА СТРАНИЦЫ HELP */
 			w_page(page);
 			break;
 		default:   /* w_emsg("");     /* clear err msg */
+			break;
 		}
     }
 }

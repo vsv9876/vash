@@ -1164,6 +1164,7 @@ LINE *phline;           /* pointer to instant page with help screen */
 			repage();
 			break;
 		default:   /* w_emsg("");     /* clear message string */
+			break;
 		}
     }
 }
