@@ -56,30 +56,27 @@ FILE *fpread;
 
 	/*signal(SIGINT, sig_vfread);*/
 	/* initial allocation */
-	if (clm._itmbuf == NULL) {
-		itmbsz = clm._itmbsz;
-		if ((clm._itmbuf = malloc(itmbsz)) == NULL) {
-			w_emsg("malloc for main buffer: NO MEM... fatal");
-			onintr(1);
-		}
-		clm._itms[0] = itmbp = clm._itmbuf;
-	    /**itmbp++ = ' '; /* 1st placeholder */
+	itmbsz = clm._itmbsz;
+	if ((clm._itmbuf = malloc(itmbsz)) == NULL) {
+		w_emsg("malloc for main buffer: NO MEM... fatal");
+		onintr(1);
 	}
+#if 0
+		clm._itms[0] = itmbp = clm._itmbuf;
+#endif
 
 	vfr_fp = fpread;
 	/*signal(SIGINT, SIG_DFL);*/
 	io_set(IO_TTYPE);
+
 	len = clm._itmlen = clm._itmmax = 0;
-	clm._itms[clm._itmmax] = itmbp = clm._itmbuf;
+	clm._itms[0 /*clm._itmmax*/] = itmbp = clm._itmbuf;
 	*itmbp++ = ' ';
 	*itmbp++ = ' ';
 	while ((c = getc(fpread)) != EOF && stopvfread == 0) {
-/*
-		if (&clm._itmbuf[clm._itmbsz] == itmbp)
-			break;
-*/
 		/* try to extent item buffer if no room for current entry */
-		if (&clm._itmbuf[itmbsz] <= &itmbp[1]) {
+		/*&clm._itmbuf[itmbsz] <= &itmbp[1]*/
+		if (&clm._itmbuf[itmbsz] <= itmbp) {
 			itmbextn += 1;
 			itmbsz = (clm._itmbsz * itmbextn);
 			if ((ibp_new = realloc(clm._itmbuf, itmbsz)) == NULL) {
@@ -96,7 +93,7 @@ FILE *fpread;
 		}
 
 		if (c == '\n') {
-			/* конец очередной строки */
+			/* current line finalize */
 			*itmbp++ = '\0';
 			if ( len > clm._itmlen ) clm._itmlen = len;
 			len = 0 ;
@@ -105,6 +102,7 @@ FILE *fpread;
 			if ((clm._itmmax % 10) == 0) {
 				w_chr('#'); fflush(vttout);
 			}
+			/* start new string */
 			clm._itmmax++;
 			clm._itms[clm._itmmax] = itmbp;
 			*itmbp++ = ' ';

@@ -8,7 +8,7 @@ LINLIB structure diagram
  LINE[] <->   :                   ->  : w_str()               :  putc()
               :                       :         -> w_chr() -> :
  strobj <->   :                       :                       :
-              :                       : r_str()               :
+              :                       : re_str(e_str())       :
               :       <- r_line() <-  : r_cod() <- r_key() <- :  read()
  kbcod  <-    : r_page() <-           :                       :
               :                       :            hw_set()   : tgetent()
@@ -27,7 +27,7 @@ legend:
      *) er_pag  clear screen
 	r_key   read a keycode (phisical, before parsing)
 	r_cod   read a logical code of a key (after parsing)
-	r_str   edit(read) a string
+	re_str  wrapper over e_str() - edit(read) a string
 
 work with elements of screen (form):
 	w_line  write a line

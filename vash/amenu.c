@@ -198,7 +198,7 @@ itmini()
 	clm._xx = clm._xx1;
 
 	if (clm._xx1 != 1) {
-		clm._xx = lframe->maxco/(clm._itmlen + 1);
+		clm._xx = lframe->maxco/(clm._itmlen + 2);
 		if (clm._xx == 0)
 			clm._xx = 1;
 	}
@@ -213,8 +213,8 @@ itmini()
 		clm._yy = 2;
 		clm._xx = (clm._xx + 1)/2;
 	}
-	clm._x0 = ((lframe->maxco - ((clm._itmlen + 1) * clm._xx)) / (clm._xx + 1));
-	clm._dx = clm._itmlen + 1 + clm._x0;
+	clm._x0 = ((lframe->maxco - ((clm._itmlen + 2) * clm._xx)) / (clm._xx + 1));
+	clm._dx = clm._itmlen + 2 + clm._x0;
 /*      dx = itmlen + 1 + ((lframe->maxco - ((itmlen + 1) * xx)) / (xx + 1));   */
 	if (clm._dx > lframe->maxco)
 		clm._dx = lframe->maxco;

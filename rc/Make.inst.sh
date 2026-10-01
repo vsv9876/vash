@@ -25,9 +25,9 @@ do
     for base in "${module}" "${module}".*
     do
 	if test -d "$base" ; then
-	    $_echo cp $base $dest
+	    $_echo cp -av $base $dest
 	elif test -f "$base" ; then
-	    $_echo cp $base $dest
+	    $_echo cp -av $base $dest
 	fi
     done
 done

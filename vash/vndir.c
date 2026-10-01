@@ -420,7 +420,7 @@ char *file;
     char  *ip;
 
     /*if (index(Cfill, 'a')) aflag = 1;*/
-	/* in progress:TODO: автоматически подбирать размер itmbsz */
+	/* in development progress:TODO: автоматически подбирать размер itmbsz */
 	/*
 	 * this malloc/realloc must be inside of vls() and/or vfread();
 	 */
@@ -562,8 +562,7 @@ char *fname;
 }
 
 
-
-vlstag() {
+void vlstag() {
 /*маркировать во втором байте тип файла, подобно ls -F */
 	int i;
 
@@ -573,7 +572,7 @@ vlstag() {
 	/*hint: do it Crepf[] points to directory, so items are files */
 	if (Crepf[0] != '\0') {
 		for (i = 0; i < clm._itmmax; i++) {
-			fname = &clm._itms[i][2]; /* file name there */
+			fname = &(clm._itms[i][2]); /* file name there */
 
 			s = clm._itms[i];
 			/*type of file symbol placed there*/

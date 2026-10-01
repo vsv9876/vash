@@ -1,8 +1,0 @@
-#!/usr/bin/vash
-#
-# alias to standard profile
-#
-
-@std.rc
-
-### EOF
