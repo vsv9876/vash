@@ -44,7 +44,8 @@ FILE *fpread;
  */
 {
     char *itmbp;  /* item buffer pointer */
-    int   itmbsz;
+    char *p;
+    size_t   itmbsz;
     char *ibp_new; /* new item buffer pointer */
 
     ptrdiff_t ibp_ofs; /* ofset for stored items */
@@ -76,8 +77,8 @@ FILE *fpread;
 	while ((c = getc(fpread)) != EOF && stopvfread == 0) {
 		/* try to extent item buffer if no room for current entry */
 		/*&clm._itmbuf[itmbsz] <= &itmbp[1]*/
-		if (&clm._itmbuf[itmbsz] <= itmbp) {
-			itmbextn += 1;
+		if (itmbsz <=  (itmbp - clm._itmbuf + 1)) {
+			itmbextn = itmbextn + 1;/** 2;*//*itmbextn += 1;*/
 			itmbsz = (clm._itmbsz * itmbextn);
 			if ((ibp_new = realloc(clm._itmbuf, itmbsz)) == NULL) {
 				w_emsg("No mem for all menu items");
@@ -86,15 +87,19 @@ FILE *fpread;
 			ibp_ofs = ibp_new - clm._itmbuf;
 			clm._itmbuf = ibp_new;
 			/* fix stored pointers */
-			if (ibp_ofs != 0)
-				for (i = 0; i < clm._itmmax; i++)
+			if (ibp_ofs != 0) {
+				for (i = 0; i <= clm._itmmax; i++) {
 					clm._itms[i] += ibp_ofs;
-			itmbp += ibp_ofs;
+					p = clm._itms[i]; /*DEBUG*/
+				}
+				itmbp = itmbp + ibp_ofs;
+			}
 		}
 
 		if (c == '\n') {
 			/* current line finalize */
 			*itmbp++ = '\0';
+			p = itmbp; /*DEBUG*/
 			if ( len > clm._itmlen ) clm._itmlen = len;
 			len = 0 ;
 			if (clm._itmmax >= ITMMAX)
@@ -114,7 +119,9 @@ FILE *fpread;
 		}
 	}
 
-	itmbsz_ex = itmbsz; /* export */
+	itmbsz_ex = itmbextn; /* itmbsz; /* export */
+	for (i = 0; i < clm._itmmax; i++) /*DEBUG*/
+		p = (clm._itms)[i];
 
 	*itmbp++ = '\0';
 	if (clm._itmmax == 0) {

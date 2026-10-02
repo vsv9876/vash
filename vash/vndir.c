@@ -390,7 +390,7 @@ int vls()
     	return(1); /* ERROR filling main menu */
     }
 
-    itmbsz_ex = itmbsz; /*export*/
+    itmbsz_ex = itmbextn; /*itmbsz; /*export*/
 
     if ( ! fflag ) {
     	if (Vflag) qsort(clm._itms, clm._itmmax, sizeof(char *), vscomp);
