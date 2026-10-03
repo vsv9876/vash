@@ -1,5 +1,10 @@
 vash news (release notes)
 
+2.1.7
+  * fix main menu rendering when last symbol was lost
+  * fix sources for debian build
+  * fix malloc/realloc automatic in main menu
+
 2.1.6
   * improving the saved vhset settings and vhset dialogues
 
