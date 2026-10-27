@@ -8,6 +8,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef BSDpagesize
+#include <unistd.h>
+#endif
 #include "line.h"
 #include "line0.h"
 #include "assist.h"
