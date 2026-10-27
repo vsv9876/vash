@@ -1,0 +1,14 @@
+
+# macOS
+CFLAGS_VISI	= -DUSE_TERMIOS -DNO_ALLOCA_H
+CFLAGS_ASH	= -DJCLsuspend -DMGROUPS -DNO_STRVERSCMP
+
+# if BSD-like      PREDEF=1
+# else (SYSV,SVR4) PREDEF=0 (omitted if not specified there)
+PREDEF	= 1
+
+TERMLIB	= -ltermcap
+
+CC	= cc $(DEBUG) -std=c89 -Wwrite-strings -Wno-error=implicit-function-declaration
+LINKER	= cc $(DEBUG)
+
