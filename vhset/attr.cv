@@ -100,13 +100,14 @@
 ---#=video attributes
 ---#line type: ." CMD     TXT     HDR     VAR     ALT     MSE     ERR     SEL ".        
 ."line type:".. ."CMD". ."TXT". ."HDR". ."VAR". ."ALT". ."MSE". ."ERR". ."SEL".         
----#        .p0....  
----#        .p1....
-                
-                 .C...   .T...   .H...   .V...   .A...   .M...   .E...   .S... 
+---#    .p0....  
+---#    .p1....
 
- ."attribute"..                                                                 
+        .p0....  .C...   .T...   .H...   .V...   .A...   .M...   .E...   .S... 
+        .p1....                
+
 !     prompter:  .P.     .t.     .t.     .t.     .t.     .t.     .t.     .t.    
+---#!."attribute"..                                                                 
 !   standout:so  .so     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !  underline:us  .us     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !        dim:mh  .mh     .t.     .t.     .t.     .t.     .t.     .t.     .t.
@@ -122,7 +123,7 @@
 !    bg bright:  .Bb     .t.     .t.     .t.     .t.     .t.     .t.     .t.
 !FG+BG compose:  .sgr    .t.     .t.     .t.     .t.     .t.     .t.     .t.
  ."mode".......
-   .sgrm...............         SGR: .sgrAT.....        .:HE.... help
+    .sgrm...............         SGR: .sgrAT.....        .:HE.... help
 							.:KI.... switch the set
 
 ---#!."color"......	.M1    .t.    .t.    .t.    .t.    .t.    .t.    .t.

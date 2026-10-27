@@ -40,14 +40,8 @@ VCC           = ../../bin/vcc
 EXTHDRS       = ../../include/line.h \
 		../../include/line0.h \
 		../../include/lineva.h \
-		/usr/include/ctype.h \
-		../../include/ediag.h \
-		/usr/include/sgtty.h \
-		/usr/include/signal.h \
-		/usr/include/stdio.h \
-		/usr/include/sys/ioctl.h
+		../../include/ediag.h
 
-INCLUDE       = /usr/include
 HDRS	      =
 
 OBJS          = lin100.o \

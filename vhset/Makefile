@@ -58,8 +58,8 @@ MAKEFILE      = Makefile
 EXTHDRS	      = $(VISI)/include/line.h \
 		$(VISI)/include/line0.h \
 		$(VISI)/include/linebp.h \
-		$(VISI)/include/lineva.h \
-		/usr/include/stdio.h
+		$(VISI)/include/lineva.h
+		
 
 HDRS	      = vhset.h
 
@@ -170,11 +170,11 @@ $(DESTBIN):
 	test -d $(DESTBIN)
 
 ###
-keys0.o: keys0.i /usr/include/stdio.h $(VISI)/include/line.h \
+keys0.o: keys0.i $(VISI)/include/line.h \
 	$(VISI)/include/line0.h vhset.h
-attr.o: attr.i /usr/include/stdio.h $(VISI)/include/line.h \
+attr.o: attr.i $(VISI)/include/line.h \
 	$(VISI)/include/line0.h $(VISI)/include/lineva.h
-keys.o: keys.i /usr/include/stdio.h $(VISI)/include/line.h \
+keys.o: keys.i $(VISI)/include/line.h \
 	$(VISI)/include/line0.h
-main.o: mainp.i /usr/include/stdio.h $(VISI)/include/line.h \
+main.o: mainp.i $(VISI)/include/line.h \
 	$(VISI)/include/line0.h $(VISI)/include/linebp.h vhset.h

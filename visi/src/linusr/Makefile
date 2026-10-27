@@ -37,11 +37,8 @@ VCC           = ../../bin/vcc
 EXTHDRS       = ../../include/line.h \
 		../../include/line0.h \
 		../../include/linebp.h \
-		/usr/include/ctype.h \
-		../../include/ediag.h \
-		/usr/include/stdio.h
+		../../include/ediag.h
 
-INCLUDE       = /usr/include
 HDRS	      =
 
 # lin440.c - duplicates ../linebp/lin510.c, last one is newer
