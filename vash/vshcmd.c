@@ -17,6 +17,9 @@
 
 extern SLIST_HEAD *sgglist;
 
+extern void sigwinch(int sig);
+extern int reapw(int jn);
+
 /*extern  char *getenv();*/
 
 extern  int     y0_top; /* defined in main.c */

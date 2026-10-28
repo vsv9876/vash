@@ -9,6 +9,6 @@ PREDEF	= 1
 
 TERMLIB	= -ltermcap
 
-CC	= cc $(DEBUG) -std=c89 -Wwrite-strings -Wno-error=implicit-function-declaration
+CC	= cc $(DEBUG) -std=c89 -Wwrite-strings
 LINKER	= cc $(DEBUG)
 
