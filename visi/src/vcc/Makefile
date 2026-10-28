@@ -57,5 +57,4 @@ co:     .co
 .DEFAULT:
 	$(CO) $(COFLAGS) $@
 ###
-vcc.o: /usr/include/ediag.h /usr/include/stdio.h /usr/include/ctype.h \
-	../../include/line.h ../../include/linebp.h vgen.h
+vcc.o:  ../../include/line.h ../../include/linebp.h vgen.h

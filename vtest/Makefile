@@ -56,8 +56,7 @@ MAKEFILE      = Makefile
 EXTHDRS	      = $(VISI)/include/line.h \
 		$(VISI)/include/line0.h \
 		$(VISI)/include/linebp.h \
-		$(VISI)/include/lineva.h \
-		/usr/include/stdio.h
+		$(VISI)/include/lineva.h
 
 HDRS	      = 
 

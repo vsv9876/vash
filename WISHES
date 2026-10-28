@@ -1,8 +1,6 @@
 
 	LINLIB
 
-- v.attribute on r_line & r_page must to visualize the cursor in correct way
-
 - inheritance from stty cooked:
    intr, erase, werase, kill, eof, tstop
 
@@ -20,7 +18,7 @@
 
 	VASH
 
-- substituition check before command execution
+- substitution check before command execution
 
 - substitution some metasymbols before some internal commands
 
@@ -35,7 +33,8 @@
 -- VASH_LABEL fill from header (1st line) of commands like ps, df, 
    then mark this line in main menu as read-only
  
--- extended file attributes permissions check, <rwx> unsufficient (never needed)
+-- extended file attributes permissions check,
+   <rwx> unsufficient but never needed
 
 -- more compact rendering of main menu - maximum width of item
    must be recalculated on every column

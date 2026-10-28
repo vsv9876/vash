@@ -1,5 +1,8 @@
 vash news (release notes)
 
+2.1.8
+  * fix old bug: wrong uid type was used, disregarding some LDAP/IPA accounts
+
 2.1.7
   * fix main menu rendering when last symbol was lost
   * fix sources for debian build

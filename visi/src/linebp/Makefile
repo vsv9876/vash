@@ -35,10 +35,8 @@ UNLOCK        = rcs -l
 VCC           = ../../bin/vcc
 
 EXTHDRS       = ../../include/line.h \
-		../../include/linebp.h \
-		/usr/include/stdio.h
-
-INCLUDE       = /usr/include
+		../../include/linebp.h
+		
 HDRS	      =
 
 OBJS	      = lin505.o \
@@ -148,8 +146,8 @@ unlock:         .co .unlock
 # ПОСЛЕ ЭТОЙ СТРОЧКИ НИЧЕГО НЕ ТРОГАТЬ:
 #
 ###
-lin505.o: /usr/include/stdio.h ../../include/line.h ../../include/linebp.h
-lin510.o: /usr/include/stdio.h ../../include/line.h ../../include/linebp.h
+lin505.o: ../../include/line.h ../../include/linebp.h
+lin510.o: ../../include/line.h ../../include/linebp.h
 lin551.o: ../../include/line.h ../../include/linebp.h
 lin552.o: ../../include/line.h ../../include/linebp.h
 lin553.o: ../../include/line.h ../../include/linebp.h

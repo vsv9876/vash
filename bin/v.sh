@@ -62,7 +62,8 @@ if [ x"${VASH_LABEL}" = x ]; then
     esac
     ttyfull=`tty`
     tty=`echo $ttyfull|sed -e 's-/dev/--'`
-    uname=`uname -n || hostname | sed -e 's/\..$*//' 2>/dev/null`
+    #uname=`uname -n || hostname | sed -e 's/\..$*//' 2>/dev/null`
+    uname=`hostname -s`
     VASH_LABEL="$tty $user@$uname:"
     export VASH_LABEL
 fi

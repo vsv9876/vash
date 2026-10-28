@@ -81,7 +81,7 @@ struct stat *statp;
 {
 	static  char rwxs[4];
 	int umode;  /* реальные права доступа */
-	unsigned short userid;  /* идентификатор пользователя */
+	unsigned int userid;  /* идентификатор пользователя */
 
 
 	userid = getuid();

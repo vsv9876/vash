@@ -48,9 +48,7 @@ VCC           = ../../bin/vcc
 
 
 EXTHDRS	      = ../../include/line.h \
-		../../include/linebp.h \
-		/usr/include/ctype.h \
-		/usr/include/stdio.h
+		../../include/linebp.h
 
 HDRS	      =
 
@@ -102,5 +100,4 @@ unlock:         .co .unlock
 # ПОСЛЕ ЭТОЙ СТРОЧКИ НИЧЕГО НЕ ТРОГАТЬ:
 #
 ###
-lbp.o: /usr/include/stdio.h /usr/include/ctype.h ../../include/line.h \
-	../../include/linebp.h
+lbp.o: ../../include/line.h ../../include/linebp.h
