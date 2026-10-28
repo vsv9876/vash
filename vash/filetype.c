@@ -7,7 +7,9 @@
  */
 
 #include <sys/types.h>
+#ifndef __APPLE__
 #include <a.out.h>
+#endif
 
 #ifdef  SYSV
 #define PORTAR 1
