@@ -168,7 +168,7 @@ docinstall: $(VASH_DOC)
 	cp $(DOC_FILES) $(VASH_DOC)
 
 $(DEST):
-	mkdir -p $(DEST)
+	mkdir -p $(DESTDIR)/$(DEST)
 
 $(DESTDIR):
 	mkdir -p $(DESTDIR)

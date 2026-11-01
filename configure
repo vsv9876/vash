@@ -91,6 +91,21 @@ finalize () {
 echo $1
 VARIANT=$1
 
+# DEST from the config if defined, see conf/Darwin
+confvar=$confdir/$1
+v=
+s=`grep '^DEST' $confvar`
+ok=$?
+if [ $ok -eq 0 ]; then
+	IFS== read k v<< EOF
+	$s
+EOF
+	dest=`echo $v`
+	DEST="$dest"
+else
+	DEST="$DEST"
+fi
+
 # > $BLDCONF	echo '#' `date`
 # >
  > $BLDCONF	echo ''

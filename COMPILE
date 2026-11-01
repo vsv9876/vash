@@ -14,63 +14,90 @@ Compile vash-2.1.0 and later
 
 1.
 unpack tarball and change directory on it:
-        tar xzf ./vash-*.tar.gz
-        cd vash-*
+        $ tar xzf ./vash-*.tar.gz
+        $ cd vash-*
+
 2.
 run ./configure script or run 'make config':
-        ./configure
+        $ ./configure
     or
-        make config
+        $ make config
+
 3. 
 check BLD.conf:
-        vi ./BLD.conf
+        $ vi ./BLD.conf
+
 4.
 compile binaries and install them in local subdirectory:
-        make clean install
+        $ make clean install
+
 NOTE: find resulting binaries under ./BLD
+        $ ls -R BLD/*
         
 5.
-How to use vash compiled locally:
+How to use vash compiled locally, yet not packaged:
 symlink 'v' to 'bin/v.local' may be used from source directory -
-	./v
-plase symlink to directory in your PATH as option
+	$ ./v
+
+You may put an alias to script "v" in your personal profile
+for regular using starting vash from any current directory:
+	$ v
 
 6.
-Debug requires special flag '-d' for ./configure
-and optionally environment setup (see comments in './vv');
-then use 'connect to process' method of eclipse or gdb:
-	./configure -d
-	. ./vv
-	env | grep V
-	./v
-NOTE: vash will give an additional prompt allowing connect debugger
+Debug requires special flag "-d" for "./configure" and
+optionally environment setup - see comments in './vv'.
+Please, use "connect to process" method of gdb or eclipse:
+	$ ./configure -d
+	$ . ./vv
+	$ env | grep V.
+	$ ./v
+
+NOTE: vash will give an additional prompt waiting debugger connect
 
 7.
 Build installable binary packages (optional).
-    7.1 RPM build
+
+7.1 RPM build
     Make sure rpmbuild package installed and working.
     NOTE: In Fedora resulting package will be in ~/rpmbuild/SRPMS
     (may be vary on a different systems)
-	./MK/srpm.sh
+	$ ./MK/srpm.sh
 
     then find resulting source package and run rpmbuild:
-	rpmbuild --rebuild ~/rpmbuild/SRPMS/vash-*.src.rpm
+	$ rpmbuild --rebuild ~/rpmbuild/SRPMS/vash-*.src.rpm
 
     find and install a package, in Fedora:
-	sudo yum -C install ~/rpmbuild/RPMS/*/vash-*.rpm
+	$ sudo yum -C install ~/rpmbuild/RPMS/*/vash-*.rpm
 
-    7.2. DEB build
+7.2. DEB build
     Make sure required 'dpkg' and 'fakeroot' packages installed.
     Run script, installable package will be in parent directory:
-       ./MK/DEBIAN.sh
-       sudo dpkg -i ../vash_*.deb
+	$ ./MK/DEBIAN.sh
 
-    7.3. PKG (FreeBSD) build
-    get compiled binaries then run script:
-	./configure
-	make clean install
-	./MK/pkg-fbsd.sh
+    find and install a package: 
+	$ sudo dpkg -i ../vash_*.deb
+
+7.3. PKG (FreeBSD) build
+    first get compiled binaries:
+	$ ./configure -l
+	$ make clean install
+
+    then run script:
+	$ ./MK/pkg-fbsd.sh
+
+    use install "../vash*.pkg":
+	$ sudo pkg install ../vash*.pkg
     
+7.4. PKG (MacOS "Big Sur") build
+    Make sure stanard development option is installed:
+        $ xcode-select --install
+    get compiled binaries:
+	$ make config
+	$ make clean install
+    then run script:
+	$ ./MK/pkg-macos.sh
+    use Finder to find "../vash*.pkg" then click on it to install
+
 
 HISTORICAL NOTEs
 
@@ -93,7 +120,7 @@ based 8-bit encodings were supported including KOI8-R and ISO-8859-1.
 
 1st stricted release was done about 1990 year under name ash, assistant
 shell.  Further development was episodical.  In 1991-1993 years ash was
-ported  to  i386  platforms  ISC  UNIX and FreeBSD, then UnixWare. Some
+ported  to  i386  platforms  ISC UNIX and FreeBSD, then UnixWare. Some
 enhancements was added with port to SPARK Solaris in 1995 and DEC OSF-1
 Unix in 1996. Porting to SGI IRIX was done in that time.
 

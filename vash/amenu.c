@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include "line.h"
 #include "line0.h"
 #include "assist.h"

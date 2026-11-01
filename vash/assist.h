@@ -260,6 +260,11 @@ extern void binpwd(void);
 extern void on_onchld(void);    /*set handler*/
 extern void Signal(int, void *);
 
+extern void sigwinch(int sig);
+		
+extern int reapw(int jn);
+		
+
 #define ASH_NOWAIT 001  /* do not wait process just invoked(BG) */
 #define ASH_NOFORK 010  /* заменить программу процесса */
 #define ASH_NOSH   020  /* не запускать дополнительный процесс sh */
